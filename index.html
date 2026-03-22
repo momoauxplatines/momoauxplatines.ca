@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Momo Aux Platines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --brand-00: #FAFBF9;
+      --brand-10: #F4F6F3;
+      --brand-20: #EAEDE5;
+      --brand-30: #DEE4DA;
+      --brand-40: #D5DCCC;
+      --brand-50: #C9D3C0;
+      --brand-80: #51534E;
+      --brand-90: #2B2D2A;
+      --brand-100: #141513;
+      --bg: #111210;
+    }
+
+    html { background: var(--bg); overflow-x: hidden; }
+    body { background: var(--bg); overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; }
+
+    /* ─── Page wrapper ─── */
+    .page { max-width: 390px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
+
+    /* ─── Fixed Header ─── */
+    .site-header {
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px; z-index: 100;
+      display: flex; justify-content: flex-end; align-items: center;
+      padding: 24px; pointer-events: none;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+    }
+    .site-header.header-hidden { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+
+    .header-school {
+      display: none; /* mobile: hidden */
+      pointer-events: auto;
+      background: var(--brand-100);
+      border: 1px solid var(--brand-30);
+      padding: 4px 16px; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
+      color: var(--brand-00); line-height: 31px; cursor: pointer;
+      text-decoration: none;
+    }
+
+    .lang-toggle {
+      pointer-events: auto;
+      background: var(--brand-90);
+      padding: 4px 16px; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
+      color: var(--brand-00); line-height: 31px; cursor: pointer;
+    }
+
+    /* ─── Page Content ─── */
+    .page-content { padding: 0 32px 100px; display: flex; flex-direction: column; gap: 80px; }
+
+    /* ─── Stamp Section ─── */
+    .stamp-section {
+      min-height: 100svh; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-left: -32px; margin-right: -32px;
+    }
+    .stamp-gradient {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 100vw; height: 100%; min-height: 100svh;
+      background: radial-gradient(ellipse at 50% 50%,
+        rgba(202,211,193,0.25) 0%, rgba(156,163,149,0.22) 22.5%,
+        rgba(110,115,105,0.15) 45%, rgba(86,90,82,0.08) 56%,
+        rgba(63,66,60,0.04) 67%, rgba(40,42,38,0.01) 79%, rgba(17,18,16,0) 90%);
+      pointer-events: none; z-index: 0;
+    }
+    .stamp-container {
+      width: 330px; height: 331px; position: relative;
+      overflow: hidden; flex-shrink: 0; z-index: 1;
+    }
+
+    @keyframes spin-cw-mobile {
+      from { transform: translate(-50%,-50%) scale(0.5258) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) scale(0.5258) rotate(360deg); }
+    }
+    @keyframes spin-cw-tablet {
+      from { transform: translate(-50%,-50%) scale(0.8231) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) scale(0.8231) rotate(360deg); }
+    }
+
+    .stamp-component {
+      position: absolute; width: 437.48px; height: 437.479px;
+      top: 50%; left: 50%;
+      animation: spin-cw-mobile 60s linear infinite;
+    }
+    .stamp-base { position: absolute; width: 100%; height: 100%; }
+    .stamp-letters { display: contents; }
+    .stamp-bottom-wrap {
+      position: absolute; top: 43.33%; right: 17.59%; bottom: 19.42%; left: 27.05%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .stamp-top-wrap {
+      position: absolute; top: 18.09%; right: 23.92%; bottom: 44.31%; left: 20.62%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .stamp-text { flex-shrink: 0; width: 221.466px; height: 109.343px; position: relative; }
+    .stamp-text img { position: absolute; width: 100%; height: 100%; }
+    .stamp-text--bottom { transform: rotate(-15deg); }
+    .stamp-text--top    { transform: rotate(-15.49deg); }
+
+    /* ─── Horizontal Scroll Row ─── */
+    .scroll-row {
+      display: flex; gap: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; margin: 0 -32px; padding: 0 32px;
+    }
+    .scroll-row::-webkit-scrollbar { display: none; }
+
+    .tabs-row {
+      display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; margin: 0 -32px; padding: 0 32px;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+
+    /* ─── Section Heading ─── */
+    .section-heading {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 48px; line-height: 48px;
+      color: var(--brand-50); text-transform: uppercase;
+    }
+
+    /* ─── Intro ─── */
+    .intro { display: flex; flex-direction: column; gap: 32px; }
+    .avatar { width: 112px; height: 112px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .intro-info { display: flex; flex-direction: column; gap: 24px; }
+    .intro-name {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 48px; line-height: 48px;
+      color: var(--brand-50); text-transform: uppercase;
+    }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      background: var(--brand-90); padding: 4px 16px; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
+      color: var(--brand-00); line-height: 31px; white-space: nowrap;
+    }
+    .bio { font-weight: 300; font-size: 24px; line-height: 32px; color: white; }
+    .bio p + p { margin-top: 24px; }
+
+    /* Responsive visibility */
+    .mobile-only { display: flex; flex-direction: column; gap: 32px; }
+    .tablet-up   { display: none; }
+
+    .ctas { display: flex; flex-direction: column; gap: 16px; }
+    .btn {
+      height: 56px; background: var(--brand-20); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px;
+      color: var(--brand-100); text-transform: uppercase; cursor: pointer;
+      border: none; width: 100%; text-decoration: none; line-height: 31px;
+    }
+    .btn:hover { background: var(--brand-30); }
+
+    /* ─── Card Link ─── */
+    .card-link {
+      font-weight: 300; font-size: 18px; line-height: 26px;
+      color: #007AFF; text-decoration: none; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .card-link-soon { color: #d71a1a; cursor: default; }
+
+    /* ─── Reviews ─── */
+    .reviews { display: flex; flex-direction: column; gap: 40px; }
+    .review-card {
+      flex-shrink: 0; width: 310px;
+      background: var(--brand-90); border: 1px solid var(--brand-100);
+      border-radius: 16px; padding: 16px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .review-card-header { display: flex; align-items: center; justify-content: space-between; width: 278px; }
+    .review-avatar { width: 80px; height: 80px; border-radius: 72px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
+    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
+    .review-subtitle { font-weight: 300; font-size: 16px; line-height: 17px; color: var(--brand-50); }
+    .review-text { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-00); width: 278px; flex: 1; }
+
+    /* ─── Demos ─── */
+    .demos { display: flex; flex-direction: column; gap: 32px; }
+    .tab {
+      height: 40px; padding: 0 16px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 16px;
+      text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+      cursor: pointer; border: none; line-height: 31px; transition: background 0.15s, color 0.15s;
+    }
+    .tab.active   { background: var(--brand-50); color: var(--brand-100); }
+    .tab.inactive { background: var(--brand-90); border: 1px solid var(--brand-100); color: var(--brand-50); }
+
+    /* Video card */
+    .video-card {
+      flex-shrink: 0; width: 310px;
+      background: var(--brand-90); border: 1px solid var(--brand-100);
+      border-radius: 16px; display: flex; flex-direction: column;
+      gap: 24px; padding: 16px;
+    }
+    .video-thumb-wrapper { position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; }
+    .video-thumb { width: 100%; height: 100%; object-fit: contain; }
+    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; }
+    .video-content { display: flex; flex-direction: column; gap: 16px; }
+    .video-info { display: flex; flex-direction: column; gap: 16px; color: var(--brand-30); }
+    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; }
+    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; }
+
+    /* ─── Timeline Mobile ─── */
+    .timeline-section { display: flex; flex-direction: column; gap: 40px; }
+    .timeline-desktop { display: none; }
+
+    .decade { display: flex; flex-direction: column; gap: 16px; }
+    .decade-title { font-weight: 300; font-size: 24px; line-height: normal; color: #dfdfdf; }
+
+    /* Mobile timeline card (64px thumb, side-by-side header) */
+    .timeline-card {
+      flex-shrink: 0; width: 310px;
+      background: var(--brand-90); border: 1px solid var(--brand-100);
+      border-radius: 16px; padding: 16px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .timeline-card-header { display: flex; gap: 16px; align-items: flex-start; width: 278px; }
+    .timeline-thumb { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .timeline-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .timeline-card-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 20px; line-height: 24px;
+      color: var(--brand-30); text-transform: uppercase;
+      flex: 1; align-self: stretch;
+    }
+    .timeline-card-body { display: flex; flex-direction: column; gap: 16px; }
+    .timeline-card-copy { display: flex; flex-direction: column; gap: 8px; }
+    .timeline-card-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
+    .timeline-card-dates { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); }
+
+    /* ─── Timeline Desktop (tablet+) ─── */
+    .timeline-all-scroll {
+      display: flex; gap: 40px; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      margin: 0 -56px; padding: 0 56px;
+    }
+    .timeline-all-scroll::-webkit-scrollbar { display: none; }
+
+    .timeline-decade-col { display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; }
+    .timeline-cards-row  { display: flex; gap: 16px; }
+
+    /* Large timeline card (80px thumb, stacked) */
+    .timeline-card-lg {
+      flex-shrink: 0; width: 310px; height: 400px;
+      background: var(--brand-90); border: 1px solid var(--brand-100);
+      border-radius: 16px; padding: 16px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .timeline-thumb-lg { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .timeline-thumb-lg img { width: 100%; height: 100%; object-fit: cover; }
+    .timeline-card-lg-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 32px; line-height: 34px;
+      color: var(--brand-30); text-transform: uppercase;
+    }
+    .timeline-card-lg-body { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+    .timeline-card-lg-copy { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .timeline-card-lg-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
+    .timeline-card-lg-dates { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      display: flex;
+      background: #000; border-top: 1px solid var(--brand-90);
+      margin: 0 -56px -100px; padding: 80px 32px;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px;
+    }
+    .footer-stamp { width: 80px; height: 80px; position: relative; overflow: hidden; flex-shrink: 0; }
+    .footer-stamp .stamp-component { animation: none; transform: translate(-50%, -50%) scale(0.1829); }
+    .footer-name {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 28px; line-height: 31px;
+      color: var(--brand-30); text-transform: uppercase; text-align: center;
+    }
+    .footer-links { display: flex; gap: 8px; align-items: center; }
+    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); text-align: center; }
+
+    /* ================================================================
+       TABLET  (≥ 640px)
+    ================================================================ */
+    @media (min-width: 640px) {
+
+      .page { max-width: 834px; }
+      .site-header { max-width: 834px; justify-content: space-between; }
+      .header-school { display: flex; }
+
+      .page-content { padding: 0 56px 100px; }
+      .stamp-section { margin-left: -56px; margin-right: -56px; }
+      .stamp-container { width: 360px; height: 361px; }
+      .stamp-component { animation: spin-cw-tablet 60s linear infinite; }
+
+      .scroll-row { margin: 0 -56px; padding: 0 56px; }
+      .tabs-row   { margin: 0 -56px; padding: 0 56px; }
+
+      .section-heading { font-size: 44px; line-height: 48px; }
+      .intro-name      { font-size: 52px; line-height: 52px; }
+
+      /* Show/hide mobile vs tablet content */
+      .mobile-only { display: none; }
+      .tablet-up   { display: flex; flex-direction: column; gap: 32px; }
+
+      /* Reviews: flat flex row, no scroll */
+      .reviews-row {
+        flex-wrap: nowrap;
+      }
+      .reviews-row .review-card {
+        flex: 0 0 310px; width: 310px; height: 328px;
+        flex-direction: column; justify-content: space-between;
+      }
+      .reviews-row .review-card-header { width: auto; }
+      .reviews-row .review-text { width: auto; }
+
+      /* Timeline: hide mobile, show desktop */
+      .timeline-mobile  { display: none; }
+      .timeline-desktop { display: flex; }
+
+    }
+
+    /* ================================================================
+       DESKTOP  (≥ 1100px)
+    ================================================================ */
+    @media (min-width: 1100px) {
+      .page { max-width: 1440px; }
+      .site-header { max-width: 1440px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Fixed Header ── -->
+  <header class="site-header">
+    <a class="header-school">SCHOOL</a>
+    <div class="lang-toggle">EN</div>
+  </header>
+
+  <div class="page-content">
+
+    <!-- ══════════════════════════════════════════════
+         HERO / STAMP
+    ══════════════════════════════════════════════ -->
+    <div class="stamp-section">
+      <div class="stamp-gradient"></div>
+      <div class="stamp-container">
+        <div class="stamp-component">
+          <img class="stamp-base" src="https://www.figma.com/api/mcp/asset/10be9a22-f450-44da-82fa-71f89daaeff1" alt="">
+          <div class="stamp-letters">
+            <div class="stamp-bottom-wrap">
+              <div class="stamp-text stamp-text--bottom">
+                <img src="https://www.figma.com/api/mcp/asset/24e51841-8fb8-4f4b-b3c1-da9b34c8d640" alt="">
+              </div>
+            </div>
+            <div class="stamp-top-wrap">
+              <div class="stamp-text stamp-text--top">
+                <img src="https://www.figma.com/api/mcp/asset/b346adb2-c320-4e28-adf5-67e9104e0d3d" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         INTRO
+    ══════════════════════════════════════════════ -->
+    <section class="intro">
+      <div class="avatar">
+        <img src="https://www.figma.com/api/mcp/asset/8a3d9625-bcdb-4b64-9fb9-4969261141cd" alt="Momo">
+      </div>
+      <div class="intro-info">
+        <h1 class="intro-name">Momo Aux Platines</h1>
+      </div>
+
+      <!-- Mobile tags -->
+      <div class="tags mobile-only" style="flex-direction:row; gap:8px;">
+        <span class="tag">TURNTABLIST</span>
+        <span class="tag">DJ SCHOOL</span>
+      </div>
+      <!-- Tablet+ tags -->
+      <div class="tags tablet-up" style="flex-direction:row; gap:8px;">
+        <span class="tag">DJ</span>
+        <span class="tag">TURNTABLIST</span>
+        <span class="tag">RADIO HOST</span>
+      </div>
+
+      <!-- Mobile bio -->
+      <div class="bio mobile-only" style="flex-direction:column; gap:0;">
+        <p>Couple decades behind the decks. Scratching with rap groups and house djs, mixing all types of stuff in cool buvettes, clubs and special events.</p>
+        <p style="margin-top:24px">Now sharing the culture and true dj skills to the young and old wannabe djs via tailor made 1 on 1 courses.</p>
+      </div>
+      <!-- Tablet+ bio -->
+      <p class="bio tablet-up" style="flex-direction:unset;">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
+
+      <!-- Tablet+ CTA -->
+      <div class="ctas tablet-up" style="width:326px; flex-direction:column; gap:16px;">
+        <button class="btn">BOOK</button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         REVIEWS
+    ══════════════════════════════════════════════ -->
+    <section class="reviews">
+      <h2 class="section-heading">Reviews</h2>
+      <div class="scroll-row reviews-row">
+
+        <div class="review-card">
+          <div class="review-card-header">
+            <div class="review-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/859a4c6f-8944-4e09-94a4-478745c1bf39" alt="Simone">
+            </div>
+            <div class="review-info">
+              <p class="review-name">Simone</p>
+              <div class="review-subtitle"><p>La Buvette</p><p>chez Simone</p></div>
+            </div>
+          </div>
+          <p class="review-text">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
+          <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-header">
+            <div class="review-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/2832de8e-63fc-4e59-9ded-9da1f7f3080a" alt="TMO">
+            </div>
+            <div class="review-info">
+              <p class="review-name">TMO</p>
+              <p class="review-subtitle">Taktika</p>
+            </div>
+          </div>
+          <p class="review-text">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
+          <a class="card-link" href="https://www.instagram.com/taktika_officiel">Instagram</a>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-header">
+            <div class="review-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/bd32fe4e-1d36-4f28-b010-3a52c234d1d4" alt="Jessie">
+            </div>
+            <div class="review-info">
+              <p class="review-name">Jessie</p>
+              <p class="review-subtitle">Le Birdie</p>
+            </div>
+          </div>
+          <p class="review-text">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
+          <a class="card-link" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         DEMOS
+    ══════════════════════════════════════════════ -->
+    <section class="demos">
+      <h2 class="section-heading">Demos</h2>
+      <div class="tabs-row">
+        <button class="tab inactive demo-tab" data-genre="reggae">REGGAE</button>
+        <button class="tab inactive demo-tab" data-genre="world-beat">WORLD BEAT</button>
+        <button class="tab inactive demo-tab" data-genre="dancehall">DANCEHALL</button>
+        <button class="tab inactive demo-tab" data-genre="house">HOUSE</button>
+        <button class="tab inactive demo-tab" data-genre="hip-hop">HIP HOP</button>
+        <button class="tab inactive demo-tab" data-genre="groovy">GROOVY</button>
+      </div>
+      <div class="scroll-row">
+
+        <div class="video-card">
+          <a href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
+            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/b88af3f7-fdd7-402c-8bb0-a8cdec561c96" alt="Jazzy House">
+            <img class="play-btn" src="https://www.figma.com/api/mcp/asset/4693a2e7-d6ab-40ae-bdda-2b528fe3a001" alt="Play">
+          </a>
+          <div class="video-content">
+            <div class="video-info">
+              <p class="video-title">Jazzy House</p>
+              <p class="video-desc">Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023.</p>
+            </div>
+            <a class="card-link" href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener">Play</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb-wrapper">
+            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/20ba605e-832b-46e8-9928-bf608bb3b194" alt="Le Bon Groove">
+          </div>
+          <div class="video-content">
+            <div class="video-info">
+              <p class="video-title">Le Bon Groove</p>
+              <p class="video-desc">Head nodding on the couch and dancing a bit when getting up to go to the fridge.</p>
+            </div>
+            <span class="card-link-soon">Coming soon</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb-wrapper">
+            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/232bf246-5fda-4574-8ec2-61b7ddeb2f7c" alt="Chill">
+          </div>
+          <div class="video-content">
+            <div class="video-info">
+              <p class="video-title">Chill</p>
+              <p class="video-desc">3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.</p>
+            </div>
+            <span class="card-link-soon">Coming soon</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb-wrapper">
+            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/699b76dd-dc93-48b9-bd38-e83ca8b26bb9" alt="Dancehall">
+          </div>
+          <div class="video-content">
+            <div class="video-info">
+              <p class="video-title">Dancehall</p>
+              <p class="video-desc">Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.</p>
+            </div>
+            <span class="card-link-soon">Coming soon</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TIMELINE — Mobile (stacked decades)
+    ══════════════════════════════════════════════ -->
+    <section class="timeline-section timeline-mobile">
+      <h2 class="section-heading">Timeline</h2>
+
+      <div class="decade">
+        <p class="decade-title">The 1990s</p>
+        <div class="scroll-row">
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/23d7de28-7feb-4053-90f5-9949b384e712" alt="La Constellation"></div>
+              <p class="timeline-card-title">La Constellation</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Scratched and hyped the crowd up around the province. Large crowds. Cool events. Great friends.</p>
+                <p class="timeline-card-dates">1996–1998</p>
+              </div>
+              <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/0fba531a-5aa4-4ed9-a09e-87bf83cc64b4" alt="AST du son"></div>
+              <p class="timeline-card-title">AST du son</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">DJ and host on a radio show specializing in French-language rap featuring Quebec and French artists.</p>
+                <p class="timeline-card-dates">1998–2002</p>
+              </div>
+              <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decade">
+        <p class="decade-title">The 2000s</p>
+        <div class="scroll-row">
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/959c69c2-cdac-4dfc-b23f-03c69533e0b7" alt="Taktika"></div>
+              <p class="timeline-card-title">Taktika</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Touring DJ with pioneer Quebec rap groups across Quebec.</p>
+                <p class="timeline-card-dates">2000–2012</p>
+              </div>
+              <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/7de3cbaa-6452-4d01-9104-de5cd7f4a168" alt="83"></div>
+              <p class="timeline-card-title">83</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                <p class="timeline-card-dates">2002–2009</p>
+              </div>
+              <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/c057ec76-80f8-40d7-a1cc-2e5dc7c9858c" alt="Club DJ"></div>
+              <p class="timeline-card-title">Club DJ</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
+                <p class="timeline-card-dates">2000–2010</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decade">
+        <p class="decade-title">The 2010s</p>
+        <div class="scroll-row">
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/f7646efb-48b6-41e5-88a0-a4a756439817" alt="Focus on the two monsters"></div>
+              <p class="timeline-card-title">Focus on the two monsters</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Took a lot of time out of the DJ business but still did it for fun at home and at friends'. Some shows with Taktika too.</p>
+                <p class="timeline-card-dates">2012–2020</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decade">
+        <p class="decade-title">The 2020s</p>
+        <div class="scroll-row">
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/b7ed9fe4-4ee4-4506-8656-8114f9d26ad2" alt="Buvette chez Simone"></div>
+              <p class="timeline-card-title">Buvette chez Simone</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">DJ ambianceur</p>
+                <p class="timeline-card-dates">2023–2026</p>
+              </div>
+              <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/4072b0d9-8993-4e5a-86bf-7bc237a9e7e8" alt="Chez Baptiste"></div>
+              <p class="timeline-card-title">Chez Baptiste</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">DJ ambianceur</p>
+                <p class="timeline-card-dates">2023–2024</p>
+              </div>
+              <a class="card-link" href="https://www.instagram.com/chezbaptiste">Instagram</a>
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/bb9f7ac9-c739-422c-a0ca-2515d623155d" alt="Demain C'est loin"></div>
+              <p class="timeline-card-title">Demain C'est loin</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc">Host and DJ of a hip-hop radio show at CJMD.</p>
+                <p class="timeline-card-dates">2021–2023</p>
+              </div>
+              <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TIMELINE — Tablet+ (tabs + combined scroll)
+    ══════════════════════════════════════════════ -->
+    <section class="timeline-section timeline-desktop">
+      <h2 class="section-heading">Timeline</h2>
+      <div class="timeline-all-scroll">
+
+        <!-- 2020s -->
+        <div class="timeline-decade-col" data-decade="2020">
+          <p class="decade-title">The 2020s</p>
+          <div class="timeline-cards-row">
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/b7ed9fe4-4ee4-4506-8656-8114f9d26ad2" alt="Buvette chez Simone"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Buvette chez Simone</p>
+                  <p class="timeline-card-lg-desc">DJ ambianceur</p>
+                  <p class="timeline-card-lg-dates">2023–2026</p>
+                </div>
+                <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/4072b0d9-8993-4e5a-86bf-7bc237a9e7e8" alt="Chez Baptiste"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Chez Baptiste</p>
+                  <p class="timeline-card-lg-desc">DJ ambianceur</p>
+                  <p class="timeline-card-lg-dates">2023–2024</p>
+                </div>
+                <a class="card-link" href="https://www.instagram.com/chezbaptiste">Instagram</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/7d905cbf-1ac1-48fc-b489-61b574dbea49" alt="Twitch"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Twitch</p>
+                  <p class="timeline-card-lg-desc">Streamer hebdomadaire du vendredi 5@7.</p>
+                  <p class="timeline-card-lg-dates">2021–2023</p>
+                </div>
+                <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/bb9f7ac9-c739-422c-a0ca-2515d623155d" alt="Demain C'est loin"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Demain C'Est loin</p>
+                  <p class="timeline-card-lg-desc">Host and DJ of a hip-hop radio show at CJMD.</p>
+                  <p class="timeline-card-lg-dates">2021–2023</p>
+                </div>
+                <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2010s -->
+        <div class="timeline-decade-col" data-decade="2010">
+          <p class="decade-title">The 2010s</p>
+          <div class="timeline-cards-row">
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/f7646efb-48b6-41e5-88a0-a4a756439817" alt="Focus on the two monsters"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Focus on the two monsters</p>
+                  <p class="timeline-card-lg-desc">Took a lot of time out of the DJ business but still did it for fun at home and at friends'. Some shows with Taktika too.</p>
+                  <p class="timeline-card-lg-dates">2012–2020</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2000s -->
+        <div class="timeline-decade-col" data-decade="2000">
+          <p class="decade-title">The 2000s</p>
+          <div class="timeline-cards-row">
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/959c69c2-cdac-4dfc-b23f-03c69533e0b7" alt="Taktika"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Taktika</p>
+                  <p class="timeline-card-lg-desc">Touring DJ with pioneer Quebec rap groups across Quebec.</p>
+                  <p class="timeline-card-lg-dates">2000–2012</p>
+                </div>
+                <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/c057ec76-80f8-40d7-a1cc-2e5dc7c9858c" alt="Club DJ"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Club DJ</p>
+                  <p class="timeline-card-lg-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
+                  <p class="timeline-card-lg-dates">2000–2010</p>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/d9e493f9-6dc7-484e-8ecb-93f9a5db4089" alt="Quebec Kebs"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Quebec Kebs</p>
+                  <p class="timeline-card-lg-desc">DJ for the ABA professional basketball team.</p>
+                  <p class="timeline-card-lg-dates">2006–2009</p>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/7de3cbaa-6452-4d01-9104-de5cd7f4a168" alt="83"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">83</p>
+                  <p class="timeline-card-lg-desc">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                  <p class="timeline-card-lg-dates">2002–2009</p>
+                </div>
+                <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/5d23e8dd-0caa-4b6a-9acd-c10db0907137" alt="Source"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Source</p>
+                  <p class="timeline-card-lg-desc">Host and DJ of a mixed weekly hip-hop radio show.</p>
+                  <p class="timeline-card-lg-dates">2002–2009</p>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/cc48d9e5-a421-4263-b366-26e25aa8eb97" alt="Red Bull"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Red Bull</p>
+                  <p class="timeline-card-lg-desc">Event DJ for extreme sports activities sponsored by the company.</p>
+                  <p class="timeline-card-lg-dates">2003–2007</p>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/22908299-5c31-4059-8b7b-929f4da37df2" alt="Pagail"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Pagail</p>
+                  <p class="timeline-card-lg-desc">Studio recorded scratches on the one and only album "C'est pour les miens".</p>
+                  <p class="timeline-card-lg-dates">2002</p>
+                </div>
+                <a class="card-link" href="https://tidal.com/album/189830926/u">Tidal</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1990s -->
+        <div class="timeline-decade-col" data-decade="1990">
+          <p class="decade-title">The 1990s</p>
+          <div class="timeline-cards-row">
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/23d7de28-7feb-4053-90f5-9949b384e712" alt="La Constellation"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">La Constellation</p>
+                  <p class="timeline-card-lg-desc">Scratched and hyped the crowd up around the province. Large crowds. Cool events. Great friends.</p>
+                  <p class="timeline-card-lg-dates">1996–1998</p>
+                </div>
+                <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/0fba531a-5aa4-4ed9-a09e-87bf83cc64b4" alt="AST du son"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">AST du son</p>
+                  <p class="timeline-card-lg-desc">DJ and host on a radio show specializing in French-language rap featuring Quebec and French artists.</p>
+                  <p class="timeline-card-lg-dates">1998–2002</p>
+                </div>
+                <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">Instagram</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         FOOTER (tablet+ only)
+    ══════════════════════════════════════════════ -->
+    <footer class="site-footer">
+      <div class="footer-stamp">
+        <div class="stamp-component">
+          <img class="stamp-base" src="https://www.figma.com/api/mcp/asset/10be9a22-f450-44da-82fa-71f89daaeff1" alt="">
+          <span class="stamp-letters">
+            <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="https://www.figma.com/api/mcp/asset/24e51841-8fb8-4f4b-b3c1-da9b34c8d640" alt=""></div></div>
+            <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="https://www.figma.com/api/mcp/asset/b346adb2-c320-4e28-adf5-67e9104e0d3d" alt=""></div></div>
+          </span>
+        </div>
+      </div>
+      <p class="footer-name">Momo aux platines</p>
+      <div class="footer-links">
+        <button class="tab inactive">Contact</button>
+        <button class="tab inactive">Instagram</button>
+        <button class="tab inactive">School</button>
+      </div>
+      <p class="footer-copy">© 2026 Momo aux platines. All rights reserved.</p>
+    </footer>
+
+  </div><!-- /page-content -->
+</div><!-- /page -->
+
+<script>
+
+  // ── Header auto-hide ──
+  const header = document.querySelector('.site-header');
+  let lastScrollY = window.scrollY;
+  let scrollUpDelta = 0;
+
+  window.addEventListener('scroll', () => {
+    const currentY = window.scrollY;
+    const diff = lastScrollY - currentY;
+    if (currentY <= 0) {
+      scrollUpDelta = 0;
+      header.classList.remove('header-hidden');
+    } else if (diff < 0) {
+      scrollUpDelta = 0;
+      header.classList.add('header-hidden');
+    } else {
+      scrollUpDelta += diff;
+      if (scrollUpDelta >= 200) header.classList.remove('header-hidden');
+    }
+    lastScrollY = currentY;
+  }, { passive: true });
+</script>
+</body>
+</html>
