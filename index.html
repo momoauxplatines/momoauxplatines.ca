@@ -291,6 +291,83 @@
     .footer-links { display: flex; gap: 8px; align-items: center; }
     .footer-copy  { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); text-align: center; }
 
+    /* ─── Booking Overlay ─── */
+    .booking-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(17,18,16,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: flex-start; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .booking-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .booking-panel {
+      width: 100%; height: 100dvh;
+      background: var(--bg);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    .booking-header {
+      position: relative; flex-shrink: 0;
+      padding: 32px 24px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+      border-bottom: 1px solid var(--brand-90);
+    }
+    .booking-close {
+      position: absolute; top: 28px; right: 24px;
+      background: var(--brand-90); border: none; cursor: pointer;
+      padding: 4px 16px; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
+      color: var(--brand-00); line-height: 31px;
+    }
+    .booking-close:hover { background: var(--brand-80); }
+
+    .booking-titles { padding-right: 80px; display: flex; flex-direction: column; gap: 10px; }
+    .booking-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 32px; line-height: 36px;
+      color: var(--brand-30); text-transform: uppercase;
+    }
+    .booking-subtitle {
+      font-weight: 300; font-size: 16px; line-height: 22px;
+      color: var(--brand-50);
+    }
+
+    .booking-body {
+      flex: 1; overflow-y: auto; padding: 24px;
+      scroll-padding-bottom: 80px;
+    }
+    .booking-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+    .form-label {
+      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px;
+      color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .form-input {
+      background: var(--brand-90); border: 1px solid var(--brand-80);
+      border-radius: 12px; padding: 12px 16px;
+      font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
+      color: var(--brand-00); outline: none; width: 100%;
+      transition: border-color 0.2s; -webkit-appearance: none;
+    }
+    .form-input::placeholder { color: var(--brand-80); }
+    .form-input:focus { border-color: var(--brand-50); }
+    .form-input.invalid { border-color: #d71a1a; }
+    input[type="date"].form-input { color-scheme: dark; }
+
+    .form-textarea {
+      resize: none; overflow: hidden;
+      min-height: 56px; max-height: 240px;
+    }
+
+    .booking-footer {
+      flex-shrink: 0; padding: 16px;
+      background: var(--bg);
+      box-shadow: 0 -12px 24px rgba(17,18,16,0.9);
+    }
+    .booking-send:disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
     /* ================================================================
        TABLET  (≥ 640px)
     ================================================================ */
@@ -331,6 +408,14 @@
       /* Timeline: hide mobile, show desktop */
       .timeline-mobile  { display: none; }
       .timeline-desktop { display: flex; }
+
+      /* Booking panel: centred card */
+      .booking-overlay { align-items: center; }
+      .booking-panel {
+        width: 400px; height: auto; max-height: 90dvh;
+        border-radius: 20px;
+        box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
+      }
 
     }
 
@@ -401,7 +486,7 @@
 
       <!-- CTA -->
       <div class="ctas intro-ctas" style="flex-direction:column; gap:16px;">
-        <button class="btn" data-en="BOOK" data-fr="BOOK">BOOK</button>
+        <button class="btn" id="book-btn" data-en="BOOK" data-fr="BOOK">BOOK</button>
       </div>
     </section>
 
@@ -872,6 +957,50 @@
     </footer>
 
   </div><!-- /page-content -->
+
+  <!-- ── Booking Overlay ── -->
+  <div class="booking-overlay" id="booking-overlay" role="dialog" aria-modal="true" aria-labelledby="booking-title" aria-hidden="true">
+    <div class="booking-panel">
+      <div class="booking-header">
+        <div class="booking-titles">
+          <h2 class="booking-title" id="booking-title" data-en="Book Momo" data-fr="Réserver Momo">Book Momo</h2>
+          <p class="booking-subtitle" data-en="Let me know what musical experience you would like to add to your event." data-fr="Dites-moi quelle expérience musicale vous souhaitez ajouter à votre événement.">Let me know what musical experience you would like to add to your event.</p>
+        </div>
+        <button class="booking-close" id="booking-close" aria-label="Close">✕</button>
+      </div>
+      <div class="booking-body">
+        <form class="booking-form" id="booking-form" novalidate>
+          <div class="form-field">
+            <label class="form-label" for="field-name" data-en="Name *" data-fr="Nom *">Name *</label>
+            <input class="form-input" id="field-name" type="text" placeholder="Your full name" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="field-phone" data-en="Phone Number *" data-fr="Numéro de téléphone *">Phone Number *</label>
+            <input class="form-input" id="field-phone" type="tel" placeholder="+1 (514) 000-0000" autocomplete="tel" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="field-email" data-en="Email *" data-fr="Courriel *">Email *</label>
+            <input class="form-input" id="field-email" type="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="field-company" data-en="Company *" data-fr="Compagnie *">Company *</label>
+            <input class="form-input" id="field-company" type="text" placeholder="Your company or venue" autocomplete="organization" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="field-desc" data-en="Description *" data-fr="Description *">Description *</label>
+            <textarea class="form-input form-textarea" id="field-desc" placeholder="Describe your event and musical vibe" required></textarea>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="field-date" data-en="Date" data-fr="Date">Date</label>
+            <input class="form-input" id="field-date" type="date">
+          </div>
+        </form>
+      </div>
+      <div class="booking-footer">
+        <button class="btn booking-send" id="booking-send" disabled data-en="SEND" data-fr="ENVOYER">SEND</button>
+      </div>
+    </div>
+  </div>
 </div><!-- /page -->
 
 <script>
@@ -896,6 +1025,122 @@
     }
     lastScrollY = currentY;
   }, { passive: true });
+
+  // ── Booking overlay ──
+  const overlay     = document.getElementById('booking-overlay');
+  const bookBtn     = document.getElementById('book-btn');
+  const closeBtn    = document.getElementById('booking-close');
+  const sendBtn     = document.getElementById('booking-send');
+  const bookForm    = document.getElementById('booking-form');
+  const textarea    = document.getElementById('field-desc');
+  const mandatoryIds = ['field-name','field-phone','field-email','field-company','field-desc'];
+
+  function openBooking() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => closeBtn.focus(), 50);
+  }
+  function closeBooking() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  bookBtn.addEventListener('click', openBooking);
+  closeBtn.addEventListener('click', closeBooking);
+
+  // Close on backdrop click
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeBooking(); });
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeBooking();
+  });
+
+  // Auto-resize textarea
+  textarea.addEventListener('input', () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 240) + 'px';
+  });
+
+  // Validate mandatory fields
+  function isEmailValid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function isPhoneValid(v) { return v.replace(/[\s\-().+]/g,'').length >= 7; }
+
+  function validateForm() {
+    let ok = true;
+    mandatoryIds.forEach(id => {
+      const el = document.getElementById(id);
+      const val = el.value.trim();
+      let fieldOk = val.length > 0;
+      if (id === 'field-email') fieldOk = isEmailValid(val);
+      if (id === 'field-phone') fieldOk = isPhoneValid(val);
+      if (!fieldOk) ok = false;
+    });
+    sendBtn.disabled = !ok;
+  }
+
+  bookForm.addEventListener('input', validateForm);
+
+  // Show inline error on blur for mandatory fields
+  mandatoryIds.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('blur', () => {
+      const val = el.value.trim();
+      let ok = val.length > 0;
+      if (id === 'field-email') ok = isEmailValid(val);
+      if (id === 'field-phone') ok = isPhoneValid(val);
+      el.classList.toggle('invalid', !ok && val.length > 0);
+    });
+    el.addEventListener('input', () => {
+      if (el.classList.contains('invalid')) el.classList.remove('invalid');
+    });
+  });
+
+  // ── Formspree endpoint — replace YOUR_FORM_ID with your Formspree form ID ──
+  const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
+
+  sendBtn.addEventListener('click', async () => {
+    // Loading state
+    const originalText = sendBtn.textContent;
+    sendBtn.textContent = '...';
+    sendBtn.disabled = true;
+
+    const data = {
+      name:        document.getElementById('field-name').value.trim(),
+      phone:       document.getElementById('field-phone').value.trim(),
+      email:       document.getElementById('field-email').value.trim(),
+      company:     document.getElementById('field-company').value.trim(),
+      description: document.getElementById('field-desc').value.trim(),
+      date:        document.getElementById('field-date').value || '—',
+    };
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        sendBtn.textContent = currentLang === 'fr' ? 'ENVOYÉ ✓' : 'SENT ✓';
+        setTimeout(() => {
+          closeBooking();
+          bookForm.reset();
+          textarea.style.height = '';
+          sendBtn.textContent = originalText;
+          validateForm();
+        }, 1800);
+      } else {
+        throw new Error('Server error');
+      }
+    } catch {
+      sendBtn.textContent = currentLang === 'fr' ? 'ERREUR — RÉESSAYER' : 'ERROR — TRY AGAIN';
+      sendBtn.disabled = false;
+      setTimeout(() => { sendBtn.textContent = originalText; validateForm(); }, 3000);
+    }
+  });
 
   // ── Language toggle ──
   let currentLang = 'en';
