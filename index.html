@@ -1009,8 +1009,12 @@
         <button class="booking-close" id="booking-close" aria-label="Close">✕</button>
       </div>
       <!-- Confirmation screen -->
-      <div class="booking-confirm" id="booking-confirm" hidden>
+      <div class="booking-confirm" id="booking-confirm" style="display:none">
         <div class="booking-confirm-inner">
+          <svg class="booking-confirm-check" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="20" fill="#22C55E"/>
+            <polyline points="11,21 17,27 29,14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <p class="booking-confirm-title" data-en="Booking sent!" data-fr="Réservation envoyée !">Booking sent!</p>
           <p class="booking-confirm-copy" data-en="Momo will get back to you shortly." data-fr="Momo vous répondra sous peu.">Momo will get back to you shortly.</p>
         </div>
@@ -1082,16 +1086,18 @@
   const sendBtn      = document.getElementById('booking-send');
   const bookForm     = document.getElementById('booking-form');
   const textarea     = document.getElementById('field-desc');
-  const bookingBody  = document.getElementById('booking-body');
-  const bookingFooter= document.getElementById('booking-footer');
-  const confirmEl    = document.getElementById('booking-confirm');
+  const bookingBody   = document.getElementById('booking-body');
+  const bookingFooter = document.getElementById('booking-footer');
+  const bookingHeader = document.querySelector('.booking-header');
+  const confirmEl     = document.getElementById('booking-confirm');
   const confirmClose = document.getElementById('booking-confirm-close');
   const mandatoryIds = ['field-name','field-phone','field-email','field-company','field-desc'];
 
   function showConfirm() {
-    bookingBody.hidden   = true;
-    bookingFooter.hidden = true;
-    confirmEl.hidden     = false;
+    bookingHeader.style.display = 'none';
+    bookingBody.style.display   = 'none';
+    bookingFooter.style.display = 'none';
+    confirmEl.style.display     = 'flex';
     // apply current language to confirmation elements
     confirmEl.querySelectorAll('[data-en]').forEach(el => {
       el.textContent = currentLang === 'fr' ? el.dataset.fr : el.dataset.en;
@@ -1103,9 +1109,10 @@
     bookForm.reset();
     textarea.style.height = '';
     validateForm();
-    bookingBody.hidden   = false;
-    bookingFooter.hidden = false;
-    confirmEl.hidden     = true;
+    bookingHeader.style.display = '';
+    bookingBody.style.display   = '';
+    bookingFooter.style.display = '';
+    confirmEl.style.display     = 'none';
   }
 
   function openBooking() {
