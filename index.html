@@ -4,7 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Momo Aux Platines</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+  <!-- Social sharing -->
+  <meta name="description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
+  <meta property="og:title" content="Momo Aux Platines">
+  <meta property="og:description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:image:width" content="1750">
+  <meta property="og:image:height" content="1750">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://momoauxplatines.ca">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Momo Aux Platines">
+  <meta name="twitter:description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
+  <meta name="twitter:image" content="images/og-image.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -23,8 +39,8 @@
       --bg: #111210;
     }
 
-    html { background: var(--bg); overflow-x: hidden; }
-    body { background: var(--bg); overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; }
+    html { background: var(--bg); overflow-x: clip; }
+    body { background: var(--bg); overflow-x: clip; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; }
 
     /* ─── Page wrapper ─── */
     .page { max-width: 390px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
@@ -66,6 +82,7 @@
       min-height: 100svh; position: relative;
       display: flex; align-items: center; justify-content: center;
       margin-left: -32px; margin-right: -32px;
+      touch-action: pan-y;
     }
     .stamp-gradient {
       position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
@@ -79,6 +96,7 @@
     .stamp-container {
       width: 330px; height: 331px; position: relative;
       flex-shrink: 0; z-index: 1;
+      pointer-events: none; touch-action: pan-y;
     }
 
     @keyframes spin-cw-mobile {
