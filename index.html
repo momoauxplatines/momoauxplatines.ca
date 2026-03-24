@@ -386,6 +386,28 @@
     }
     .booking-send:disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
+    /* Confirmation screen */
+    .booking-confirm {
+      display: flex; flex-direction: column; justify-content: space-between;
+      flex: 1; padding: 32px; gap: 40px;
+    }
+    .booking-confirm-inner {
+      display: flex; flex-direction: column; gap: 16px; flex: 1;
+      justify-content: center; align-items: center; text-align: center;
+    }
+    .booking-confirm-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 32px; line-height: 1.1; color: var(--brand-20);
+      text-transform: uppercase;
+    }
+    .booking-confirm-copy {
+      font-size: 18px; font-weight: 300; line-height: 1.5;
+      color: var(--brand-50);
+    }
+    .booking-confirm-close {
+      width: 100%; flex-shrink: 0;
+    }
+
     /* ================================================================
        TABLET  (≥ 640px)
     ================================================================ */
@@ -986,7 +1008,16 @@
         </div>
         <button class="booking-close" id="booking-close" aria-label="Close">✕</button>
       </div>
-      <div class="booking-body">
+      <!-- Confirmation screen -->
+      <div class="booking-confirm" id="booking-confirm" hidden>
+        <div class="booking-confirm-inner">
+          <p class="booking-confirm-title" data-en="Booking sent!" data-fr="Réservation envoyée !">Booking sent!</p>
+          <p class="booking-confirm-copy" data-en="Momo will get back to you shortly." data-fr="Momo vous répondra sous peu.">Momo will get back to you shortly.</p>
+        </div>
+        <button class="btn booking-confirm-close" id="booking-confirm-close" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+      </div>
+
+      <div class="booking-body" id="booking-body">
         <form class="booking-form" id="booking-form" novalidate>
           <div class="form-field">
             <label class="form-label" for="field-name" data-en="Name *" data-fr="Nom *">Name *</label>
@@ -1013,8 +1044,8 @@
             <input class="form-input" id="field-date" type="date">
           </div>
         </form>
-      </div>
-      <div class="booking-footer">
+      </div><!-- /booking-body -->
+      <div class="booking-footer" id="booking-footer">
         <button class="btn booking-send" id="booking-send" disabled data-en="SEND" data-fr="ENVOYER">SEND</button>
       </div>
     </div>
@@ -1045,13 +1076,37 @@
   }, { passive: true });
 
   // ── Booking overlay ──
-  const overlay     = document.getElementById('booking-overlay');
-  const bookBtn     = document.getElementById('book-btn');
-  const closeBtn    = document.getElementById('booking-close');
-  const sendBtn     = document.getElementById('booking-send');
-  const bookForm    = document.getElementById('booking-form');
-  const textarea    = document.getElementById('field-desc');
+  const overlay      = document.getElementById('booking-overlay');
+  const bookBtn      = document.getElementById('book-btn');
+  const closeBtn     = document.getElementById('booking-close');
+  const sendBtn      = document.getElementById('booking-send');
+  const bookForm     = document.getElementById('booking-form');
+  const textarea     = document.getElementById('field-desc');
+  const bookingBody  = document.getElementById('booking-body');
+  const bookingFooter= document.getElementById('booking-footer');
+  const confirmEl    = document.getElementById('booking-confirm');
+  const confirmClose = document.getElementById('booking-confirm-close');
   const mandatoryIds = ['field-name','field-phone','field-email','field-company','field-desc'];
+
+  function showConfirm() {
+    bookingBody.hidden   = true;
+    bookingFooter.hidden = true;
+    confirmEl.hidden     = false;
+    // apply current language to confirmation elements
+    confirmEl.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = currentLang === 'fr' ? el.dataset.fr : el.dataset.en;
+    });
+    setTimeout(() => confirmClose.focus(), 50);
+  }
+
+  function resetBooking() {
+    bookForm.reset();
+    textarea.style.height = '';
+    validateForm();
+    bookingBody.hidden   = false;
+    bookingFooter.hidden = false;
+    confirmEl.hidden     = true;
+  }
 
   function openBooking() {
     overlay.classList.add('open');
@@ -1063,7 +1118,11 @@
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    // reset after transition so it's fresh next open
+    setTimeout(resetBooking, 300);
   }
+
+  confirmClose.addEventListener('click', closeBooking);
 
   bookBtn.addEventListener('click', openBooking);
   closeBtn.addEventListener('click', closeBooking);
@@ -1145,14 +1204,9 @@
       });
 
       if (res.ok) {
-        sendBtn.textContent = currentLang === 'fr' ? 'ENVOYÉ ✓' : 'SENT ✓';
-        setTimeout(() => {
-          closeBooking();
-          bookForm.reset();
-          textarea.style.height = '';
-          sendBtn.textContent = originalText;
-          validateForm();
-        }, 1800);
+        showConfirm();
+        sendBtn.textContent = originalText;
+        sendBtn.disabled = true;
       } else {
         throw new Error('Server error');
       }
