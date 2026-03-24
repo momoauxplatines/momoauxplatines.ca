@@ -10,13 +10,10 @@
 ## Top Copy  
 
 | Title | Tag | Copy | Button |
-| ----------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| ----------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | MOMO AUX PLATINES | Turntablist, DJ | Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.
 
-
-
-
- | BOOK |
+Aka DJ Muhammad Alias et DJ Alias. | BOOK |
   
   
 ## Demos  
