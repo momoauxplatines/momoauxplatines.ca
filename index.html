@@ -1116,8 +1116,8 @@
     });
   });
 
-  // ── Formspree endpoint — replace YOUR_FORM_ID with your Formspree form ID ──
-  const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
+  // ── Web3Forms endpoint — replace with your access key from web3forms.com ──
+  const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY';
 
   sendBtn.addEventListener('click', async () => {
     // Loading state
@@ -1126,6 +1126,9 @@
     sendBtn.disabled = true;
 
     const data = {
+      access_key:  WEB3FORMS_KEY,
+      subject:     'New Booking Request — Momo Aux Platines',
+      from_name:   'Momo Aux Platines Website',
       name:        document.getElementById('field-name').value.trim(),
       phone:       document.getElementById('field-phone').value.trim(),
       email:       document.getElementById('field-email').value.trim(),
@@ -1135,7 +1138,7 @@
     };
 
     try {
-      const res = await fetch(FORMSPREE_URL, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body:    JSON.stringify(data),
