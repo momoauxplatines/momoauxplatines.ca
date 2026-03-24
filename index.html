@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Momo Aux Platines</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -39,7 +40,7 @@
     .site-header.header-hidden { transform: translateX(-50%) translateY(-100%); opacity: 0; }
 
     .header-school {
-      display: none; /* mobile: hidden */
+      display: none; /* hidden everywhere */
       pointer-events: auto;
       background: var(--brand-100);
       border: 1px solid var(--brand-30);
@@ -58,7 +59,7 @@
     }
 
     /* ─── Page Content ─── */
-    .page-content { padding: 0 32px 100px; display: flex; flex-direction: column; gap: 80px; }
+    .page-content { padding: 0 32px 0; display: flex; flex-direction: column; gap: 80px; }
 
     /* ─── Stamp Section ─── */
     .stamp-section {
@@ -77,16 +78,16 @@
     }
     .stamp-container {
       width: 330px; height: 331px; position: relative;
-      overflow: hidden; flex-shrink: 0; z-index: 1;
+      flex-shrink: 0; z-index: 1;
     }
 
     @keyframes spin-cw-mobile {
-      from { transform: translate(-50%,-50%) scale(0.5258) rotate(0deg); }
-      to   { transform: translate(-50%,-50%) scale(0.5258) rotate(360deg); }
+      from { transform: translate(-50%,-50%) scale(0.4893) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) scale(0.4893) rotate(360deg); }
     }
     @keyframes spin-cw-tablet {
-      from { transform: translate(-50%,-50%) scale(0.8231) rotate(0deg); }
-      to   { transform: translate(-50%,-50%) scale(0.8231) rotate(360deg); }
+      from { transform: translate(-50%,-50%) scale(0.7865) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) scale(0.7865) rotate(360deg); }
     }
 
     .stamp-component {
@@ -153,6 +154,7 @@
     .tablet-up   { display: none; }
 
     .ctas { display: flex; flex-direction: column; gap: 16px; }
+    .intro-ctas { width: 100%; }
     .btn {
       height: 56px; background: var(--brand-20); border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
@@ -275,7 +277,7 @@
     .site-footer {
       display: flex;
       background: #000; border-top: 1px solid var(--brand-90);
-      margin: 0 -56px -100px; padding: 80px 32px;
+      margin: 0 -32px -80px; padding: 80px 32px;
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px;
     }
@@ -295,16 +297,18 @@
     @media (min-width: 640px) {
 
       .page { max-width: 834px; }
-      .site-header { max-width: 834px; justify-content: space-between; }
-      .header-school { display: flex; }
+      .site-header { max-width: 834px; justify-content: flex-end; }
+      .header-school { display: none; }
+      .intro-ctas { width: 326px; }
 
-      .page-content { padding: 0 56px 100px; }
+      .page-content { padding: 0 56px 0; }
       .stamp-section { margin-left: -56px; margin-right: -56px; }
       .stamp-container { width: 360px; height: 361px; }
       .stamp-component { animation: spin-cw-tablet 60s linear infinite; }
 
       .scroll-row { margin: 0 -56px; padding: 0 56px; }
       .tabs-row   { margin: 0 -56px; padding: 0 56px; }
+      .site-footer { margin: 0 -56px 0; padding: 80px 56px; }
 
       .section-heading { font-size: 44px; line-height: 48px; }
       .intro-name      { font-size: 52px; line-height: 52px; }
@@ -345,7 +349,7 @@
   <!-- ── Fixed Header ── -->
   <header class="site-header">
     <a class="header-school">SCHOOL</a>
-    <div class="lang-toggle">EN</div>
+    <div class="lang-toggle" id="lang-btn">FR</div>
   </header>
 
   <div class="page-content">
@@ -357,16 +361,16 @@
       <div class="stamp-gradient"></div>
       <div class="stamp-container">
         <div class="stamp-component">
-          <img class="stamp-base" src="https://www.figma.com/api/mcp/asset/10be9a22-f450-44da-82fa-71f89daaeff1" alt="">
+          <img class="stamp-base" src="images/stamp-base.svg" alt="">
           <div class="stamp-letters">
             <div class="stamp-bottom-wrap">
               <div class="stamp-text stamp-text--bottom">
-                <img src="https://www.figma.com/api/mcp/asset/24e51841-8fb8-4f4b-b3c1-da9b34c8d640" alt="">
+                <img src="images/stamp-bottom.svg" alt="">
               </div>
             </div>
             <div class="stamp-top-wrap">
               <div class="stamp-text stamp-text--top">
-                <img src="https://www.figma.com/api/mcp/asset/b346adb2-c320-4e28-adf5-67e9104e0d3d" alt="">
+                <img src="images/stamp-top.svg" alt="">
               </div>
             </div>
           </div>
@@ -379,35 +383,25 @@
     ══════════════════════════════════════════════ -->
     <section class="intro">
       <div class="avatar">
-        <img src="https://www.figma.com/api/mcp/asset/8a3d9625-bcdb-4b64-9fb9-4969261141cd" alt="Momo">
+        <img src="images/profile.png" alt="Momo">
       </div>
       <div class="intro-info">
         <h1 class="intro-name">Momo Aux Platines</h1>
       </div>
 
-      <!-- Mobile tags -->
-      <div class="tags mobile-only" style="flex-direction:row; gap:8px;">
-        <span class="tag">TURNTABLIST</span>
-        <span class="tag">DJ SCHOOL</span>
-      </div>
-      <!-- Tablet+ tags -->
-      <div class="tags tablet-up" style="flex-direction:row; gap:8px;">
+      <!-- Tags (all viewports) -->
+      <div class="tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
         <span class="tag">DJ</span>
         <span class="tag">TURNTABLIST</span>
-        <span class="tag">RADIO HOST</span>
+        <span class="tag" data-en="RADIO HOST" data-fr="ANIMATEUR RADIO">RADIO HOST</span>
       </div>
 
-      <!-- Mobile bio -->
-      <div class="bio mobile-only" style="flex-direction:column; gap:0;">
-        <p>Couple decades behind the decks. Scratching with rap groups and house djs, mixing all types of stuff in cool buvettes, clubs and special events.</p>
-        <p style="margin-top:24px">Now sharing the culture and true dj skills to the young and old wannabe djs via tailor made 1 on 1 courses.</p>
-      </div>
-      <!-- Tablet+ bio -->
-      <p class="bio tablet-up" style="flex-direction:unset;">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
+      <!-- Bio -->
+      <p class="bio" data-en="Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec." data-fr="Plusieurs décennies derrière les platines. Scratch avec des groupes de rap et des DJ tout azimuts, mixant toutes sortes de styles dans des bars branchés, des clubs à mode et dans lors d'événements spéciaux à travers le Québec.">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
 
-      <!-- Tablet+ CTA -->
-      <div class="ctas tablet-up" style="width:326px; flex-direction:column; gap:16px;">
-        <button class="btn">BOOK</button>
+      <!-- CTA -->
+      <div class="ctas intro-ctas" style="flex-direction:column; gap:16px;">
+        <button class="btn" data-en="BOOK" data-fr="BOOK">BOOK</button>
       </div>
     </section>
 
@@ -415,48 +409,48 @@
          REVIEWS
     ══════════════════════════════════════════════ -->
     <section class="reviews">
-      <h2 class="section-heading">Reviews</h2>
+      <h2 class="section-heading" data-en="Reviews" data-fr="Avis">Reviews</h2>
       <div class="scroll-row reviews-row">
 
         <div class="review-card">
           <div class="review-card-header">
             <div class="review-avatar">
-              <img src="https://www.figma.com/api/mcp/asset/859a4c6f-8944-4e09-94a4-478745c1bf39" alt="Simone">
+              <img src="images/review-simone.png" alt="Simone">
             </div>
             <div class="review-info">
               <p class="review-name">Simone</p>
               <div class="review-subtitle"><p>La Buvette</p><p>chez Simone</p></div>
             </div>
           </div>
-          <p class="review-text">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
+          <p class="review-text" data-en="Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us." data-fr="Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
           <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
         </div>
 
         <div class="review-card">
           <div class="review-card-header">
             <div class="review-avatar">
-              <img src="https://www.figma.com/api/mcp/asset/2832de8e-63fc-4e59-9ded-9da1f7f3080a" alt="TMO">
+              <img src="images/review-tmo.jpg" alt="TMO">
             </div>
             <div class="review-info">
               <p class="review-name">TMO</p>
               <p class="review-subtitle">Taktika</p>
             </div>
           </div>
-          <p class="review-text">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
+          <p class="review-text" data-en="A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices." data-fr="Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
           <a class="card-link" href="https://www.instagram.com/taktika_officiel">Instagram</a>
         </div>
 
         <div class="review-card">
           <div class="review-card-header">
             <div class="review-avatar">
-              <img src="https://www.figma.com/api/mcp/asset/bd32fe4e-1d36-4f28-b010-3a52c234d1d4" alt="Jessie">
+              <img src="images/review-jessie.png" alt="Jessie">
             </div>
             <div class="review-info">
               <p class="review-name">Jessie</p>
               <p class="review-subtitle">Le Birdie</p>
             </div>
           </div>
-          <p class="review-text">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
+          <p class="review-text" data-en="We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!" data-fr="On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
           <a class="card-link" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
         </div>
 
@@ -480,54 +474,54 @@
 
         <div class="video-card">
           <a href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
-            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/b88af3f7-fdd7-402c-8bb0-a8cdec561c96" alt="Jazzy House">
-            <img class="play-btn" src="https://www.figma.com/api/mcp/asset/4693a2e7-d6ab-40ae-bdda-2b528fe3a001" alt="Play">
+            <img class="video-thumb" src="images/video-jazzy-house.png" alt="Jazzy House">
+            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
           </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Jazzy House</p>
-              <p class="video-desc">Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023.</p>
+              <p class="video-desc" data-en="Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023." data-fr="Extrait d'un stream Twitch 5@7 de deux heures tenus tous les vendredis.">Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023.</p>
             </div>
-            <a class="card-link" href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener">Play</a>
+            <a class="card-link" href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener" data-en="Play" data-fr="Jouer">Play</a>
           </div>
         </div>
 
         <div class="video-card">
           <div class="video-thumb-wrapper">
-            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/20ba605e-832b-46e8-9928-bf608bb3b194" alt="Le Bon Groove">
+            <img class="video-thumb" src="images/video-le-bon-groove.png" alt="Le Bon Groove">
           </div>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Le Bon Groove</p>
-              <p class="video-desc">Head nodding on the couch and dancing a bit when getting up to go to the fridge.</p>
+              <p class="video-desc" data-en="Head nodding on the couch and dancing a bit when getting up to go to the fridge." data-fr="Hocher la tête, danser un peu en allant au frigo.">Head nodding on the couch and dancing a bit when getting up to go to the fridge.</p>
             </div>
-            <span class="card-link-soon">Coming soon</span>
+            <span class="card-link-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
 
         <div class="video-card">
           <div class="video-thumb-wrapper">
-            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/232bf246-5fda-4574-8ec2-61b7ddeb2f7c" alt="Chill">
+            <img class="video-thumb" src="images/video-chill.png" alt="Chill">
           </div>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Chill</p>
-              <p class="video-desc">3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.</p>
+              <p class="video-desc" data-en="3 songs just to chill out. Great fit for the lounge, the buvette or even the bath." data-fr="Parfait pour le lounge, la buvette ou même le bain.">3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.</p>
             </div>
-            <span class="card-link-soon">Coming soon</span>
+            <span class="card-link-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
 
         <div class="video-card">
           <div class="video-thumb-wrapper">
-            <img class="video-thumb" src="https://www.figma.com/api/mcp/asset/699b76dd-dc93-48b9-bd38-e83ca8b26bb9" alt="Dancehall">
+            <img class="video-thumb" src="images/video-dancehall.png" alt="Dancehall">
           </div>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Dancehall</p>
-              <p class="video-desc">Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.</p>
+              <p class="video-desc" data-en="Shake your bum bum a bit. Stay classy but move around like you want the right person to see you." data-fr="Restez classy mais bougez votre popotin comme si vous vouliez quelqu'un vous voit.">Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.</p>
             </div>
-            <span class="card-link-soon">Coming soon</span>
+            <span class="card-link-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
 
@@ -541,48 +535,48 @@
       <h2 class="section-heading">Timeline</h2>
 
       <div class="decade">
-        <p class="decade-title">The 1990s</p>
+        <p class="decade-title" data-en="1990s" data-fr="Années 1990">1990s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/23d7de28-7feb-4053-90f5-9949b384e712" alt="La Constellation"></div>
+              <div class="timeline-thumb"><img src="images/timeline-la-constellation.jpg" alt="La Constellation"></div>
               <p class="timeline-card-title">La Constellation</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Scratched and hyped the crowd up around the province. Large crowds. Cool events. Great friends.</p>
-                <p class="timeline-card-dates">1996–1998</p>
+                <p class="timeline-card-desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
+                <p class="timeline-card-dates">1998–1999</p>
               </div>
               <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
             </div>
           </div>
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/0fba531a-5aa4-4ed9-a09e-87bf83cc64b4" alt="AST du son"></div>
-              <p class="timeline-card-title">AST du son</p>
+              <div class="timeline-thumb"><img src="images/timeline-ast-du-son.png" alt="AST du Son"></div>
+              <p class="timeline-card-title">AST du Son</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">DJ and host on a radio show specializing in French-language rap featuring Quebec and French artists.</p>
+                <p class="timeline-card-desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                 <p class="timeline-card-dates">1998–2002</p>
               </div>
-              <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">Instagram</a>
+              <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
             </div>
           </div>
         </div>
       </div>
 
       <div class="decade">
-        <p class="decade-title">The 2000s</p>
+        <p class="decade-title" data-en="2000s" data-fr="Années 2000">2000s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/959c69c2-cdac-4dfc-b23f-03c69533e0b7" alt="Taktika"></div>
+              <div class="timeline-thumb"><img src="images/timeline-taktika.jpg" alt="Taktika"></div>
               <p class="timeline-card-title">Taktika</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Touring DJ with pioneer Quebec rap groups across Quebec.</p>
+                <p class="timeline-card-desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                 <p class="timeline-card-dates">2000–2012</p>
               </div>
               <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
@@ -590,12 +584,12 @@
           </div>
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/7de3cbaa-6452-4d01-9104-de5cd7f4a168" alt="83"></div>
+              <div class="timeline-thumb"><img src="images/timeline-83.jpg" alt="83"></div>
               <p class="timeline-card-title">83</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                <p class="timeline-card-desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                 <p class="timeline-card-dates">2002–2009</p>
               </div>
               <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
@@ -603,13 +597,13 @@
           </div>
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/c057ec76-80f8-40d7-a1cc-2e5dc7c9858c" alt="Club DJ"></div>
+              <div class="timeline-thumb"><img src="images/timeline-club-dj.jpg" alt="Club DJ"></div>
               <p class="timeline-card-title">Club DJ</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
                 <p class="timeline-card-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
-                <p class="timeline-card-dates">2000–2010</p>
+                <p class="timeline-card-dates">2000–2006</p>
               </div>
             </div>
           </div>
@@ -617,17 +611,17 @@
       </div>
 
       <div class="decade">
-        <p class="decade-title">The 2010s</p>
+        <p class="decade-title" data-en="2010s" data-fr="Années 2010">2010s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/f7646efb-48b6-41e5-88a0-a4a756439817" alt="Focus on the two monsters"></div>
+              <div class="timeline-thumb"><img src="images/timeline-focus.png" alt="Focus on the two monsters"></div>
               <p class="timeline-card-title">Focus on the two monsters</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Took a lot of time out of the DJ business but still did it for fun at home and at friends'. Some shows with Taktika too.</p>
-                <p class="timeline-card-dates">2012–2020</p>
+                <p class="timeline-card-desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
+                <p class="timeline-card-dates">2010–2020</p>
               </div>
             </div>
           </div>
@@ -635,42 +629,42 @@
       </div>
 
       <div class="decade">
-        <p class="decade-title">The 2020s</p>
+        <p class="decade-title" data-en="2020s" data-fr="Années 2020">2020s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/b7ed9fe4-4ee4-4506-8656-8114f9d26ad2" alt="Buvette chez Simone"></div>
-              <p class="timeline-card-title">Buvette chez Simone</p>
+              <div class="timeline-thumb"><img src="images/timeline-buvette-simone.jpg" alt="La buvette chez Simone"></div>
+              <p class="timeline-card-title">La buvette chez Simone</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">DJ ambianceur</p>
-                <p class="timeline-card-dates">2023–2026</p>
+                <p class="timeline-card-desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
+                <p class="timeline-card-dates">2023–2025</p>
               </div>
               <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
             </div>
           </div>
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/4072b0d9-8993-4e5a-86bf-7bc237a9e7e8" alt="Chez Baptiste"></div>
-              <p class="timeline-card-title">Chez Baptiste</p>
+              <div class="timeline-thumb"><img src="images/timeline-twitch.png" alt="Twitch"></div>
+              <p class="timeline-card-title">Twitch</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">DJ ambianceur</p>
-                <p class="timeline-card-dates">2023–2024</p>
+                <p class="timeline-card-desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
+                <p class="timeline-card-dates">2021–2023</p>
               </div>
-              <a class="card-link" href="https://www.instagram.com/chezbaptiste">Instagram</a>
+              <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
             </div>
           </div>
           <div class="timeline-card">
             <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="https://www.figma.com/api/mcp/asset/bb9f7ac9-c739-422c-a0ca-2515d623155d" alt="Demain C'est loin"></div>
-              <p class="timeline-card-title">Demain C'est loin</p>
+              <div class="timeline-thumb"><img src="images/timeline-demain.png" alt="Demain c'est loin"></div>
+              <p class="timeline-card-title">Demain c'est loin</p>
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Host and DJ of a hip-hop radio show at CJMD.</p>
+                <p class="timeline-card-desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                 <p class="timeline-card-dates">2021–2023</p>
               </div>
               <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
@@ -690,47 +684,36 @@
 
         <!-- 2020s -->
         <div class="timeline-decade-col" data-decade="2020">
-          <p class="decade-title">The 2020s</p>
+          <p class="decade-title" data-en="2020s" data-fr="Années 2020">2020s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/b7ed9fe4-4ee4-4506-8656-8114f9d26ad2" alt="Buvette chez Simone"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-buvette-simone.jpg" alt="La buvette chez Simone"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Buvette chez Simone</p>
-                  <p class="timeline-card-lg-desc">DJ ambianceur</p>
-                  <p class="timeline-card-lg-dates">2023–2026</p>
+                  <p class="timeline-card-lg-title">La buvette chez Simone</p>
+                  <p class="timeline-card-lg-desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
+                  <p class="timeline-card-lg-dates">2023–2025</p>
                 </div>
                 <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/4072b0d9-8993-4e5a-86bf-7bc237a9e7e8" alt="Chez Baptiste"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Chez Baptiste</p>
-                  <p class="timeline-card-lg-desc">DJ ambianceur</p>
-                  <p class="timeline-card-lg-dates">2023–2024</p>
-                </div>
-                <a class="card-link" href="https://www.instagram.com/chezbaptiste">Instagram</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/7d905cbf-1ac1-48fc-b489-61b574dbea49" alt="Twitch"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-twitch.png" alt="Twitch"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Twitch</p>
-                  <p class="timeline-card-lg-desc">Streamer hebdomadaire du vendredi 5@7.</p>
+                  <p class="timeline-card-lg-desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
                 <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/bb9f7ac9-c739-422c-a0ca-2515d623155d" alt="Demain C'est loin"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-demain.png" alt="Demain c'est loin"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Demain C'Est loin</p>
-                  <p class="timeline-card-lg-desc">Host and DJ of a hip-hop radio show at CJMD.</p>
+                  <p class="timeline-card-lg-title">Demain c'est loin</p>
+                  <p class="timeline-card-lg-desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
                 <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
@@ -741,15 +724,15 @@
 
         <!-- 2010s -->
         <div class="timeline-decade-col" data-decade="2010">
-          <p class="decade-title">The 2010s</p>
+          <p class="decade-title" data-en="2010s" data-fr="Années 2010">2010s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/f7646efb-48b6-41e5-88a0-a4a756439817" alt="Focus on the two monsters"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-focus.png" alt="Focus on the two monsters"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Focus on the two monsters</p>
-                  <p class="timeline-card-lg-desc">Took a lot of time out of the DJ business but still did it for fun at home and at friends'. Some shows with Taktika too.</p>
-                  <p class="timeline-card-lg-dates">2012–2020</p>
+                  <p class="timeline-card-lg-desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
+                  <p class="timeline-card-lg-dates">2010–2020</p>
                 </div>
               </div>
             </div>
@@ -758,76 +741,76 @@
 
         <!-- 2000s -->
         <div class="timeline-decade-col" data-decade="2000">
-          <p class="decade-title">The 2000s</p>
+          <p class="decade-title" data-en="2000s" data-fr="Années 2000">2000s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/959c69c2-cdac-4dfc-b23f-03c69533e0b7" alt="Taktika"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-taktika.jpg" alt="Taktika"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Taktika</p>
-                  <p class="timeline-card-lg-desc">Touring DJ with pioneer Quebec rap groups across Quebec.</p>
+                  <p class="timeline-card-lg-desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                   <p class="timeline-card-lg-dates">2000–2012</p>
                 </div>
                 <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/c057ec76-80f8-40d7-a1cc-2e5dc7c9858c" alt="Club DJ"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-club-dj.jpg" alt="Club DJ"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Club DJ</p>
                   <p class="timeline-card-lg-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
-                  <p class="timeline-card-lg-dates">2000–2010</p>
+                  <p class="timeline-card-lg-dates">2000–2006</p>
                 </div>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/d9e493f9-6dc7-484e-8ecb-93f9a5db4089" alt="Quebec Kebs"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-quebec-kebs.png" alt="Quebec Kebs"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Quebec Kebs</p>
-                  <p class="timeline-card-lg-desc">DJ for the ABA professional basketball team.</p>
+                  <p class="timeline-card-lg-desc" data-en="DJ for the ABA professional basketball team." data-fr="DJ pour l'équipe de basketball professionnelle de la ABA.">DJ for the ABA professional basketball team.</p>
                   <p class="timeline-card-lg-dates">2006–2009</p>
                 </div>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/7de3cbaa-6452-4d01-9104-de5cd7f4a168" alt="83"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-83.jpg" alt="83"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">83</p>
-                  <p class="timeline-card-lg-desc">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                  <p class="timeline-card-lg-desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                   <p class="timeline-card-lg-dates">2002–2009</p>
                 </div>
                 <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/5d23e8dd-0caa-4b6a-9acd-c10db0907137" alt="Source"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-source.png" alt="Source"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Source</p>
-                  <p class="timeline-card-lg-desc">Host and DJ of a mixed weekly hip-hop radio show.</p>
+                  <p class="timeline-card-lg-title">Source @ CHYZ 94.3 FM</p>
+                  <p class="timeline-card-lg-desc" data-en="Host and DJ of a mixed weekly hip-hop radio show." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a mixed weekly hip-hop radio show.</p>
                   <p class="timeline-card-lg-dates">2002–2009</p>
                 </div>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/cc48d9e5-a421-4263-b366-26e25aa8eb97" alt="Red Bull"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-red-bull.png" alt="Red Bull"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Red Bull</p>
-                  <p class="timeline-card-lg-desc">Event DJ for extreme sports activities sponsored by the company.</p>
+                  <p class="timeline-card-lg-desc" data-en="Event DJ for extreme sports activities sponsored by the company." data-fr="DJ événementiel pour les activités de sports extrêmes commanditées par la compagnie.">Event DJ for extreme sports activities sponsored by the company.</p>
                   <p class="timeline-card-lg-dates">2003–2007</p>
                 </div>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/22908299-5c31-4059-8b7b-929f4da37df2" alt="Pagail"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-pagail.jpg" alt="Pagail"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Pagail</p>
-                  <p class="timeline-card-lg-desc">Studio recorded scratches on the one and only album "C'est pour les miens".</p>
+                  <p class="timeline-card-lg-desc" data-en='Studio recorded scratches on the one and only album "C\'est pour les miens".' data-fr='Scratches sur le seul et unique album "C\'est pour les miens".'>Studio recorded scratches on the one and only album "C'est pour les miens".</p>
                   <p class="timeline-card-lg-dates">2002</p>
                 </div>
                 <a class="card-link" href="https://tidal.com/album/189830926/u">Tidal</a>
@@ -838,28 +821,28 @@
 
         <!-- 1990s -->
         <div class="timeline-decade-col" data-decade="1990">
-          <p class="decade-title">The 1990s</p>
+          <p class="decade-title" data-en="1990s" data-fr="Années 1990">1990s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/23d7de28-7feb-4053-90f5-9949b384e712" alt="La Constellation"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-la-constellation.jpg" alt="La Constellation"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">La Constellation</p>
-                  <p class="timeline-card-lg-desc">Scratched and hyped the crowd up around the province. Large crowds. Cool events. Great friends.</p>
-                  <p class="timeline-card-lg-dates">1996–1998</p>
+                  <p class="timeline-card-lg-desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
+                  <p class="timeline-card-lg-dates">1998–1999</p>
                 </div>
                 <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
               </div>
             </div>
             <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="https://www.figma.com/api/mcp/asset/0fba531a-5aa4-4ed9-a09e-87bf83cc64b4" alt="AST du son"></div>
+              <div class="timeline-thumb-lg"><img src="images/timeline-ast-du-son.png" alt="AST du Son"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">AST du son</p>
-                  <p class="timeline-card-lg-desc">DJ and host on a radio show specializing in French-language rap featuring Quebec and French artists.</p>
+                  <p class="timeline-card-lg-title">AST du Son</p>
+                  <p class="timeline-card-lg-desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                   <p class="timeline-card-lg-dates">1998–2002</p>
                 </div>
-                <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">Instagram</a>
+                <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
               </div>
             </div>
           </div>
@@ -869,25 +852,23 @@
     </section>
 
     <!-- ══════════════════════════════════════════════
-         FOOTER (tablet+ only)
+         FOOTER
     ══════════════════════════════════════════════ -->
     <footer class="site-footer">
       <div class="footer-stamp">
         <div class="stamp-component">
-          <img class="stamp-base" src="https://www.figma.com/api/mcp/asset/10be9a22-f450-44da-82fa-71f89daaeff1" alt="">
+          <img class="stamp-base" src="images/stamp-base.svg" alt="">
           <span class="stamp-letters">
-            <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="https://www.figma.com/api/mcp/asset/24e51841-8fb8-4f4b-b3c1-da9b34c8d640" alt=""></div></div>
-            <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="https://www.figma.com/api/mcp/asset/b346adb2-c320-4e28-adf5-67e9104e0d3d" alt=""></div></div>
+            <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="images/stamp-bottom.svg" alt=""></div></div>
+            <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="images/stamp-top.svg" alt=""></div></div>
           </span>
         </div>
       </div>
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
-        <button class="tab inactive">Contact</button>
-        <button class="tab inactive">Instagram</button>
-        <button class="tab inactive">School</button>
+        <a class="tab inactive" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener" style="text-decoration:none;">Instagram</a>
       </div>
-      <p class="footer-copy">© 2026 Momo aux platines. All rights reserved.</p>
+      <p class="footer-copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
     </footer>
 
   </div><!-- /page-content -->
@@ -915,6 +896,22 @@
     }
     lastScrollY = currentY;
   }, { passive: true });
+
+  // ── Language toggle ──
+  let currentLang = 'en';
+  const langBtn = document.getElementById('lang-btn');
+
+  function applyLang(lang) {
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+    });
+    langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
+    currentLang = lang;
+  }
+
+  langBtn.addEventListener('click', () => {
+    applyLang(currentLang === 'en' ? 'fr' : 'en');
+  });
 </script>
 </body>
 </html>
