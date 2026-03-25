@@ -343,7 +343,12 @@
     .request-confirm-close { width: 100%; flex-shrink: 0; }
 
     @media (min-width: 640px) {
-      .request-panel { max-width: 390px; margin: 0 auto; }
+      .request-overlay { align-items: center; }
+      .request-panel {
+        width: 400px; height: auto; max-height: 90dvh;
+        border-radius: 20px;
+        box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
+      }
     }
   </style>
 </head>
