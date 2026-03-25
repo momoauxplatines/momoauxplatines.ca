@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Requests — Momo Aux Platines</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <meta name="description" content="Request a song for Momo's DJ set.">
+  <meta property="og:title" content="Requests — Momo Aux Platines">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:url" content="https://momoauxplatines.ca/requests">
+  <link rel="canonical" href="https://momoauxplatines.ca/requests">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --bg: #111210;
+      --brand-00: #FAFBF9;
+      --brand-10: #F4F6F3;
+      --brand-20: #EAEDE5;
+      --brand-30: #DEE4DA;
+      --brand-40: #D5DCCC;
+      --brand-50: #C9D3C0;
+      --brand-80: #51534E;
+      --brand-90: #2B2D2A;
+      --brand-100: #141513;
+      --green: #34C759;
+      --red: #D34242;
+      --blue: #007AFF;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--brand-30);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100dvh;
+      overflow-x: clip;
+    }
+
+    .page {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 112px;
+    }
+
+    /* ── Stamp ── */
+    .stamp-wrap {
+      width: 40px; height: 40px;
+      position: relative; overflow: hidden; flex-shrink: 0;
+      display: block; text-decoration: none;
+    }
+    .stamp-component {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.09145);
+      width: 437.48px; height: 437.479px;
+    }
+    .stamp-base { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .stamp-letters { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .stamp-bottom-wrap {
+      position: absolute; width: 222.33px; height: 109.792px;
+      top: 50%; left: 50%; transform-origin: center;
+      transform: translate(-50%, -50%) rotate(180deg);
+    }
+    .stamp-top-wrap {
+      position: absolute; width: 222.33px; height: 109.792px;
+      top: 50%; left: 50%; transform-origin: center;
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    .stamp-text { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .stamp-text--bottom { transform: translateY(110%); }
+    .stamp-text--top    { transform: translateY(-110%); }
+    .stamp-text img { width: 100%; height: auto; display: block; }
+
+    /* ── Header ── */
+    .req-header {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px;
+      background: var(--bg);
+    }
+
+    .req-btn {
+      background: var(--brand-100);
+      border: 1px solid var(--brand-30);
+      border-radius: 8px;
+      color: var(--brand-00);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900; font-size: 16px; line-height: 31px;
+      padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
+      transition: background 0.15s;
+    }
+    .req-btn:hover { background: var(--brand-90); }
+
+    /* ── Event Card ── */
+    .event-card {
+      margin: 0 16px 0;
+      background: var(--brand-100);
+      border: 1px solid var(--brand-90);
+      border-radius: 8px; padding: 16px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .event-venue-img {
+      width: 48px; height: 48px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--brand-90);
+    }
+    .event-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .event-live-row { display: flex; align-items: center; gap: 6px; }
+    .live-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--red); flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .live-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 22px; line-height: 26px;
+      color: var(--red); text-transform: uppercase;
+    }
+    .event-venue-name {
+      font-size: 14px; font-weight: 300; color: var(--brand-50);
+    }
+    .event-details-link {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--brand-50); font-size: 16px; font-weight: 300;
+      text-decoration: none; flex-shrink: 0;
+    }
+
+    /* ── Tabs ── */
+    .tabs-row {
+      display: flex; gap: 12px; padding: 16px;
+    }
+    .tab-btn {
+      flex: 1; height: 40px; border-radius: 8px; border: none;
+      cursor: pointer; font-family: 'Kanit', sans-serif;
+      font-weight: 600; font-size: 16px; line-height: 40px;
+      text-transform: uppercase; transition: background 0.2s, color 0.2s;
+    }
+    .tab-btn.active  { background: var(--brand-50); color: var(--brand-100); }
+    .tab-btn.inactive { background: var(--brand-90); color: var(--brand-50); border: 1px solid var(--brand-100); }
+
+    /* ── Song List ── */
+    .song-list {
+      padding: 0 16px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .song-list.hidden { display: none; }
+
+    .empty-state {
+      padding: 48px 0; text-align: center;
+      color: var(--brand-80); font-size: 16px; font-weight: 300;
+    }
+
+    /* ── Song Card ── */
+    .song-card {
+      background: var(--bg);
+      border: 1px solid var(--brand-90);
+      border-radius: 8px; padding: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .song-art {
+      width: 64px; height: 64px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--brand-90);
+    }
+    .song-art-placeholder {
+      width: 64px; height: 64px; border-radius: 8px;
+      flex-shrink: 0; background: var(--brand-90);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .song-info {
+      flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0;
+    }
+    .song-title {
+      font-weight: 700; font-size: 18px; line-height: 1.3;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .song-artist {
+      font-weight: 300; font-size: 16px; line-height: 26px;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .song-link {
+      font-weight: 300; font-size: 16px; line-height: 26px;
+      color: var(--blue); text-decoration: none;
+    }
+
+    /* ── Now Playing Footer ── */
+    .now-playing-bar {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: var(--brand-100);
+      border-top: 1px solid var(--brand-90);
+      padding: 16px;
+      box-shadow: 0 -16px 16px 0 rgba(0,0,0,0.3);
+      z-index: 40;
+    }
+    .now-playing-card {
+      background: var(--brand-100);
+      border: 1px solid var(--green);
+      border-radius: 8px; padding: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .now-playing-art {
+      width: 64px; height: 64px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0; background: var(--brand-90);
+    }
+    .now-playing-info {
+      flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0;
+    }
+    .now-playing-title {
+      font-weight: 700; font-size: 18px; color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-artist {
+      font-weight: 300; font-size: 18px; line-height: 26px;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-state {
+      display: flex; align-items: center; gap: 5px;
+      color: var(--green); font-size: 16px; font-weight: 300;
+    }
+    .now-playing-state svg { flex-shrink: 0; }
+
+    /* ── Request Overlay ── */
+    .request-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(17,18,16,0.7);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: flex-start; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .request-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .request-sheet {
+      width: 100%; max-width: 390px;
+      background: var(--brand-100);
+      border-radius: 0 0 24px 24px;
+      padding: 24px 16px 32px;
+      display: flex; flex-direction: column; gap: 20px;
+      transform: translateY(-24px);
+      transition: transform 0.25s ease;
+      max-height: 90dvh; overflow-y: auto;
+    }
+    .request-overlay.open .request-sheet { transform: translateY(0); }
+
+    .sheet-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sheet-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 22px; color: var(--brand-00);
+    }
+    .sheet-close {
+      background: var(--brand-90); border: none; border-radius: 8px;
+      color: var(--brand-00); font-family: 'Kanit', sans-serif;
+      font-weight: 900; font-size: 16px; line-height: 31px;
+      padding: 4px 12px; cursor: pointer;
+    }
+
+    /* ── Form Fields ── */
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field-label { font-size: 14px; font-weight: 300; color: var(--brand-50); }
+
+    .field-input {
+      background: var(--brand-90);
+      border: 1px solid var(--brand-80);
+      border-radius: 8px; padding: 12px 16px;
+      color: var(--brand-00); font-size: 16px; font-weight: 300;
+      width: 100%; outline: none; transition: border-color 0.15s;
+    }
+    .field-input:focus { border-color: var(--brand-50); }
+    .field-input::placeholder { color: var(--brand-80); }
+
+    /* Song preview inside form */
+    .song-preview { display: none; }
+    .song-preview.visible { display: flex; }
+
+    .fetch-status {
+      font-size: 14px; font-weight: 300;
+      color: var(--brand-50); min-height: 18px;
+    }
+    .fetch-status.error { color: var(--red); }
+
+    /* Send button */
+    .send-btn {
+      background: var(--brand-20);
+      border: none; border-radius: 16px;
+      color: var(--brand-100);
+      font-family: 'Kanit', sans-serif; font-weight: 700;
+      font-size: 18px; line-height: 56px; height: 56px;
+      width: 100%; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Success State ── */
+    .request-success {
+      display: none; flex-direction: column;
+      align-items: center; text-align: center; gap: 16px;
+      padding: 24px 0 8px;
+    }
+    .request-success.visible { display: flex; }
+    .request-success-icon {
+      width: 40px; height: 40px; color: var(--green);
+    }
+    .request-success-title {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 22px; color: var(--brand-00);
+    }
+    .request-success-copy {
+      font-size: 16px; font-weight: 300; color: var(--brand-50);
+      line-height: 24px;
+    }
+    .request-success-close {
+      margin-top: 8px;
+      background: var(--brand-20); border: none; border-radius: 16px;
+      color: var(--brand-100); font-family: 'Kanit', sans-serif;
+      font-weight: 700; font-size: 18px; line-height: 56px; height: 56px;
+      width: 100%; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="req-header">
+    <a href="/" class="stamp-wrap">
+      <div class="stamp-component">
+        <img class="stamp-base" src="images/stamp-base.svg" alt="Momo">
+        <span class="stamp-letters">
+          <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="images/stamp-bottom.svg" alt=""></div></div>
+          <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="images/stamp-top.svg" alt=""></div></div>
+        </span>
+      </div>
+    </a>
+    <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+  </header>
+
+  <!-- Event Card -->
+  <div class="event-card">
+    <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
+    <div class="event-info">
+      <div class="event-live-row">
+        <div class="live-dot"></div>
+        <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+      </div>
+      <p class="event-venue-name" id="event-venue-name">Buvette chez Simone</p>
+    </div>
+    <a class="event-details-link" href="#" data-en="Details" data-fr="Détails">
+      Details
+      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+        <path d="M1 1.5L4 4.5L7 1.5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-row">
+    <button class="tab-btn inactive" id="tab-requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
+    <button class="tab-btn active"   id="tab-played"    data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+  </div>
+
+  <!-- Played List -->
+  <div class="song-list" id="played-list">
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273e8e28219724c2423afa4d320" alt="Dreams" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      </div>
+      <div class="song-info">
+        <p class="song-title">Dreams</p>
+        <p class="song-artist">Fleetwood Mac</p>
+        <a class="song-link" href="https://open.spotify.com/track/0ofHAoxe9vBkTCp2UQIavz" target="_blank" rel="noopener">Spotify</a>
+      </div>
+    </div>
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f4f58a6c7b8c56b82e9a576e" alt="Point & Kill" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      </div>
+      <div class="song-info">
+        <p class="song-title">Point & Kill</p>
+        <p class="song-artist">Little Simz</p>
+        <a class="song-link" href="https://open.spotify.com/track/0cTlql5vODhMdpA3Ovhafh" target="_blank" rel="noopener">Spotify</a>
+      </div>
+    </div>
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b2733d181e53929e6d5e5f5ea9c4" alt="Put Your Hands" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      </div>
+      <div class="song-info">
+        <p class="song-title">Put Your Hands Where My Eyes Could See</p>
+        <p class="song-artist">Busta Rhymes</p>
+        <a class="song-link" href="https://open.spotify.com/track/3iVcZ5G6tvkXZkZKlMpIUs" target="_blank" rel="noopener">Spotify</a>
+      </div>
+    </div>
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f05d5eb8d9dc9d3dc1e9f1db" alt="Out of Touch" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      </div>
+      <div class="song-info">
+        <p class="song-title">Out of Touch</p>
+        <p class="song-artist">Daryl Hall & John Oates</p>
+        <a class="song-link" href="https://open.spotify.com/track/2vbChSzIFEaqGZGfSIMvvz" target="_blank" rel="noopener">Spotify</a>
+      </div>
+    </div>
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f31c3e82d4f30c2b8b2e1e8f" alt="Casio" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      </div>
+      <div class="song-info">
+        <p class="song-title">Casio</p>
+        <p class="song-artist">Jungle</p>
+        <a class="song-link" href="https://open.spotify.com/track/72gB5PoOAiJO5Bmu7oXSFz" target="_blank" rel="noopener">Spotify</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requested List -->
+  <div class="song-list hidden" id="requested-list">
+    <div class="empty-state" id="requested-empty" data-en="No requests yet. Be the first!" data-fr="Pas encore de demandes. Soyez le premier !">No requests yet. Be the first!</div>
+  </div>
+
+  <!-- Now Playing Footer -->
+  <div class="now-playing-bar">
+    <div class="now-playing-card">
+      <img class="now-playing-art" src="https://i.scdn.co/image/ab67616d0000b2732e8ed79e177ff6011076f5f0" alt="Get Busy"
+           onerror="this.style.background='var(--brand-90)'">
+      <div class="now-playing-info">
+        <p class="now-playing-title">Get Busy</p>
+        <p class="now-playing-artist">Sean Paul</p>
+        <div class="now-playing-state">
+          <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
+            <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
+          </svg>
+          <span data-en="Playing" data-fr="En lecture">Playing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Request Overlay -->
+<div class="request-overlay" id="request-overlay" role="dialog" aria-modal="true" aria-label="Request a song">
+  <div class="request-sheet">
+
+    <!-- Form view -->
+    <div id="form-view">
+      <div class="sheet-header" style="margin-bottom:4px">
+        <h2 class="sheet-title" data-en="Request a song" data-fr="Demander une chanson">Request a song</h2>
+        <button class="sheet-close" id="close-request" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+      </div>
+      <p style="font-size:14px; font-weight:300; color:var(--brand-50); margin-top:4px; margin-bottom:12px"
+         data-en="Paste a Spotify song link below." data-fr="Collez un lien Spotify ci-dessous.">Paste a Spotify song link below.</p>
+
+      <div class="field">
+        <label class="field-label" for="spotify-url" data-en="Spotify link" data-fr="Lien Spotify">Spotify link</label>
+        <input class="field-input" type="url" id="spotify-url"
+               placeholder="https://open.spotify.com/track/..."
+               autocomplete="off" autocorrect="off" spellcheck="false">
+        <p class="fetch-status" id="fetch-status"></p>
+      </div>
+
+      <!-- Song preview (appears after valid URL is pasted) -->
+      <div class="song-card song-preview" id="song-preview">
+        <img class="song-art" id="preview-art" src="" alt="" onerror="this.style.background='var(--brand-90)'">
+        <div class="song-info">
+          <p class="song-title" id="preview-title"></p>
+          <p class="song-artist" id="preview-artist"></p>
+          <a class="song-link" id="preview-link" href="#" target="_blank" rel="noopener">Spotify</a>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="req-name" data-en="Your name (optional)" data-fr="Votre nom (optionnel)">Your name (optional)</label>
+        <input class="field-input" type="text" id="req-name"
+               data-placeholder-en="Name" data-placeholder-fr="Nom" placeholder="Name">
+      </div>
+
+      <button class="send-btn" id="send-request-btn" disabled
+              data-en="SEND REQUEST" data-fr="ENVOYER LA DEMANDE">SEND REQUEST</button>
+    </div>
+
+    <!-- Success view -->
+    <div class="request-success" id="success-view">
+      <svg class="request-success-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" stroke="#34C759" stroke-width="2"/>
+        <path d="M12 20.5L17.5 26L28 15" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="request-success-title" data-en="Request sent!" data-fr="Demande envoyée !">Request sent!</p>
+      <p class="request-success-copy"
+         data-en="Momo received your request and will do their best to play it tonight."
+         data-fr="Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.">Momo received your request and will do their best to play it tonight.</p>
+      <button class="request-success-close" id="success-close-btn"
+              data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  // CONFIG — Add Spotify credentials for full track info (artist name)
+  // Get your free credentials at developer.spotify.com → Create App
+  // ─────────────────────────────────────────────
+  const SPOTIFY_CLIENT_ID     = '';
+  const SPOTIFY_CLIENT_SECRET = '';
+  const FORMSPREE_ID = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+
+  // ─────────────────────────────────────────────
+  // Language
+  // ─────────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+
+  function applyLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const val = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+      if (val !== undefined) el.textContent = val;
+    });
+    document.querySelectorAll('[data-placeholder-en]').forEach(el => {
+      el.placeholder = lang === 'fr' ? (el.dataset.placeholderFr || '') : (el.dataset.placeholderEn || '');
+    });
+    document.documentElement.lang = lang;
+  }
+
+  // Apply on load
+  applyLang(currentLang);
+
+  // ─────────────────────────────────────────────
+  // Tabs
+  // ─────────────────────────────────────────────
+  const tabRequested = document.getElementById('tab-requested');
+  const tabPlayed    = document.getElementById('tab-played');
+  const playedList   = document.getElementById('played-list');
+  const requestedList= document.getElementById('requested-list');
+
+  tabPlayed.addEventListener('click', () => {
+    tabPlayed.className    = 'tab-btn active';
+    tabRequested.className = 'tab-btn inactive';
+    playedList.classList.remove('hidden');
+    requestedList.classList.add('hidden');
+  });
+  tabRequested.addEventListener('click', () => {
+    tabRequested.className = 'tab-btn active';
+    tabPlayed.className    = 'tab-btn inactive';
+    requestedList.classList.remove('hidden');
+    playedList.classList.add('hidden');
+    renderRequestedList();
+  });
+
+  // ─────────────────────────────────────────────
+  // Spotify helpers
+  // ─────────────────────────────────────────────
+  function parseSpotifyTrackId(url) {
+    const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    return m ? m[1] : null;
+  }
+
+  async function getSpotifyToken() {
+    const cached = sessionStorage.getItem('sp_token');
+    const expiry = parseInt(sessionStorage.getItem('sp_expiry') || '0');
+    if (cached && Date.now() < expiry) return cached;
+    const resp = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET)
+      },
+      body: 'grant_type=client_credentials'
+    });
+    const data = await resp.json();
+    if (!data.access_token) throw new Error('Token error');
+    sessionStorage.setItem('sp_token', data.access_token);
+    sessionStorage.setItem('sp_expiry', Date.now() + (data.expires_in - 60) * 1000);
+    return data.access_token;
+  }
+
+  async function fetchTrackInfo(spotifyUrl) {
+    const trackId = parseSpotifyTrackId(spotifyUrl);
+    if (!trackId) throw new Error('invalid');
+
+    // Full API if credentials provided
+    if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
+      const token = await getSpotifyToken();
+      const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const d = await resp.json();
+      return {
+        title:  d.name,
+        artist: d.artists.map(a => a.name).join(', '),
+        image:  d.album.images[0]?.url || '',
+        url:    d.external_urls.spotify
+      };
+    }
+
+    // Fallback: oEmbed (no artist name)
+    const oembed = await fetch(
+      `https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`
+    );
+    const d = await oembed.json();
+    return {
+      title:  d.title || '',
+      artist: '',
+      image:  d.thumbnail_url || '',
+      url:    spotifyUrl
+    };
+  }
+
+  // ─────────────────────────────────────────────
+  // Request overlay
+  // ─────────────────────────────────────────────
+  const overlay   = document.getElementById('request-overlay');
+  const formView  = document.getElementById('form-view');
+  const successView = document.getElementById('success-view');
+  const openBtn   = document.getElementById('open-request');
+  const closeBtn  = document.getElementById('close-request');
+  const successCloseBtn = document.getElementById('success-close-btn');
+  const urlInput  = document.getElementById('spotify-url');
+  const nameInput = document.getElementById('req-name');
+  const sendBtn   = document.getElementById('send-request-btn');
+  const preview   = document.getElementById('song-preview');
+  const previewArt= document.getElementById('preview-art');
+  const previewTitle  = document.getElementById('preview-title');
+  const previewArtist = document.getElementById('preview-artist');
+  const previewLink   = document.getElementById('preview-link');
+  const fetchStatus   = document.getElementById('fetch-status');
+
+  let currentTrack = null;
+  let fetchTimer   = null;
+
+  function openOverlay() {
+    overlay.classList.add('open');
+    formView.style.display  = '';
+    successView.classList.remove('visible');
+    urlInput.value = '';
+    nameInput.value = '';
+    preview.classList.remove('visible');
+    fetchStatus.textContent = '';
+    fetchStatus.className = 'fetch-status';
+    sendBtn.disabled = true;
+    currentTrack = null;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOverlay() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openOverlay);
+  closeBtn.addEventListener('click', closeOverlay);
+  successCloseBtn.addEventListener('click', closeOverlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+
+  // Live Spotify URL detection
+  urlInput.addEventListener('input', () => {
+    clearTimeout(fetchTimer);
+    const val = urlInput.value.trim();
+    if (!val) {
+      preview.classList.remove('visible');
+      fetchStatus.textContent = '';
+      sendBtn.disabled = true;
+      currentTrack = null;
+      return;
+    }
+    if (!parseSpotifyTrackId(val)) {
+      preview.classList.remove('visible');
+      fetchStatus.textContent = currentLang === 'fr'
+        ? 'Lien Spotify invalide.' : 'Not a valid Spotify track link.';
+      fetchStatus.className = 'fetch-status error';
+      sendBtn.disabled = true;
+      currentTrack = null;
+      return;
+    }
+    fetchStatus.textContent = currentLang === 'fr' ? 'Récupération…' : 'Fetching…';
+    fetchStatus.className = 'fetch-status';
+    fetchTimer = setTimeout(async () => {
+      try {
+        const info = await fetchTrackInfo(val);
+        currentTrack = { ...info, url: val };
+        previewArt.src = info.image;
+        previewArt.alt = info.title;
+        previewTitle.textContent  = info.title;
+        previewArtist.textContent = info.artist;
+        previewLink.href = val;
+        preview.classList.add('visible');
+        fetchStatus.textContent = '';
+        sendBtn.disabled = false;
+      } catch {
+        preview.classList.remove('visible');
+        fetchStatus.textContent = currentLang === 'fr'
+          ? 'Impossible de récupérer la chanson.' : 'Could not fetch song info.';
+        fetchStatus.className = 'fetch-status error';
+        sendBtn.disabled = true;
+        currentTrack = null;
+      }
+    }, 600);
+  });
+
+  // Submit
+  sendBtn.addEventListener('click', async () => {
+    if (!currentTrack) return;
+    sendBtn.disabled = true;
+    sendBtn.textContent = currentLang === 'fr' ? 'ENVOI…' : 'SENDING…';
+
+    // Save to localStorage
+    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
+    requests.unshift({ ...currentTrack, name: nameInput.value.trim(), ts: Date.now() });
+    localStorage.setItem('momo_requests', JSON.stringify(requests));
+
+    // Email via Formspree
+    try {
+      await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `Song request: ${currentTrack.title}`,
+          song:    currentTrack.title,
+          artist:  currentTrack.artist,
+          spotify: currentTrack.url,
+          from:    nameInput.value.trim() || 'Anonymous'
+        })
+      });
+    } catch { /* non-blocking */ }
+
+    // Show success
+    formView.style.display = 'none';
+    successView.classList.add('visible');
+    applyLang(currentLang);
+  });
+
+  // ─────────────────────────────────────────────
+  // Render requested list from localStorage
+  // ─────────────────────────────────────────────
+  function renderRequestedList() {
+    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
+    const emptyEl  = document.getElementById('requested-empty');
+
+    // Remove previously rendered cards (keep empty state el)
+    Array.from(requestedList.children).forEach(c => {
+      if (c.id !== 'requested-empty') c.remove();
+    });
+
+    if (!requests.length) {
+      emptyEl.style.display = '';
+      applyLang(currentLang);
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    requests.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'song-card';
+      card.innerHTML = `
+        <img class="song-art" src="${r.image || ''}" alt="${r.title}"
+             onerror="this.style.background='var(--brand-90)'">
+        <div class="song-info">
+          <p class="song-title">${r.title}</p>
+          ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
+          <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
+        </div>`;
+      requestedList.appendChild(card);
+    });
+  }
+</script>
+</body>
+</html>
