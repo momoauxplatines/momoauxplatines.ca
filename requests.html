@@ -49,33 +49,11 @@
       padding-bottom: 112px;
     }
 
-    /* ── Stamp ── */
-    .stamp-wrap {
-      width: 40px; height: 40px;
-      position: relative; overflow: hidden; flex-shrink: 0;
-      display: block; text-decoration: none;
+    /* ── Header Logo ── */
+    .header-logo {
+      width: 40px; height: 40px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0; display: block;
     }
-    .stamp-component {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0.09145);
-      width: 437.48px; height: 437.479px;
-    }
-    .stamp-base { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-    .stamp-letters { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-    .stamp-bottom-wrap {
-      position: absolute; width: 222.33px; height: 109.792px;
-      top: 50%; left: 50%; transform-origin: center;
-      transform: translate(-50%, -50%) rotate(180deg);
-    }
-    .stamp-top-wrap {
-      position: absolute; width: 222.33px; height: 109.792px;
-      top: 50%; left: 50%; transform-origin: center;
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-    .stamp-text { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .stamp-text--bottom { transform: translateY(110%); }
-    .stamp-text--top    { transform: translateY(-110%); }
-    .stamp-text img { width: 100%; height: auto; display: block; }
 
     /* ── Header ── */
     .req-header {
@@ -99,21 +77,24 @@
 
     /* ── Event Card ── */
     .event-card {
-      margin: 0 16px 0;
+      margin: 0 16px;
       background: var(--brand-100);
       border: 1px solid var(--brand-90);
       border-radius: 8px; padding: 16px;
+      display: flex; flex-direction: column; gap: 16px;
+      overflow: hidden;
+    }
+    .event-card-top {
       display: flex; align-items: center; gap: 16px;
     }
     .event-venue-img {
       width: 48px; height: 48px; border-radius: 8px;
       object-fit: cover; flex-shrink: 0;
-      background: var(--brand-90);
+      border: 1px solid var(--brand-100);
     }
-    .event-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    .event-live-row { display: flex; align-items: center; gap: 6px; }
+    .event-live-row { display: flex; align-items: center; gap: 6px; flex: 1; }
     .live-dot {
-      width: 10px; height: 10px; border-radius: 50%;
+      width: 12px; height: 12px; border-radius: 50%;
       background: var(--red); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
@@ -126,13 +107,37 @@
       font-size: 22px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
     }
-    .event-venue-name {
-      font-size: 14px; font-weight: 300; color: var(--brand-50);
-    }
-    .event-details-link {
-      display: flex; align-items: center; gap: 4px;
+    .event-details-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: none; border: none; cursor: pointer;
       color: var(--brand-50); font-size: 16px; font-weight: 300;
-      text-decoration: none; flex-shrink: 0;
+      font-family: inherit; flex-shrink: 0; padding: 0;
+    }
+    .event-details-btn .chevron {
+      transition: transform 0.25s ease;
+    }
+    .event-details-btn.open .chevron { transform: rotate(180deg); }
+
+    /* Expanded content */
+    .event-expanded {
+      display: none; flex-direction: column; gap: 8px;
+    }
+    .event-expanded.visible { display: flex; }
+    .event-copy { display: flex; flex-direction: column; gap: 4px; }
+    .event-name {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 20px; line-height: 26px;
+      color: var(--brand-30); text-transform: uppercase;
+    }
+    .event-address {
+      font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
+    }
+    .event-hours {
+      font-size: 16px; font-weight: 300; line-height: 26px; color: var(--brand-50);
+    }
+    .event-ig-link {
+      font-size: 16px; font-weight: 300; line-height: 24px;
+      color: var(--blue); text-decoration: none;
     }
 
     /* ── Tabs ── */
@@ -165,27 +170,33 @@
       background: var(--bg);
       border: 1px solid var(--brand-90);
       border-radius: 8px; padding: 8px;
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: flex-start; gap: 8px;
+      min-height: 80px;
     }
     .song-art {
       width: 64px; height: 64px; border-radius: 8px;
       object-fit: cover; flex-shrink: 0;
+      border: 1px solid var(--brand-100);
       background: var(--brand-90);
     }
     .song-art-placeholder {
       width: 64px; height: 64px; border-radius: 8px;
       flex-shrink: 0; background: var(--brand-90);
+      border: 1px solid var(--brand-100);
       display: flex; align-items: center; justify-content: center;
     }
     .song-info {
-      flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0;
+      flex: 1; display: flex; flex-direction: column; gap: 4px;
+      min-width: 0; align-self: stretch;
     }
-    .song-title {
+    /* Artist name: bold, first */
+    .song-artist {
       font-weight: 700; font-size: 18px; line-height: 1.3;
       color: var(--brand-30);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .song-artist {
+    /* Track title: light, second */
+    .song-title {
       font-weight: 300; font-size: 16px; line-height: 26px;
       color: var(--brand-30);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -193,6 +204,14 @@
     .song-link {
       font-weight: 300; font-size: 16px; line-height: 26px;
       color: var(--blue); text-decoration: none;
+    }
+    /* Request icon column */
+    .song-request-col {
+      padding: 0 8px; align-self: stretch;
+      display: flex; align-items: center; flex-shrink: 0;
+    }
+    .song-request-icon {
+      width: 20px; height: 18px; opacity: 0.5;
     }
 
     /* ── Now Playing Footer ── */
@@ -357,34 +376,33 @@
 
   <!-- Header -->
   <header class="req-header">
-    <a href="/" class="stamp-wrap">
-      <div class="stamp-component">
-        <img class="stamp-base" src="images/stamp-base.svg" alt="Momo">
-        <span class="stamp-letters">
-          <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="images/stamp-bottom.svg" alt=""></div></div>
-          <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="images/stamp-top.svg" alt=""></div></div>
-        </span>
-      </div>
-    </a>
+    <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
     <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
   </header>
 
   <!-- Event Card -->
-  <div class="event-card">
-    <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
-    <div class="event-info">
+  <div class="event-card" id="event-card">
+    <div class="event-card-top">
+      <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
       <div class="event-live-row">
         <div class="live-dot"></div>
         <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
       </div>
-      <p class="event-venue-name" id="event-venue-name">Buvette chez Simone</p>
+      <button class="event-details-btn" id="event-details-btn" data-en="Details" data-fr="Détails">
+        Details
+        <svg class="chevron" width="8" height="6" viewBox="0 0 8 6" fill="none">
+          <path d="M1 1.5L4 4.5L7 1.5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
-    <a class="event-details-link" href="#" data-en="Details" data-fr="Détails">
-      Details
-      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-        <path d="M1 1.5L4 4.5L7 1.5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
+    <div class="event-expanded" id="event-expanded">
+      <div class="event-copy">
+        <p class="event-name">Buvette chez Simone</p>
+        <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
+        <p class="event-hours">19:00 – 01:00</p>
+      </div>
+      <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
+    </div>
   </div>
 
   <!-- Tabs -->
@@ -395,61 +413,66 @@
 
   <!-- Played List -->
   <div class="song-list" id="played-list">
+
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273e8e28219724c2423afa4d320" alt="Dreams" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="song-art-placeholder" style="display:none">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
-      </div>
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273e8e28219724c2423afa4d320" alt="Fleetwood Mac" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-title">Dreams</p>
         <p class="song-artist">Fleetwood Mac</p>
+        <p class="song-title">Dreams</p>
         <a class="song-link" href="https://open.spotify.com/track/0ofHAoxe9vBkTCp2UQIavz" target="_blank" rel="noopener">Spotify</a>
       </div>
-    </div>
-    <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f4f58a6c7b8c56b82e9a576e" alt="Point & Kill" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="song-art-placeholder" style="display:none">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      <div class="song-request-col">
+        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f4f58a6c7b8c56b82e9a576e" alt="Little Simz" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-title">Point & Kill</p>
         <p class="song-artist">Little Simz</p>
+        <p class="song-title">Point & Kill</p>
         <a class="song-link" href="https://open.spotify.com/track/0cTlql5vODhMdpA3Ovhafh" target="_blank" rel="noopener">Spotify</a>
       </div>
     </div>
+
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b2733d181e53929e6d5e5f5ea9c4" alt="Put Your Hands" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="song-art-placeholder" style="display:none">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
-      </div>
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b2733d181e53929e6d5e5f5ea9c4" alt="Busta Rhymes" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-title">Put Your Hands Where My Eyes Could See</p>
         <p class="song-artist">Busta Rhymes</p>
+        <p class="song-title">Put Your Hands Where My Eyes Could See</p>
         <a class="song-link" href="https://open.spotify.com/track/3iVcZ5G6tvkXZkZKlMpIUs" target="_blank" rel="noopener">Spotify</a>
       </div>
     </div>
+
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f05d5eb8d9dc9d3dc1e9f1db" alt="Out of Touch" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="song-art-placeholder" style="display:none">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
-      </div>
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f05d5eb8d9dc9d3dc1e9f1db" alt="Hall & Oates" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-title">Out of Touch</p>
         <p class="song-artist">Daryl Hall & John Oates</p>
+        <p class="song-title">Out of Touch</p>
         <a class="song-link" href="https://open.spotify.com/track/2vbChSzIFEaqGZGfSIMvvz" target="_blank" rel="noopener">Spotify</a>
       </div>
-    </div>
-    <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f31c3e82d4f30c2b8b2e1e8f" alt="Casio" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="song-art-placeholder" style="display:none">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg>
+      <div class="song-request-col">
+        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f31c3e82d4f30c2b8b2e1e8f" alt="Jungle" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-title">Casio</p>
         <p class="song-artist">Jungle</p>
+        <p class="song-title">Casio</p>
         <a class="song-link" href="https://open.spotify.com/track/72gB5PoOAiJO5Bmu7oXSFz" target="_blank" rel="noopener">Spotify</a>
       </div>
+      <div class="song-request-col">
+        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
     </div>
+
   </div>
 
   <!-- Requested List -->
@@ -581,6 +604,22 @@
 
   // Apply on load
   applyLang(currentLang);
+
+  // ─────────────────────────────────────────────
+  // Event Card expand / collapse
+  // ─────────────────────────────────────────────
+  const eventDetailsBtn = document.getElementById('event-details-btn');
+  const eventExpanded   = document.getElementById('event-expanded');
+
+  eventDetailsBtn.addEventListener('click', () => {
+    const isOpen = eventExpanded.classList.toggle('visible');
+    eventDetailsBtn.classList.toggle('open', isOpen);
+    const label = isOpen
+      ? (currentLang === 'fr' ? 'Masquer' : 'Hide')
+      : (currentLang === 'fr' ? 'Détails' : 'Details');
+    // Update text node before the chevron SVG
+    eventDetailsBtn.firstChild.textContent = label + ' ';
+  });
 
   // ─────────────────────────────────────────────
   // Tabs
@@ -776,7 +815,7 @@
           song:    currentTrack.title,
           artist:  currentTrack.artist,
           spotify: currentTrack.url,
-          from:    nameInput.value.trim() || 'Anonymous'
+          from:    'Anonymous'
         })
       });
     } catch { /* non-blocking */ }
@@ -813,8 +852,8 @@
         <img class="song-art" src="${r.image || ''}" alt="${r.title}"
              onerror="this.style.background='var(--brand-90)'">
         <div class="song-info">
-          <p class="song-title">${r.title}</p>
           ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
+          <p class="song-title">${r.title}</p>
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
         </div>`;
       requestedList.appendChild(card);
