@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/requests"
+  to = "/request.html"
+  status = 200
+
+[[redirects]]
+  from = "/demandesspeciales"
+  to = "/demandespeciale.html"
+  status = 200
+
+[[redirects]]
+  from = "/demandespeciale"
+  to = "/demandespeciale.html"
+  status = 200

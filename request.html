@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Requests — Momo Aux Platines</title>
+  <title>Request — Momo Aux Platines</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="description" content="Request a song for Momo's DJ set.">
-  <meta property="og:title" content="Requests — Momo Aux Platines">
+  <meta property="og:title" content="Request — Momo Aux Platines">
   <meta property="og:image" content="images/og-image.png">
-  <meta property="og:url" content="https://momoauxplatines.ca/requests">
-  <link rel="canonical" href="https://momoauxplatines.ca/requests">
+  <meta property="og:url" content="https://momoauxplatines.ca/request">
+  <link rel="canonical" href="https://momoauxplatines.ca/request">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -55,12 +55,17 @@
       object-fit: cover; flex-shrink: 0; display: block;
     }
 
+    /* ── Sticky top (header + event card + tabs) ── */
+    .sticky-top {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+    }
+
     /* ── Header ── */
     .req-header {
-      position: sticky; top: 0; z-index: 50;
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px;
-      background: var(--bg);
     }
 
     .req-btn {
@@ -113,10 +118,9 @@
       color: var(--brand-50); font-size: 16px; font-weight: 300;
       font-family: inherit; flex-shrink: 0; padding: 0;
     }
-    .event-details-btn .chevron {
-      transition: transform 0.25s ease;
+    .event-details-caret {
+      width: 8px; height: auto; flex-shrink: 0;
     }
-    .event-details-btn.open .chevron { transform: rotate(180deg); }
 
     /* Expanded content */
     .event-expanded {
@@ -170,7 +174,7 @@
       background: var(--bg);
       border: 1px solid var(--brand-90);
       border-radius: 8px; padding: 8px;
-      display: flex; align-items: flex-start; gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       min-height: 80px;
     }
     .song-art {
@@ -187,17 +191,22 @@
     }
     .song-info {
       flex: 1; display: flex; flex-direction: column; gap: 4px;
-      min-width: 0; align-self: stretch;
+      min-width: 0;
     }
-    /* Artist name: bold, first */
-    .song-artist {
-      font-weight: 700; font-size: 18px; line-height: 1.3;
+    /* Artist + Title grouped — 0px between them */
+    .song-text-group {
+      display: flex; flex-direction: column; gap: 0;
+      min-width: 0;
+    }
+    /* Song title: Bold, first */
+    .song-title {
+      font-weight: 700; font-size: 18px; line-height: normal;
       color: var(--brand-30);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    /* Track title: light, second */
-    .song-title {
-      font-weight: 300; font-size: 16px; line-height: 26px;
+    /* Artist name: Light (Small Body), second */
+    .song-artist {
+      font-weight: 300; font-size: 16px; line-height: 20px;
       color: var(--brand-30);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
@@ -205,13 +214,38 @@
       font-weight: 300; font-size: 16px; line-height: 26px;
       color: var(--blue); text-decoration: none;
     }
-    /* Request icon column */
+    /* Request icon column — 52px wide, icon 20px, sticky right */
     .song-request-col {
-      padding: 0 8px; align-self: stretch;
-      display: flex; align-items: center; flex-shrink: 0;
+      width: 52px; flex-shrink: 0; align-self: stretch;
+      display: flex; align-items: center; justify-content: center;
     }
     .song-request-icon {
-      width: 20px; height: 18px; opacity: 0.5;
+      width: 20px; height: 20px; object-fit: contain;
+    }
+
+    /* ── Preview Song Card (Request Form) ── */
+    .song-card.song-preview {
+      background: var(--brand-100);
+      align-items: flex-start;
+    }
+    /* Content: flex col, gap 4px, vertically centred */
+    .preview-content {
+      flex: 1 0 0; display: flex; flex-direction: column; gap: 4px;
+      align-items: flex-start; align-self: stretch;
+      justify-content: center; min-width: 0;
+    }
+    /* Delete column: right side, 16px padding each side */
+    .preview-delete-col {
+      flex-shrink: 0; align-self: stretch;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 16px;
+    }
+    .song-delete-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .song-delete-icon {
+      width: 16px; height: 16px; object-fit: contain;
     }
 
     /* ── Now Playing Footer ── */
@@ -374,102 +408,219 @@
 <body>
 <div class="page">
 
-  <!-- Header -->
-  <header class="req-header">
-    <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-    <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
-  </header>
+  <div class="sticky-top">
 
-  <!-- Event Card -->
-  <div class="event-card" id="event-card">
-    <div class="event-card-top">
-      <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
-      <div class="event-live-row">
-        <div class="live-dot"></div>
-        <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-      </div>
-      <button class="event-details-btn" id="event-details-btn" data-en="Details" data-fr="Détails">
-        Details
-        <svg class="chevron" width="8" height="6" viewBox="0 0 8 6" fill="none">
-          <path d="M1 1.5L4 4.5L7 1.5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-    <div class="event-expanded" id="event-expanded">
-      <div class="event-copy">
-        <p class="event-name">Buvette chez Simone</p>
-        <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
-        <p class="event-hours">19:00 – 01:00</p>
-      </div>
-      <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
-    </div>
-  </div>
+    <header class="req-header">
+      <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
+      <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+    </header>
 
-  <!-- Tabs -->
-  <div class="tabs-row">
-    <button class="tab-btn inactive" id="tab-requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
-    <button class="tab-btn active"   id="tab-played"    data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
-  </div>
+    <!-- Event Card -->
+    <div class="event-card" id="event-card">
+      <div class="event-card-top">
+        <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
+        <div class="event-live-row">
+          <div class="live-dot"></div>
+          <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+        </div>
+        <button class="event-details-btn" id="event-details-btn">
+          <span data-en="Details" data-fr="Détails">Details</span>
+          <img class="event-details-caret" id="event-details-caret" src="images/caret-down.png" alt="">
+        </button>
+      </div>
+      <div class="event-expanded" id="event-expanded">
+        <div class="event-copy">
+          <p class="event-name">Buvette chez Simone</p>
+          <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
+          <p class="event-hours">19:00 – 01:00</p>
+        </div>
+        <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-row">
+      <button class="tab-btn inactive" id="tab-requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
+      <button class="tab-btn active"   id="tab-played"    data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+    </div>
+
+  </div><!-- /sticky-top -->
 
   <!-- Played List -->
   <div class="song-list" id="played-list">
 
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273e8e28219724c2423afa4d320" alt="Fleetwood Mac" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/99/96/a6/9996a65d-c79d-2d70-46f0-32468f4f6e21/195497550296.jpg/100x100bb.jpg" alt="Dream Machines" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-artist">Fleetwood Mac</p>
-        <p class="song-title">Dreams</p>
-        <a class="song-link" href="https://open.spotify.com/track/0ofHAoxe9vBkTCp2UQIavz" target="_blank" rel="noopener">Spotify</a>
-      </div>
-      <div class="song-request-col">
-        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="song-text-group">
+          <p class="song-title">Dream Machines</p>
+          <p class="song-artist">Curren$y &amp; Harry Fraud feat. Premo Rice</p>
+        </div>
       </div>
     </div>
 
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f4f58a6c7b8c56b82e9a576e" alt="Little Simz" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c0/b5/8e/c0b58e08-176c-e3a1-c4aa-53ae9facdcc7/659123512725.jpg/100x100bb.jpg" alt="Tearz" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-artist">Little Simz</p>
-        <p class="song-title">Point & Kill</p>
-        <a class="song-link" href="https://open.spotify.com/track/0cTlql5vODhMdpA3Ovhafh" target="_blank" rel="noopener">Spotify</a>
+        <div class="song-text-group">
+          <p class="song-title">Tearz</p>
+          <p class="song-artist">El Michels Affair</p>
+        </div>
       </div>
     </div>
 
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b2733d181e53929e6d5e5f5ea9c4" alt="Busta Rhymes" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/17/9c/4e/179c4e12-f013-a33a-8a70-550474e10c78/22UMGIM47943.rgb.jpg/100x100bb.jpg" alt="Look To Him" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-artist">Busta Rhymes</p>
-        <p class="song-title">Put Your Hands Where My Eyes Could See</p>
-        <a class="song-link" href="https://open.spotify.com/track/3iVcZ5G6tvkXZkZKlMpIUs" target="_blank" rel="noopener">Spotify</a>
+        <div class="song-text-group">
+          <p class="song-title">Look To Him</p>
+          <p class="song-artist">Greentea Peng</p>
+        </div>
       </div>
     </div>
 
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f05d5eb8d9dc9d3dc1e9f1db" alt="Hall & Oates" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3a/c4/be/3ac4be92-f255-b735-605f-3d531bf7a487/dj.kvenstal.jpg/100x100bb.jpg" alt="The Look of Love" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-artist">Daryl Hall & John Oates</p>
-        <p class="song-title">Out of Touch</p>
-        <a class="song-link" href="https://open.spotify.com/track/2vbChSzIFEaqGZGfSIMvvz" target="_blank" rel="noopener">Spotify</a>
-      </div>
-      <div class="song-request-col">
-        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="song-text-group">
+          <p class="song-title">The Look of Love (Remix)</p>
+          <p class="song-artist">Slum Village</p>
+        </div>
       </div>
     </div>
 
     <div class="song-card">
-      <img class="song-art" src="https://i.scdn.co/image/ab67616d0000b273f31c3e82d4f30c2b8b2e1e8f" alt="Jungle" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/0e/5a/cf/0e5acf5f-8c55-2d26-773c-9a79384ae82f/49542.jpg/100x100bb.jpg" alt="Last Forever" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
       <div class="song-info">
-        <p class="song-artist">Jungle</p>
-        <p class="song-title">Casio</p>
-        <a class="song-link" href="https://open.spotify.com/track/72gB5PoOAiJO5Bmu7oXSFz" target="_blank" rel="noopener">Spotify</a>
+        <div class="song-text-group">
+          <p class="song-title">Last Forever</p>
+          <p class="song-artist">Patchwork Inc. &amp; Wyatt Waddell</p>
+        </div>
       </div>
-      <div class="song-request-col">
-        <svg class="song-request-icon" viewBox="0 0 20 19" fill="none"><path d="M1 1h18v12H1V1ZM1 13l4 5M19 13l-4 5" stroke="#C9D3C0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/04/c9/42/04c942e5-e8d9-5d29-0302-1c4d31f3cf59/cover.jpg/100x100bb.jpg" alt="Fair Play" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Fair Play</p>
+          <p class="song-artist">Malaki &amp; Lucy McWilliams</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2a/59/41/2a59414e-3cb8-99e6-be89-7e2716057a20/22UMGIM40134.rgb.jpg/100x100bb.jpg" alt="London Bridge" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">London Bridge</p>
+          <p class="song-artist">Fergie</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c8/be/2f/c8be2f23-c2e8-7d40-841b-8673d1b524fb/190295127886.jpg/100x100bb.jpg" alt="Darker Place" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Darker Place</p>
+          <p class="song-artist">Rachel Chinouriri</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <div class="song-art-placeholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Wiki Wiki</p>
+          <p class="song-artist">Gualtiero</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/db/c0/86/dbc08631-0d99-b7f0-6a7a-3b5de6b41cf2/23UMGIM04122.rgb.jpg/100x100bb.jpg" alt="What You Wanna Try" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">What You Wanna Try</p>
+          <p class="song-artist">Masego</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/2e/83/5c/2e835cf2-be2c-c54c-cff9-161b2cab1d20/mzi.gzebllno.jpg/100x100bb.jpg" alt="Put Your Hands Where My Eyes Could See" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Put Your Hands Where My Eyes Could See</p>
+          <p class="song-artist">Busta Rhymes feat. Jamal</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/e3/45/18e345bd-eb70-5dea-a5a0-7b5e59a02426/24UMGIM67470.rgb.jpg/100x100bb.jpg" alt="CARPINTERIA" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">CARPINTERIA</p>
+          <p class="song-artist">Rae Khalil &amp; Freddie Gibbs</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/26/86/a9/2686a9dc-0a17-8e7f-82e3-9bb7c53c1494/23UMGIM19042.rgb.jpg/100x100bb.jpg" alt="I Like It" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">I Like It (I Wanna Be Where You Are)</p>
+          <p class="song-artist">Grand Puba</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3f/ac/0a/3fac0a92-17ff-d246-1b0a-5df576a27738/dj.egpvypdu.jpg/100x100bb.jpg" alt="If I Got It" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">If I Got It (Your Love Brought It)</p>
+          <p class="song-artist">Aaron Frazer</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f8/be/b3/f8beb304-caf4-4b2b-ee4b-1be48dea1412/contsched.kpssrlgt.jpg/100x100bb.jpg" alt="Bad Bad News" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Bad Bad News</p>
+          <p class="song-artist">Leon Bridges</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-card">
+      <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/60/88/3e/60883eee-7ec2-75e9-ccc6-5a6187371d97/075679665010.jpg/100x100bb.jpg" alt="Lovin On Me" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="song-art-placeholder" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/><circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/></svg></div>
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">Lovin On Me</p>
+          <p class="song-artist">Jack Harlow</p>
+        </div>
       </div>
     </div>
 
@@ -538,10 +689,14 @@
         <div class="song-card song-preview" id="song-preview">
           <img class="song-art" id="preview-art" src="" alt=""
                onerror="this.style.background='var(--brand-90)'">
-          <div class="song-info">
+          <div class="preview-content">
             <p class="song-title" id="preview-title"></p>
             <p class="song-artist" id="preview-artist"></p>
-            <a class="song-link" id="preview-link" href="#" target="_blank" rel="noopener">Spotify</a>
+          </div>
+          <div class="preview-delete-col">
+            <button class="song-delete-btn" id="preview-delete" aria-label="Remove">
+              <img class="song-delete-icon" src="images/delete.png" alt="">
+            </button>
           </div>
         </div>
       </div>
@@ -580,8 +735,8 @@
   // CONFIG — Add Spotify credentials for full track info (artist name)
   // Get your free credentials at developer.spotify.com → Create App
   // ─────────────────────────────────────────────
-  const SPOTIFY_CLIENT_ID     = '';
-  const SPOTIFY_CLIENT_SECRET = '';
+  const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
+  const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
   const FORMSPREE_ID = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
 
   // ─────────────────────────────────────────────
@@ -608,17 +763,13 @@
   // ─────────────────────────────────────────────
   // Event Card expand / collapse
   // ─────────────────────────────────────────────
-  const eventDetailsBtn = document.getElementById('event-details-btn');
-  const eventExpanded   = document.getElementById('event-expanded');
+  const eventDetailsBtn   = document.getElementById('event-details-btn');
+  const eventExpanded     = document.getElementById('event-expanded');
+  const eventDetailsCaret = document.getElementById('event-details-caret');
 
   eventDetailsBtn.addEventListener('click', () => {
     const isOpen = eventExpanded.classList.toggle('visible');
-    eventDetailsBtn.classList.toggle('open', isOpen);
-    const label = isOpen
-      ? (currentLang === 'fr' ? 'Masquer' : 'Hide')
-      : (currentLang === 'fr' ? 'Détails' : 'Details');
-    // Update text node before the chevron SVG
-    eventDetailsBtn.firstChild.textContent = label + ' ';
+    eventDetailsCaret.src = isOpen ? 'images/caret-up.png' : 'images/caret-down.png';
   });
 
   // ─────────────────────────────────────────────
@@ -674,25 +825,31 @@
     const trackId = parseSpotifyTrackId(spotifyUrl);
     if (!trackId) throw new Error('invalid');
 
-    // Full API if credentials provided
+    // Full API if credentials provided — fall back to oEmbed on any failure
     if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
-      const token = await getSpotifyToken();
-      const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const d = await resp.json();
-      return {
-        title:  d.name,
-        artist: d.artists.map(a => a.name).join(', '),
-        image:  d.album.images[0]?.url || '',
-        url:    d.external_urls.spotify
-      };
+      try {
+        const token = await getSpotifyToken();
+        const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resp.ok) throw new Error(`API ${resp.status}`);
+        const d = await resp.json();
+        return {
+          title:  d.name,
+          artist: d.artists.map(a => a.name).join(', '),
+          image:  d.album.images[0]?.url || '',
+          url:    d.external_urls.spotify
+        };
+      } catch (e) {
+        console.warn('Spotify API failed, falling back to oEmbed:', e);
+      }
     }
 
-    // Fallback: oEmbed (no artist name)
+    // oEmbed fallback (title + thumbnail, no artist)
     const oembed = await fetch(
       `https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`
     );
+    if (!oembed.ok) throw new Error('oEmbed failed');
     const d = await oembed.json();
     return {
       title:  d.title || '',
@@ -717,7 +874,6 @@
   const previewArt      = document.getElementById('preview-art');
   const previewTitle    = document.getElementById('preview-title');
   const previewArtist   = document.getElementById('preview-artist');
-  const previewLink     = document.getElementById('preview-link');
   const fetchStatus     = document.getElementById('fetch-status');
 
   let currentTrack = null;
@@ -742,6 +898,19 @@
     overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
+
+  function resetPreview() {
+    clearTimeout(fetchTimer);
+    urlInput.value = '';
+    preview.classList.remove('visible');
+    fetchStatus.textContent = '';
+    fetchStatus.className = 'fetch-status';
+    sendBtn.disabled = true;
+    currentTrack = null;
+    setTimeout(() => urlInput.focus(), 50);
+  }
+
+  document.getElementById('preview-delete').addEventListener('click', resetPreview);
 
   openBtn.addEventListener('click', openOverlay);
   closeBtn.addEventListener('click', closeOverlay);
@@ -779,7 +948,6 @@
         previewArt.alt = info.title;
         previewTitle.textContent  = info.title;
         previewArtist.textContent = info.artist;
-        previewLink.href = val;
         preview.classList.add('visible');
         fetchStatus.textContent = '';
         sendBtn.disabled = false;
@@ -820,10 +988,13 @@
       });
     } catch { /* non-blocking */ }
 
-    // Show success
-    formView.style.display = 'none';
-    successView.style.display = 'flex';
-    applyLang(currentLang);
+    // Close overlay and switch to Requested tab
+    closeOverlay();
+    tabRequested.className = 'tab-btn active';
+    tabPlayed.className    = 'tab-btn inactive';
+    requestedList.classList.remove('hidden');
+    playedList.classList.add('hidden');
+    renderRequestedList();
   });
 
   // ─────────────────────────────────────────────
@@ -852,13 +1023,119 @@
         <img class="song-art" src="${r.image || ''}" alt="${r.title}"
              onerror="this.style.background='var(--brand-90)'">
         <div class="song-info">
-          ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
-          <p class="song-title">${r.title}</p>
+          <div class="song-text-group">
+            <p class="song-title">${r.title}</p>
+            ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
+          </div>
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
+        </div>
+        <div class="song-request-col">
+          <img class="song-request-icon" src="images/request-icon.png" alt="Requested">
         </div>`;
       requestedList.appendChild(card);
     });
   }
+
+  // ─────────────────────────────────────────────
+  // Spotify — search by artist + title (for live tracks)
+  // ─────────────────────────────────────────────
+  async function searchSpotifyTrack(token, artist, title) {
+    // Use just the first listed artist to improve match rate
+    const primaryArtist = artist.split(',')[0].trim();
+    const q = encodeURIComponent(`track:"${title}" artist:"${primaryArtist}"`);
+    const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const track = data.tracks?.items?.[0];
+    if (!track) return null;
+    return {
+      image:      track.album.images[1]?.url || track.album.images[0]?.url || '',
+      spotifyUrl: track.external_urls.spotify,
+      artist:     track.artists.map(a => a.name).join(', '),
+      title:      track.name
+    };
+  }
+
+  // ─────────────────────────────────────────────
+  // Live playlist polling  (/api/live → Netlify Function → Serato)
+  // ─────────────────────────────────────────────
+  let artworkCache     = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
+  let liveSessionSlug  = null;
+  let liveTrackIds     = new Set();
+
+  function safeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function buildPlayedCard(artist, title, image, spotifyUrl) {
+    const card = document.createElement('div');
+    card.className = 'song-card';
+    card.innerHTML = `
+      <img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(artist)}"
+           onerror="this.style.background='var(--brand-90)'">
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-artist">${safeHtml(artist)}</p>
+          <p class="song-title">${safeHtml(title)}</p>
+        </div>
+        ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
+      </div>`;
+    return card;
+  }
+
+  async function pollLivePlaylist() {
+    try {
+      const res = await fetch('/api/live');
+      if (!res.ok) return;
+      const { tracks, session } = await res.json();
+      if (!tracks?.length) return;
+
+      // Skip render if nothing changed
+      const newIds = new Set(tracks.map(t => t.id));
+      const hasNew = [...newIds].some(id => !liveTrackIds.has(id));
+      if (!hasNew && session === liveSessionSlug) return;
+      liveSessionSlug = session;
+      liveTrackIds    = newIds;
+
+      // Spotify artwork for uncached tracks
+      if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
+        try {
+          const token = await getSpotifyToken();
+          for (const t of tracks) {
+            if (!artworkCache[t.id] && t.artist && t.title) {
+              try {
+                const info = await searchSpotifyTrack(token, t.artist, t.title);
+                if (info) artworkCache[t.id] = info;
+              } catch { /* non-blocking */ }
+            }
+          }
+          localStorage.setItem('momo_artwork_cache', JSON.stringify(artworkCache));
+        } catch { /* no credentials or token failure */ }
+      }
+
+      // Render into Played list
+      const list = document.getElementById('played-list');
+      list.innerHTML = '';
+      for (const t of tracks) {
+        const cached = artworkCache[t.id];
+        list.appendChild(buildPlayedCard(
+          cached?.artist     || t.artist,
+          cached?.title      || t.title,
+          cached?.image      || '',
+          cached?.spotifyUrl || ''
+        ));
+      }
+
+    } catch { /* network error — keep existing content */ }
+  }
+
+  // Start polling: immediately on load, then every 30 s
+  pollLivePlaylist();
+  setInterval(pollLivePlaylist, 30_000);
 </script>
 </body>
 </html>
