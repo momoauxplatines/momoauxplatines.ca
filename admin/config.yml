@@ -1,0 +1,55 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Uploaded images go to images/events/ in the repo
+media_folder: images/events
+public_folder: /images/events
+
+# Only invited users can log in
+publish_mode: simple
+
+collections:
+  - name: events
+    label: "Events / Événements"
+    files:
+      - name: event_list
+        label: "Event List"
+        file: events.json
+        fields:
+          - name: events
+            label: Events
+            label_singular: Event
+            widget: list
+            summary: "{{fields.venue}} — {{fields.hours}}"
+            fields:
+              - name: venue
+                label: "Venue / Lieu"
+                widget: string
+                hint: "Displayed in uppercase on the card"
+
+              - name: address
+                label: "Address / Adresse"
+                widget: string
+
+              - name: hours
+                label: "Hours / Horaire"
+                widget: string
+                hint: "e.g. 19:00 – 01:00"
+
+              - name: instagram
+                label: "Instagram URL"
+                widget: string
+                hint: "Full URL, e.g. https://www.instagram.com/labuvettechezsimone"
+
+              - name: image
+                label: "Venue Image"
+                widget: image
+                required: false
+                hint: "Square image recommended — will be displayed at 48×48px"
+
+              - name: live
+                label: "Show LIVE indicator"
+                widget: boolean
+                default: false
+                hint: "Show the pulsing red LIVE / EN DIRECT dot on the card"

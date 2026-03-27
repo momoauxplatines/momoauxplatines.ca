@@ -1,0 +1,12 @@
+{
+  "events": [
+    {
+      "venue": "Buvette Chez Simone",
+      "address": "4869 Rue Villeneuve O, Montréal, QC",
+      "hours": "19:00 – 01:00",
+      "instagram": "https://www.instagram.com/labuvettechezsimone",
+      "image": "/images/timeline-buvette-simone.jpg",
+      "live": true
+    }
+  ]
+}

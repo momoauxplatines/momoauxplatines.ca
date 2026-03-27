@@ -21,6 +21,9 @@
   <meta name="twitter:description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
   <meta name="twitter:image" content="images/og-image.png">
 
+  <!-- Netlify Identity — handles admin invite redirects -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -1377,11 +1380,25 @@
     applyLang(currentLang === 'en' ? 'fr' : 'en');
   });
 
-  // Load events.js then render (events.js sets window.MOMO_EVENTS)
-  const evScript = document.createElement('script');
-  evScript.src = 'events.js';
-  evScript.onload = renderEvents;
-  document.head.appendChild(evScript);
+  // Netlify Identity — redirect to admin after login via invite link
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', user => {
+      if (!user) {
+        window.netlifyIdentity.on('login', () => {
+          document.location.href = '/admin/';
+        });
+      }
+    });
+  }
+
+  // Load events.json and render cards
+  fetch('events.json')
+    .then(r => r.json())
+    .then(data => {
+      window.MOMO_EVENTS = Array.isArray(data) ? data : (data.events || []);
+      renderEvents();
+    })
+    .catch(() => renderEvents());
 </script>
 </body>
 </html>
