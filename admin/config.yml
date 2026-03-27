@@ -35,7 +35,7 @@ collections:
               - name: hours
                 label: "Hours / Horaire"
                 widget: string
-                hint: "e.g. 19:00 – 01:00"
+                hint: "e.g. 19:00 – 01:00 — the card is only visible during this window"
 
               - name: instagram
                 label: "Instagram URL"
