@@ -239,7 +239,8 @@
     }
     .ev-ig {
       font-size: 16px; font-weight: 300; line-height: 20px;
-      color: #007AFF; text-decoration: none;
+      color: var(--brand-50); text-decoration: underline;
+      text-decoration-color: var(--brand-50);
     }
 
     /* "NEXT" badge — blue Kanit Black */
@@ -325,7 +326,8 @@
     /* ─── Card Link ─── */
     .card-link {
       font-weight: 300; font-size: 18px; line-height: 26px;
-      color: #007AFF; text-decoration: none; cursor: pointer;
+      color: var(--brand-50); text-decoration: underline;
+      text-decoration-color: var(--brand-50); cursor: pointer;
       flex-shrink: 0;
     }
     .card-link-soon { color: #d71a1a; cursor: default; }
@@ -1424,6 +1426,14 @@
   // "2026-04-05" → Date at midnight local
   function parseDate(s) { return s ? new Date(s + 'T00:00:00') : null; }
 
+  // Strip postal/zip code from address (Canadian A1A 1A1 or A1A1A1, US 12345)
+  function stripPostalCode(addr) {
+    return (addr || '')
+      .replace(/,?\s*[A-Z]\d[A-Z]\s*\d[A-Z]\d\b/i, '') // Canadian
+      .replace(/,?\s*\b\d{5}(-\d{4})?\b/, '')            // US zip
+      .replace(/,\s*$/, '').trim();
+  }
+
   // "2026-04-15" → "APR. 15"
   function formatShortDate(dateStr) {
     const months = ['JAN.','FEB.','MAR.','APR.','MAY','JUN.','JUL.','AUG.','SEP.','OCT.','NOV.','DEC.'];
@@ -1524,7 +1534,7 @@
             <div class="ev-content">
               <div class="ev-content-copy">
                 <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${ev.address}</p>
+                <p class="ev-address">${stripPostalCode(ev.address)}</p>
                 <p class="ev-hours">${formatHours(ev)}</p>
               </div>
               <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
@@ -1556,7 +1566,7 @@
             <div class="ev-content">
               <div class="ev-content-copy">
                 <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${ev.address}</p>
+                <p class="ev-address">${stripPostalCode(ev.address)}</p>
                 <p class="ev-hours">${formatHours(ev)}</p>
               </div>
               <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
