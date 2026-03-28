@@ -1,3 +1,13 @@
 {
-  "events": []
+  "events": [
+    {
+      "venue": "Set chez ti jo",
+      "address": "5630 rue de la roche",
+      "date": "2026-03-28",
+      "start_time": "",
+      "end_time": "",
+      "instagram": "https://www.instagram.com/djmomoauxplatines/",
+      "image": "/images/events/djmomoauxplatines.jpg"
+    }
+  ]
 }
