@@ -1,13 +1,3 @@
 {
-  "events": [
-    {
-      "venue": "Buvette Chez Simone",
-      "address": "4869 Rue Villeneuve O, Montréal, QC",
-      "date": "2026-04-05",
-      "start_time": "19:00",
-      "end_time": "01:00",
-      "instagram": "https://www.instagram.com/labuvettechezsimone",
-      "image": "/images/timeline-buvette-simone.jpg"
-    }
-  ]
+  "events": []
 }
