@@ -40,6 +40,8 @@
       --brand-90: #2B2D2A;
       --brand-100: #141513;
       --bg: #111210;
+      --red: #D34242;
+      --blue: #007AFF;
     }
 
     html { background: var(--bg); overflow-x: clip; }
@@ -57,6 +59,29 @@
       transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
     }
     .site-header.header-hidden { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+
+    /* Live header centre badge — absolutely centred, FR stays right via flex-end */
+    .header-live-link {
+      display: none; align-items: center; gap: 8px;
+      text-decoration: none; pointer-events: auto;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .site-header.has-live .header-live-link { display: flex; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .header-live-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--red); flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .header-live-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 22px; line-height: 26px;
+      color: var(--red) !important; text-transform: uppercase;
+      white-space: nowrap;
+    }
 
     .header-school {
       display: none; /* hidden everywhere */
@@ -557,8 +582,13 @@
 <div class="page">
 
   <!-- ── Fixed Header ── -->
-  <header class="site-header">
+  <header class="site-header" id="site-header">
     <a class="header-school">SCHOOL</a>
+    <a class="header-live-link" id="header-live-link" href="#events-section"
+       aria-label="Live event — scroll to card">
+      <div class="header-live-dot"></div>
+      <span class="header-live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+    </a>
     <div class="lang-toggle" id="lang-btn">FR</div>
   </header>
 
@@ -716,15 +746,16 @@
         </div>
 
         <div class="video-card">
-          <div class="video-thumb-wrapper">
+          <a href="https://drive.google.com/file/d/18mEL6BPIDrNysV6Exuhx7iCnwVg_rc1_/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
             <img class="video-thumb" src="images/video-chill.png" alt="Chill">
-          </div>
+            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
+          </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Chill</p>
               <p class="video-desc" data-en="3 songs just to chill out. Great fit for the lounge, the buvette or even the bath." data-fr="Parfait pour le lounge, la buvette ou même le bain.">3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.</p>
             </div>
-            <span class="card-link-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
+            <a class="card-link" href="https://drive.google.com/file/d/18mEL6BPIDrNysV6Exuhx7iCnwVg_rc1_/view?usp=drive_link" target="_blank" rel="noopener" data-en="Play" data-fr="Jouer">Play</a>
           </div>
         </div>
 
@@ -886,6 +917,19 @@
               <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
             </div>
           </div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div class="timeline-thumb"><img src="images/timeline-les-yeux-bleus.png" alt="Les Yeux Bleus"></div>
+              <p class="timeline-card-title">Les Yeux Bleus</p>
+            </div>
+            <div class="timeline-card-body">
+              <div class="timeline-card-copy">
+                <p class="timeline-card-desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
+                <p class="timeline-card-dates">2022–2023</p>
+              </div>
+              <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -933,6 +977,17 @@
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
                 <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
+              </div>
+            </div>
+            <div class="timeline-card-lg">
+              <div class="timeline-thumb-lg"><img src="images/timeline-les-yeux-bleus.png" alt="Les Yeux Bleus"></div>
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">Les Yeux Bleus</p>
+                  <p class="timeline-card-lg-desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
+                  <p class="timeline-card-lg-dates">2022–2023</p>
+                </div>
+                <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
               </div>
             </div>
           </div>
@@ -1083,6 +1138,7 @@
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
         <a class="tab inactive" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener" style="text-decoration:none;">Instagram</a>
+        <a class="tab inactive" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener" style="text-decoration:none;">Twitch</a>
       </div>
       <p class="footer-copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
     </footer>
@@ -1334,12 +1390,23 @@
     return nowMins >= startMins && nowMins < endMins;
   }
 
+  function setHeaderLive(isLive) {
+    const hdr  = document.getElementById('site-header');
+    const link = document.getElementById('header-live-link');
+    if (!hdr || !link) return;
+    hdr.classList.toggle('has-live', isLive);
+  }
+
   function renderEvents() {
     const all     = window.MOMO_EVENTS || [];
     const events  = all.filter(eventIsVisible);
     const section = document.getElementById('events-section');
     if (!section) return;
-    if (!events.length) { section.style.display = 'none'; return; }
+    if (!events.length) {
+      section.style.display = 'none';
+      setHeaderLive(false);
+      return;
+    }
 
     section.style.display = 'flex';
     section.innerHTML = '';
@@ -1369,6 +1436,10 @@
         </div>`;
       section.appendChild(card);
     });
+
+    // Show live badge in header if any event has live:true
+    const hasLive = events.some(ev => ev.live);
+    setHeaderLive(hasLive);
 
     if (typeof applyLang === 'function') applyLang(currentLang);
   }
