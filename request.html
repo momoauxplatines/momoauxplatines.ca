@@ -147,16 +147,19 @@
 
     /* ── Tabs ── */
     .tabs-row {
-      display: flex; gap: 12px; padding: 16px;
+      display: flex; gap: 0; padding: 16px;
     }
     .tab-btn {
-      flex: 1; height: 40px; border-radius: 8px; border: none;
+      flex: 1; height: 40px; border: 1px solid var(--brand-100);
       cursor: pointer; font-family: 'Kanit', sans-serif;
       font-weight: 600; font-size: 16px; line-height: 40px;
-      text-transform: uppercase; transition: background 0.2s, color 0.2s;
+      text-transform: uppercase; transition: background 0.15s, color 0.15s;
+      padding: 0 16px;
     }
-    .tab-btn.active  { background: var(--brand-50); color: var(--brand-100); }
-    .tab-btn.inactive { background: var(--brand-90); color: var(--brand-50); border: 1px solid var(--brand-100); }
+    .tab-btn:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
+    .tab-btn:last-child  { border-radius: 0 8px 8px 0; }
+    .tab-btn.active   { background: #20221f; color: var(--brand-00); }
+    .tab-btn.inactive { background: var(--brand-100); color: var(--brand-40); }
 
     /* ── Song List ── */
     .song-list {
