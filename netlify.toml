@@ -2,6 +2,10 @@
   publish = "."
   ignore = "exit 1"
 
+# Branch deploys (preview, staging, etc.) — always deploy
+[context.branch-deploy]
+  ignore = "exit 0"
+
 [functions]
   directory = "netlify/functions"
 
