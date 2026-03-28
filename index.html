@@ -242,6 +242,36 @@
       color: #007AFF; text-decoration: none;
     }
 
+    /* "NEXT" badge — blue Kanit Black */
+    .ev-next-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 22px; line-height: 26px;
+      color: #007AFF; text-transform: uppercase;
+    }
+
+    /* Date + time row inside next event card */
+    .ev-date-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 16px; font-weight: 300; line-height: 20px;
+      color: var(--brand-50);
+    }
+
+    /* Next Events section — below intro */
+    .next-events-section {
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: 40px;
+    }
+    .next-events-heading {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 44px; line-height: 48px;
+      color: var(--brand-50); text-transform: uppercase;
+      width: 100%;
+    }
+    .next-events-list {
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: 16px; width: 100%;
+    }
+
     /* Tablet: max 400px */
     @media (min-width: 640px) {
       .event-card-home { max-width: 400px; }
@@ -649,6 +679,14 @@
         <button class="btn" id="book-btn" data-en="BOOK" data-fr="BOOK">BOOK</button>
       </div>
     </section>
+
+    <!-- ══════════════════════════════════════════════
+         NEXT EVENTS  (rendered from events.json via JS)
+    ══════════════════════════════════════════════ -->
+    <div id="next-events-section" class="next-events-section" style="display:none">
+      <h2 class="next-events-heading" data-en="Next Events" data-fr="Prochains Événements">Next Events</h2>
+      <div class="next-events-list" id="next-events-list"></div>
+    </div>
 
     <!-- ══════════════════════════════════════════════
          REVIEWS
@@ -1376,18 +1414,69 @@
   // Returns true if current local time falls within the event's hours window.
   // hours format: "19:00 – 01:00" or "19:00 - 01:00" (handles overnight spans).
   // If no hours field is set, the card is always visible.
-  function eventIsVisible(ev) {
-    if (!ev.hours) return true;
-    const m = ev.hours.match(/(\d{1,2}):(\d{2})\s*[–\-]\s*(\d{1,2}):(\d{2})/);
-    if (!m) return true;
-    const startMins = parseInt(m[1]) * 60 + parseInt(m[2]);
-    const endMins   = parseInt(m[3]) * 60 + parseInt(m[4]);
+  // Parse "HH:MM" → total minutes
+  function parseMins(t) {
+    if (!t) return null;
+    const p = t.match(/(\d{1,2}):(\d{2})/);
+    return p ? parseInt(p[1]) * 60 + parseInt(p[2]) : null;
+  }
+
+  // "2026-04-05" → Date at midnight local
+  function parseDate(s) { return s ? new Date(s + 'T00:00:00') : null; }
+
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  // Is the event happening RIGHT NOW?
+  function eventIsLive(ev) {
+    if (!ev.date || !ev.start_time) return false;
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
-    // Overnight span (e.g. 19:00 – 01:00): visible after start OR before end
-    if (startMins > endMins) return nowMins >= startMins || nowMins < endMins;
-    // Same-day span (e.g. 10:00 – 18:00)
-    return nowMins >= startMins && nowMins < endMins;
+    const today = todayStr();
+    const start = parseMins(ev.start_time);
+    const end   = parseMins(ev.end_time);
+    if (end === null) return ev.date === today && nowMins >= start;
+    const overnight = start > end; // e.g. 19:00 – 01:00
+    if (overnight) {
+      // Live on start-date after start, OR on next day before end
+      const nextDay = new Date(ev.date + 'T00:00:00');
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().slice(0,10);
+      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
+    }
+    return ev.date === today && nowMins >= start && nowMins < end;
+  }
+
+  // Is the event upcoming (not yet live, not yet past)?
+  function eventIsNext(ev) {
+    if (!ev.date) return false;
+    const today = todayStr();
+    if (ev.date > today) return true;
+    if (ev.date < today) return false;
+    // Same day — before start?
+    const start = parseMins(ev.start_time);
+    if (start === null) return false;
+    const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
+    return nowMins < start;
+  }
+
+  // Format "2026-04-05" → "April 5th"
+  function formatEventDate(dateStr) {
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const d = parseDate(dateStr);
+    if (!d) return dateStr;
+    const day = d.getDate();
+    const suf = [,'st','nd','rd'][day % 10 > 3 || Math.floor(day/10) === 1 ? 0 : day % 10] || 'th';
+    return `${months[d.getMonth()]} ${day}${suf}`;
+  }
+
+  // Format hours string "19:00 – 01:00" from start_time / end_time
+  function formatHours(ev) {
+    if (ev.start_time && ev.end_time) return `${ev.start_time} – ${ev.end_time}`;
+    if (ev.start_time) return ev.start_time;
+    return ev.hours || '';
   }
 
   function setHeaderLive(isLive) {
@@ -1398,48 +1487,79 @@
   }
 
   function renderEvents() {
-    const all     = window.MOMO_EVENTS || [];
-    const events  = all.filter(eventIsVisible);
-    const section = document.getElementById('events-section');
-    if (!section) return;
-    if (!events.length) {
-      section.style.display = 'none';
-      setHeaderLive(false);
-      return;
+    const all  = window.MOMO_EVENTS || [];
+    const live = all.filter(eventIsLive);
+    const next = all.filter(eventIsNext);
+
+    // ── Live events section (between hero and intro) ──
+    const liveSection = document.getElementById('events-section');
+    if (liveSection) {
+      if (!live.length) {
+        liveSection.style.display = 'none';
+      } else {
+        liveSection.style.display = 'flex';
+        liveSection.innerHTML = '';
+        live.forEach(ev => {
+          const card = document.createElement('div');
+          card.className = 'event-card-home';
+          card.innerHTML = `
+            <div class="event-card-home-top">
+              <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
+                   onerror="this.style.background='var(--brand-90)'">
+              <div class="event-card-home-live">
+                <div class="ev-live-dot"></div>
+                <span class="ev-live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+              </div>
+            </div>
+            <a class="ev-go-btn" href="request.html"
+               data-en="GO TO EVENT PAGE" data-fr="ALLER À LA PAGE DE L'ÉVÉNEMENT">GO TO EVENT PAGE</a>
+            <div class="ev-content">
+              <div class="ev-content-copy">
+                <p class="ev-venue-name">${ev.venue}</p>
+                <p class="ev-address">${ev.address}</p>
+                <p class="ev-hours">${formatHours(ev)}</p>
+              </div>
+              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
+            </div>`;
+          liveSection.appendChild(card);
+        });
+      }
+      setHeaderLive(live.length > 0);
     }
 
-    section.style.display = 'flex';
-    section.innerHTML = '';
-
-    events.forEach(ev => {
-      const card = document.createElement('div');
-      card.className = 'event-card-home';
-      card.innerHTML = `
-        <div class="event-card-home-top">
-          <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
-               onerror="this.style.background='var(--brand-90)'">
-          <div class="event-card-home-live">
-            ${ev.live ? `<div class="ev-live-dot"></div>
-              <span class="ev-live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>` : ''}
-          </div>
-        </div>
-        <a class="ev-go-btn" href="request.html"
-           data-en="GO TO EVENT PAGE" data-fr="ALLER À LA PAGE DE L'ÉVÉNEMENT">GO TO EVENT PAGE</a>
-        <div class="ev-content">
-          <div class="ev-content-copy">
-            <p class="ev-venue-name">${ev.venue}</p>
-            <p class="ev-address">${ev.address}</p>
-            ${ev.hours ? `<p class="ev-hours">${ev.hours}</p>` : ''}
-          </div>
-          <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener"
-             data-en="Instagram" data-fr="Instagram">Instagram</a>
-        </div>`;
-      section.appendChild(card);
-    });
-
-    // Show live badge in header if any event has live:true
-    const hasLive = events.some(ev => ev.live);
-    setHeaderLive(hasLive);
+    // ── Next events section (below intro) ──
+    const nextSection = document.getElementById('next-events-section');
+    const nextList    = document.getElementById('next-events-list');
+    if (nextSection && nextList) {
+      if (!next.length) {
+        nextSection.style.display = 'none';
+      } else {
+        nextSection.style.display = 'flex';
+        nextList.innerHTML = '';
+        next.forEach(ev => {
+          const card = document.createElement('div');
+          card.className = 'event-card-home';
+          card.innerHTML = `
+            <div class="event-card-home-top">
+              <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
+                   onerror="this.style.background='var(--brand-90)'">
+              <span class="ev-next-label" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
+            </div>
+            <div class="ev-content">
+              <div class="ev-content-copy">
+                <p class="ev-venue-name">${ev.venue}</p>
+                <p class="ev-address">${ev.address}</p>
+                <div class="ev-date-row">
+                  <span>${formatEventDate(ev.date)}</span>
+                  <span>${formatHours(ev)}</span>
+                </div>
+              </div>
+              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
+            </div>`;
+          nextList.appendChild(card);
+        });
+      }
+    }
 
     if (typeof applyLang === 'function') applyLang(currentLang);
   }

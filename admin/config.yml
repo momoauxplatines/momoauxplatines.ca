@@ -32,10 +32,23 @@ collections:
                 label: "Address / Adresse"
                 widget: string
 
-              - name: hours
-                label: "Hours / Horaire"
+              - name: date
+                label: "Date"
+                widget: datetime
+                format: "YYYY-MM-DD"
+                date_format: "YYYY-MM-DD"
+                time_format: false
+                hint: "The date of the event (YYYY-MM-DD)"
+
+              - name: start_time
+                label: "Start Time / Heure de début"
                 widget: string
-                hint: "e.g. 19:00 – 01:00 — the card is only visible during this window"
+                hint: "e.g. 19:00 — card becomes LIVE at this time on the event date"
+
+              - name: end_time
+                label: "End Time / Heure de fin"
+                widget: string
+                hint: "e.g. 01:00 — card disappears after this time (can be past midnight)"
 
               - name: instagram
                 label: "Instagram URL"
@@ -47,9 +60,3 @@ collections:
                 widget: image
                 required: false
                 hint: "Square image recommended — will be displayed at 48×48px"
-
-              - name: live
-                label: "Show LIVE indicator"
-                widget: boolean
-                default: false
-                hint: "Show the pulsing red LIVE / EN DIRECT dot on the card"
