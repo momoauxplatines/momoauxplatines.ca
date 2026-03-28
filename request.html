@@ -69,16 +69,16 @@
     }
 
     .req-btn {
-      background: var(--brand-100);
-      border: 1px solid var(--brand-30);
+      background: none;
+      border: none;
       border-radius: 8px;
-      color: var(--brand-00);
+      color: var(--blue);
       font-family: 'Kanit', sans-serif;
       font-weight: 900; font-size: 16px; line-height: 31px;
       padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
-      transition: background 0.15s;
+      transition: opacity 0.15s;
     }
-    .req-btn:hover { background: var(--brand-90); }
+    .req-btn:hover { opacity: 0.7; }
 
     /* ── Event Card ── */
     .event-card {
@@ -150,9 +150,9 @@
       display: flex; gap: 0; padding: 16px;
     }
     .tab-btn {
-      flex: 1; height: 40px; border: 1px solid var(--brand-100);
+      flex: 1; height: 48px; border: 1px solid var(--brand-100);
       cursor: pointer; font-family: 'Kanit', sans-serif;
-      font-weight: 600; font-size: 16px; line-height: 40px;
+      font-weight: 600; font-size: 16px; line-height: 48px;
       text-transform: uppercase; transition: background 0.15s, color 0.15s;
       padding: 0 16px;
     }
@@ -175,7 +175,7 @@
 
     /* ── Song Card ── */
     .song-card {
-      background: var(--bg);
+      background: var(--brand-100);
       border: 1px solid var(--brand-90);
       border-radius: 8px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
@@ -216,8 +216,8 @@
     }
     .song-link {
       font-weight: 300; font-size: 16px; line-height: 26px;
-      color: var(--brand-50); text-decoration: underline;
-      text-decoration-color: var(--brand-50);
+      color: var(--brand-00); text-decoration: underline;
+      text-decoration-color: var(--brand-00);
     }
     /* Request icon column — 52px wide, icon 20px, sticky right */
     .song-request-col {
@@ -266,7 +266,6 @@
     }
     .now-playing-card {
       background: var(--brand-100);
-      border: 1px solid var(--green);
       border-radius: 8px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
     }

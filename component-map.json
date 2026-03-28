@@ -311,7 +311,7 @@
       "figma": "48px",
       "code": "40px",
       "file": "request.html",
-      "action": "pending"
+      "action": "resolved"
     },
     {
       "component": "Song Card",
@@ -319,7 +319,7 @@
       "figma": "#141513 (brand-100)",
       "code": "#111210 (var(--bg))",
       "file": "request.html",
-      "action": "pending"
+      "action": "resolved"
     },
     {
       "component": "Song Card",
@@ -327,7 +327,7 @@
       "figma": "#FAFBF9 (brand-00)",
       "code": "var(--brand-50)",
       "file": "request.html",
-      "action": "pending"
+      "action": "resolved"
     },
     {
       "component": "Now Playing Footer",
@@ -335,7 +335,7 @@
       "figma": "none",
       "code": "1px solid var(--green)",
       "file": "request.html",
-      "action": "pending"
+      "action": "resolved"
     },
     {
       "component": "Demo Card",
@@ -343,7 +343,7 @@
       "figma": "#DEE4DA (brand-30) underlined",
       "code": "#007AFF (blue)",
       "file": "index.html",
-      "action": "pending"
+      "action": "resolved"
     },
     {
       "component": "Header — Request Page",
@@ -351,7 +351,7 @@
       "figma": "blue text #007AFF, no border, no bg",
       "code": "brand-100 bg, brand-30 border",
       "file": "request.html",
-      "action": "pending"
+      "action": "resolved"
     }
   ]
 }
