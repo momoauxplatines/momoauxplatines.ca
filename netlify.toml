@@ -1,5 +1,6 @@
 [build]
   publish = "."
+  ignore = "exit 1"
 
 [functions]
   directory = "netlify/functions"
