@@ -84,6 +84,17 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-footer { flex-shrink: 0; padding: 16px 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
 
+    /* ── Instagram avatar preview ── */
+    .ig-preview-wrap { display: none; flex-direction: column; gap: 10px; }
+    .ig-preview-wrap.visible { display: flex; }
+    .ig-preview-row { display: flex; align-items: center; gap: 12px; }
+    .ig-preview-img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: var(--brand-90); border: 1px solid var(--brand-80); flex-shrink: 0; }
+    .ig-preview-info { display: flex; flex-direction: column; gap: 3px; }
+    .ig-preview-name { font-size: 14px; font-weight: 600; color: var(--brand-20); }
+    .ig-preview-status { font-size: 12px; font-weight: 300; color: var(--brand-50); }
+    .ig-preview-status.ok  { color: var(--green); }
+    .ig-preview-status.err { color: var(--red); }
+
     /* ── Toast ── */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 300; color: var(--brand-20); white-space: nowrap; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 200; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -175,11 +186,20 @@
         <label class="field-label" for="f-instagram">Instagram URL</label>
         <input class="field-input" type="url" id="f-instagram" placeholder="https://www.instagram.com/venue">
       </div>
-      <div class="field">
-        <label class="field-label" for="f-image">Venue Image URL</label>
-        <input class="field-input" type="url" id="f-image" placeholder="/images/events/venue.jpg">
-        <span class="field-hint">Upload to /images/events/ in the GitHub repo, then paste the path here.</span>
+
+      <!-- Avatar preview — appears once Instagram URL is valid -->
+      <div class="ig-preview-wrap" id="ig-preview-wrap">
+        <div class="ig-preview-row">
+          <img class="ig-preview-img" id="ig-preview-img" src="" alt="">
+          <div class="ig-preview-info">
+            <p class="ig-preview-name" id="ig-preview-name"></p>
+            <p class="ig-preview-status" id="ig-preview-status">Photo will be saved to /images/events/ when you save.</p>
+          </div>
+        </div>
       </div>
+
+      <!-- Image path — hidden, managed automatically -->
+      <input type="hidden" id="f-image">
     </div>
     <div class="form-footer">
       <button class="btn-primary" id="save-event-btn">Save Event</button>
@@ -334,6 +354,47 @@
     }
   }
 
+  // ── Instagram avatar helpers ──
+  function extractIgUsername(url) {
+    const m = (url || '').match(/instagram\.com\/([^/?#]+)/);
+    return m ? m[1].replace(/\/$/, '') : null;
+  }
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function uploadAvatarToGitHub(avatarUrl, username) {
+    const res = await fetch(avatarUrl);
+    if (!res.ok) throw new Error('Fetch failed');
+    const blob = await res.blob();
+    const dataUrl = await blobToBase64(blob);
+    const base64 = dataUrl.split(',')[1];
+    const ext  = blob.type.includes('png') ? 'png' : 'jpg';
+    const path = `images/events/${username}.${ext}`;
+
+    // Get SHA if file already exists
+    let sha;
+    const check = await ghFetch(`/repos/${REPO}/contents/${path}`);
+    if (check.ok) sha = (await check.json()).sha;
+
+    const body = { message: `Add venue photo: ${username}`, content: base64, branch: BRANCH };
+    if (sha) body.sha = sha;
+
+    const up = await ghFetch(`/repos/${REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!up.ok) throw new Error(`GitHub upload ${up.status}`);
+    return `/${path}`;
+  }
+
   // ── Add / Edit form ──
   const overlay   = document.getElementById('form-overlay');
   const formTitle = document.getElementById('form-title');
@@ -348,8 +409,63 @@
     image:     document.getElementById('f-image'),
   };
 
+  // Avatar preview state
+  let pendingAvatarUrl = null;  // unavatar URL to fetch on save
+  let pendingAvatarUser = null; // Instagram username
+
+  const igPreviewWrap   = document.getElementById('ig-preview-wrap');
+  const igPreviewImg    = document.getElementById('ig-preview-img');
+  const igPreviewName   = document.getElementById('ig-preview-name');
+  const igPreviewStatus = document.getElementById('ig-preview-status');
+
+  function showAvatarPreview(username, existingImagePath) {
+    if (existingImagePath) {
+      // Editing existing event — show current image
+      igPreviewImg.src = '../' + existingImagePath.replace(/^\//, '');
+      igPreviewName.textContent = username || '';
+      igPreviewStatus.textContent = 'Current venue photo';
+      igPreviewStatus.className = 'ig-preview-status';
+      igPreviewWrap.classList.add('visible');
+      pendingAvatarUrl  = null;
+      pendingAvatarUser = null;
+      return;
+    }
+    if (!username) { igPreviewWrap.classList.remove('visible'); return; }
+    const avatarUrl = `https://unavatar.io/instagram/${username}`;
+    igPreviewImg.src = avatarUrl;
+    igPreviewImg.onerror = () => {
+      igPreviewStatus.textContent = 'Could not load photo — will try again on save.';
+      igPreviewStatus.className = 'ig-preview-status err';
+    };
+    igPreviewImg.onload = () => {
+      igPreviewStatus.textContent = 'Photo will be saved to /images/events/ when you save.';
+      igPreviewStatus.className = 'ig-preview-status ok';
+    };
+    igPreviewName.textContent = '@' + username;
+    igPreviewWrap.classList.add('visible');
+    pendingAvatarUrl  = avatarUrl;
+    pendingAvatarUser = username;
+  }
+
+  let igDebounce;
+  // Wired up after fields declaration below
+
+  // Wire Instagram debounce
+  fields.instagram.addEventListener('input', () => {
+    clearTimeout(igDebounce);
+    igDebounce = setTimeout(() => {
+      const username = extractIgUsername(fields.instagram.value.trim());
+      // Only fetch new avatar if we don't already have a local image
+      if (!fields.image.value) showAvatarPreview(username, null);
+    }, 600);
+  });
+
   function openForm(index = -1) {
     fields.index.value = index;
+    pendingAvatarUrl  = null;
+    pendingAvatarUser = null;
+    igPreviewWrap.classList.remove('visible');
+
     if (index >= 0) {
       const ev = currentEvents[index];
       formTitle.textContent = 'Edit Event';
@@ -360,6 +476,9 @@
       fields.end.value       = ev.end_time || '';
       fields.instagram.value = ev.instagram || '';
       fields.image.value     = ev.image || '';
+      // Show existing image or fetch from Instagram
+      const username = extractIgUsername(ev.instagram);
+      showAvatarPreview(username, ev.image || null);
     } else {
       formTitle.textContent = 'Add Event';
       [fields.venue, fields.address, fields.date, fields.start,
@@ -385,6 +504,27 @@
     if (!venue) { fields.venue.classList.add('invalid'); fields.venue.focus(); return; }
     fields.venue.classList.remove('invalid');
 
+    const saveBtn = document.getElementById('save-event-btn');
+    saveBtn.disabled = true;
+
+    // Try to fetch + upload the Instagram avatar if we have a pending one
+    let imagePath = fields.image.value.trim();
+    if (pendingAvatarUrl && pendingAvatarUser && !imagePath) {
+      igPreviewStatus.textContent = 'Uploading photo…';
+      igPreviewStatus.className = 'ig-preview-status';
+      try {
+        imagePath = await uploadAvatarToGitHub(pendingAvatarUrl, pendingAvatarUser);
+        igPreviewStatus.textContent = 'Photo saved ✓';
+        igPreviewStatus.className = 'ig-preview-status ok';
+      } catch (e) {
+        // CORS or network issue — fall back gracefully
+        console.warn('Avatar upload failed:', e);
+        igPreviewStatus.textContent = 'Could not auto-save photo — you can add it manually later.';
+        igPreviewStatus.className = 'ig-preview-status err';
+        imagePath = ''; // leave empty rather than use external URL
+      }
+    }
+
     const ev = {
       venue,
       address:    fields.address.value.trim(),
@@ -392,7 +532,7 @@
       start_time: fields.start.value,
       end_time:   fields.end.value,
       instagram:  fields.instagram.value.trim(),
-      image:      fields.image.value.trim(),
+      image:      imagePath,
     };
 
     const idx = parseInt(fields.index.value);
@@ -402,6 +542,7 @@
 
     closeForm();
     renderList();
+    saveBtn.disabled = false;
     try {
       await saveEvents(isNew ? `Add event: ${venue}` : `Update event: ${venue}`);
       showToast(isNew ? `"${venue}" added` : `"${venue}" updated`, 'success');
