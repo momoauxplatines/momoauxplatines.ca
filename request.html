@@ -83,12 +83,11 @@
     /* ── Event Card ── */
     .event-card {
       margin: 0 16px;
-      background: var(--brand-100);
-      border: 1px solid var(--brand-90);
-      border-radius: 8px; padding: 16px;
+      background: #000;
+      border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
-      overflow: hidden;
     }
+    .event-card:has(.event-expanded.visible) { padding-bottom: 20px; }
     .event-card-top {
       display: flex; align-items: center; gap: 16px;
     }
@@ -109,7 +108,7 @@
     }
     .live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
+      font-size: 20px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
     }
     .event-details-btn {
@@ -124,25 +123,25 @@
 
     /* Expanded content */
     .event-expanded {
-      display: none; flex-direction: column; gap: 8px;
+      display: none; flex-direction: column;
     }
     .event-expanded.visible { display: flex; }
     .event-copy { display: flex; flex-direction: column; gap: 4px; }
     .event-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
+      font-size: 28px; line-height: 31px;
       color: var(--brand-30); text-transform: uppercase;
     }
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
     }
     .event-hours {
-      font-size: 16px; font-weight: 300; line-height: 26px; color: var(--brand-50);
+      font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
     .event-ig-link {
-      font-size: 16px; font-weight: 300; line-height: 24px;
-      color: var(--brand-50); text-decoration: underline;
-      text-decoration-color: var(--brand-50);
+      font-size: 16px; font-weight: 300; line-height: 20px;
+      color: var(--brand-30); text-decoration: underline;
+      text-decoration-color: var(--brand-30);
     }
 
     /* ── Tabs ── */
@@ -224,28 +223,7 @@
       display: flex; align-items: center; justify-content: center;
     }
     .song-request-icon {
-      width: 20px; height: 20px; object-fit: contain;
-    }
-
-    /* ── Request Icon (composite: base + overlay) ── */
-    .req-icon-wrap {
-      width: 20px; height: 18.333px; position: relative; flex-shrink: 0;
-    }
-    .req-icon-base {
-      position: absolute; left: 0; right: 0; top: 0;
-      width: 100%; aspect-ratio: 24/22; height: auto;
-    }
-    /* Played: play-triangle sits at inset 25.45% 24.9% 33.32% 24.9% */
-    .req-icon-played .req-icon-overlay {
-      position: absolute;
-      top: 25.45%; right: 24.9%; bottom: 33.32%; left: 24.9%;
-    }
-    /* Added: "+" centred, 8px wide, 4.54px from top */
-    .req-icon-added .req-icon-overlay {
-      position: absolute;
-      width: 8px; height: 7.811px;
-      left: 50%; top: 4.54px;
-      transform: translateX(-50%);
+      width: 20px; height: 20px; object-fit: contain; flex-shrink: 0;
     }
 
     /* ── Preview Song Card (Request Form) ── */
@@ -278,15 +256,14 @@
       position: fixed; bottom: 0; left: 50%;
       transform: translateX(-50%);
       width: 100%; max-width: 390px;
-      background: var(--brand-100);
-      border-top: 1px solid var(--brand-90);
+      background: #000;
       padding: 16px;
-      box-shadow: 0 -16px 16px 0 rgba(0,0,0,0.3);
+      box-shadow: 0 -16px 16px 0 rgba(0,0,0,0.25);
       z-index: 40;
     }
     .now-playing-card {
-      background: var(--brand-100);
-      border-radius: 8px; padding: 8px;
+      background: #000;
+      border-radius: 16px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
     }
     .now-playing-art {
@@ -457,8 +434,8 @@
           <p class="event-name">Buvette chez Simone</p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
           <p class="event-hours">19:00 – 01:00</p>
+          <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
         </div>
-        <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
 
@@ -1054,10 +1031,7 @@
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
         </div>
         <div class="song-request-col">
-          <div class="req-icon-wrap req-icon-added">
-            <img class="req-icon-base" src="images/req-icon-added-base.png" alt="">
-            <img class="req-icon-overlay" src="images/req-icon-added-plus.png" alt="">
-          </div>
+          <img class="song-request-icon" src="images/request-sent-icon.png" alt="Requested">
         </div>`;
       requestedList.appendChild(card);
     });
@@ -1112,10 +1086,7 @@
         ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
       </div>
       <div class="song-request-col">
-        <div class="req-icon-wrap req-icon-played">
-          <img class="req-icon-base" src="images/req-icon-played-base.png" alt="">
-          <img class="req-icon-overlay" src="images/req-icon-played-vector.png" alt="">
-        </div>
+        <img class="song-request-icon" src="images/request-played-icon.png" alt="Played">
       </div>`;
     return card;
   }
