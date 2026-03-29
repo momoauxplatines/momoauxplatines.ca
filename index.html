@@ -436,7 +436,7 @@
     /* ─── Footer ─── */
     .site-footer {
       display: flex;
-      background: #000; border-top: 1px solid var(--brand-90);
+      background: var(--brand-100);
       margin: 0 -32px -80px; padding: 80px 32px;
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px;
@@ -445,11 +445,21 @@
     .footer-stamp .stamp-component { animation: none; transform: translate(-50%, -50%) scale(0.1829); }
     .footer-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 28px; line-height: 31px;
+      font-size: 32px; line-height: 34px;
       color: var(--brand-30); text-transform: uppercase; text-align: center;
     }
     .footer-links { display: flex; gap: 8px; align-items: center; }
-    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); text-align: center; }
+    .footer-btn {
+      background: var(--brand-90); border: none; border-radius: 8px;
+      padding: 0 16px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
+      color: var(--brand-00); text-transform: uppercase; text-decoration: none;
+      cursor: pointer; white-space: nowrap; line-height: 26px;
+      transition: opacity 0.15s;
+    }
+    .footer-btn:hover { opacity: 0.75; }
+    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-50); text-align: center; }
 
     /* ─── Booking Overlay ─── */
     .booking-overlay {
@@ -1177,8 +1187,8 @@
       </div>
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
-        <a class="tab inactive" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener" style="text-decoration:none;">Instagram</a>
-        <a class="tab inactive" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener" style="text-decoration:none;">Twitch</a>
+        <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
+        <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
       </div>
       <p class="footer-copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
     </footer>
