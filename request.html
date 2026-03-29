@@ -83,12 +83,11 @@
     /* ── Event Card ── */
     .event-card {
       margin: 0 16px;
-      background: var(--brand-100);
-      border: 1px solid var(--brand-90);
-      border-radius: 8px; padding: 16px;
+      background: #000;
+      border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
-      overflow: hidden;
     }
+    .event-card:has(.event-expanded.visible) { padding-bottom: 20px; }
     .event-card-top {
       display: flex; align-items: center; gap: 16px;
     }
@@ -109,7 +108,7 @@
     }
     .live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
+      font-size: 20px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
     }
     .event-details-btn {
@@ -124,25 +123,25 @@
 
     /* Expanded content */
     .event-expanded {
-      display: none; flex-direction: column; gap: 8px;
+      display: none; flex-direction: column;
     }
     .event-expanded.visible { display: flex; }
     .event-copy { display: flex; flex-direction: column; gap: 4px; }
     .event-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
+      font-size: 28px; line-height: 31px;
       color: var(--brand-30); text-transform: uppercase;
     }
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
     }
     .event-hours {
-      font-size: 16px; font-weight: 300; line-height: 26px; color: var(--brand-50);
+      font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
     .event-ig-link {
-      font-size: 16px; font-weight: 300; line-height: 24px;
-      color: var(--brand-50); text-decoration: underline;
-      text-decoration-color: var(--brand-50);
+      font-size: 16px; font-weight: 300; line-height: 20px;
+      color: var(--brand-30); text-decoration: underline;
+      text-decoration-color: var(--brand-30);
     }
 
     /* ── Tabs ── */
@@ -435,8 +434,8 @@
           <p class="event-name">Buvette chez Simone</p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
           <p class="event-hours">19:00 – 01:00</p>
+          <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
         </div>
-        <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
 
