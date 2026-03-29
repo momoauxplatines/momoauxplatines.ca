@@ -74,7 +74,7 @@
       border-radius: 8px;
       color: var(--blue);
       font-family: 'Kanit', sans-serif;
-      font-weight: 900; font-size: 16px; line-height: 31px;
+      font-weight: 900; font-size: 18px; line-height: 26px;
       padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
       transition: opacity 0.15s;
     }
@@ -152,13 +152,13 @@
     .tab-btn {
       flex: 1; height: 48px; border: 1px solid var(--brand-100);
       cursor: pointer; font-family: 'Kanit', sans-serif;
-      font-weight: 600; font-size: 16px; line-height: 48px;
+      font-weight: 900; font-size: 18px; line-height: 24px;
       text-transform: uppercase; transition: background 0.15s, color 0.15s;
-      padding: 0 16px;
+      padding: 0 16px; display: flex; align-items: center; justify-content: center;
     }
     .tab-btn:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
     .tab-btn:last-child  { border-radius: 0 8px 8px 0; }
-    .tab-btn.active   { background: #20221f; color: var(--brand-00); }
+    .tab-btn.active   { background: #000; color: var(--brand-00); }
     .tab-btn.inactive { background: var(--brand-100); color: var(--brand-40); }
 
     /* ── Song List ── */
@@ -175,9 +175,8 @@
 
     /* ── Song Card ── */
     .song-card {
-      background: var(--brand-100);
-      border: 1px solid var(--brand-90);
-      border-radius: 8px; padding: 8px;
+      background: #000;
+      border-radius: 16px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
       min-height: 80px;
     }
@@ -228,9 +227,30 @@
       width: 20px; height: 20px; object-fit: contain;
     }
 
+    /* ── Request Icon (composite: base + overlay) ── */
+    .req-icon-wrap {
+      width: 20px; height: 18.333px; position: relative; flex-shrink: 0;
+    }
+    .req-icon-base {
+      position: absolute; left: 0; right: 0; top: 0;
+      width: 100%; aspect-ratio: 24/22; height: auto;
+    }
+    /* Played: play-triangle sits at inset 25.45% 24.9% 33.32% 24.9% */
+    .req-icon-played .req-icon-overlay {
+      position: absolute;
+      top: 25.45%; right: 24.9%; bottom: 33.32%; left: 24.9%;
+    }
+    /* Added: "+" centred, 8px wide, 4.54px from top */
+    .req-icon-added .req-icon-overlay {
+      position: absolute;
+      width: 8px; height: 7.811px;
+      left: 50%; top: 4.54px;
+      transform: translateX(-50%);
+    }
+
     /* ── Preview Song Card (Request Form) ── */
     .song-card.song-preview {
-      background: var(--brand-100);
+      background: #000;
       align-items: flex-start;
     }
     /* Content: flex col, gap 4px, vertically centred */
@@ -1034,7 +1054,10 @@
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
         </div>
         <div class="song-request-col">
-          <img class="song-request-icon" src="images/request-icon.png" alt="Requested">
+          <div class="req-icon-wrap req-icon-added">
+            <img class="req-icon-base" src="images/req-icon-added-base.png" alt="">
+            <img class="req-icon-overlay" src="images/req-icon-added-plus.png" alt="">
+          </div>
         </div>`;
       requestedList.appendChild(card);
     });
@@ -1087,6 +1110,12 @@
           <p class="song-title">${safeHtml(title)}</p>
         </div>
         ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
+      </div>
+      <div class="song-request-col">
+        <div class="req-icon-wrap req-icon-played">
+          <img class="req-icon-base" src="images/req-icon-played-base.png" alt="">
+          <img class="req-icon-overlay" src="images/req-icon-played-vector.png" alt="">
+        </div>
       </div>`;
     return card;
   }

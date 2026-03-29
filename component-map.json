@@ -34,7 +34,9 @@
       "Body":       { "family": "SF Pro / system-ui", "weight": 300, "size": 18, "lineHeight": 26 },
       "Small Body": { "family": "SF Pro / system-ui", "weight": 300, "size": 16, "lineHeight": 20 },
       "Bold":       { "family": "SF Pro / system-ui", "weight": 700, "size": 18, "lineHeight": "normal" },
-      "Link":       { "family": "SF Pro / system-ui", "weight": 300, "size": 18, "lineHeight": 26, "decoration": "underline", "color": "brand-00" }
+      "Link":       { "family": "SF Pro / system-ui", "weight": 300, "size": 18, "lineHeight": 26, "decoration": "underline", "color": "brand-00" },
+      "Button":     { "family": "Kanit / SF Pro Black", "weight": 900, "size": 18, "lineHeight": 26, "transform": "uppercase" },
+      "Tab":        { "family": "Kanit / SF Pro Black", "weight": 900, "size": 18, "lineHeight": 24, "transform": "uppercase" }
     }
   },
 
@@ -47,17 +49,17 @@
       "files": ["request.html"],
       "css_classes": [".tabs-row", ".tab-btn", ".tab-btn.active", ".tab-btn.inactive"],
       "variants": {
-        "active":   { "bg": "brand-95 (#20221F)", "text": "brand-00 (#FAFBF9)", "border-radius": "8px 0 0 8px" },
+        "active":   { "bg": "#000 (black)", "text": "brand-00 (#FAFBF9)", "border-radius": "8px 0 0 8px" },
         "inactive": { "bg": "brand-100 (#141513)", "text": "brand-40 (#D5DCCC)", "border-radius": "0 8px 8px 0" }
       },
       "specs": {
         "height": "48px",
-        "font": "Kanit Black 900, 18px, uppercase",
+        "font": "Kanit Black 900, 18px, line-height 24px, uppercase",
         "border": "1px solid brand-100",
         "join": "margin-right: -1px (shared border)"
       },
       "last_synced": "2026-03-28",
-      "notes": "Height in Figma is 48px — currently coded as 40px. Font in Figma is SF Pro Black but Kanit 600 is used in code (intentional substitution)."
+      "notes": "Synced from node 232:2430. Active tab bg is pure black (#000). Font updated to 900/18px/24px."
     },
 
     {
@@ -65,23 +67,24 @@
       "figma_node": "71:4680",
       "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=71-4680",
       "files": ["request.html"],
-      "css_classes": [".song-card", ".song-art", ".song-info", ".song-artist", ".song-title", ".song-link", ".song-request-col"],
+      "css_classes": [".song-card", ".song-art", ".song-info", ".song-artist", ".song-title", ".song-link", ".song-request-col", ".req-icon-wrap", ".req-icon-played", ".req-icon-added"],
       "variants": {
-        "played":    { "request_icon": "request-icon.png (played state)" },
-        "requested": { "request_icon": "none or add icon" }
+        "played":    { "request_icon": "req-icon-played-base.png + req-icon-played-vector.png (composite)" },
+        "requested": { "request_icon": "req-icon-added-base.png + req-icon-added-plus.png (composite)" }
       },
       "specs": {
-        "bg": "brand-100 (#141513)",
+        "bg": "#000 (black)",
         "padding": "8px all sides",
-        "border-radius": "8px",
+        "border-radius": "16px",
         "album_art": "64×64px, border-radius 8px, border 1px brand-100",
         "track_title": "SF Pro Bold 700, 18px — displayed FIRST",
         "artist_name": "SF Pro Light 300, 16px — displayed SECOND",
         "spotify_link": "brand-00 (#FAFBF9), underlined, 16px Light",
-        "request_col": "padding 0 16px, centered, self-stretch"
+        "request_col": "padding 0 16px, centered, self-stretch",
+        "icon_size": "20×18.333px"
       },
       "last_synced": "2026-03-28",
-      "notes": "Song card bg in Figma is brand-100 (#141513), code currently uses var(--bg) (#111210). Spotify link color in Figma is brand-00, code currently uses brand-50. Gap between title+artist is 0px; gap between that group and Spotify link is 4px."
+      "notes": "bg updated to black. border-radius updated to 16px. Icons are composite two-image structure from node 164:5515."
     },
 
     {
@@ -240,7 +243,27 @@
         "gap_between_sections": "24px"
       },
       "last_synced": "2026-03-28",
-      "notes": "Link color in Figma is brand-30 (#DEE4DA) NOT blue. Play link should be brand-30 underlined. 'Coming soon' is red #D71A1A underlined."
+      "notes": "bg updated to brand-95. Link color is brand-30. 'Coming soon' is red #D71A1A underlined."
+    },
+
+    {
+      "name": "Button",
+      "figma_node": "22:206",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=22-206",
+      "files": ["index.html"],
+      "css_classes": [".btn", ".ev-go-btn"],
+      "variants": {
+        "primary":   { "bg": "brand-10 (#F4F6F3)", "text": "brand-100 (#141513)" },
+        "secondary": { "bg": "brand-90 (#2B2D2A)", "text": "brand-00 (#FAFBF9)" },
+        "tertiary":  { "bg": "#000 (black)", "text": "brand-00 (#FAFBF9)" }
+      },
+      "specs": {
+        "height": "56px",
+        "border-radius": "8px",
+        "font": "Kanit Black 900, 18px, line-height 26px, uppercase",
+        "padding": "0 16px"
+      },
+      "last_synced": "2026-03-28"
     },
 
     {
@@ -262,18 +285,27 @@
       "name": "Review Card",
       "figma_node": "TBD — not yet fetched",
       "files": ["index.html"],
-      "css_classes": [".review-card"],
-      "last_synced": null,
-      "notes": "Node ID not yet captured. Share the Figma node URL to sync."
+      "css_classes": [".review-card", ".review-avatar"],
+      "specs": {
+        "bg": "brand-95 (#20221F)",
+        "avatar": "80×80px, border-radius 8px"
+      },
+      "last_synced": "2026-03-28",
+      "notes": "bg updated to brand-95. Avatar updated to 80px with 8px border-radius (was circular). Node ID not yet captured."
     },
 
     {
       "name": "Timeline Card",
       "figma_node": "TBD — not yet fetched",
       "files": ["index.html"],
-      "css_classes": [".timeline-card"],
-      "last_synced": null,
-      "notes": "Node ID not yet captured. Share the Figma node URL to sync."
+      "css_classes": [".timeline-card", ".timeline-card-lg", ".timeline-thumb", ".timeline-thumb-lg"],
+      "specs": {
+        "bg": "brand-95 (#20221F)",
+        "avatar_mobile": "80×80px, border-radius 8px",
+        "avatar_desktop": "80×80px, border-radius 8px"
+      },
+      "last_synced": "2026-03-28",
+      "notes": "bg updated to brand-95. Mobile avatar updated to 80px (was 64px). Node ID not yet captured."
     },
 
     {

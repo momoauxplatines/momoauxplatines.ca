@@ -38,6 +38,7 @@
       --brand-50: #C9D3C0;
       --brand-80: #51534E;
       --brand-90: #2B2D2A;
+      --brand-95: #20221F;
       --brand-100: #141513;
       --bg: #111210;
       --red: #D34242;
@@ -179,9 +180,8 @@
     /* Card — full width on mobile */
     .event-card-home {
       width: 100%;
-      background: var(--brand-100);
-      border: 1px solid var(--brand-90);
-      border-radius: 8px; padding: 16px;
+      background: var(--brand-95);
+      border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
     }
 
@@ -291,7 +291,7 @@
 
     /* ─── Intro ─── */
     .intro { display: flex; flex-direction: column; gap: 32px; }
-    .avatar { width: 112px; height: 112px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .avatar { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
     .intro-info { display: flex; flex-direction: column; gap: 24px; }
     .intro-name {
@@ -315,13 +315,13 @@
     .ctas { display: flex; flex-direction: column; gap: 16px; }
     .intro-ctas { width: 100%; }
     .btn {
-      height: 56px; background: var(--brand-20); border-radius: 12px;
+      height: 56px; background: var(--brand-10); border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
       color: var(--brand-100); text-transform: uppercase; cursor: pointer;
-      border: none; width: 100%; text-decoration: none; line-height: 31px;
+      border: none; width: 100%; text-decoration: none; line-height: 26px;
     }
-    .btn:hover { background: var(--brand-30); }
+    .btn:hover { background: var(--brand-20); }
 
     /* ─── Card Link ─── */
     .card-link {
@@ -336,12 +336,12 @@
     .reviews { display: flex; flex-direction: column; gap: 40px; }
     .review-card {
       flex-shrink: 0; width: 310px;
-      background: var(--brand-90); border: 1px solid var(--brand-100);
+      background: var(--brand-95);
       border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
     }
     .review-card-header { display: flex; align-items: center; justify-content: space-between; width: 278px; }
-    .review-avatar { width: 80px; height: 80px; border-radius: 72px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .review-avatar { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
     .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
@@ -363,7 +363,7 @@
     /* Video card */
     .video-card {
       flex-shrink: 0; width: 310px;
-      background: var(--brand-90); border: 1px solid var(--brand-100);
+      background: var(--brand-95);
       border-radius: 16px; display: flex; flex-direction: column;
       gap: 24px; padding: 16px;
     }
@@ -382,15 +382,15 @@
     .decade { display: flex; flex-direction: column; gap: 16px; }
     .decade-title { font-weight: 300; font-size: 24px; line-height: normal; color: #dfdfdf; }
 
-    /* Mobile timeline card (64px thumb, side-by-side header) */
+    /* Mobile timeline card (80px thumb, side-by-side header) */
     .timeline-card {
       flex-shrink: 0; width: 310px;
-      background: var(--brand-90); border: 1px solid var(--brand-100);
+      background: var(--brand-95);
       border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
     }
     .timeline-card-header { display: flex; gap: 16px; align-items: flex-start; width: 278px; }
-    .timeline-thumb { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .timeline-thumb { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
     .timeline-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .timeline-card-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
@@ -417,7 +417,7 @@
     /* Large timeline card (80px thumb, stacked) */
     .timeline-card-lg {
       flex-shrink: 0; width: 310px; height: 400px;
-      background: var(--brand-90); border: 1px solid var(--brand-100);
+      background: var(--brand-95);
       border-radius: 16px; padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
     }
