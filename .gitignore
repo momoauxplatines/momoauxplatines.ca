@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Videos (too large for git — host separately)
+videos/
