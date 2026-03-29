@@ -41,7 +41,10 @@ export default async (req) => {
   if (req.method === 'GET') {
     const raw  = await store.get('current').catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
-    return new Response(JSON.stringify(list), { headers: CORS });
+    // Filter out deleted entries for public consumers
+    const isAdm = await isAdmin(req);
+    const visible = isAdm ? list : list.filter(r => r.status !== 'deleted');
+    return new Response(JSON.stringify(visible), { headers: CORS });
   }
 
   // ── POST ──────────────────────────────────────

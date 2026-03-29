@@ -177,9 +177,8 @@
       background: #000;
       border-radius: 16px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
-      min-height: 80px; transition: opacity 0.3s;
+      min-height: 80px;
     }
-    .song-card--played { opacity: 0.5; }
     .song-art {
       width: 64px; height: 64px; border-radius: 8px;
       object-fit: cover; flex-shrink: 0;
@@ -224,7 +223,7 @@
       display: flex; align-items: center; justify-content: center;
     }
     .song-request-icon {
-      width: 20px; height: 20px; object-fit: contain; flex-shrink: 0;
+      width: 20px; height: auto; object-fit: contain; flex-shrink: 0;
     }
 
     /* ── Preview Song Card (Request Form) ── */
@@ -1089,7 +1088,7 @@
       const icon     = isPlayed ? 'images/request-played-icon.png' : 'images/request-sent-icon.png';
       const iconAlt  = isPlayed ? 'Played' : 'Requested';
       const card = document.createElement('div');
-      card.className = 'song-card' + (isPlayed ? ' song-card--played' : '');
+      card.className = 'song-card';
       card.innerHTML = `
         <img class="song-art" src="${r.image || ''}" alt="${safeHtml(r.title)}"
              onerror="this.style.background='var(--brand-90)'">
