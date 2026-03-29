@@ -404,10 +404,74 @@
         box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
       }
     }
+
+    /* ── Inactive / Gated Screen ── */
+    #inactive-screen {
+      display: none;
+      min-height: 100dvh;
+      max-width: 390px;
+      margin: 0 auto;
+      padding: 48px 32px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      text-align: center;
+    }
+    .inactive-logo {
+      width: 64px; height: 64px; border-radius: 12px;
+      object-fit: cover;
+    }
+    .inactive-icon {
+      width: 64px; height: 64px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--brand-90); border-radius: 50%;
+    }
+    .inactive-copy { display: flex; flex-direction: column; gap: 12px; }
+    .inactive-heading {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 28px; line-height: 1.1;
+      color: var(--brand-20); text-transform: uppercase;
+    }
+    .inactive-sub {
+      font-size: 16px; font-weight: 300; line-height: 1.5;
+      color: var(--brand-80);
+    }
+    .inactive-ig-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--brand-20); border-radius: 16px;
+      padding: 0 24px; height: 56px;
+      color: var(--brand-100); font-family: 'Kanit', sans-serif;
+      font-weight: 700; font-size: 18px;
+      text-decoration: none; transition: opacity 0.15s;
+    }
+    .inactive-ig-btn:hover { opacity: 0.8; }
   </style>
 </head>
 <body>
-<div class="page">
+
+<!-- No Active Event Screen -->
+<div id="inactive-screen">
+  <a href="/"><img class="inactive-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
+  <div class="inactive-icon">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <rect x="5" y="11" width="14" height="10" rx="2" stroke="#51534E" stroke-width="1.5"/>
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="#51534E" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="inactive-copy">
+    <p class="inactive-heading"
+       data-en="No Active Event" data-fr="Aucun événement actif">No Active Event</p>
+    <p class="inactive-sub"
+       data-en="The request page is only available when Momo is performing live. Follow on Instagram for upcoming events."
+       data-fr="La page de demandes n'est disponible que lorsque Momo performe en direct. Suivez sur Instagram pour les prochains événements.">The request page is only available when Momo is performing live. Follow on Instagram for upcoming events.</p>
+  </div>
+  <a class="inactive-ig-btn" id="inactive-ig-link"
+     href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener"
+     data-en="Follow on Instagram" data-fr="Suivre sur Instagram">Follow on Instagram</a>
+</div>
+
+<div class="page" style="display:none">
 
   <div class="sticky-top">
 
@@ -739,6 +803,66 @@
   const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
   const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
   const FORMSPREE_ID = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+
+  // ─────────────────────────────────────────────
+  // Event gate — page only usable during an active event (+ 24h grace period)
+  // ─────────────────────────────────────────────
+
+  async function getActiveEvent() {
+    try {
+      const res = await fetch('/events.json');
+      if (!res.ok) return null;
+      const { events } = await res.json();
+      if (!events?.length) return null;
+      const now = Date.now();
+      // Sort by start time descending so the most recent event wins
+      const sorted = [...events].sort((a, b) =>
+        new Date(`${b.date}T${b.start_time}:00`).getTime() -
+        new Date(`${a.date}T${a.start_time}:00`).getTime()
+      );
+      for (const e of sorted) {
+        const startMs = new Date(`${e.date}T${e.start_time}:00`).getTime();
+        if (startMs > now) continue; // event hasn't started yet
+        // If end_time is before start_time the event ends past midnight → add a day
+        let endDateStr = e.date;
+        if (e.end_time <= e.start_time) {
+          const d = new Date(e.date);
+          d.setDate(d.getDate() + 1);
+          endDateStr = d.toISOString().slice(0, 10);
+        }
+        const endMs     = new Date(`${endDateStr}T${e.end_time}:00`).getTime();
+        const expiresMs = endMs + 24 * 60 * 60 * 1000; // +24 h grace
+        if (now <= expiresMs) return e;
+      }
+      return null;
+    } catch { return null; }
+  }
+
+  function populateEventCard(event) {
+    const nameEl    = document.querySelector('.event-name');
+    const addressEl = document.querySelector('.event-address');
+    const hoursEl   = document.querySelector('.event-hours');
+    const igEl      = document.querySelector('.event-ig-link');
+    const imgEl     = document.querySelector('.event-venue-img');
+    if (nameEl)    nameEl.textContent    = event.venue    || '';
+    if (addressEl) addressEl.textContent = event.address  || '';
+    if (hoursEl)   hoursEl.textContent   = `${event.start_time} – ${event.end_time}`;
+    if (igEl) { igEl.href = event.instagram || '#'; igEl.textContent = 'Instagram'; }
+    if (imgEl && event.image) imgEl.src = event.image;
+  }
+
+  // Run gate check — show page or locked screen
+  (async () => {
+    const page           = document.querySelector('.page');
+    const inactiveScreen = document.getElementById('inactive-screen');
+    const activeEvent    = await getActiveEvent();
+    if (activeEvent) {
+      populateEventCard(activeEvent);
+      page.style.display = 'flex';
+    } else {
+      inactiveScreen.style.display = 'flex';
+    }
+  })();
 
   // ─────────────────────────────────────────────
   // Language
