@@ -785,7 +785,7 @@
         if (!res.ok) { copyData[lang] = {}; return; }
         const j = await res.json();
         copySha[lang] = j.sha;
-        copyData[lang] = JSON.parse(atob(j.content.replace(/\n/g,'')));
+        copyData[lang] = JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
       }));
     } catch(e) { copyData.en = {}; copyData.fr = {}; }
     renderCopyFields();
