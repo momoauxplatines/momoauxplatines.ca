@@ -95,6 +95,28 @@
     .ig-preview-status.ok  { color: var(--green); }
     .ig-preview-status.err { color: var(--red); }
 
+    /* ── Admin nav tabs ── */
+    .admin-nav { display: none; gap: 0; border-bottom: 1px solid var(--brand-90); }
+    .admin-nav.visible { display: flex; }
+    .admin-nav-btn { flex: 1; height: 44px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; }
+    .admin-nav-btn.active { color: var(--brand-00); border-bottom-color: var(--brand-00); }
+
+    /* ── Copy editor ── */
+    .copy-lang-tabs { display: flex; gap: 0; }
+    .copy-lang-btn { flex: 1; height: 40px; background: var(--brand-100); border: 1px solid var(--brand-90); color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; text-transform: uppercase; cursor: pointer; }
+    .copy-lang-btn:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
+    .copy-lang-btn:last-child { border-radius: 0 8px 8px 0; }
+    .copy-lang-btn.active { background: var(--brand-90); color: var(--brand-00); }
+    .copy-section { display: flex; flex-direction: column; gap: 12px; }
+    .copy-section-title { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 11px; color: var(--brand-80); text-transform: uppercase; letter-spacing: 0.1em; padding-top: 8px; }
+    .copy-row { display: flex; flex-direction: column; gap: 4px; }
+    .copy-key { font-size: 11px; font-weight: 300; color: var(--brand-80); font-family: monospace; }
+    .copy-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 14px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; resize: vertical; min-height: 38px; transition: border-color 0.2s; }
+    .copy-input:focus { border-color: var(--brand-50); }
+    .copy-save-bar { position: sticky; bottom: 0; background: var(--bg); padding: 16px 0 0; display: flex; gap: 12px; align-items: center; }
+    .copy-saved-msg { font-size: 13px; font-weight: 300; color: var(--green); opacity: 0; transition: opacity 0.3s; }
+    .copy-saved-msg.show { opacity: 1; }
+
     /* ── Toast ── */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 300; color: var(--brand-20); white-space: nowrap; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 200; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -134,6 +156,12 @@
     </div>
   </div>
 
+  <!-- Admin nav tabs (shown after login) -->
+  <nav class="admin-nav" id="admin-nav">
+    <button class="admin-nav-btn active" data-screen="events-screen">Events</button>
+    <button class="admin-nav-btn" data-screen="copy-screen">Copy</button>
+  </nav>
+
   <!-- Events screen -->
   <div class="screen" id="events-screen">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
@@ -142,6 +170,22 @@
     </div>
     <div class="events-list" id="events-list">
       <p class="empty-events">Loading…</p>
+    </div>
+  </div>
+
+  <!-- Copy screen -->
+  <div class="screen" id="copy-screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <p class="section-heading">Copy</p>
+    </div>
+    <div class="copy-lang-tabs">
+      <button class="copy-lang-btn active" id="copy-lang-en">EN</button>
+      <button class="copy-lang-btn" id="copy-lang-fr">FR</button>
+    </div>
+    <div id="copy-fields" style="display:flex;flex-direction:column;gap:24px;"></div>
+    <div class="copy-save-bar">
+      <button class="btn-primary" id="copy-save-btn" style="max-width:160px;">Save</button>
+      <span class="copy-saved-msg" id="copy-saved-msg">Saved ✓</span>
     </div>
   </div>
 </div>
@@ -221,8 +265,23 @@
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.getElementById('logout-btn').style.display = id === 'events-screen' ? '' : 'none';
+    const loggedIn = id !== 'login-screen';
+    document.getElementById('logout-btn').style.display = loggedIn ? '' : 'none';
+    const nav = document.getElementById('admin-nav');
+    nav.classList.toggle('visible', loggedIn);
+    nav.querySelectorAll('.admin-nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.screen === id);
+    });
   }
+
+  // ── Admin nav tab switching ──
+  document.getElementById('admin-nav').addEventListener('click', e => {
+    const btn = e.target.closest('.admin-nav-btn');
+    if (!btn) return;
+    const target = btn.dataset.screen;
+    showScreen(target);
+    if (target === 'copy-screen') loadCopyEditor();
+  });
 
   document.getElementById('logout-btn').addEventListener('click', () => {
     sessionStorage.removeItem('momo_admin_token');
@@ -567,6 +626,118 @@
     showScreen('events-screen');
     loadEvents();
   }
+
+  // ══════════════════════════════════════════════
+  // COPY EDITOR
+  // ══════════════════════════════════════════════
+
+  const COPY_SECTIONS = [
+    { id: 'nav',      label: 'Navigation',    keys: ['nav.live'] },
+    { id: 'intro',    label: 'Intro',         keys: ['intro.tag.radio-host','intro.bio','intro.btn.book'] },
+    { id: 'events',   label: 'Next Events',   keys: ['next-events.heading','next-events.live','next-events.btn.go'] },
+    { id: 'reviews',  label: 'Reviews',       keys: ['reviews.heading','reviews.simone.text','reviews.tmo.text','reviews.jessie.text'] },
+    { id: 'demos',    label: 'Demos',         keys: ['demos.le-bon-groove.desc','demos.jazzy-house.desc','demos.chill.desc','demos.dancehall.desc','demos.coming-soon'] },
+    { id: 'timeline', label: 'Timeline',      keys: ['timeline.1990s','timeline.2000s','timeline.2010s','timeline.2020s','timeline.la-constellation.desc','timeline.ast-du-son.desc','timeline.taktika.desc','timeline.83.desc','timeline.focus.desc','timeline.buvette-simone.desc','timeline.twitch.desc','timeline.demain.desc','timeline.les-yeux-bleus.desc','timeline.quebec-kebs.desc','timeline.source.desc','timeline.red-bull.desc','timeline.pagail.desc'] },
+    { id: 'footer',   label: 'Footer',        keys: ['footer.copy'] },
+    { id: 'booking',  label: 'Booking Form',  keys: ['booking.title','booking.subtitle','booking.confirm.title','booking.confirm.copy','booking.btn.close','booking.btn.send','booking.field.name','booking.field.phone','booking.field.email','booking.field.company','booking.field.desc','booking.field.date'] },
+    { id: 'request',  label: 'Request Page',  keys: ['req.btn','req.live','req.details','req.tab.requested','req.tab.played','req.empty','req.playing','req.overlay.title','req.overlay.subtitle','req.overlay.field.spotify','req.overlay.btn.send','req.confirm.title','req.confirm.copy','req.confirm.btn.close'] },
+  ];
+
+  let copyData  = { en: null, fr: null };
+  let copyLang  = 'en';
+  let copySha   = { en: null, fr: null };
+
+  async function loadCopyEditor() {
+    const fieldsEl = document.getElementById('copy-fields');
+    if (copyData[copyLang]) { renderCopyFields(); return; }
+    fieldsEl.innerHTML = '<p style="color:var(--brand-80);font-size:14px;font-weight:300;">Loading…</p>';
+    try {
+      await Promise.all(['en','fr'].map(async lang => {
+        const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json?ref=${BRANCH}`);
+        if (!res.ok) { copyData[lang] = {}; return; }
+        const j = await res.json();
+        copySha[lang] = j.sha;
+        copyData[lang] = JSON.parse(atob(j.content.replace(/\n/g,'')));
+      }));
+    } catch(e) { copyData.en = {}; copyData.fr = {}; }
+    renderCopyFields();
+  }
+
+  function renderCopyFields() {
+    const fieldsEl = document.getElementById('copy-fields');
+    const copy = copyData[copyLang] || {};
+    fieldsEl.innerHTML = '';
+    COPY_SECTIONS.forEach(sec => {
+      const wrap = document.createElement('div');
+      wrap.className = 'copy-section';
+      wrap.innerHTML = `<p class="copy-section-title">${sec.label}</p>`;
+      sec.keys.forEach(key => {
+        const row = document.createElement('div');
+        row.className = 'copy-row';
+        const isLong = (copy[key] || '').length > 80;
+        row.innerHTML = `
+          <span class="copy-key">${key}</span>
+          ${isLong
+            ? `<textarea class="copy-input" data-copy-key="${key}" rows="3">${escHtml(copy[key] || '')}</textarea>`
+            : `<input class="copy-input" type="text" data-copy-key="${key}" value="${escHtml(copy[key] || '')}">`
+          }`;
+        wrap.appendChild(row);
+      });
+      fieldsEl.appendChild(wrap);
+    });
+  }
+
+  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+  // Lang toggle
+  document.getElementById('copy-lang-en').addEventListener('click', () => {
+    copyLang = 'en';
+    document.getElementById('copy-lang-en').classList.add('active');
+    document.getElementById('copy-lang-fr').classList.remove('active');
+    renderCopyFields();
+  });
+  document.getElementById('copy-lang-fr').addEventListener('click', () => {
+    copyLang = 'fr';
+    document.getElementById('copy-lang-fr').classList.add('active');
+    document.getElementById('copy-lang-en').classList.remove('active');
+    renderCopyFields();
+  });
+
+  // Save
+  document.getElementById('copy-save-btn').addEventListener('click', async () => {
+    const saveBtn = document.getElementById('copy-save-btn');
+    const savedMsg = document.getElementById('copy-saved-msg');
+    // Collect current field values
+    document.querySelectorAll('[data-copy-key]').forEach(el => {
+      copyData[copyLang][el.dataset.copyKey] = el.value;
+    });
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(copyData[copyLang], null, 2))));
+      const body = JSON.stringify({
+        message: `Update copy/${copyLang}.json via admin`,
+        content,
+        sha: copySha[copyLang],
+        branch: BRANCH
+      });
+      const res = await ghFetch(`/repos/${REPO}/contents/copy/${copyLang}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+      if (!res.ok) throw new Error((await res.json()).message);
+      const j = await res.json();
+      copySha[copyLang] = j.content.sha;
+      savedMsg.classList.add('show');
+      setTimeout(() => savedMsg.classList.remove('show'), 2500);
+      showToast('Copy saved — deploy to go live', 'success');
+    } catch(e) {
+      showToast('Save failed: ' + e.message, 'error');
+    }
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
+  });
 </script>
 </body>
 </html>

@@ -413,7 +413,7 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-      <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+      <button class="req-btn" id="open-request" data-key="req.btn" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
     </header>
 
     <!-- Event Card -->
@@ -422,10 +422,10 @@
         <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
         <div class="event-live-row">
           <div class="live-dot"></div>
-          <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+          <span class="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
         </div>
         <button class="event-details-btn" id="event-details-btn">
-          <span data-en="Details" data-fr="Détails">Details</span>
+          <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
           <img class="event-details-caret" id="event-details-caret" src="images/caret-down.png" alt="">
         </button>
       </div>
@@ -441,8 +441,8 @@
 
     <!-- Tabs -->
     <div class="tabs-row">
-      <button class="tab-btn inactive" id="tab-requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
-      <button class="tab-btn active"   id="tab-played"    data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+      <button class="tab-btn inactive" id="tab-requested" data-key="req.tab.requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
+      <button class="tab-btn active"   id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -629,7 +629,7 @@
 
   <!-- Requested List -->
   <div class="song-list hidden" id="requested-list">
-    <div class="empty-state" id="requested-empty" data-en="No requests yet. Be the first!" data-fr="Pas encore de demandes. Soyez le premier !">No requests yet. Be the first!</div>
+    <div class="empty-state" id="requested-empty" data-key="req.empty" data-en="No requests yet. Be the first!" data-fr="Pas encore de demandes. Soyez le premier !">No requests yet. Be the first!</div>
   </div>
 
   <!-- Now Playing Footer -->
@@ -644,7 +644,7 @@
           <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
             <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
           </svg>
-          <span data-en="Playing" data-fr="En lecture">Playing</span>
+          <span data-key="req.playing" data-en="Playing" data-fr="En lecture">Playing</span>
         </div>
       </div>
     </div>
@@ -663,9 +663,9 @@
       <div class="request-header">
         <div class="request-header-titles">
           <h2 class="request-header-title" id="request-title"
-              data-en="REQUEST A SONG" data-fr="DEMANDER UNE CHANSON">REQUEST A SONG</h2>
+              data-key="req.overlay.title" data-en="REQUEST A SONG" data-fr="DEMANDER UNE CHANSON">REQUEST A SONG</h2>
           <p class="request-header-sub"
-             data-en="Paste a Spotify link and Momo will do their best to play it."
+             data-key="req.overlay.subtitle" data-en="Paste a Spotify link and Momo will do their best to play it."
              data-fr="Collez un lien Spotify et Momo fera de son mieux pour la jouer.">Paste a Spotify link and Momo will do their best to play it.</p>
         </div>
         <button class="request-close" id="close-request" aria-label="Close">
@@ -679,7 +679,7 @@
       <div class="request-body">
         <div class="form-field">
           <label class="form-label" for="spotify-url"
-                 data-en="Spotify Link *" data-fr="Lien Spotify *">Spotify Link *</label>
+                 data-key="req.overlay.field.spotify" data-en="Spotify Link *" data-fr="Lien Spotify *">Spotify Link *</label>
           <input class="form-input" type="url" id="spotify-url"
                  placeholder="https://open.spotify.com/track/..."
                  autocomplete="off" autocorrect="off" spellcheck="false">
@@ -705,7 +705,7 @@
       <!-- Sticky footer -->
       <div class="request-footer">
         <button class="btn request-send" id="send-request-btn" disabled
-                data-en="SEND REQUEST" data-fr="ENVOYER LA DEMANDE">SEND REQUEST</button>
+                data-key="req.overlay.btn.send" data-en="SEND REQUEST" data-fr="ENVOYER LA DEMANDE">SEND REQUEST</button>
       </div>
     </div>
 
@@ -717,14 +717,14 @@
           <path d="M12 20.5L17.5 26L28 15" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <p class="request-confirm-title"
-           data-en="REQUEST SENT!" data-fr="DEMANDE ENVOYÉE !">REQUEST SENT!</p>
+           data-key="req.confirm.title" data-en="REQUEST SENT!" data-fr="DEMANDE ENVOYÉE !">REQUEST SENT!</p>
         <p class="request-confirm-copy"
-           data-en="Momo received your request and will do their best to play it tonight."
+           data-key="req.confirm.copy" data-en="Momo received your request and will do their best to play it tonight."
            data-fr="Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.">Momo received your request and will do their best to play it tonight.</p>
       </div>
       <div class="request-confirm-close">
         <button class="btn" id="success-close-btn"
-                data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+                data-key="req.confirm.btn.close" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
       </div>
     </div>
 
@@ -745,10 +745,28 @@
   // ─────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+  const COPY = { en: {}, fr: {} };
+
+  // Load both copy files in parallel; re-apply once loaded
+  Promise.all([
+    fetch('/copy/en.json').then(r => r.json()).catch(() => ({})),
+    fetch('/copy/fr.json').then(r => r.json()).catch(() => ({}))
+  ]).then(([en, fr]) => {
+    COPY.en = en; COPY.fr = fr;
+    applyLang(currentLang);
+  });
 
   function applyLang(lang) {
     currentLang = lang;
-    document.querySelectorAll('[data-en]').forEach(el => {
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val
+        : lang === 'fr' ? (el.dataset.fr || el.textContent)
+        : (el.dataset.en || el.textContent);
+    });
+    // Fallback for elements without data-key
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       const val = lang === 'fr' ? el.dataset.fr : el.dataset.en;
       if (val !== undefined) el.textContent = val;
     });
