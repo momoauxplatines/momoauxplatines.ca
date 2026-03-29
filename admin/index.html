@@ -101,6 +101,20 @@
     .admin-nav-btn { flex: 1; height: 44px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; }
     .admin-nav-btn.active { color: var(--brand-00); border-bottom-color: var(--brand-00); }
 
+    /* ── Requests ── */
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
+    .req-card { background: var(--brand-100); border-radius: 16px; padding: 8px; display: flex; align-items: center; gap: 10px; min-height: 80px; transition: opacity 0.3s; }
+    .req-card--played { opacity: 0.45; }
+    .req-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); }
+    .req-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .req-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 15px; color: var(--brand-00); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .req-artist { font-size: 13px; font-weight: 300; color: var(--brand-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .req-toggle { flex-shrink: 0; width: 44px; height: 44px; border-radius: 10px; border: none; background: var(--brand-90); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .req-toggle:hover { background: var(--brand-80); }
+    .req-toggle img { width: 28px; height: 28px; }
+    .req-empty { text-align: center; padding: 40px 0; color: var(--brand-80); font-size: 15px; font-weight: 300; }
+    .req-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
     /* ── Copy editor ── */
     .copy-lang-tabs { display: flex; gap: 0; }
     .copy-lang-btn { flex: 1; height: 40px; background: var(--brand-100); border: 1px solid var(--brand-90); color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; text-transform: uppercase; cursor: pointer; }
@@ -159,6 +173,7 @@
   <!-- Admin nav tabs (shown after login) -->
   <nav class="admin-nav" id="admin-nav">
     <button class="admin-nav-btn active" data-screen="events-screen">Events</button>
+    <button class="admin-nav-btn" data-screen="requests-screen">Requests</button>
     <button class="admin-nav-btn" data-screen="copy-screen">Copy</button>
   </nav>
 
@@ -171,6 +186,18 @@
     <div class="events-list" id="events-list">
       <p class="empty-events">Loading…</p>
     </div>
+  </div>
+
+  <!-- Requests screen -->
+  <div class="screen" id="requests-screen">
+    <div class="req-toolbar">
+      <p class="section-heading">Requests</p>
+      <button class="btn-secondary" id="req-refresh-btn">↻ Refresh</button>
+    </div>
+    <div class="req-list" id="req-list">
+      <p class="req-empty">Loading…</p>
+    </div>
+    <button class="btn-danger" id="req-clear-btn" style="margin-top:8px;">Clear All Requests</button>
   </div>
 
   <!-- Copy screen -->
@@ -280,7 +307,8 @@
     if (!btn) return;
     const target = btn.dataset.screen;
     showScreen(target);
-    if (target === 'copy-screen') loadCopyEditor();
+    if (target === 'copy-screen')     loadCopyEditor();
+    if (target === 'requests-screen') loadRequests();
   });
 
   document.getElementById('logout-btn').addEventListener('click', () => {
@@ -626,6 +654,106 @@
     showScreen('events-screen');
     loadEvents();
   }
+
+  // ══════════════════════════════════════════════
+  // REQUESTS
+  // ══════════════════════════════════════════════
+
+  let reqList = [];
+  let reqPollTimer = null;
+
+  async function loadRequests() {
+    const listEl = document.getElementById('req-list');
+    listEl.innerHTML = '<p class="req-empty">Loading…</p>';
+    try {
+      const res = await fetch('/api/requests');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      reqList = await res.json();
+    } catch (e) {
+      listEl.innerHTML = `<p class="req-empty" style="color:var(--red)">Failed to load: ${e.message}</p>`;
+      return;
+    }
+    renderRequests();
+    // Auto-refresh every 10 s while on this screen
+    clearInterval(reqPollTimer);
+    reqPollTimer = setInterval(() => {
+      if (document.getElementById('requests-screen').classList.contains('active')) {
+        loadRequests();
+      }
+    }, 10_000);
+  }
+
+  function renderRequests() {
+    const listEl = document.getElementById('req-list');
+    listEl.innerHTML = '';
+    if (!reqList.length) {
+      listEl.innerHTML = '<p class="req-empty">No requests yet.</p>';
+      return;
+    }
+    reqList.forEach(r => {
+      const isPlayed = r.status === 'played';
+      const card = document.createElement('div');
+      card.className = 'req-card' + (isPlayed ? ' req-card--played' : '');
+      card.dataset.id = r.id;
+      card.innerHTML = `
+        <img class="req-art" src="${r.image || ''}" alt=""
+             onerror="this.style.background='var(--brand-90)'">
+        <div class="req-info">
+          <p class="req-title">${escReq(r.title)}</p>
+          ${r.artist ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
+        </div>
+        <button class="req-toggle" title="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}">
+          <img src="../images/${isPlayed ? 'request-played-icon.png' : 'request-sent-icon.png'}" alt="">
+        </button>`;
+      listEl.appendChild(card);
+    });
+  }
+
+  function escReq(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+  // Toggle played/sent
+  document.getElementById('req-list').addEventListener('click', async e => {
+    const btn = e.target.closest('.req-toggle');
+    if (!btn) return;
+    const id     = btn.dataset.id;
+    const status = btn.dataset.status; // the NEW status to set
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, status })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
+      // Update local copy
+      const idx = reqList.findIndex(r => r.id === id);
+      if (idx >= 0) reqList[idx].status = status;
+      renderRequests();
+    } catch (e) {
+      showToast('Failed: ' + e.message, 'error');
+      btn.disabled = false;
+    }
+  });
+
+  // Refresh button
+  document.getElementById('req-refresh-btn').addEventListener('click', loadRequests);
+
+  // Clear all
+  document.getElementById('req-clear-btn').addEventListener('click', async () => {
+    if (!confirm('Clear all requests? This cannot be undone.')) return;
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
+      reqList = [];
+      renderRequests();
+      showToast('All requests cleared', 'success');
+    } catch (e) {
+      showToast('Failed: ' + e.message, 'error');
+    }
+  });
 
   // ══════════════════════════════════════════════
   // COPY EDITOR

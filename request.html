@@ -177,8 +177,9 @@
       background: #000;
       border-radius: 16px; padding: 8px;
       display: flex; align-items: center; gap: 8px;
-      min-height: 80px;
+      min-height: 80px; transition: opacity 0.3s;
     }
+    .song-card--played { opacity: 0.5; }
     .song-art {
       width: 64px; height: 64px; border-radius: 8px;
       object-fit: cover; flex-shrink: 0;
@@ -981,31 +982,78 @@
     }, 600);
   });
 
+  // ─────────────────────────────────────────────
+  // Shared request store (API + localStorage backup)
+  // ─────────────────────────────────────────────
+  // localStorage key: 'momo_my_requests' → [{id, title, artist, image, url, ts}]
+  // API is polled every 10s to sync played status
+
+  function myRequests() {
+    return JSON.parse(localStorage.getItem('momo_my_requests') || '[]');
+  }
+  function saveMyRequests(list) {
+    localStorage.setItem('momo_my_requests', JSON.stringify(list));
+  }
+
+  // Map of requestId → status (synced from API)
+  let requestStatuses = {};
+
+  async function syncStatuses() {
+    const mine = myRequests();
+    if (!mine.length) return;
+    try {
+      const res  = await fetch('/api/requests');
+      if (!res.ok) return;
+      const all  = await res.json();
+      const map  = {};
+      all.forEach(r => { map[r.id] = r.status; });
+      requestStatuses = map;
+      renderRequestedList();
+    } catch { /* non-blocking */ }
+  }
+
+  // Poll every 10 s while page is visible
+  setInterval(() => { if (!document.hidden) syncStatuses(); }, 10_000);
+  syncStatuses();
+
   // Submit
   sendBtn.addEventListener('click', async () => {
     if (!currentTrack) return;
     sendBtn.disabled = true;
     sendBtn.textContent = currentLang === 'fr' ? 'ENVOI…' : 'SENDING…';
 
-    // Save to localStorage
-    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
-    requests.unshift({ ...currentTrack, ts: Date.now() });
-    localStorage.setItem('momo_requests', JSON.stringify(requests));
+    let requestId = null;
 
-    // Email via Formspree
+    // POST to shared API
     try {
-      await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const res = await fetch('/api/requests', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `Song request: ${currentTrack.title}`,
-          song:    currentTrack.title,
-          artist:  currentTrack.artist,
-          spotify: currentTrack.url,
-          from:    'Anonymous'
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentTrack)
       });
+      if (res.ok) {
+        const data = await res.json();
+        requestId = data.id;
+      }
     } catch { /* non-blocking */ }
+
+    // Save to localStorage (backup + owns-this-request tracking)
+    const mine = myRequests();
+    mine.unshift({ ...currentTrack, id: requestId, ts: Date.now() });
+    saveMyRequests(mine);
+
+    // Email via Formspree (non-blocking)
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Song request: ${currentTrack.title}`,
+        song:    currentTrack.title,
+        artist:  currentTrack.artist,
+        spotify: currentTrack.url,
+        from:    'Anonymous'
+      })
+    }).catch(() => {});
 
     // Close overlay and switch to Requested tab
     closeOverlay();
@@ -1014,42 +1062,46 @@
     requestedList.classList.remove('hidden');
     playedList.classList.add('hidden');
     renderRequestedList();
+    syncStatuses();
   });
 
   // ─────────────────────────────────────────────
-  // Render requested list from localStorage
+  // Render requested list
   // ─────────────────────────────────────────────
   function renderRequestedList() {
-    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
-    const emptyEl  = document.getElementById('requested-empty');
+    const mine    = myRequests();
+    const emptyEl = document.getElementById('requested-empty');
 
     // Remove previously rendered cards (keep empty state el)
     Array.from(requestedList.children).forEach(c => {
       if (c.id !== 'requested-empty') c.remove();
     });
 
-    if (!requests.length) {
+    if (!mine.length) {
       emptyEl.style.display = '';
       applyLang(currentLang);
       return;
     }
     emptyEl.style.display = 'none';
 
-    requests.forEach(r => {
+    mine.forEach(r => {
+      const isPlayed = r.id && requestStatuses[r.id] === 'played';
+      const icon     = isPlayed ? 'images/request-played-icon.png' : 'images/request-sent-icon.png';
+      const iconAlt  = isPlayed ? 'Played' : 'Requested';
       const card = document.createElement('div');
-      card.className = 'song-card';
+      card.className = 'song-card' + (isPlayed ? ' song-card--played' : '');
       card.innerHTML = `
-        <img class="song-art" src="${r.image || ''}" alt="${r.title}"
+        <img class="song-art" src="${r.image || ''}" alt="${safeHtml(r.title)}"
              onerror="this.style.background='var(--brand-90)'">
         <div class="song-info">
           <div class="song-text-group">
-            <p class="song-title">${r.title}</p>
-            ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
+            <p class="song-title">${safeHtml(r.title)}</p>
+            ${r.artist ? `<p class="song-artist">${safeHtml(r.artist)}</p>` : ''}
           </div>
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
         </div>
         <div class="song-request-col">
-          <img class="song-request-icon" src="images/request-sent-icon.png" alt="Requested">
+          <img class="song-request-icon" src="${icon}" alt="${iconAlt}">
         </div>`;
       requestedList.appendChild(card);
     });
