@@ -1,25 +1,20 @@
 {
   "nav.live": "LIVE",
-
   "intro.tag.radio-host": "RADIO HOST",
-  "intro.bio": "Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.",
+  "intro.bio": "Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.\n\nOls AKAs were DJ Muhammad Alias and DJ Alias.",
   "intro.btn.book": "BOOK",
-
   "next-events.heading": "Next Events",
   "next-events.live": "LIVE",
   "next-events.btn.go": "GO TO EVENT PAGE",
-
   "reviews.heading": "Reviews",
   "reviews.simone.text": "Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.",
   "reviews.tmo.text": "A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.",
   "reviews.jessie.text": "We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!",
-
   "demos.le-bon-groove.desc": "Head nodding on the couch and dancing a bit when getting up to go to the fridge.",
   "demos.jazzy-house.desc": "Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023.",
   "demos.chill.desc": "3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.",
   "demos.dancehall.desc": "Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.",
   "demos.coming-soon": "Coming soon",
-
   "timeline.1990s": "1990s",
   "timeline.2000s": "2000s",
   "timeline.2010s": "2010s",
@@ -37,9 +32,7 @@
   "timeline.source.desc": "Host and DJ of a mixed weekly hip-hop radio show.",
   "timeline.red-bull.desc": "Event DJ for extreme sports activities sponsored by the company.",
   "timeline.pagail.desc": "Studio recorded scratches on the one and only album \"C'est pour les miens\".",
-
   "footer.copy": "© 2026 Momo aux platines. All rights reserved.",
-
   "booking.title": "Book Momo",
   "booking.subtitle": "Let me know what musical experience you would like to add to your event.",
   "booking.confirm.title": "Booking request just sent!",
@@ -52,7 +45,6 @@
   "booking.field.company": "Company *",
   "booking.field.desc": "Description *",
   "booking.field.date": "Date",
-
   "req.btn": "REQUEST",
   "req.live": "LIVE",
   "req.details": "Details",
