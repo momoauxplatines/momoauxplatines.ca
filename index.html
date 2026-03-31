@@ -126,8 +126,10 @@
     .stamp-container {
       width: 330px; height: 331px; position: relative;
       flex-shrink: 0; z-index: 1;
-      pointer-events: none; touch-action: pan-y;
+      pointer-events: auto; touch-action: none;
+      cursor: grab; user-select: none; -webkit-user-select: none;
     }
+    .stamp-container:active { cursor: grabbing; }
 
     @keyframes spin-cw-mobile {
       from { transform: translate(-50%,-50%) scale(0.4893) rotate(0deg); }
@@ -1625,6 +1627,116 @@
       }
     });
   }
+
+  // ─────────────────────────────────────────────
+  // Stamp drag-to-rotate interaction
+  // Drag down → clockwise + scratch-forth sound
+  // Drag up   → counter-clockwise + scratch-back sound
+  // ─────────────────────────────────────────────
+  (function () {
+    const container = document.querySelector('.stamp-section .stamp-container');
+    const stamp     = document.querySelector('.stamp-section .stamp-component');
+    if (!container || !stamp) return;
+
+    const PX_PER_DEG = 0.7; // sensitivity
+
+    let dragging      = false;
+    let startY        = 0;
+    let baseAngle     = 0;
+    let lastY         = 0;
+    let lastDirection = 0; // 1 = down, -1 = up
+
+    // ── Audio ──
+    const audioForth = new Audio('/audio/scratch-forth.mp3');
+    const audioBack  = new Audio('/audio/scratch-back.mp3');
+    audioForth.loop  = false;
+    audioBack.loop   = false;
+    let activeAudio  = null;
+
+    function playSound(audio) {
+      if (activeAudio === audio) return;
+      if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
+      activeAudio = audio;
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+
+    function stopSound() {
+      if (!activeAudio) return;
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+
+    function getCurrentAngle() {
+      const m = new DOMMatrix(window.getComputedStyle(stamp).transform);
+      const a = Math.atan2(m.b, m.a) * (180 / Math.PI);
+      return ((a % 360) + 360) % 360;
+    }
+
+    function getScale() {
+      return window.matchMedia('(min-width: 640px)').matches ? 0.7865 : 0.4893;
+    }
+
+    function setAngle(angle) {
+      stamp.style.transform = `translate(-50%,-50%) scale(${getScale()}) rotate(${angle}deg)`;
+    }
+
+    function startDrag(y) {
+      baseAngle     = getCurrentAngle();
+      stamp.style.animation = 'none';
+      setAngle(baseAngle);
+      dragging      = true;
+      startY        = y;
+      lastY         = y;
+      lastDirection = 0;
+    }
+
+    function moveDrag(y) {
+      if (!dragging) return;
+      setAngle(baseAngle + (y - startY) * PX_PER_DEG);
+
+      const delta = y - lastY;
+      if (delta !== 0) {
+        const dir = delta > 0 ? 1 : -1;
+        if (dir !== lastDirection) {
+          lastDirection = dir;
+          playSound(dir > 0 ? audioForth : audioBack);
+        }
+      }
+      lastY = y;
+    }
+
+    function endDrag(y) {
+      if (!dragging) return;
+      dragging = false;
+      stopSound();
+      const finalAngle = ((baseAngle + (y - startY) * PX_PER_DEG) % 360 + 360) % 360;
+      // Resume auto-spin from the current angle
+      const animName = window.matchMedia('(min-width: 640px)').matches
+        ? 'spin-cw-tablet' : 'spin-cw-mobile';
+      const delay = -(finalAngle / 360 * 60);
+      stamp.style.transform  = '';
+      stamp.style.animation  = `${animName} 60s ${delay}s linear infinite`;
+    }
+
+    // Mouse
+    container.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientY); });
+    window.addEventListener('mousemove',    e => { moveDrag(e.clientY); });
+    window.addEventListener('mouseup',      e => { endDrag(e.clientY); });
+
+    // Touch
+    container.addEventListener('touchstart', e => {
+      e.preventDefault();
+      startDrag(e.touches[0].clientY);
+    }, { passive: false });
+    window.addEventListener('touchmove', e => {
+      if (dragging) { e.preventDefault(); moveDrag(e.touches[0].clientY); }
+    }, { passive: false });
+    window.addEventListener('touchend', e => {
+      if (dragging) endDrag(e.changedTouches[0].clientY);
+    });
+  })();
 
   // Load events.json and render cards
   fetch('events.json')
