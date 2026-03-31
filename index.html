@@ -1652,6 +1652,18 @@
     audioForth.loop  = false;
     audioBack.loop   = false;
     let activeAudio  = null;
+    let audioReady   = false;
+
+    // iOS/Android require audio to be triggered inside a synchronous touchstart.
+    // Prime both elements on the first touch so moveDrag can play them freely.
+    function primeAudio() {
+      if (audioReady) return;
+      audioReady = true;
+      [audioForth, audioBack].forEach(a => {
+        const p = a.play();
+        if (p) p.then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
+      });
+    }
 
     function playSound(audio) {
       if (activeAudio === audio) return;
@@ -1683,6 +1695,7 @@
     }
 
     function startDrag(y) {
+      primeAudio(); // must run synchronously inside touchstart to unlock audio on mobile
       baseAngle     = getCurrentAngle();
       stamp.style.animation = 'none';
       setAngle(baseAngle);
