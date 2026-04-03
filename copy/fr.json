@@ -2,7 +2,7 @@
   "nav.live": "EN DIRECT",
   "intro.tag.radio-host": "ANIMATEUR RADIO",
   "intro.bio": "Plusieurs décennies derrière les platines. Scratch avec des groupes de rap et des DJ tout azimuts, mixant toutes sortes de styles dans des bars branchés, des clubs à mode et lors d'événements spéciaux à travers le Québec.\n\nAnciens pseudonymes étaient DJ Muhammad Alias et DJ Alias.",
-  "intro.btn.book": "BOOK",
+  "intro.btn.book": "CONTACT",
   "next-events.heading": "Prochains événements",
   "next-events.live": "EN DIRECT",
   "next-events.btn.go": "ALLER À LA PAGE DE L'ÉVÉNEMENT",
@@ -58,5 +58,7 @@
   "req.overlay.btn.send": "ENVOYER LA DEMANDE",
   "req.confirm.title": "DEMANDE ENVOYÉE !",
   "req.confirm.copy": "Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.",
-  "req.confirm.btn.close": "FERMER"
+  "req.confirm.btn.close": "FERMER",
+  "intro.title": "MOMO AUX PLATINES",
+  "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO"
 }
