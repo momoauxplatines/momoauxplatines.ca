@@ -2,7 +2,7 @@
   "nav.live": "LIVE",
   "intro.tag.radio-host": "RADIO HOST",
   "intro.bio": "Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.\n\nI've also been DJ Muhammad Alias and DJ Alias in the past.",
-  "intro.btn.book": "BOOK",
+  "intro.btn.book": "CONTACT",
   "next-events.heading": "Next Events",
   "next-events.live": "LIVE",
   "next-events.btn.go": "GO TO EVENT PAGE",
@@ -58,5 +58,7 @@
   "req.overlay.btn.send": "SEND REQUEST",
   "req.confirm.title": "REQUEST SENT!",
   "req.confirm.copy": "Momo received your request and will do their best to play it tonight.",
-  "req.confirm.btn.close": "CLOSE"
+  "req.confirm.btn.close": "CLOSE",
+  "intro.title": "MOMO AUX PLATINES",
+  "intro.tags": "DJ|TURNTABLIST|RADIO HOST"
 }
