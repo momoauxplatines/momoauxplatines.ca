@@ -1521,7 +1521,7 @@
               ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
               ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
             </div>
-            <a class="ev-go-btn" href="request.html"
+            <a class="ev-go-btn" href="request.html${ev.slug ? '?event=' + encodeURIComponent(ev.slug) : ''}"
                data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
           liveSection.appendChild(card);
         });
@@ -1758,7 +1758,11 @@
   })();
 
   // Load events.json and render cards
-  fetch('events.json')
+  // Use GitHub raw URL locally so admin changes (which write to GitHub) are reflected without a git pull
+  const eventsUrl = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'https://raw.githubusercontent.com/momoauxplatines/momoauxplatines.ca/main/events.json'
+    : '/events.json';
+  fetch(eventsUrl)
     .then(r => r.json())
     .then(data => {
       window.MOMO_EVENTS = Array.isArray(data) ? data : (data.events || []);

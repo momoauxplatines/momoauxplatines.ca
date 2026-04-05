@@ -633,7 +633,7 @@
 
     const liveIdx = currentEvents.indexOf(liveEvent);
     el.innerHTML = `
-      <div class="gig-card" data-action="open-requests" data-index="${liveIdx}" style="cursor:pointer;">
+      <div class="gig-card" style="cursor:default;">
         <div class="gig-card-top">
           <div class="gig-card-avatar">
             <img src="${liveEvent.image ? '../' + liveEvent.image.replace(/^\//, '') : ''}" alt="${esc(liveEvent.venue)}" onerror="this.style.opacity='0'">
@@ -649,6 +649,7 @@
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">Live</span>
           </div>
+          <button class="btn-card-edit" data-action="open-requests" data-index="${liveIdx}" style="pointer-events:auto;">Requests</button>
           <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
         </div>
         ${liveEvent.slug ? `<div class="gig-card-url">
@@ -692,8 +693,7 @@
       const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
       const card = document.createElement('div');
       card.className = 'gig-card';
-      card.dataset.action = 'open-requests';
-      card.dataset.index  = idx;
+      card.style.cursor = 'default';
       card.innerHTML = `
         <div class="gig-card-top">
           <div class="gig-card-avatar">
@@ -706,7 +706,8 @@
           </div>
         </div>
         <div class="gig-card-actions">
-          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
+          <button class="btn-card-edit" data-action="open-requests" data-index="${idx}">Requests</button>
+          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}">Edit</button>
         </div>
         ${ev.slug ? `<div class="gig-card-url">
           <span class="gig-url-label">${esc(requestUrl(ev.slug))}</span>
