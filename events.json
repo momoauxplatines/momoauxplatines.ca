@@ -3,12 +3,23 @@
     {
       "slug": "testing-the-thingy-thing",
       "venue": "Testing the thingy thing",
-      "address": "2242 rue de la roche, montréal",
+      "address": "2242 rue de la roche, montrÃ©al",
       "date": "",
       "start_time": "14:00",
       "end_time": "16:00",
       "instagram": "https://www.instagram.com/djmomoauxplatines/",
       "image": "/images/events/testing-the-thingy-thing-mnm4ojni.jpg",
+      "show": true
+    },
+    {
+      "slug": "bobby-2026-05-05",
+      "venue": "bobby",
+      "address": "4444 rue lot, Qc",
+      "date": "2026-05-05",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "instagram": "https://www.instagram.com/djmomoauxplatines/",
+      "image": "/images/events/bobby-mnm4pxq4.jpg",
       "show": true
     }
   ]
