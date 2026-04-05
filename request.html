@@ -925,7 +925,8 @@
     tabPlayed.className    = 'tab-btn inactive';
     requestedList.classList.remove('hidden');
     playedList.classList.add('hidden');
-    renderRequestedList();
+    // Always sync before rendering so icons reflect the latest played status
+    syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
   });
 
   // ─────────────────────────────────────────────
@@ -1126,8 +1127,8 @@
     } catch { /* non-blocking */ }
   }
 
-  // Poll every 10 s while page is visible
-  setInterval(() => { if (!document.hidden) syncStatuses(); }, 10_000);
+  // Poll while page is visible — 5 s on event pages (icon flips to Played), 10 s on general live page
+  setInterval(() => { if (!document.hidden) syncStatuses(); }, EVENT_SLUG ? 5_000 : 10_000);
   syncStatuses();
   // Render requested list on load so the correct empty-state text shows immediately
   renderRequestedList();
