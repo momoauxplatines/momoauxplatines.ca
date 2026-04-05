@@ -3,23 +3,12 @@
     {
       "slug": "testing-the-thingy-thing",
       "venue": "Testing the thingy thing",
-      "address": "2242 rue de la roche, montrÃÂ©al",
+      "address": "2242 rue de la roche, montrÃÂÃÂ©al",
       "date": "",
       "start_time": "14:00",
       "end_time": "16:00",
       "instagram": "https://www.instagram.com/djmomoauxplatines/",
       "image": "/images/events/testing-the-thingy-thing-mnm4ojni.jpg",
-      "show": true
-    },
-    {
-      "slug": "jean-val-jean-2026-05-05",
-      "venue": "Jean val jean",
-      "address": "1234 rue du Cat",
-      "date": "2026-04-05",
-      "start_time": "13:00",
-      "end_time": "17:00",
-      "instagram": "https://www.instagram.com/djmomoauxplatines/",
-      "image": "/images/events/jean-val-jean-mnm5n330.jpg",
       "show": true
     }
   ]
