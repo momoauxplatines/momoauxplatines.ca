@@ -16,7 +16,8 @@
       "start_time": "17:00",
       "end_time": "19:00",
       "instagram": "https://www.instagram.com/labuvettechezsimone/",
-      "image": "/images/events/labuvettechezsimone.png"
+      "image": "/images/events/labuvettechezsimone.png",
+      "show": false
     }
   ]
 }
