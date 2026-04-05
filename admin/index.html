@@ -190,6 +190,10 @@
     .req-switch.on { background: var(--green); }
     .req-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 100px; background: #fff; box-shadow: 0 2px 4px rgba(39,39,39,0.1); transition: transform 0.2s; }
     .req-switch.on::after { transform: translateX(16px); }
+    .req-delete-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--red, #d34242); padding: 0; flex-shrink: 0; transition: opacity 0.15s; }
+    .req-delete-btn:hover { opacity: 0.65; }
+    .req-empty-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 6px; }
+    .req-empty-body p { font-size: 16px; font-weight: 300; color: var(--brand-60, #888); line-height: 22px; }
 
   </style>
 </head>
@@ -1458,10 +1462,25 @@
   const reqBody     = document.getElementById('req-body');
   let reqList = [];
   let reqEventIdx = -1;
+  let reqEventIsLive = false;
+
+  function isEventLive(ev) {
+    if (!ev || !ev.date) return false;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    if (ev.date !== todayStr) return false;
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    function toMins(t) { if (!t) return null; const p = t.split(':').map(Number); return p[0] * 60 + (p[1] || 0); }
+    const start = toMins(ev.start_time);
+    const end   = toMins(ev.end_time);
+    if (start === null || end === null) return false;
+    return nowMins >= start && nowMins < end;
+  }
 
   function openRequests(idx) {
     reqEventIdx = idx;
     const ev = currentEvents[idx];
+    reqEventIsLive = isEventLive(ev);
     const avatarEl = document.getElementById('req-event-avatar-img');
     if (avatarEl) {
       const src = ev?.image ? '../' + ev.image.replace(/^\//, '') : '';
@@ -1498,30 +1517,42 @@
 
   function renderRequests() {
     reqBody.innerHTML = '';
+
+    if (!reqList.length) {
+      reqBody.innerHTML = `
+        <div class="req-empty-body">
+          <p>No requests have been made yet.</p>
+          <p style="margin-top:8px;color:var(--brand-80,#51534E)">Make a request by tapping the<br>Request button in the top header.</p>
+        </div>`;
+      return;
+    }
+
     // Section heading
     const heading = document.createElement('p');
     heading.className = 'req-section-title';
     heading.textContent = 'Requests';
     reqBody.appendChild(heading);
 
-    if (!reqList.length) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'No requests yet.';
-      reqBody.appendChild(empty);
-      return;
-    }
     reqList.forEach(r => {
       const isPlayed = r.status === 'played';
       const card = document.createElement('div');
       card.className = 'req-card';
       card.dataset.id = r.id;
-      // Format timestamp
+      // Format timestamp using r.ts (milliseconds)
       let timeStr = '';
-      if (r.created_at) {
-        const d = new Date(r.created_at);
+      if (r.ts) {
+        const d = new Date(r.ts);
         timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
+      // Right control: toggle switch when live, red ✕ delete when not live
+      const controlHtml = reqEventIsLive
+        ? `<button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>`
+        : `<button class="req-delete-btn" aria-label="Delete request" data-req-action="delete" data-id="${r.id}">
+             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+               <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+               <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+             </svg>
+           </button>`;
       card.innerHTML = `
         <img class="req-art" src="${r.image || ''}" alt="" onerror="this.style.background='var(--brand-90)'">
         <div class="req-info">
@@ -1529,9 +1560,7 @@
           ${r.artist ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
           ${timeStr   ? `<p class="req-time">${escReq(timeStr)}</p>`   : ''}
         </div>
-        <div class="req-controls">
-          <button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>
-        </div>`;
+        <div class="req-controls">${controlHtml}</div>`;
       reqBody.appendChild(card);
     });
   }

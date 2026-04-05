@@ -65,7 +65,7 @@
     /* ── Header ── */
     .req-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px;
+      padding: 24px 16px;
     }
 
     .req-btn {
@@ -168,8 +168,13 @@
     .song-list.hidden { display: none; }
 
     .empty-state {
-      padding: 48px 0; text-align: center;
-      color: var(--brand-80); font-size: 16px; font-weight: 300;
+      min-height: 240px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 48px 32px;
+      color: #A2A99A;
+      font-size: 18px; font-weight: 300; line-height: 26px;
     }
 
     /* ── Song Card ── */
@@ -441,14 +446,14 @@
 
     <!-- Tabs -->
     <div class="tabs-row">
-      <button class="tab-btn inactive" id="tab-requested" data-key="req.tab.requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
-      <button class="tab-btn active"   id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+      <button class="tab-btn active"   id="tab-requested" data-key="req.tab.requested" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
+      <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
     </div>
 
   </div><!-- /sticky-top -->
 
   <!-- Played List -->
-  <div class="song-list" id="played-list">
+  <div class="song-list hidden" id="played-list">
 
     <div class="song-card">
       <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/99/96/a6/9996a65d-c79d-2d70-46f0-32468f4f6e21/195497550296.jpg/100x100bb.jpg" alt="Dream Machines" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -628,8 +633,8 @@
   </div>
 
   <!-- Requested List -->
-  <div class="song-list hidden" id="requested-list">
-    <div class="empty-state" id="requested-empty" data-key="req.empty" data-en="No requests yet. Be the first!" data-fr="Pas encore de demandes. Soyez le premier !">No requests yet. Be the first!</div>
+  <div class="song-list" id="requested-list">
+    <div class="empty-state" id="requested-empty" data-en="No requests have been made yet." data-fr="Aucune demande pour le moment.">No requests have been made yet.</div>
   </div>
 
   <!-- Now Playing Footer -->
@@ -815,7 +820,7 @@
 
     // Clear hardcoded placeholder songs from played list
     const playedList = document.getElementById('played-list');
-    if (playedList) playedList.innerHTML = '<div class="empty-state" data-en="No songs played yet." data-fr="Aucune chanson jouée pour l\'instant.">No songs played yet.</div>';
+    if (playedList) playedList.innerHTML = '<div class="empty-state">Nothing has been played yet.<br><br>Open the event details card to know when this event will be live and where.</div>';
 
     const eventsUrl = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
       ? 'https://raw.githubusercontent.com/momoauxplatines/momoauxplatines.ca/main/events.json'
@@ -873,6 +878,14 @@
   const tabPlayed    = document.getElementById('tab-played');
   const playedList   = document.getElementById('played-list');
   const requestedList= document.getElementById('requested-list');
+
+  // Non-slug (live) page defaults to PLAYED tab; slug pages keep REQUESTS default
+  if (!EVENT_SLUG) {
+    tabPlayed.className    = 'tab-btn active';
+    tabRequested.className = 'tab-btn inactive';
+    playedList.classList.remove('hidden');
+    requestedList.classList.add('hidden');
+  }
 
   tabPlayed.addEventListener('click', () => {
     tabPlayed.className    = 'tab-btn active';
@@ -1089,6 +1102,8 @@
   // Poll every 10 s while page is visible
   setInterval(() => { if (!document.hidden) syncStatuses(); }, 10_000);
   syncStatuses();
+  // Render requested list on load so the correct empty-state text shows immediately
+  renderRequestedList();
 
   // Submit
   sendBtn.addEventListener('click', async () => {
@@ -1152,8 +1167,14 @@
     });
 
     if (!mine.length) {
+      if (EVENT_SLUG) {
+        emptyEl.innerHTML = 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
+      } else {
+        emptyEl.textContent = currentLang === 'fr'
+          ? 'Pas encore de demandes. Soyez le premier !'
+          : 'No requests yet. Be the first!';
+      }
       emptyEl.style.display = '';
-      applyLang(currentLang);
       return;
     }
     emptyEl.style.display = 'none';
