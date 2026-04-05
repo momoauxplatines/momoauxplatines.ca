@@ -745,6 +745,9 @@
   // ─────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+  const EVENT_SLUG = (params.get('event') || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
+  const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
   const COPY = { en: {}, fr: {} };
 
   // Load both copy files in parallel; re-apply once loaded
@@ -778,6 +781,33 @@
 
   // Apply on load
   applyLang(currentLang);
+
+  // ─────────────────────────────────────────────
+  // Populate event card from events.json when slug is provided
+  // ─────────────────────────────────────────────
+  if (EVENT_SLUG) {
+    fetch('/events.json')
+      .then(r => r.json())
+      .then(data => {
+        const events = Array.isArray(data) ? data : (data.events || []);
+        const ev = events.find(e => e.slug === EVENT_SLUG);
+        if (!ev) return;
+        const venueImg = document.querySelector('.event-venue-img');
+        if (venueImg && ev.image) venueImg.src = ev.image.replace(/^\//, '');
+        const eventName = document.querySelector('.event-name');
+        if (eventName) eventName.textContent = ev.venue || '';
+        const eventAddress = document.querySelector('.event-address');
+        if (eventAddress) eventAddress.textContent = ev.address || '';
+        const eventHours = document.querySelector('.event-hours');
+        if (eventHours) eventHours.textContent = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
+        const igLink = document.querySelector('.event-ig-link');
+        if (igLink) {
+          if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
+          else igLink.style.display = 'none';
+        }
+      })
+      .catch(() => {});
+  }
 
   // ─────────────────────────────────────────────
   // Event Card expand / collapse
@@ -988,10 +1018,10 @@
   // API is polled every 10s to sync played status
 
   function myRequests() {
-    return JSON.parse(localStorage.getItem('momo_my_requests') || '[]');
+    return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
   }
   function saveMyRequests(list) {
-    localStorage.setItem('momo_my_requests', JSON.stringify(list));
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
   }
 
   // Map of requestId → status (synced from API)
@@ -1001,7 +1031,7 @@
     const mine = myRequests();
     if (!mine.length) return;
     try {
-      const res  = await fetch('/api/requests');
+      const res  = await fetch(API_BASE);
       if (!res.ok) return;
       const all  = await res.json();
       const map  = {};
@@ -1023,9 +1053,9 @@
 
     let requestId = null;
 
-    // POST to shared API
+    // POST to per-event API
     try {
-      const res = await fetch('/api/requests', {
+      const res = await fetch(API_BASE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentTrack)

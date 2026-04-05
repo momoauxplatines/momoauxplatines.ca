@@ -169,6 +169,10 @@
     .gig-card-name { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; }
     .gig-card-meta { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
     .gig-card-actions { display: flex; justify-content: flex-end; }
+    .gig-card-url { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--brand-90); padding-top: 10px; pointer-events: auto; }
+    .gig-url-label { flex: 1; font-size: 12px; font-weight: 300; color: var(--brand-60); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .btn-copy-url { background: none; border: 1px solid var(--brand-80); border-radius: 6px; color: var(--brand-50); font-family: inherit; font-size: 12px; font-weight: 300; padding: 0 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; height: 28px; transition: background 0.15s, color 0.15s; }
+    .btn-copy-url:hover { background: var(--brand-90); color: var(--brand-00); }
 
     /* ── Requests overlay ── */
     .req-back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 18px; font-weight: 300; padding: 0; line-height: 26px; }
@@ -470,6 +474,18 @@
       + '-' + Date.now().toString(36);
   }
 
+  // Stable event slug — no timestamp, based on venue + date
+  function eventSlug(venue, date) {
+    const v = (venue || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 28);
+    const d = (date || '').slice(0, 10); // YYYY-MM-DD
+    return [v, d].filter(Boolean).join('-').replace(/-{2,}/g, '-');
+  }
+
+  // Build the full request page URL for an event slug
+  function requestUrl(slug) {
+    return `https://momoauxplatines.ca/request.html?event=${encodeURIComponent(slug)}`;
+  }
+
   function loadRegistries() {
     // Reviews
     const rReg = (copyData['en']['reviews.registry'] || '').split('|').filter(Boolean);
@@ -635,6 +651,10 @@
           </div>
           <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
         </div>
+        ${liveEvent.slug ? `<div class="gig-card-url">
+          <span class="gig-url-label">${esc(requestUrl(liveEvent.slug))}</span>
+          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}">Copy URL</button>
+        </div>` : ''}
       </div>`;
   }
 
@@ -687,7 +707,11 @@
         </div>
         <div class="gig-card-actions">
           <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
-        </div>`;
+        </div>
+        ${ev.slug ? `<div class="gig-card-url">
+          <span class="gig-url-label">${esc(requestUrl(ev.slug))}</span>
+          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}">Copy URL</button>
+        </div>` : ''}`;
       el.appendChild(card);
     });
   }
@@ -779,6 +803,13 @@
     if (action === 'edit-gig')      openForm('gig',      { index: parseInt(index) });
     if (action === 'delete-gig')    deleteGig(parseInt(index));
     if (action === 'open-requests') openRequests(parseInt(index));
+    if (action === 'copy-url') {
+      e.stopPropagation();
+      navigator.clipboard.writeText(btn.dataset.url).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy URL'; }, 2000);
+      }).catch(() => showToast('Could not copy', 'error'));
+    }
   });
 
   document.getElementById('add-gig-btn').addEventListener('click', () => openForm('gig', { index: -1 }));
@@ -1301,10 +1332,15 @@
           } catch (_) { imagePath = ''; }
         }
 
+        const dateVal = document.getElementById('ef-date')?.value || '';
+        const existingEv = (() => { const i = parseInt(document.getElementById('ef-gig-index')?.value); return i >= 0 ? currentEvents[i] : null; })();
+        const slug = existingEv?.slug || eventSlug(venue, dateVal);
+
         const ev = {
+          slug,
           venue,
           address:    document.getElementById('ef-address')?.value.trim() || '',
-          date:       document.getElementById('ef-date')?.value || '',
+          date:       dateVal,
           start_time: document.getElementById('ef-start')?.value || '',
           end_time:   document.getElementById('ef-end')?.value || '',
           instagram:  igVal,
@@ -1451,8 +1487,12 @@
 
   async function loadRequests() {
     reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+    const slug = currentEvents[reqEventIdx]?.slug || '';
+    const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
     try {
-      const res = await fetch('/api/requests');
+      const res = await fetch(`/api/requests${qs}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       reqList = await res.json();
     } catch (e) {
@@ -1511,8 +1551,10 @@
     if (!btn) return;
     const { reqAction, id, status } = btn.dataset;
     btn.disabled = true;
+    const patchSlug = currentEvents[reqEventIdx]?.slug || '';
+    const patchQs   = patchSlug ? `?event=${encodeURIComponent(patchSlug)}` : '';
     try {
-      const res = await fetch('/api/requests', {
+      const res = await fetch(`/api/requests${patchQs}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ id, status: reqAction === 'delete' ? 'deleted' : status })

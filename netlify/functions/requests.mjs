@@ -1,11 +1,14 @@
 /**
  * Netlify Function: /api/requests
- * Shared song request store using Netlify Blobs.
+ * Per-event song request store using Netlify Blobs.
  *
- * GET    /api/requests          → return all requests (public)
- * POST   /api/requests          → add a request (public)
- * PATCH  /api/requests          → update status (admin — requires GitHub PAT)
- * DELETE /api/requests          → clear all requests (admin — requires GitHub PAT)
+ * All endpoints accept ?event=<slug> to scope to a specific event.
+ * Falls back to 'current' store key when no slug is provided.
+ *
+ * GET    /api/requests?event=slug  → return all requests for event (public)
+ * POST   /api/requests?event=slug  → add a request for event (public)
+ * PATCH  /api/requests?event=slug  → update status (admin — requires GitHub PAT)
+ * DELETE /api/requests?event=slug  → clear all requests for event (admin)
  */
 
 import { getStore } from '@netlify/blobs';
@@ -35,13 +38,17 @@ export default async (req) => {
     return new Response(null, { status: 204, headers: CORS });
   }
 
+  // Scope requests by event slug — falls back to 'current' for legacy calls
+  const url      = new URL(req.url);
+  const slug     = (url.searchParams.get('event') || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const storeKey = slug ? `event-${slug}` : 'current';
+
   const store = getStore({ name: 'requests', consistency: 'strong' });
 
   // ── GET ───────────────────────────────────────
   if (req.method === 'GET') {
-    const raw  = await store.get('current').catch(() => null);
+    const raw  = await store.get(storeKey).catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
-    // Filter out deleted entries for public consumers
     const isAdm = await isAdmin(req);
     const visible = isAdm ? list : list.filter(r => r.status !== 'deleted');
     return new Response(JSON.stringify(visible), { headers: CORS });
@@ -52,7 +59,7 @@ export default async (req) => {
     let body;
     try { body = await req.json(); } catch { return new Response('Bad JSON', { status: 400, headers: CORS }); }
 
-    const raw  = await store.get('current').catch(() => null);
+    const raw  = await store.get(storeKey).catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
 
     const entry = {
@@ -67,7 +74,7 @@ export default async (req) => {
 
     list.unshift(entry);
     list.splice(200); // keep last 200
-    await store.set('current', JSON.stringify(list));
+    await store.set(storeKey, JSON.stringify(list));
 
     return new Response(JSON.stringify({ ok: true, id: entry.id }), { status: 201, headers: CORS });
   }
@@ -80,11 +87,11 @@ export default async (req) => {
     let body;
     try { body = await req.json(); } catch { return new Response('Bad JSON', { status: 400, headers: CORS }); }
 
-    const raw  = await store.get('current').catch(() => null);
+    const raw  = await store.get(storeKey).catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
     const idx  = list.findIndex(r => r.id === body.id);
     if (idx >= 0) list[idx].status = body.status === 'played' ? 'played' : 'sent';
-    await store.set('current', JSON.stringify(list));
+    await store.set(storeKey, JSON.stringify(list));
 
     return new Response(JSON.stringify({ ok: true }), { headers: CORS });
   }
@@ -94,7 +101,7 @@ export default async (req) => {
     if (!(await isAdmin(req))) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: CORS });
     }
-    await store.set('current', JSON.stringify([]));
+    await store.set(storeKey, JSON.stringify([]));
     return new Response(JSON.stringify({ ok: true }), { headers: CORS });
   }
 
