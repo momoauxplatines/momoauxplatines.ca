@@ -173,6 +173,11 @@
       display: flex; flex-direction: column;
       align-items: flex-start; gap: 16px;
     }
+    .live-section-heading {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 28px; line-height: 31px;
+      color: var(--brand-50); text-transform: uppercase; width: 100%;
+    }
 
     /* Card — full width on mobile */
     .event-card-home {
@@ -193,9 +198,7 @@
       border: 1px solid var(--brand-100);
       background: var(--brand-90);
     }
-    .event-card-home-live {
-      display: flex; align-items: center; gap: 8px;
-    }
+    .ev-live-status { display: flex; align-items: center; gap: 8px; }
     .ev-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
       background: #D34242; flex-shrink: 0;
@@ -207,23 +210,22 @@
       color: #D34242; text-transform: uppercase;
     }
 
-    /* Button — dark (brand-90 bg, brand-00 text) */
+    /* "Go to event page" button — black bg */
     .ev-go-btn {
-      background: var(--brand-90); border: none; border-radius: 8px;
-      color: var(--brand-00); font-family: 'Kanit', sans-serif;
-      font-weight: 700; font-size: 20px; text-transform: uppercase;
+      background: #000; border: none; border-radius: 8px;
+      color: var(--brand-00); font-family: inherit;
+      font-weight: 1000; font-size: 18px; text-transform: uppercase;
       height: 56px; width: 100%; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       text-decoration: none; transition: opacity 0.15s;
     }
     .ev-go-btn:hover { opacity: 0.85; }
 
-    /* Content — always visible */
-    .ev-content { display: flex; flex-direction: column; gap: 8px; }
-    .ev-content-copy { display: flex; flex-direction: column; gap: 4px; }
+    /* Content */
+    .ev-content { display: flex; flex-direction: column; gap: 4px; }
     .ev-venue-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
+      font-size: 28px; line-height: 31px;
       color: var(--brand-30); text-transform: uppercase;
     }
     .ev-address {
@@ -236,23 +238,17 @@
     }
     .ev-ig {
       font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-50); text-decoration: underline;
-      text-decoration-color: var(--brand-50);
+      color: var(--brand-30); text-decoration: underline;
+      text-decoration-color: var(--brand-30);
     }
 
-    /* "NEXT" badge — blue Kanit Black */
+    /* Date badge — blue Kanit Black */
     .ev-next-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
+      font-size: 20px; line-height: 26px;
       color: #007AFF; text-transform: uppercase;
     }
 
-    /* Date + time row inside next event card */
-    .ev-date-row {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-50);
-    }
 
     /* Next Events section — below intro */
     .next-events-section {
@@ -662,14 +658,14 @@
         <img src="images/profile.png" alt="Momo">
       </div>
       <div class="intro-info">
-        <h1 class="intro-name">Momo Aux Platines</h1>
+        <h1 class="intro-name" data-key="intro.title">Momo Aux Platines</h1>
       </div>
 
       <!-- Tags (all viewports) -->
-      <div class="tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
+      <div class="tags" id="intro-tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
         <span class="tag">DJ</span>
         <span class="tag">TURNTABLIST</span>
-        <span class="tag" data-key="intro.tag.radio-host" data-en="RADIO HOST" data-fr="ANIMATEUR RADIO">RADIO HOST</span>
+        <span class="tag">RADIO HOST</span>
       </div>
 
       <!-- Bio -->
@@ -1437,6 +1433,7 @@
 
   // Is the event happening RIGHT NOW?
   function eventIsLive(ev) {
+    if (ev.show === false) return false;
     if (!ev.date || !ev.start_time) return false;
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
@@ -1457,6 +1454,7 @@
 
   // Is the event upcoming (not yet live, not yet past)?
   function eventIsNext(ev) {
+    if (ev.show === false) return false;
     if (!ev.date) return false;
     const today = todayStr();
     if (ev.date > today) return true;
@@ -1504,7 +1502,7 @@
         liveSection.style.display = 'none';
       } else {
         liveSection.style.display = 'flex';
-        liveSection.innerHTML = '';
+        liveSection.innerHTML = '<p class="live-section-heading" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</p>';
         live.forEach(ev => {
           const card = document.createElement('div');
           card.className = 'event-card-home';
@@ -1512,21 +1510,19 @@
             <div class="event-card-home-top">
               <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
                    onerror="this.style.background='var(--brand-90)'">
-              <div class="event-card-home-live">
+              <div class="ev-live-status">
                 <div class="ev-live-dot"></div>
                 <span class="ev-live-label" data-key="next-events.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
               </div>
             </div>
-            <a class="ev-go-btn" href="request.html"
-               data-key="next-events.btn.go" data-en="GO TO EVENT PAGE" data-fr="ALLER À LA PAGE DE L'ÉVÉNEMENT">GO TO EVENT PAGE</a>
             <div class="ev-content">
-              <div class="ev-content-copy">
-                <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${stripPostalCode(ev.address)}</p>
-                <p class="ev-hours">${formatHours(ev)}</p>
-              </div>
-              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
-            </div>`;
+              <p class="ev-venue-name">${ev.venue}</p>
+              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+              ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
+            </div>
+            <a class="ev-go-btn" href="request.html"
+               data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
           liveSection.appendChild(card);
         });
       }
@@ -1552,12 +1548,10 @@
               <span class="ev-next-label">${formatShortDate(ev.date)}</span>
             </div>
             <div class="ev-content">
-              <div class="ev-content-copy">
-                <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${stripPostalCode(ev.address)}</p>
-                <p class="ev-hours">${formatHours(ev)}</p>
-              </div>
-              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
+              <p class="ev-venue-name">${ev.venue}</p>
+              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+              ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
             </div>`;
           nextList.appendChild(card);
         });
@@ -1596,6 +1590,12 @@
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
     });
+    // Render intro tags from pipe-separated copy key
+    const tagsContainer = document.getElementById('intro-tags');
+    if (tagsContainer && copy['intro.tags']) {
+      tagsContainer.innerHTML = copy['intro.tags'].split('|')
+        .map(t => `<span class="tag">${t.trim()}</span>`).join('');
+    }
     langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
     currentLang = lang;
   }
@@ -1646,38 +1646,44 @@
     let lastY         = 0;
     let lastDirection = 0; // 1 = down, -1 = up
 
-    // ── Audio ──
-    const audioForth = new Audio('/audio/scratch-forth.mp3');
-    const audioBack  = new Audio('/audio/scratch-back.mp3');
-    audioForth.loop  = false;
-    audioBack.loop   = false;
-    let activeAudio  = null;
-    let audioReady   = false;
+    // ── Audio (Web Audio API — pre-decoded PCM for zero-latency playback) ──
+    const audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
+    let buffers       = { forth: null, back: null };
+    let activeSource  = null;
+    let audioReady    = false;
 
-    // iOS/Android require audio to be triggered inside a synchronous touchstart.
-    // Prime both elements on the first touch so moveDrag can play them freely.
+    // Decode both files eagerly in the background
+    async function decodeBuffer(url) {
+      const res = await fetch(url);
+      const ab  = await res.arrayBuffer();
+      return audioCtx.decodeAudioData(ab);
+    }
+    Promise.all([decodeBuffer('/audio/scratch-forth.mp3'), decodeBuffer('/audio/scratch-back.mp3')])
+      .then(([forth, back]) => { buffers.forth = forth; buffers.back = back; })
+      .catch(() => {});
+
+    // Resume AudioContext inside the first user gesture (required by iOS/Android)
     function primeAudio() {
       if (audioReady) return;
       audioReady = true;
-      [audioForth, audioBack].forEach(a => {
-        const p = a.play();
-        if (p) p.then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
-      });
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playSound(audio) {
-      if (activeAudio === audio) return;
-      if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
-      activeAudio = audio;
-      audio.currentTime = 0;
-      audio.play().catch(() => {});
+    function playSound(key) {
+      const buf = buffers[key];
+      if (!buf) return;
+      stopSound();
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(audioCtx.destination);
+      src.start(0);
+      activeSource = src;
     }
 
     function stopSound() {
-      if (!activeAudio) return;
-      activeAudio.pause();
-      activeAudio.currentTime = 0;
-      activeAudio = null;
+      if (!activeSource) return;
+      try { activeSource.stop(); } catch (_) {}
+      activeSource = null;
     }
 
     function getCurrentAngle() {
@@ -1714,7 +1720,7 @@
         const dir = delta > 0 ? 1 : -1;
         if (dir !== lastDirection) {
           lastDirection = dir;
-          playSound(dir > 0 ? audioForth : audioBack);
+          playSound(dir > 0 ? 'forth' : 'back');
         }
       }
       lastY = y;

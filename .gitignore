@@ -4,3 +4,9 @@
 
 # Videos (too large for git — host separately)
 videos/
+
+# Local Netlify folder
+.netlify
+
+# Local env
+.env

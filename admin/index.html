@@ -13,28 +13,15 @@
     :root {
       --bg: #111210; --brand-00: #FAFBF9; --brand-10: #F4F6F3;
       --brand-20: #EAEDE5; --brand-30: #DEE4DA; --brand-40: #D5DCCC;
-      --brand-50: #C9D3C0; --brand-80: #51534E; --brand-90: #2B2D2A;
-      --brand-100: #141513; --red: #D34242; --blue: #007AFF; --green: #34C759;
+      --brand-50: #C9D3C0; --brand-60: #A2A99A; --brand-80: #51534E;
+      --brand-90: #2B2D2A; --brand-100: #141513; --brand-105: #111210;
+      --red: #D34242; --blue: #007AFF; --green: #34C759;
     }
     html, body { background: var(--bg); color: var(--brand-30); font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; min-height: 100dvh; }
 
-    /* ── Layout ── */
-    .page { max-width: 600px; margin: 0 auto; padding: 32px 24px 80px; display: flex; flex-direction: column; gap: 40px; }
-
-    /* ── Header ── */
-    .admin-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .admin-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
-    .admin-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 22px; color: var(--brand-30); text-transform: uppercase; letter-spacing: 0.02em; }
-    .admin-logout { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-50); font-size: 13px; font-weight: 300; padding: 6px 12px; cursor: pointer; }
-    .admin-logout:hover { background: var(--brand-80); }
-
-    /* ── Screens ── */
-    .screen { display: none; flex-direction: column; gap: 32px; }
-    .screen.active { display: flex; }
-
     /* ── Login ── */
-    .login-card { background: var(--brand-100); border: 1px solid var(--brand-90); border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; }
-    .login-intro { display: flex; flex-direction: column; gap: 8px; }
+    .login-wrap { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+    .login-card { background: var(--brand-100); border: 1px solid var(--brand-90); border-radius: 16px; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; width: 100%; max-width: 420px; }
     .login-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-20); text-transform: uppercase; }
     .login-sub { font-size: 14px; font-weight: 300; color: var(--brand-50); line-height: 1.5; }
     .login-sub a { color: var(--brand-50); }
@@ -44,47 +31,124 @@
     .field-input::placeholder { color: var(--brand-80); }
     .field-input:focus { border-color: var(--brand-50); }
     .field-input.invalid { border-color: var(--red); }
-    .field-hint { font-size: 12px; font-weight: 300; color: var(--brand-80); }
-
-    /* ── Buttons ── */
-    .btn-primary { background: var(--brand-20); border: none; border-radius: 14px; color: var(--brand-100); font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 17px; height: 52px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-secondary { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; color: var(--brand-30); font-family: inherit; font-size: 15px; font-weight: 300; padding: 10px 18px; cursor: pointer; transition: background 0.15s; }
-    .btn-secondary:hover { background: var(--brand-80); }
-    .btn-danger { background: transparent; border: 1px solid var(--red); border-radius: 10px; color: var(--red); font-family: inherit; font-size: 14px; font-weight: 300; padding: 8px 14px; cursor: pointer; transition: background 0.15s; }
-    .btn-danger:hover { background: rgba(211,66,66,0.1); }
     .error-msg { font-size: 13px; font-weight: 300; color: var(--red); min-height: 18px; }
+    .btn-login { background: var(--brand-20); border: none; border-radius: 14px; color: var(--brand-100); font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 17px; height: 52px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
+    .btn-login:hover { opacity: 0.85; }
+    .btn-login:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    /* ── Events list ── */
-    .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.02em; }
-    .events-list { display: flex; flex-direction: column; gap: 12px; }
-    .event-item { background: var(--brand-100); border: 1px solid var(--brand-90); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 16px; }
-    .event-item-img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-90); }
-    .event-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .event-item-venue { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-20); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .event-item-meta { font-size: 13px; font-weight: 300; color: var(--brand-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .event-item-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .empty-events { text-align: center; padding: 40px 0; color: var(--brand-80); font-size: 15px; font-weight: 300; }
+    /* ── Admin shell ── */
+    #admin-screen { display: none; min-height: 100dvh; }
+    #admin-screen.active { display: block; }
 
-    /* ── Add/Edit form overlay ── */
-    .form-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(17,18,16,0.8); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-    .form-overlay.open { opacity: 1; pointer-events: auto; }
-    .form-panel { background: var(--bg); width: 100%; max-width: 600px; max-height: 92dvh; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; overflow: hidden; transform: translateY(40px); transition: transform 0.25s ease; }
-    .form-overlay.open .form-panel { transform: translateY(0); }
-    @media (min-width: 640px) {
-      .form-overlay { align-items: center; }
-      .form-panel { border-radius: 20px; max-height: 90dvh; }
+    /* ── Fixed header ── */
+    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--brand-105); display: flex; align-items: center; justify-content: space-between; padding: 24px; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-favicon { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+    .header-favicon img { width: 100%; height: 100%; object-fit: cover; }
+    .header-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; }
+    .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .btn-admin:hover { background: var(--brand-80); }
+    .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Scrollable content ── */
+    .admin-content { padding-top: 88px; max-width: 800px; margin: 0 auto; }
+
+    /* ── Language tabs ── */
+    .lang-tabs { display: flex; padding: 16px; }
+    .lang-tab { flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 18px; color: var(--brand-40); text-transform: uppercase; cursor: pointer; border: none; background: var(--brand-100); transition: background 0.15s, color 0.15s; }
+    .lang-tab:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
+    .lang-tab:last-child  { border-radius: 0 8px 8px 0; }
+    .lang-tab.active { background: #000; color: var(--brand-00); }
+
+    /* ── Sections ── */
+    .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+    .section-title-row { display: flex; align-items: center; justify-content: space-between; }
+    .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-50); text-transform: uppercase; line-height: 31px; }
+    .decade-title-row { display: flex; align-items: center; justify-content: space-between; }
+    .decade-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; line-height: 26px; }
+
+    /* ── Admin card ── */
+    .admin-card { background: var(--brand-100); border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+    .card-avatar { width: 56px; height: 56px; border-radius: 8px; overflow: hidden; border: 1px solid var(--brand-50); flex-shrink: 0; background: var(--brand-90); }
+    .card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .card-avatar.round { border-radius: 40px; }
+    .card-name { font-size: 18px; font-weight: 300; color: var(--brand-30); line-height: 26px; }
+    .card-sub  { font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
+    .card-text { font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
+    .card-link-text { font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
+    .card-thumb { position: relative; display: inline-grid; }
+    .card-thumb-img { width: 91px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid var(--brand-50); }
+    .btn-card-edit { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; width: 100%; cursor: pointer; }
+    .btn-card-edit:hover { background: var(--brand-80); }
+
+    /* ── Empty state ── */
+    .empty-state { height: 152px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 300; color: var(--brand-60); text-align: center; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 300; color: var(--brand-20); white-space: nowrap; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 200; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: var(--green); color: var(--green); }
+    .toast.error   { border-color: var(--red);   color: var(--red); }
+
+    /* ── Edit overlay ── */
+    .edit-overlay { position: fixed; inset: 0; z-index: 100; background: var(--brand-100); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow: hidden; }
+    .edit-overlay.open { opacity: 1; pointer-events: auto; }
+    .edit-panel { display: contents; } /* mobile: panel is transparent, overlay IS the panel */
+    .edit-header { flex-shrink: 0; position: relative; background: var(--brand-100); padding: 32px 24px 24px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid var(--brand-90); }
+    .edit-titles { padding-right: 80px; display: flex; flex-direction: column; gap: 10px; }
+    .edit-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; color: var(--brand-30); text-transform: uppercase; line-height: 36px; }
+    .edit-close { position: absolute; top: 28px; right: 24px; background: var(--brand-90); border: none; cursor: pointer; padding: 4px 16px; border-radius: 8px; font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-00); line-height: 31px; }
+    .edit-close:hover { background: var(--brand-80); }
+    .edit-subtitle { font-weight: 300; font-size: 16px; line-height: 22px; color: var(--brand-50); }
+    .edit-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .edit-footer { flex-shrink: 0; padding: 16px; background: var(--brand-100); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+
+    /* ── Desktop: overlay becomes backdrop, panel floats centred ── */
+    @media (min-width: 860px) {
+      .edit-overlay { background: rgba(17,18,16,0.75); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
+      .edit-panel { display: flex; flex-direction: column; width: 480px; max-height: 90dvh; background: var(--brand-100); border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px 20px rgba(0,0,0,0.7); }
     }
-    .form-header { position: relative; flex-shrink: 0; padding: 28px 24px 20px; border-bottom: 1px solid var(--brand-90); display: flex; flex-direction: column; gap: 4px; }
-    .form-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 24px; color: var(--brand-20); text-transform: uppercase; padding-right: 48px; }
-    .form-close { position: absolute; top: 24px; right: 20px; background: var(--brand-90); border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--brand-00); }
-    .form-close:hover { background: var(--brand-80); }
-    .form-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-footer { flex-shrink: 0; padding: 16px 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+    .btn-save { background: var(--brand-10, #f4f6f3); border: none; border-radius: 8px; color: var(--brand-100); font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 1000; font-size: 18px; height: 56px; width: 100%; cursor: pointer; text-transform: uppercase; transition: background 0.15s; }
+    .btn-save:hover:not(:disabled) { background: var(--brand-00, #fafbf9); }
+    .btn-save:disabled { background: var(--brand-80, #51534e); color: var(--brand-100); cursor: not-allowed; }
+    .btn-dark { background: var(--brand-90, #282a27); border: 1px solid var(--brand-80, #51534e); border-radius: 8px; color: var(--brand-00, #fafbf9); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
+    .btn-dark:hover { opacity: 0.8; }
+    .gig-live-status { display: flex; align-items: center; gap: 8px; }
+    .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red, #d34242); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
+    @keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .gig-live-label { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--red, #d34242); text-transform: uppercase; line-height: 26px; }
 
-    /* ── Instagram avatar preview ── */
+    /* ── Form fields (in edit overlay) ── */
+    .edit-field { display: flex; flex-direction: column; gap: 8px; }
+    .edit-label { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em; }
+    .edit-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 12px; padding: 12px 16px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; resize: none; }
+    .edit-input::placeholder { color: var(--brand-80); }
+    .edit-input:focus { border-color: var(--brand-50); }
+
+    /* ── Card list gaps ── */
+    #gigs-list, #reviews-list, #demos-list, .decade-cards { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Image picker row ── */
+    .image-row { display: flex; align-items: center; gap: 24px; }
+    .image-preview { width: 88px; height: 88px; border-radius: 560px; border: 1px solid var(--brand-50); overflow: hidden; flex-shrink: 0; background: var(--brand-90); }
+    .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .image-preview.square { border-radius: 8px; }
+    .image-preview.rect { border-radius: 8px; width: 141px; height: 88px; }
+
+    /* ── Tags ── */
+    .tags-section { display: flex; flex-direction: column; gap: 16px; }
+    .tags-existing { display: flex; flex-wrap: wrap; gap: 12px; }
+    .tag-chip { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 16px; }
+    .tag-chip span { font-size: 18px; font-weight: 300; color: var(--brand-00); white-space: nowrap; }
+    .tag-remove { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--red); flex-shrink: 0; }
+    .tag-remove:hover { opacity: 0.7; }
+
+    /* ── Event form fields ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .show-toggle-row { display: flex; align-items: center; gap: 8px; height: 40px; }
+    .show-toggle-label { flex: 1; font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
+    .btn-delete-gig { background: var(--brand-90, #282a27); border: 1px solid var(--red, #d34242); border-radius: 8px; color: var(--red, #d34242); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; min-height: 56px; flex-shrink: 0; width: 100%; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .btn-delete-gig:hover { background: var(--red, #d34242); border-color: var(--red, #d34242); color: var(--brand-00, #fafbf9); }
     .ig-preview-wrap { display: none; flex-direction: column; gap: 10px; }
     .ig-preview-wrap.visible { display: flex; }
     .ig-preview-row { display: flex; align-items: center; gap: 12px; }
@@ -95,190 +159,204 @@
     .ig-preview-status.ok  { color: var(--green); }
     .ig-preview-status.err { color: var(--red); }
 
-    /* ── Admin nav tabs ── */
-    .admin-nav { display: none; gap: 0; border-bottom: 1px solid var(--brand-90); }
-    .admin-nav.visible { display: flex; }
-    .admin-nav-btn { flex: 1; height: 44px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; }
-    .admin-nav-btn.active { color: var(--brand-00); border-bottom-color: var(--brand-00); }
+    /* ── Gig card ── */
+    .gig-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; transition: opacity 0.15s; }
+    .gig-card:hover { opacity: 0.85; }
+    .gig-card-top { display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
+    .gig-card-avatar { width: 72px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--brand-90); }
+    .gig-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .gig-card-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .gig-card-name { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; }
+    .gig-card-meta { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
+    .gig-card-actions { display: flex; justify-content: flex-end; }
 
-    /* ── Requests ── */
-    .req-list { display: flex; flex-direction: column; gap: 10px; }
-    .req-card { background: #000; border-radius: 16px; padding: 8px; display: flex; align-items: center; gap: 8px; min-height: 80px; }
+    /* ── Requests overlay ── */
+    .req-back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 18px; font-weight: 300; padding: 0; line-height: 26px; }
+    .req-back-btn:hover { color: var(--brand-30); }
+    .req-event-avatar { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-100); }
+    .req-event-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .req-list { display: flex; flex-direction: column; gap: 16px; }
+    .req-section-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; line-height: 26px; }
+    .req-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: flex-start; }
     .req-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-100); }
-    .req-info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; align-self: stretch; justify-content: center; }
-    .req-title { font-size: 18px; font-weight: 700; color: var(--brand-30); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; }
-    .req-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 20px; }
-    /* Controls column: toggle + delete */
-    .req-controls { flex-shrink: 0; display: flex; align-items: center; gap: 24px; padding: 0 16px; align-self: stretch; }
-    /* iOS-style toggle switch */
+    .req-info { flex: 1; display: flex; flex-direction: column; gap: 0; min-width: 0; }
+    .req-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; margin-bottom: 2px; }
+    .req-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
+    .req-time   { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
+    .req-controls { display: flex; align-items: center; padding: 0 16px; align-self: stretch; }
     .req-switch { position: relative; width: 36px; height: 20px; border-radius: 100px; background: #d2d5da; border: none; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
     .req-switch.on { background: var(--green); }
     .req-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 100px; background: #fff; box-shadow: 0 2px 4px rgba(39,39,39,0.1); transition: transform 0.2s; }
     .req-switch.on::after { transform: translateX(16px); }
-    /* Delete button */
-    .req-delete { flex-shrink: 0; width: 16px; height: 16px; background: none; border: none; padding: 0; cursor: pointer; color: var(--red); display: flex; align-items: center; justify-content: center; }
-    .req-delete svg { display: block; }
-    .req-empty { text-align: center; padding: 40px 0; color: var(--brand-80); font-size: 15px; font-weight: 300; }
-    .req-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 
-    /* ── Copy editor ── */
-    .copy-lang-tabs { display: flex; gap: 0; }
-    .copy-lang-btn { flex: 1; height: 40px; background: var(--brand-100); border: 1px solid var(--brand-90); color: var(--brand-50); font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; text-transform: uppercase; cursor: pointer; }
-    .copy-lang-btn:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
-    .copy-lang-btn:last-child { border-radius: 0 8px 8px 0; }
-    .copy-lang-btn.active { background: var(--brand-90); color: var(--brand-00); }
-    .copy-section { display: flex; flex-direction: column; gap: 12px; }
-    .copy-section-title { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 11px; color: var(--brand-80); text-transform: uppercase; letter-spacing: 0.1em; padding-top: 8px; }
-    .copy-row { display: flex; flex-direction: column; gap: 4px; }
-    .copy-key { font-size: 11px; font-weight: 300; color: var(--brand-80); font-family: monospace; }
-    .copy-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 14px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; resize: vertical; min-height: 38px; transition: border-color 0.2s; }
-    .copy-input:focus { border-color: var(--brand-50); }
-    .copy-save-bar { position: sticky; bottom: 0; background: var(--bg); padding: 16px 0 0; display: flex; gap: 12px; align-items: center; }
-    .copy-saved-msg { font-size: 13px; font-weight: 300; color: var(--green); opacity: 0; transition: opacity 0.3s; }
-    .copy-saved-msg.show { opacity: 1; }
-
-    /* ── Toast ── */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 300; color: var(--brand-20); white-space: nowrap; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 200; pointer-events: none; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.success { border-color: var(--green); color: var(--green); }
-    .toast.error { border-color: var(--red); color: var(--red); }
   </style>
 </head>
 <body>
 
-<div class="page">
-  <!-- Header -->
-  <div class="admin-header">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <img class="admin-logo" src="../images/og-image.png" alt="Momo">
-      <span class="admin-title">Admin</span>
+<!-- ══════════════════════════════════════════════
+     LOGIN
+══════════════════════════════════════════════ -->
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <p class="login-heading">Sign In</p>
+    <p class="login-sub">Enter your GitHub Personal Access Token.<br>
+      Create one at <a href="https://github.com/settings/tokens/new?scopes=repo&description=Momo+Admin" target="_blank" rel="noopener">github.com/settings/tokens</a> with <strong>repo</strong> scope.</p>
+    <div class="field">
+      <label class="field-label" for="pat-input">GitHub Token</label>
+      <input class="field-input" type="password" id="pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
     </div>
-    <button class="admin-logout" id="logout-btn" style="display:none">Sign out</button>
+    <p class="error-msg" id="login-error"></p>
+    <button class="btn-login" id="login-btn">Sign In</button>
   </div>
+</div>
 
-  <!-- Login screen -->
-  <div class="screen active" id="login-screen">
-    <div class="login-card">
-      <div class="login-intro">
-        <p class="login-heading">Sign In</p>
-        <p class="login-sub">
-          Enter your GitHub Personal Access Token to manage events.<br>
-          Create one at <a href="https://github.com/settings/tokens/new?scopes=repo&description=Momo+Admin" target="_blank" rel="noopener">github.com/settings/tokens</a> with <strong>repo</strong> scope.
-        </p>
+<!-- ══════════════════════════════════════════════
+     ADMIN SCREEN
+══════════════════════════════════════════════ -->
+<div id="admin-screen">
+
+  <!-- Fixed header -->
+  <header class="admin-header">
+    <div class="header-left">
+      <div class="header-favicon"><img src="../images/og-image.png" alt="Momo"></div>
+      <span class="header-title">DJ Admin</span>
+    </div>
+    <button class="btn-admin" id="logout-btn">Sign out</button>
+  </header>
+
+  <div class="admin-content">
+
+    <!-- Language tabs -->
+    <div class="lang-tabs">
+      <button class="lang-tab active" data-lang="en">EN</button>
+      <button class="lang-tab" data-lang="fr">FR</button>
+    </div>
+
+    <!-- ── LIVE ── -->
+    <section class="admin-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Live</h2>
       </div>
-      <div class="field">
-        <label class="field-label" for="pat-input">GitHub Token</label>
-        <input class="field-input" type="password" id="pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-        <span class="field-hint">Stored only in this browser session — never sent anywhere except GitHub.</span>
+      <div id="live-content"><div class="empty-state">Loading…</div></div>
+    </section>
+
+    <!-- ── INTRO ── -->
+    <section class="admin-section">
+      <h2 class="section-heading">Intro</h2>
+      <div class="admin-card" id="intro-card">
+        <div class="empty-state" style="height:auto">Loading…</div>
       </div>
-      <p class="error-msg" id="login-error"></p>
-      <button class="btn-primary" id="login-btn">Sign In</button>
-    </div>
-  </div>
+    </section>
 
-  <!-- Admin nav tabs (shown after login) -->
-  <nav class="admin-nav" id="admin-nav">
-    <button class="admin-nav-btn active" data-screen="events-screen">Events</button>
-    <button class="admin-nav-btn" data-screen="requests-screen">Requests</button>
-    <button class="admin-nav-btn" data-screen="copy-screen">Copy</button>
-  </nav>
+    <!-- ── NEXT GIGS ── -->
+    <section class="admin-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Next Gigs</h2>
+        <button class="btn-admin" id="add-gig-btn">Add</button>
+      </div>
+      <div id="gigs-list"><div class="empty-state">Loading…</div></div>
+    </section>
 
-  <!-- Events screen -->
-  <div class="screen" id="events-screen">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <p class="section-heading">Events</p>
-      <button class="btn-secondary" id="add-event-btn">+ Add Event</button>
-    </div>
-    <div class="events-list" id="events-list">
-      <p class="empty-events">Loading…</p>
-    </div>
-  </div>
+    <!-- ── REVIEWS ── -->
+    <section class="admin-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Reviews</h2>
+        <button class="btn-admin" id="add-review-btn">Add</button>
+      </div>
+      <div id="reviews-list"><div class="empty-state">Loading…</div></div>
+    </section>
 
-  <!-- Requests screen -->
-  <div class="screen" id="requests-screen">
-    <div class="req-toolbar">
-      <p class="section-heading">Requests</p>
-      <button class="btn-secondary" id="req-refresh-btn">↻ Refresh</button>
-    </div>
-    <div class="req-list" id="req-list">
-      <p class="req-empty">Loading…</p>
-    </div>
-  </div>
+    <!-- ── DEMOS ── -->
+    <section class="admin-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Demos</h2>
+        <button class="btn-admin" id="add-demo-btn">Add</button>
+      </div>
+      <div id="demos-list"><div class="empty-state">Loading…</div></div>
+    </section>
 
-  <!-- Copy screen -->
-  <div class="screen" id="copy-screen">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <p class="section-heading">Copy</p>
+    <!-- ── TIMELINE ── -->
+    <section class="admin-section" id="timeline-section">
+      <h2 class="section-heading">Timeline</h2>
+
+      <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2020">
+        <div class="decade-title-row">
+          <span class="decade-heading">2020</span>
+          <button class="btn-admin" data-decade="2020">Add</button>
+        </div>
+        <div class="decade-cards" data-decade-cards="2020"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2010">
+        <div class="decade-title-row">
+          <span class="decade-heading">2010</span>
+          <button class="btn-admin" data-decade="2010">Add</button>
+        </div>
+        <div class="decade-cards" data-decade-cards="2010"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2000">
+        <div class="decade-title-row">
+          <span class="decade-heading">2000</span>
+          <button class="btn-admin" data-decade="2000">Add</button>
+        </div>
+        <div class="decade-cards" data-decade-cards="2000"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px;" id="decade-1990">
+        <div class="decade-title-row">
+          <span class="decade-heading">1990</span>
+          <button class="btn-admin" data-decade="1990">Add</button>
+        </div>
+        <div class="decade-cards" data-decade-cards="1990"></div>
+      </div>
+
+    </section>
+
+
+    <div style="height:48px;"></div>
+
+  </div><!-- /admin-content -->
+</div><!-- /admin-screen -->
+
+<!-- ══════════════════════════════════════════════
+     EDIT OVERLAY
+══════════════════════════════════════════════ -->
+<div class="edit-overlay" id="edit-overlay">
+  <div class="edit-panel">
+    <div class="edit-header">
+      <button class="edit-close" id="edit-close-btn">✕</button>
+      <div class="edit-titles">
+        <p class="edit-title" id="edit-title">Edit</p>
+        <p class="edit-subtitle" id="edit-subtitle"></p>
+      </div>
     </div>
-    <div class="copy-lang-tabs">
-      <button class="copy-lang-btn active" id="copy-lang-en">EN</button>
-      <button class="copy-lang-btn" id="copy-lang-fr">FR</button>
-    </div>
-    <div id="copy-fields" style="display:flex;flex-direction:column;gap:24px;"></div>
-    <div class="copy-save-bar">
-      <button class="btn-primary" id="copy-save-btn" style="max-width:160px;">Save</button>
-      <span class="copy-saved-msg" id="copy-saved-msg">Saved ✓</span>
+    <div class="edit-body" id="edit-body"></div>
+    <div class="edit-footer">
+      <button class="btn-save" id="edit-save-btn">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Add / Edit overlay -->
-<div class="form-overlay" id="form-overlay">
-  <div class="form-panel">
-    <div class="form-header">
-      <p class="form-title" id="form-title">Add Event</p>
-      <button class="form-close" id="form-close-btn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<!-- Requests overlay -->
+<div class="edit-overlay" id="req-overlay">
+  <div class="edit-panel">
+    <div class="edit-header" style="padding:24px;flex-direction:row;align-items:center;justify-content:space-between;">
+      <button class="req-back-btn" id="req-close-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="var(--brand-50)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+        Back
       </button>
+      <div class="req-event-avatar" id="req-event-avatar">
+        <img id="req-event-avatar-img" src="" alt="" onerror="this.style.opacity='0'">
+      </div>
     </div>
-    <div class="form-body">
-      <input type="hidden" id="edit-index" value="-1">
-
-      <div class="field">
-        <label class="field-label" for="f-venue">Venue / Lieu *</label>
-        <input class="field-input" type="text" id="f-venue" placeholder="Buvette Chez Simone">
-      </div>
-      <div class="field">
-        <label class="field-label" for="f-address">Address / Adresse *</label>
-        <input class="field-input" type="text" id="f-address" placeholder="4869 Rue Villeneuve O, Montréal, QC">
-      </div>
-      <div class="field">
-        <label class="field-label" for="f-date">Date *</label>
-        <input class="field-input" type="date" id="f-date">
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label" for="f-start">Start Time *</label>
-          <input class="field-input" type="time" id="f-start" placeholder="19:00">
-        </div>
-        <div class="field">
-          <label class="field-label" for="f-end">End Time *</label>
-          <input class="field-input" type="time" id="f-end" placeholder="01:00">
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label" for="f-instagram">Instagram URL</label>
-        <input class="field-input" type="url" id="f-instagram" placeholder="https://www.instagram.com/venue">
-      </div>
-
-      <!-- Avatar preview — appears once Instagram URL is valid -->
-      <div class="ig-preview-wrap" id="ig-preview-wrap">
-        <div class="ig-preview-row">
-          <img class="ig-preview-img" id="ig-preview-img" src="" alt="">
-          <div class="ig-preview-info">
-            <p class="ig-preview-name" id="ig-preview-name"></p>
-            <p class="ig-preview-status" id="ig-preview-status">Photo will be saved to /images/events/ when you save.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Image path — hidden, managed automatically -->
-      <input type="hidden" id="f-image">
+    <div class="edit-body req-list" id="req-body">
+      <div class="empty-state">Loading…</div>
     </div>
-    <div class="form-footer">
-      <button class="btn-primary" id="save-event-btn">Save Event</button>
+    <div class="edit-footer">
+      <button class="btn-dark" id="req-refresh-btn">Refresh</button>
     </div>
   </div>
 </div>
@@ -287,43 +365,58 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const REPO  = 'momoauxplatines/momoauxplatines.ca';
+  const REPO   = 'momoauxplatines/momoauxplatines.ca';
   const BRANCH = 'main';
-  const FILE   = 'events.json';
 
-  // ── Auth ──
+  // ── Static content metadata ─────────────────────────────────────────────────
+
+  const REVIEWS = [
+    { id: 'simone', name: 'Simone', venue: 'La Buvette chez Simone', instagram: 'https://www.instagram.com/labuvettechezsimone', avatar: '../images/review-simone.png', textKey: 'reviews.simone.text' },
+    { id: 'tmo',    name: 'TMO',    venue: '',                        instagram: 'https://www.instagram.com/taktika_officiel',      avatar: '../images/review-tmo.png',    textKey: 'reviews.tmo.text'    },
+    { id: 'jessie', name: 'Jessie', venue: 'Le Birdie',               instagram: 'https://www.instagram.com/lebirdiemontreal',      avatar: '../images/review-jessie.png', textKey: 'reviews.jessie.text' },
+  ];
+
+  const DEMOS = [
+    { id: 'le-bon-groove', title: 'Le Bon Groove', thumb: '../images/video-le-bon-groove.png', ytId: 'eqyngbFuLcU', descKey: 'demos.le-bon-groove.desc' },
+    { id: 'jazzy-house',   title: 'Jazzy House',   thumb: '../images/video-jazzy-house.png',   ytId: 'cQRz7w4A7pc', descKey: 'demos.jazzy-house.desc'   },
+    { id: 'chill',         title: 'Chill',         thumb: '../images/video-chill.png',          ytId: 'Bu2YCXoDMe4', descKey: 'demos.chill.desc'          },
+    { id: 'dancehall',     title: 'Dancehall',     thumb: '../images/video-dancehall.png',      ytId: '',            descKey: 'demos.dancehall.desc'      },
+  ];
+
+  const TIMELINE = {
+    '2020': [
+      { id: 'buvette-simone', name: 'La Buvette chez Simone', dates: '2023–2025', instagram: 'https://www.instagram.com/labuvettechezsimone', avatar: '../images/timeline-buvette-simone.jpg', roleKey: 'timeline.buvette-simone.desc' },
+      { id: 'twitch',         name: 'Twitch',                  dates: '2021–2023', instagram: 'https://www.twitch.tv/muhammadalias/about',     avatar: '../images/timeline-twitch.png',         roleKey: 'timeline.twitch.desc'         },
+      { id: 'demain',         name: "Demain c'est loin",       dates: '2021–2023', instagram: 'https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique', avatar: '../images/timeline-demain.png', roleKey: 'timeline.demain.desc' },
+      { id: 'les-yeux-bleus', name: 'Les Yeux Bleus',          dates: '2022–2023', instagram: 'https://www.instagram.com/barlesyeuxbleus/', avatar: '../images/timeline-les-yeux-bleus.png', roleKey: 'timeline.les-yeux-bleus.desc' },
+    ],
+    '2010': [
+      { id: 'focus', name: 'Focus on the two monsters', dates: '2010–2020', instagram: '', avatar: '../images/timeline-focus.png', roleKey: 'timeline.focus.desc' },
+    ],
+    '2000': [
+      { id: 'taktika',  name: 'Taktika',  dates: '2000–2012', instagram: 'https://taktika.ca/', avatar: '../images/timeline-taktika.jpg', roleKey: 'timeline.taktika.desc' },
+      { id: '83',       name: '83',       dates: '2002–2009', instagram: 'https://tidal.com/artist/3668374/u', avatar: '../images/timeline-83.jpg', roleKey: 'timeline.83.desc' },
+      { id: 'club-dj',  name: 'Club DJ',  dates: '2000–2006', instagram: '', avatar: '../images/timeline-club-dj.jpg', roleKey: null },
+    ],
+    '1990': [
+      { id: 'la-constellation', name: 'La Constellation', dates: '1998–1999', instagram: 'https://www.youtube.com/watch?v=IkPuf9plNyA', avatar: '../images/timeline-la-constellation.jpg', roleKey: 'timeline.la-constellation.desc' },
+      { id: 'ast-du-son',       name: 'AST du Son',       dates: '1998–2002', instagram: 'https://chyz.ca/emission/les-arshitechs-du-son/', avatar: '../images/timeline-ast-du-son.png', roleKey: 'timeline.ast-du-son.desc' },
+    ],
+  };
+
+  // ── State ──────────────────────────────────────────────────────────────────
   let token = sessionStorage.getItem('momo_admin_token') || '';
+  let currentLang = 'en';
+  let copyData = { en: null, fr: null };
+  let copySha  = { en: null, fr: null };
+  let currentEvents = [];
+  let eventsSha = '';
+  let editFormType = null; // 'intro' | 'review' | 'demo' | 'timeline' | 'gig'
+  let editFormMeta = null; // extra context
 
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    const loggedIn = id !== 'login-screen';
-    document.getElementById('logout-btn').style.display = loggedIn ? '' : 'none';
-    const nav = document.getElementById('admin-nav');
-    nav.classList.toggle('visible', loggedIn);
-    nav.querySelectorAll('.admin-nav-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.screen === id);
-    });
-  }
-
-  // ── Admin nav tab switching ──
-  document.getElementById('admin-nav').addEventListener('click', e => {
-    const btn = e.target.closest('.admin-nav-btn');
-    if (!btn) return;
-    const target = btn.dataset.screen;
-    showScreen(target);
-    if (target === 'copy-screen')     loadCopyEditor();
-    if (target === 'requests-screen') loadRequests();
-  });
-
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem('momo_admin_token');
-    token = '';
-    showScreen('login-screen');
-  });
-
+  // ── GitHub API ──────────────────────────────────────────────────────────────
   async function ghFetch(path, opts = {}) {
-    const res = await fetch(`https://api.github.com${path}`, {
+    return fetch(`https://api.github.com${path}`, {
       ...opts,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -332,10 +425,9 @@
         ...(opts.headers || {})
       }
     });
-    return res;
   }
 
-  // ── Login ──
+  // ── Login ───────────────────────────────────────────────────────────────────
   const loginBtn   = document.getElementById('login-btn');
   const patInput   = document.getElementById('pat-input');
   const loginError = document.getElementById('login-error');
@@ -347,16 +439,15 @@
     loginBtn.textContent = 'Verifying…';
     loginError.textContent = '';
     token = pat;
-    const res = await ghFetch(`/repos/${REPO}/contents/${FILE}`);
+    const res = await ghFetch(`/repos/${REPO}/contents/events.json`);
     if (res.ok) {
       sessionStorage.setItem('momo_admin_token', pat);
-      showScreen('events-screen');
-      loadEvents();
+      showAdmin();
     } else {
       token = '';
       loginError.textContent = res.status === 401
         ? 'Invalid token — check it has repo scope.'
-        : `GitHub error ${res.status}. Check repo name and token permissions.`;
+        : `GitHub error ${res.status}.`;
     }
     loginBtn.disabled = false;
     loginBtn.textContent = 'Sign In';
@@ -365,88 +456,903 @@
   loginBtn.addEventListener('click', doLogin);
   patInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-  // ── Load events ──
-  let currentEvents = [];
-  let currentSha = '';
+  // ── Show admin ──────────────────────────────────────────────────────────────
+  async function showAdmin() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').classList.add('active');
+    await Promise.all([loadAllCopy(), loadEvents()]);
+    loadRegistries();
+    renderAll();
+  }
 
-  async function loadEvents() {
-    const list = document.getElementById('events-list');
-    list.innerHTML = '<p class="empty-events">Loading…</p>';
-    const res = await ghFetch(`/repos/${REPO}/contents/${FILE}?ref=${BRANCH}`);
-    if (!res.ok) { list.innerHTML = '<p class="empty-events" style="color:var(--red)">Failed to load events.</p>'; return; }
+  function slugify(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24)
+      + '-' + Date.now().toString(36);
+  }
+
+  function loadRegistries() {
+    // Reviews
+    const rReg = (copyData['en']['reviews.registry'] || '').split('|').filter(Boolean);
+    rReg.forEach(id => {
+      if (REVIEWS.find(r => r.id === id)) return;
+      REVIEWS.push({ id,
+        name:      copyData['en'][`reviews.${id}.name`]      || id,
+        venue:     copyData['en'][`reviews.${id}.venue`]     || '',
+        instagram: copyData['en'][`reviews.${id}.instagram`] || '',
+        avatar:    copyData['en'][`reviews.${id}.avatar`]    || '',
+        textKey:  `reviews.${id}.text`
+      });
+    });
+    // Demos
+    const dReg = (copyData['en']['demos.registry'] || '').split('|').filter(Boolean);
+    dReg.forEach(id => {
+      if (DEMOS.find(d => d.id === id)) return;
+      DEMOS.push({ id,
+        title:  copyData['en'][`demos.${id}.title`]  || id,
+        thumb:  copyData['en'][`demos.${id}.avatar`] || '',
+        ytId:   '',
+        descKey: `demos.${id}.desc`
+      });
+    });
+    // Timeline
+    Object.keys(TIMELINE).forEach(decade => {
+      const tReg = (copyData['en'][`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
+      tReg.forEach(id => {
+        if (TIMELINE[decade].find(x => x.id === id)) return;
+        TIMELINE[decade].push({ id,
+          name:      copyData['en'][`timeline.${id}.name`]      || id,
+          dates:     copyData['en'][`timeline.${id}.dates`]     || '',
+          instagram: copyData['en'][`timeline.${id}.instagram`] || '',
+          avatar:    copyData['en'][`timeline.${id}.avatar`]    || '',
+          roleKey:  `timeline.${id}.desc`
+        });
+      });
+    });
+  }
+
+  // ── Logout ──────────────────────────────────────────────────────────────────
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('momo_admin_token');
+    token = '';
+    document.getElementById('login-screen').style.display = '';
+    document.getElementById('admin-screen').classList.remove('active');
+    patInput.value = '';
+  });
+
+  // ── Load copy ───────────────────────────────────────────────────────────────
+  async function loadAllCopy() {
+    await Promise.all(['en', 'fr'].map(async lang => {
+      if (copyData[lang]) return;
+      const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json?ref=${BRANCH}`);
+      if (!res.ok) { copyData[lang] = {}; return; }
+      const j = await res.json();
+      copySha[lang] = j.sha;
+      copyData[lang] = JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g, '')))));
+    }));
+  }
+
+  function copy(key) {
+    return (copyData[currentLang] || {})[key] || (copyData['en'] || {})[key] || '';
+  }
+
+  async function saveCopy(lang, message) {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(copyData[lang], null, 2))));
+    const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content, sha: copySha[lang], branch: BRANCH })
+    });
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
     const data = await res.json();
-    currentSha = data.sha;
+    copySha[lang] = data.content.sha;
+  }
+
+  // ── Load events ──────────────────────────────────────────────────────────────
+  async function loadEvents() {
+    const res = await ghFetch(`/repos/${REPO}/contents/events.json?ref=${BRANCH}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    eventsSha = data.sha;
     const content = JSON.parse(atob(data.content.replace(/\n/g, '')));
     currentEvents = Array.isArray(content) ? content : (content.events || []);
-    renderList();
   }
 
-  function renderList() {
-    const list = document.getElementById('events-list');
-    if (!currentEvents.length) {
-      list.innerHTML = '<p class="empty-events">No events yet. Add your first one!</p>';
-      return;
-    }
-    list.innerHTML = '';
-    currentEvents.forEach((ev, i) => {
-      const item = document.createElement('div');
-      item.className = 'event-item';
-      item.innerHTML = `
-        <img class="event-item-img" src="${ev.image ? '../' + ev.image.replace(/^\//, '') : ''}" alt="${ev.venue}"
-             onerror="this.style.opacity='0'">
-        <div class="event-item-info">
-          <p class="event-item-venue">${ev.venue || '—'}</p>
-          <p class="event-item-meta">${ev.date || ''} · ${ev.start_time || ''}–${ev.end_time || ''}</p>
-        </div>
-        <div class="event-item-actions">
-          <button class="btn-secondary" data-edit="${i}" style="padding:8px 12px;font-size:13px;">Edit</button>
-          <button class="btn-danger" data-delete="${i}">Delete</button>
-        </div>`;
-      list.appendChild(item);
-    });
-
-    list.querySelectorAll('[data-edit]').forEach(btn => {
-      btn.addEventListener('click', () => openForm(parseInt(btn.dataset.edit)));
-    });
-    list.querySelectorAll('[data-delete]').forEach(btn => {
-      btn.addEventListener('click', () => deleteEvent(parseInt(btn.dataset.delete)));
-    });
-  }
-
-  // ── Save to GitHub ──
   async function saveEvents(message) {
     const body = JSON.stringify({ events: currentEvents }, null, 2);
-    const res = await ghFetch(`/repos/${REPO}/contents/${FILE}`, {
+    const res = await ghFetch(`/repos/${REPO}/contents/events.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message,
-        content: btoa(unescape(encodeURIComponent(body))),
-        sha: currentSha,
-        branch: BRANCH
+        message, content: btoa(unescape(encodeURIComponent(body))),
+        sha: eventsSha, branch: BRANCH
       })
     });
     if (!res.ok) throw new Error(`GitHub ${res.status}`);
     const data = await res.json();
-    currentSha = data.content.sha;
+    eventsSha = data.content.sha;
   }
 
-  // ── Delete ──
-  async function deleteEvent(index) {
+  // ── Language tabs ────────────────────────────────────────────────────────────
+  document.querySelector('.lang-tabs').addEventListener('click', async e => {
+    const tab = e.target.closest('.lang-tab');
+    if (!tab) return;
+    const lang = tab.dataset.lang;
+    if (lang === currentLang) return;
+    currentLang = lang;
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === lang));
+    if (!copyData[lang]) await loadAllCopy();
+    renderAll();
+  });
+
+  // ── Render all sections ──────────────────────────────────────────────────────
+  function renderAll() {
+    renderLive();
+    renderIntro();
+    renderGigs();
+    renderReviews();
+    renderDemos();
+    renderTimeline();
+  }
+
+  // ── LIVE section ──────────────────────────────────────────────────────────────
+  function renderLive() {
+    const el = document.getElementById('live-content');
+    const now = Date.now();
+    const liveEvent = currentEvents.find(ev => {
+      const startMs = new Date(`${ev.date}T${ev.start_time}:00`).getTime();
+      if (startMs > now) return false;
+      let endDateStr = ev.date;
+      if (ev.end_time <= ev.start_time) {
+        const d = new Date(ev.date); d.setDate(d.getDate() + 1);
+        endDateStr = d.toISOString().slice(0, 10);
+      }
+      const endMs = new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
+      return now <= endMs + 24 * 60 * 60 * 1000;
+    });
+
+    if (!liveEvent) {
+      el.innerHTML = `<div class="empty-state">Not live anywhere now</div>`;
+      return;
+    }
+
+    const liveIdx = currentEvents.indexOf(liveEvent);
+    el.innerHTML = `
+      <div class="gig-card" data-action="open-requests" data-index="${liveIdx}" style="cursor:pointer;">
+        <div class="gig-card-top">
+          <div class="gig-card-avatar">
+            <img src="${liveEvent.image ? '../' + liveEvent.image.replace(/^\//, '') : ''}" alt="${esc(liveEvent.venue)}" onerror="this.style.opacity='0'">
+          </div>
+          <div class="gig-card-copy">
+            <p class="gig-card-name">${esc(liveEvent.venue || '—')}</p>
+            <p class="gig-card-meta">${esc(liveEvent.date || '')}</p>
+            <p class="gig-card-meta">${esc(liveEvent.start_time || '')}–${esc(liveEvent.end_time || '')}</p>
+          </div>
+        </div>
+        <div class="gig-card-actions">
+          <div class="gig-live-status" style="pointer-events:none;">
+            <div class="gig-live-dot"></div>
+            <span class="gig-live-label">Live</span>
+          </div>
+          <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
+        </div>
+      </div>`;
+  }
+
+  // ── INTRO section ─────────────────────────────────────────────────────────────
+  function renderIntro() {
+    const card = document.getElementById('intro-card');
+    card.innerHTML = `
+      <div class="card-avatar" style="border-radius:8px;">
+        <img src="../images/profile.png" alt="Momo">
+      </div>
+      <p class="card-name">${esc(copy('intro.title') || 'MOMO AUX PLATINES')}</p>
+      <p class="card-sub">${esc((copy('intro.tags') || '').replace(/\|/g, ' · '))}</p>
+      <p class="card-text">${esc(copy('intro.bio'))}</p>
+      <p class="card-link-text">CONTACT</p>
+      <button class="btn-card-edit" data-action="edit-intro">Edit</button>`;
+  }
+
+  // ── NEXT GIGS section ─────────────────────────────────────────────────────────
+  function renderGigs() {
+    const el = document.getElementById('gigs-list');
+    const now = Date.now();
+    const upcoming = currentEvents.filter(ev => {
+      const startMs = new Date(`${ev.date}T${ev.start_time}:00`).getTime();
+      return startMs > now;
+    }).sort((a, b) => new Date(`${a.date}T${a.start_time}:00`) - new Date(`${b.date}T${b.start_time}:00`));
+
+    if (!upcoming.length) {
+      el.innerHTML = `<div class="empty-state">No gigs planned</div>`;
+      return;
+    }
+
+    el.innerHTML = '';
+    upcoming.forEach(ev => {
+      const idx = currentEvents.indexOf(ev);
+      const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
+      const card = document.createElement('div');
+      card.className = 'gig-card';
+      card.dataset.action = 'open-requests';
+      card.dataset.index  = idx;
+      card.innerHTML = `
+        <div class="gig-card-top">
+          <div class="gig-card-avatar">
+            <img src="${imgSrc}" alt="${esc(ev.venue)}" onerror="this.style.opacity='0'">
+          </div>
+          <div class="gig-card-copy">
+            <p class="gig-card-name">${esc(ev.venue || '—')}</p>
+            <p class="gig-card-meta">${esc(ev.date || '')}</p>
+            <p class="gig-card-meta">${esc(ev.start_time || '')}–${esc(ev.end_time || '')}</p>
+          </div>
+        </div>
+        <div class="gig-card-actions">
+          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
+        </div>`;
+      el.appendChild(card);
+    });
+  }
+
+  // ── REVIEWS section ───────────────────────────────────────────────────────────
+  function renderReviews() {
+    const el = document.getElementById('reviews-list');
+    el.innerHTML = '';
+    REVIEWS.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'admin-card';
+      const rName  = copy(`reviews.${r.id}.name`)  || r.name;
+      const rVenue = copy(`reviews.${r.id}.venue`) || r.venue;
+      card.innerHTML = `
+        <div class="card-avatar round"><img src="${r.avatar}" alt="${esc(rName)}"></div>
+        <p class="card-name">${esc(rName)}</p>
+        ${rVenue ? `<p class="card-sub">${esc(rVenue)}</p>` : ''}
+        <p class="card-text">${esc(copy(r.textKey))}</p>
+        <p class="card-link-text">Instagram</p>
+        <button class="btn-card-edit" data-action="edit-review" data-id="${r.id}">Edit</button>`;
+      el.appendChild(card);
+    });
+  }
+
+  // ── DEMOS section ─────────────────────────────────────────────────────────────
+  function renderDemos() {
+    const el = document.getElementById('demos-list');
+    el.innerHTML = '';
+    DEMOS.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'admin-card';
+      const dTitle = copy(`demos.${d.id}.title`) || d.title;
+      const dLink  = copy(`demos.${d.id}.link`)  || (d.ytId ? `https://www.youtube.com/watch?v=${d.ytId}` : '');
+      const dSoon  = copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false');
+      card.innerHTML = `
+        <div class="card-thumb">
+          <img class="card-thumb-img" src="${d.thumb}" alt="${esc(dTitle)}">
+        </div>
+        <p class="card-name">${esc(dTitle)}</p>
+        <p class="card-text">${esc(copy(d.descKey))}</p>
+        ${dSoon ? '<p class="card-sub">Coming soon</p>' : dLink ? `<p class="card-link-text">YouTube</p>` : ''}
+        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>`;
+      el.appendChild(card);
+    });
+  }
+
+  // ── TIMELINE section ──────────────────────────────────────────────────────────
+  function renderTimeline() {
+    Object.entries(TIMELINE).forEach(([decade, items]) => {
+      const container = document.querySelector(`[data-decade-cards="${decade}"]`);
+      if (!container) return;
+      container.innerHTML = '';
+      if (!items.length) {
+        container.innerHTML = `<div class="empty-state">No entries</div>`;
+        return;
+      }
+      items.forEach(item => {
+        const iName = copy(`timeline.${item.id}.name`)  || item.name;
+        const iDates = copy(`timeline.${item.id}.dates`) || item.dates;
+        const iLink  = copy(`timeline.${item.id}.instagram`) || item.instagram;
+        const role = item.roleKey ? copy(item.roleKey) : '';
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+        card.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card-avatar" style="border-radius:8px;"><img src="${item.avatar}" alt="${esc(iName)}"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <p class="card-name">${esc(iName)}</p>
+              ${role ? `<p class="card-sub">${esc(role)}</p>` : ''}
+              <p class="card-sub">${esc(iDates)}</p>
+            </div>
+          </div>
+          ${iLink ? `<p class="card-link-text">Link</p>` : ''}
+          <button class="btn-card-edit" data-action="edit-timeline" data-decade="${decade}" data-id="${item.id}">Edit</button>`;
+        container.appendChild(card);
+      });
+    });
+  }
+
+  // ── Delegated click handler ───────────────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id, index, decade } = btn.dataset;
+    if (action === 'edit-intro')    openForm('intro');
+    if (action === 'edit-review')   openForm('review',   REVIEWS.find(r => r.id === id));
+    if (action === 'edit-demo')     openForm('demo',     DEMOS.find(d => d.id === id));
+    if (action === 'edit-timeline') openForm('timeline', { item: TIMELINE[decade]?.find(x => x.id === id), decade });
+    if (action === 'edit-gig')      openForm('gig',      { index: parseInt(index) });
+    if (action === 'delete-gig')    deleteGig(parseInt(index));
+    if (action === 'open-requests') openRequests(parseInt(index));
+  });
+
+  document.getElementById('add-gig-btn').addEventListener('click', () => openForm('gig', { index: -1 }));
+  document.getElementById('add-review-btn').addEventListener('click', () => openForm('review', null));
+  document.getElementById('add-demo-btn').addEventListener('click', () => openForm('demo', null));
+  document.querySelectorAll('[data-decade]').forEach(btn => {
+    btn.addEventListener('click', () => openForm('timeline', { decade: btn.dataset.decade, item: null }));
+  });
+
+  // ── Edit overlay ──────────────────────────────────────────────────────────────
+  const overlay   = document.getElementById('edit-overlay');
+  const editTitle = document.getElementById('edit-title');
+  const editSub   = document.getElementById('edit-subtitle');
+  const editBody  = document.getElementById('edit-body');
+  const saveBtn   = document.getElementById('edit-save-btn');
+
+  function openForm(type, meta = null) {
+    editFormType = type;
+    editFormMeta = meta;
+    editBody.innerHTML = '';
+    // Disable Save until user makes a change
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Save';
+    function enableSave() { saveBtn.disabled = false; }
+    editBody.addEventListener('input',  enableSave, { once: true });
+    editBody.addEventListener('change', enableSave, { once: true });
+
+    if (type === 'intro') {
+      editTitle.textContent = 'Edit Intro';
+      editSub.textContent   = "Tell 'em who you are mr DJ.";
+      const existingTags = (copy('intro.tags') || 'DJ|TURNTABLIST|RADIO HOST').split('|').map(t => t.trim()).filter(Boolean);
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="image-row">
+          <div class="image-preview">
+            <img id="ef-img-preview" src="../images/profile.png" alt="Profile">
+          </div>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Title*</label>
+          <input class="edit-input" type="text" id="ef-title" value="${esc(copy('intro.title') || 'MOMO AUX PLATINES')}">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Tags</label>
+          <div class="tags-section">
+            <div style="display:flex;gap:8px;">
+              <input class="edit-input" type="text" id="ef-tag-input" placeholder="Label a new tag" style="flex:1;">
+              <button type="button" id="ef-tag-add" style="height:52px;padding:0 20px;background:var(--brand-80);border:none;border-radius:12px;color:var(--brand-00);font-size:16px;font-weight:600;cursor:pointer;flex-shrink:0;">Add</button>
+            </div>
+            <div class="tags-existing" id="ef-tags-list">
+              ${existingTags.map(t => `
+                <div class="tag-chip" data-tag="${esc(t)}">
+                  <span>${esc(t)}</span>
+                  <button type="button" class="tag-remove" aria-label="Remove tag">✕</button>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Description*</label>
+          <textarea class="edit-input" id="ef-bio" rows="6">${esc(copy('intro.bio'))}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Button label*</label>
+          <input class="edit-input" type="text" id="ef-btn" value="${esc(copy('intro.btn.book'))}">
+        </div>`;
+      // Wire up image picker
+      const imgInput   = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => {
+        const file = imgInput.files[0];
+        if (file) imgPreview.src = URL.createObjectURL(file);
+      });
+      // Wire up tag add/remove
+      const tagInput = document.getElementById('ef-tag-input');
+      const tagList  = document.getElementById('ef-tags-list');
+      function addTag(val) {
+        const label = val.trim().toUpperCase();
+        if (!label) return;
+        const existing = [...tagList.querySelectorAll('.tag-chip')].map(c => c.dataset.tag);
+        if (existing.includes(label)) { tagInput.value = ''; return; }
+        const chip = document.createElement('div');
+        chip.className = 'tag-chip';
+        chip.dataset.tag = label;
+        chip.innerHTML = `<span>${esc(label)}</span><button type="button" class="tag-remove" aria-label="Remove tag">✕</button>`;
+        chip.querySelector('.tag-remove').addEventListener('click', () => chip.remove());
+        tagList.appendChild(chip);
+        tagInput.value = '';
+      }
+      document.getElementById('ef-tag-add').addEventListener('click', () => addTag(tagInput.value));
+      tagInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTag(tagInput.value); } });
+      tagList.querySelectorAll('.tag-remove').forEach(btn => btn.addEventListener('click', () => btn.closest('.tag-chip').remove()));
+    }
+
+    if (type === 'review') {
+      const isNew = !meta;
+      editTitle.textContent = isNew ? 'Add Review' : 'Edit Review';
+      editSub.textContent   = 'Review will be posted live once saved.';
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="image-row">
+          <div class="image-preview round">
+            <img id="ef-img-preview" src="${isNew ? '' : meta.avatar}" alt="" style="${isNew ? 'display:none' : ''}">
+          </div>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Title*</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-name" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.name') || meta.name)}" placeholder="Simone">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Company name</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-venue" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.venue') || meta.venue)}" placeholder="La Buvette chez Simone">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Description*</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-text" rows="6" placeholder="Write the review here…">${isNew ? '' : esc(copy(meta.textKey))}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Instagram link</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-instagram" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.instagram') || meta.instagram)}" placeholder="https://www.instagram.com/...">
+        </div>`;
+      const imgInput = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; } });
+    }
+
+    if (type === 'demo') {
+      const isNew = !meta;
+      editTitle.textContent = isNew ? 'Add Demo' : 'Edit Demo';
+      editSub.textContent   = '';
+      const ytLink = isNew ? '' : (copy(`demos.${meta.id}.link`) || (meta.ytId ? `https://www.youtube.com/watch?v=${meta.ytId}` : ''));
+      const comingSoon = isNew ? true : (copy(`demos.${meta.id}.coming-soon`) === 'true' || (!meta.ytId && copy(`demos.${meta.id}.coming-soon`) !== 'false'));
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="image-row">
+          <div class="image-preview rect">
+            <img id="ef-img-preview" src="${isNew ? '' : meta.thumb}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
+          </div>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Title*</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-title" value="${isNew ? '' : esc(copy('demos.' + meta.id + '.title') || meta.title)}" placeholder="Le Bon Groove">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Description*</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-desc" rows="5" placeholder="Describe the vibe…">${isNew ? '' : esc(copy(meta.descKey))}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">YouTube link</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-ytlink" value="${esc(ytLink)}" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;">
+          <input type="checkbox" id="ef-coming-soon" ${comingSoon ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--brand-80);flex-shrink:0;">
+          <span class="edit-label" style="margin:0;">Coming soon</span>
+        </label>`;
+      const imgInput = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+    }
+
+    if (type === 'timeline' && meta) {
+      const item  = meta.item;
+      const isNew = !item;
+      editTitle.textContent = isNew ? 'Add Timeline Entry' : 'Edit Timeline';
+      editSub.textContent   = '';
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="image-row">
+          <div class="image-preview square">
+            <img id="ef-img-preview" src="${isNew ? '' : item.avatar}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
+          </div>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Title*</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-name" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.name') || item.name)}" placeholder="La Buvette chez Simone">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Description</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-role" rows="4" placeholder="What was the role here?">${isNew ? '' : esc(item.roleKey ? copy(item.roleKey) : '')}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Dates*</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-dates" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.dates') || item.dates)}" placeholder="2020–2023">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Link</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-link" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.instagram') || item.instagram)}" placeholder="https://...">
+        </div>`;
+      const imgInput = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+    }
+
+    if (type === 'gig') {
+      const idx = meta?.index ?? -1;
+      const ev  = idx >= 0 ? currentEvents[idx] : null;
+      editTitle.textContent = ev ? 'Edit Gig' : 'Add Gig';
+      editSub.textContent   = '';
+      editBody.innerHTML = `
+        <input type="hidden" id="ef-gig-index" value="${idx}">
+        <div class="edit-field">
+          <label class="edit-label">Venue*</label>
+          <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-venue" value="${esc(ev?.venue || '')}" placeholder="Buvette Chez Simone">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Address</label>
+          <input class="edit-input ${ev?.address ? '' : 'empty'}" type="text" id="ef-address" value="${esc(ev?.address || '')}" placeholder="4869 Rue Villeneuve O, Montréal">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Date*</label>
+          <input class="edit-input ${ev?.date ? '' : 'empty'}" type="date" id="ef-date" value="${esc(ev?.date || '')}">
+        </div>
+        <div class="form-row">
+          <div class="edit-field">
+            <label class="edit-label">Start*</label>
+            <input class="edit-input ${ev?.start_time ? '' : 'empty'}" type="time" id="ef-start" value="${esc(ev?.start_time || '')}">
+          </div>
+          <div class="edit-field">
+            <label class="edit-label">End*</label>
+            <input class="edit-input ${ev?.end_time ? '' : 'empty'}" type="time" id="ef-end" value="${esc(ev?.end_time || '')}">
+          </div>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Instagram URL</label>
+          <input class="edit-input ${ev?.instagram ? '' : 'empty'}" type="url" id="ef-instagram" value="${esc(ev?.instagram || '')}" placeholder="https://www.instagram.com/venue">
+        </div>
+        <input type="file" id="ef-gig-img-input" accept="image/*" style="display:none">
+        <div class="edit-field">
+          <label class="edit-label">Photo</label>
+          <div class="image-row">
+            <div class="image-preview rect" style="flex-shrink:0;">
+              <img id="ef-gig-img-preview" src="" alt="" style="display:none;opacity:1;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <button type="button" class="btn-card-edit" id="ef-gig-overwrite-btn">Overwrite photo</button>
+              <button type="button" class="btn-card-edit" id="ef-gig-revert-btn" style="display:none;">Revert to Instagram</button>
+            </div>
+          </div>
+          <p id="ef-gig-img-status" style="font-size:12px;font-weight:300;color:var(--brand-50);margin:0;line-height:18px;"></p>
+        </div>
+        <div class="show-toggle-row">
+          <span class="show-toggle-label">Show on home page</span>
+          <button type="button" class="req-switch${ev?.show !== false ? ' on' : ''}" id="ef-show-toggle" aria-label="Show on home page"></button>
+        </div>
+        <input type="hidden" id="ef-image" value="${esc(ev?.image || '')}">
+        ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">Delete event</button>` : ''}`;
+
+      // Wire Instagram debounce + image overwrite/revert buttons
+      setTimeout(() => {
+        const igInput      = document.getElementById('ef-instagram');
+        const gigImgInput  = document.getElementById('ef-gig-img-input');
+        const gigPreview   = document.getElementById('ef-gig-img-preview');
+        const gigStatus    = document.getElementById('ef-gig-img-status');
+        const overwriteBtn = document.getElementById('ef-gig-overwrite-btn');
+        const revertBtn    = document.getElementById('ef-gig-revert-btn');
+        if (!igInput) return;
+
+        function showGigPreview(src, statusText) {
+          if (!src) { gigPreview.style.display = 'none'; gigStatus.textContent = ''; return; }
+          gigPreview.src = src;
+          gigPreview.style.display = '';
+          gigPreview.style.opacity = '';
+          gigStatus.textContent = statusText || '';
+        }
+
+        function updateRevertVisibility() {
+          const hasIg = !!extractIgUsername(igInput.value.trim());
+          revertBtn.style.display = hasIg ? '' : 'none';
+        }
+
+        // Initial state
+        if (ev?.image) {
+          showGigPreview('../' + ev.image.replace(/^\//, ''), 'Current photo');
+          pendingAvatarUrl = null; pendingAvatarUser = null;
+        } else if (ev?.instagram) {
+          const u = extractIgUsername(ev.instagram);
+          if (u) {
+            const src = `https://unavatar.io/instagram/${u}`;
+            pendingAvatarUrl = src; pendingAvatarUser = u;
+            showGigPreview(src, 'From Instagram · will be saved on save');
+          }
+        }
+        updateRevertVisibility();
+
+        // IG input → debounced fetch
+        let igDebounce;
+        igInput.addEventListener('input', () => {
+          updateRevertVisibility();
+          clearTimeout(igDebounce);
+          igDebounce = setTimeout(() => {
+            if (pendingCustomFile) return;
+            const u = extractIgUsername(igInput.value.trim());
+            if (!u) { showGigPreview('', ''); pendingAvatarUrl = null; pendingAvatarUser = null; return; }
+            const src = `https://unavatar.io/instagram/${u}`;
+            pendingAvatarUrl = src; pendingAvatarUser = u;
+            document.getElementById('ef-image').value = '';
+            showGigPreview(src, 'From Instagram · will be saved on save');
+          }, 600);
+        });
+
+        // Overwrite → file picker
+        overwriteBtn.addEventListener('click', () => gigImgInput.click());
+        gigImgInput.addEventListener('change', () => {
+          const file = gigImgInput.files[0];
+          if (!file) return;
+          pendingCustomFile = file;
+          pendingAvatarUrl = null; pendingAvatarUser = null;
+          document.getElementById('ef-image').value = '';
+          showGigPreview(URL.createObjectURL(file), 'Custom photo · will be saved on save');
+          saveBtn.disabled = false;
+        });
+
+        // Show toggle
+        const showToggle = document.getElementById('ef-show-toggle');
+        if (showToggle) {
+          showToggle.addEventListener('click', () => {
+            showToggle.classList.toggle('on');
+            saveBtn.disabled = false;
+          });
+        }
+
+        // Revert → go back to Instagram photo
+        revertBtn.addEventListener('click', () => {
+          pendingCustomFile = null;
+          document.getElementById('ef-image').value = '';
+          const u = extractIgUsername(igInput.value.trim());
+          if (u) {
+            const src = `https://unavatar.io/instagram/${u}`;
+            pendingAvatarUrl = src; pendingAvatarUser = u;
+            showGigPreview(src, 'From Instagram · will be saved on save');
+          } else {
+            showGigPreview('', '');
+          }
+          saveBtn.disabled = false;
+        });
+      }, 50);
+    }
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeForm() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    editFormType = null;
+    editFormMeta = null;
+    pendingCustomFile = null;
+  }
+
+  document.getElementById('edit-close-btn').addEventListener('click', closeForm);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeForm(); });
+
+  // ── Save ──────────────────────────────────────────────────────────────────────
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      if (editFormType === 'intro') {
+        // Upload new profile image if selected
+        const imgInput = document.getElementById('ef-img-input');
+        if (imgInput && imgInput.files[0]) {
+          const file = imgInput.files[0];
+          const base64 = (await blobToBase64(file)).split(',')[1];
+          const check = await ghFetch(`/repos/${REPO}/contents/images/profile.png`);
+          const body = { message: 'Update profile photo via admin', content: base64, branch: BRANCH };
+          if (check.ok) body.sha = (await check.json()).sha;
+          const up = await ghFetch(`/repos/${REPO}/contents/images/profile.png`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+          });
+          if (!up.ok) throw new Error(`Image upload failed: ${up.status}`);
+        }
+        copyData[currentLang]['intro.title']    = document.getElementById('ef-title').value;
+        copyData[currentLang]['intro.bio']      = document.getElementById('ef-bio').value;
+        copyData[currentLang]['intro.btn.book'] = document.getElementById('ef-btn').value;
+        const tagChips = [...document.querySelectorAll('#ef-tags-list .tag-chip')].map(c => c.dataset.tag);
+        copyData[currentLang]['intro.tags'] = tagChips.join('|');
+        await saveCopy(currentLang, `Update intro copy (${currentLang}) via admin`);
+        renderIntro();
+        showToast('Intro saved', 'success');
+      }
+
+      if (editFormType === 'review') {
+        const isNew = !editFormMeta;
+        const name  = document.getElementById('ef-name')?.value.trim();
+        if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        const id = isNew ? slugify(name) : editFormMeta.id;
+        const avatarRepoPath = isNew ? `images/reviews/${id}.jpg` : editFormMeta.avatar.replace(/^\.\.\//, '');
+        const imgInput = document.getElementById('ef-img-input');
+        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], avatarRepoPath, `${isNew ? 'Add' : 'Update'} review photo: ${id}`);
+        const textVal     = document.getElementById('ef-text')?.value ?? '';
+        const venueVal    = document.getElementById('ef-venue')?.value ?? '';
+        const igVal       = document.getElementById('ef-instagram')?.value ?? '';
+        const avatarVal   = isNew ? `/${avatarRepoPath}` : (editFormMeta.avatar.startsWith('../') ? editFormMeta.avatar.slice(2) : editFormMeta.avatar);
+        const langs = isNew ? ['en', 'fr'] : [currentLang];
+        for (const lang of langs) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang]['reviews.registry'] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang]['reviews.registry'] = [...reg, id].join('|');
+            copyData[lang][`reviews.${id}.avatar`] = avatarVal;
+          }
+          copyData[lang][`reviews.${id}.name`]      = name;
+          copyData[lang][`reviews.${id}.venue`]     = venueVal;
+          copyData[lang][`reviews.${id}.text`]      = textVal;
+          copyData[lang][`reviews.${id}.instagram`] = igVal;
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} review: ${name} (${lang})`);
+        }
+        if (isNew) {
+          REVIEWS.push({ id, name, venue: venueVal, instagram: igVal, avatar: '../' + avatarRepoPath, textKey: `reviews.${id}.text` });
+        } else {
+          const r = REVIEWS.find(x => x.id === id);
+          if (r) { r.name = name; r.venue = venueVal; r.instagram = igVal; }
+        }
+        renderReviews();
+        showToast(isNew ? 'Review added' : 'Review saved', 'success');
+      }
+
+      if (editFormType === 'demo') {
+        const isNew = !editFormMeta;
+        const title = document.getElementById('ef-title')?.value.trim();
+        if (!title) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        const id = isNew ? slugify(title) : editFormMeta.id;
+        const thumbRepoPath = isNew ? `images/demos/${id}.jpg` : editFormMeta.thumb.replace(/^\.\.\//, '');
+        const imgInput = document.getElementById('ef-img-input');
+        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], thumbRepoPath, `${isNew ? 'Add' : 'Update'} demo thumb: ${id}`);
+        const descVal    = document.getElementById('ef-desc')?.value ?? '';
+        const ytVal      = document.getElementById('ef-ytlink')?.value ?? '';
+        const soonVal    = document.getElementById('ef-coming-soon')?.checked ? 'true' : 'false';
+        const thumbVal   = isNew ? `/${thumbRepoPath}` : (editFormMeta.thumb.startsWith('../') ? editFormMeta.thumb.slice(2) : editFormMeta.thumb);
+        const langs = isNew ? ['en', 'fr'] : [currentLang];
+        for (const lang of langs) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang]['demos.registry'] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang]['demos.registry'] = [...reg, id].join('|');
+            copyData[lang][`demos.${id}.avatar`] = thumbVal;
+          }
+          copyData[lang][`demos.${id}.title`]       = title;
+          copyData[lang][`demos.${id}.desc`]        = descVal;
+          copyData[lang][`demos.${id}.link`]        = ytVal;
+          copyData[lang][`demos.${id}.coming-soon`] = soonVal;
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} demo: ${title} (${lang})`);
+        }
+        if (isNew) {
+          DEMOS.push({ id, title, thumb: '../' + thumbRepoPath, ytId: '', descKey: `demos.${id}.desc` });
+        } else {
+          const d = DEMOS.find(x => x.id === id);
+          if (d) d.title = title;
+        }
+        renderDemos();
+        showToast(isNew ? 'Demo added' : 'Demo saved', 'success');
+      }
+
+      if (editFormType === 'timeline' && editFormMeta) {
+        const item  = editFormMeta.item;
+        const isNew = !item;
+        const decade = editFormMeta.decade;
+        const name  = document.getElementById('ef-name')?.value.trim();
+        if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        const id = isNew ? slugify(name) : item.id;
+        const avatarRepoPath = isNew ? `images/timeline/${id}.jpg` : item.avatar.replace(/^\.\.\//, '');
+        const imgInput = document.getElementById('ef-img-input');
+        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], avatarRepoPath, `${isNew ? 'Add' : 'Update'} timeline photo: ${id}`);
+        const roleVal  = document.getElementById('ef-role')?.value ?? '';
+        const datesVal = document.getElementById('ef-dates')?.value ?? '';
+        const linkVal  = document.getElementById('ef-link')?.value ?? '';
+        const avatarVal = isNew ? `/${avatarRepoPath}` : (item.avatar.startsWith('../') ? item.avatar.slice(2) : item.avatar);
+        const langs = isNew ? ['en', 'fr'] : [currentLang];
+        for (const lang of langs) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang][`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang][`timeline.${decade}.registry`] = [...reg, id].join('|');
+            copyData[lang][`timeline.${id}.avatar`] = avatarVal;
+          }
+          copyData[lang][`timeline.${id}.name`]      = name;
+          copyData[lang][`timeline.${id}.desc`]      = roleVal;
+          copyData[lang][`timeline.${id}.dates`]     = datesVal;
+          copyData[lang][`timeline.${id}.instagram`] = linkVal;
+          if (!isNew && item.roleKey) copyData[lang][item.roleKey] = roleVal;
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} timeline: ${name} (${lang})`);
+        }
+        if (isNew) {
+          TIMELINE[decade].push({ id, name, dates: datesVal, instagram: linkVal, avatar: '../' + avatarRepoPath, roleKey: `timeline.${id}.desc` });
+        } else {
+          item.name = name; item.dates = datesVal; item.instagram = linkVal;
+        }
+        renderTimeline();
+        showToast(isNew ? 'Entry added' : 'Entry saved', 'success');
+      }
+
+      if (editFormType === 'gig') {
+        const venue = document.getElementById('ef-venue')?.value.trim();
+        if (!venue) { showToast('Venue is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+
+        let imagePath = document.getElementById('ef-image')?.value.trim() || '';
+        const igInput = document.getElementById('ef-instagram');
+        const igVal   = igInput?.value.trim() || '';
+        if (pendingCustomFile) {
+          try {
+            const repoPath = imagePath
+              ? imagePath.replace(/^\//, '')
+              : `images/events/${slugify(venue)}.jpg`;
+            await uploadImageToGitHub(pendingCustomFile, repoPath, `Update gig photo: ${venue}`);
+            imagePath = '/' + repoPath;
+            pendingCustomFile = null;
+          } catch (e) { showToast('Image upload failed: ' + e.message, 'error'); }
+        } else if (pendingAvatarUrl && pendingAvatarUser) {
+          try {
+            imagePath = await uploadAvatarToGitHub(pendingAvatarUrl, pendingAvatarUser);
+          } catch (_) { imagePath = ''; }
+        }
+
+        const ev = {
+          venue,
+          address:    document.getElementById('ef-address')?.value.trim() || '',
+          date:       document.getElementById('ef-date')?.value || '',
+          start_time: document.getElementById('ef-start')?.value || '',
+          end_time:   document.getElementById('ef-end')?.value || '',
+          instagram:  igVal,
+          image:      imagePath,
+          show:       document.getElementById('ef-show-toggle')?.classList.contains('on') ?? true,
+        };
+
+        const idx = parseInt(document.getElementById('ef-gig-index')?.value);
+        const isNew = idx < 0;
+        if (isNew) currentEvents.push(ev);
+        else currentEvents[idx] = ev;
+
+        await saveEvents(isNew ? `Add gig: ${venue}` : `Update gig: ${venue}`);
+        renderLive();
+        renderGigs();
+        showToast(isNew ? `"${venue}" added` : `"${venue}" updated`, 'success');
+      }
+
+      closeForm();
+    } catch (e) {
+      showToast('Save failed — ' + e.message, 'error');
+    }
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
+  });
+
+  // ── Delete gig ────────────────────────────────────────────────────────────────
+  async function deleteGig(index) {
     const ev = currentEvents[index];
     if (!confirm(`Delete "${ev.venue}"?\nThis cannot be undone.`)) return;
     currentEvents.splice(index, 1);
-    renderList();
     try {
-      await saveEvents(`Delete event: ${ev.venue}`);
+      await saveEvents(`Delete gig: ${ev.venue}`);
+      closeForm();
+      renderLive();
+      renderGigs();
       showToast(`"${ev.venue}" deleted`, 'success');
     } catch (e) {
-      showToast('Save failed — ' + e.message, 'error');
-      loadEvents(); // revert
+      showToast('Delete failed — ' + e.message, 'error');
+      loadEvents().then(() => { renderLive(); renderGigs(); });
     }
   }
 
-  // ── Instagram avatar helpers ──
+  // ── Instagram avatar ──────────────────────────────────────────────────────────
+  let pendingAvatarUrl = null;
+  let pendingAvatarUser = null;
+  let pendingCustomFile = null;
+
   function extractIgUsername(url) {
     const m = (url || '').match(/instagram\.com\/([^/?#]+)/);
     return m ? m[1].replace(/\/$/, '') : null;
@@ -461,190 +1367,171 @@
     });
   }
 
+  async function uploadImageToGitHub(file, repoPath, message) {
+    const base64 = (await blobToBase64(file)).split(',')[1];
+    const check  = await ghFetch(`/repos/${REPO}/contents/${repoPath}`);
+    const body   = { message, content: base64, branch: BRANCH };
+    if (check.ok) body.sha = (await check.json()).sha;
+    const up = await ghFetch(`/repos/${REPO}/contents/${repoPath}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    });
+    if (!up.ok) throw new Error(`Image upload failed: ${up.status}`);
+  }
+
   async function uploadAvatarToGitHub(avatarUrl, username) {
     const res = await fetch(avatarUrl);
     if (!res.ok) throw new Error('Fetch failed');
     const blob = await res.blob();
     const dataUrl = await blobToBase64(blob);
     const base64 = dataUrl.split(',')[1];
-    const ext  = blob.type.includes('png') ? 'png' : 'jpg';
+    const ext = blob.type.includes('png') ? 'png' : 'jpg';
     const path = `images/events/${username}.${ext}`;
-
-    // Get SHA if file already exists
     let sha;
     const check = await ghFetch(`/repos/${REPO}/contents/${path}`);
     if (check.ok) sha = (await check.json()).sha;
-
     const body = { message: `Add venue photo: ${username}`, content: base64, branch: BRANCH };
     if (sha) body.sha = sha;
-
     const up = await ghFetch(`/repos/${REPO}/contents/${path}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
     if (!up.ok) throw new Error(`GitHub upload ${up.status}`);
     return `/${path}`;
   }
 
-  // ── Add / Edit form ──
-  const overlay   = document.getElementById('form-overlay');
-  const formTitle = document.getElementById('form-title');
-  const fields    = {
-    index:     document.getElementById('edit-index'),
-    venue:     document.getElementById('f-venue'),
-    address:   document.getElementById('f-address'),
-    date:      document.getElementById('f-date'),
-    start:     document.getElementById('f-start'),
-    end:       document.getElementById('f-end'),
-    instagram: document.getElementById('f-instagram'),
-    image:     document.getElementById('f-image'),
-  };
-
-  // Avatar preview state
-  let pendingAvatarUrl = null;  // unavatar URL to fetch on save
-  let pendingAvatarUser = null; // Instagram username
-
-  const igPreviewWrap   = document.getElementById('ig-preview-wrap');
-  const igPreviewImg    = document.getElementById('ig-preview-img');
-  const igPreviewName   = document.getElementById('ig-preview-name');
-  const igPreviewStatus = document.getElementById('ig-preview-status');
-
   function showAvatarPreview(username, existingImagePath) {
+    const wrap   = document.getElementById('ig-preview-wrap');
+    const img    = document.getElementById('ig-preview-img');
+    const name   = document.getElementById('ig-preview-name');
+    const status = document.getElementById('ig-preview-status');
+    if (!wrap) return;
     if (existingImagePath) {
-      // Editing existing event — show current image
-      igPreviewImg.src = '../' + existingImagePath.replace(/^\//, '');
-      igPreviewName.textContent = username || '';
-      igPreviewStatus.textContent = 'Current venue photo';
-      igPreviewStatus.className = 'ig-preview-status';
-      igPreviewWrap.classList.add('visible');
-      pendingAvatarUrl  = null;
-      pendingAvatarUser = null;
+      img.src = '../' + existingImagePath.replace(/^\//, '');
+      name.textContent   = username || '';
+      status.textContent = 'Current venue photo';
+      status.className   = 'ig-preview-status';
+      wrap.classList.add('visible');
+      pendingAvatarUrl = null; pendingAvatarUser = null;
       return;
     }
-    if (!username) { igPreviewWrap.classList.remove('visible'); return; }
+    if (!username) { wrap.classList.remove('visible'); return; }
     const avatarUrl = `https://unavatar.io/instagram/${username}`;
-    igPreviewImg.src = avatarUrl;
-    igPreviewImg.onerror = () => {
-      igPreviewStatus.textContent = 'Could not load photo — will try again on save.';
-      igPreviewStatus.className = 'ig-preview-status err';
-    };
-    igPreviewImg.onload = () => {
-      igPreviewStatus.textContent = 'Photo will be saved to /images/events/ when you save.';
-      igPreviewStatus.className = 'ig-preview-status ok';
-    };
-    igPreviewName.textContent = '@' + username;
-    igPreviewWrap.classList.add('visible');
-    pendingAvatarUrl  = avatarUrl;
-    pendingAvatarUser = username;
+    img.src = avatarUrl;
+    img.onerror = () => { status.textContent = 'Could not load photo.'; status.className = 'ig-preview-status err'; };
+    img.onload  = () => { status.textContent = 'Photo will be saved on save.'; status.className = 'ig-preview-status ok'; };
+    name.textContent = '@' + username;
+    wrap.classList.add('visible');
+    pendingAvatarUrl = avatarUrl; pendingAvatarUser = username;
   }
 
-  let igDebounce;
-  // Wired up after fields declaration below
+  // ── Requests ──────────────────────────────────────────────────────────────────
+  const reqOverlay  = document.getElementById('req-overlay');
+  const reqBody     = document.getElementById('req-body');
+  let reqList = [];
+  let reqEventIdx = -1;
 
-  // Wire Instagram debounce
-  fields.instagram.addEventListener('input', () => {
-    clearTimeout(igDebounce);
-    igDebounce = setTimeout(() => {
-      const username = extractIgUsername(fields.instagram.value.trim());
-      // Only fetch new avatar if we don't already have a local image
-      if (!fields.image.value) showAvatarPreview(username, null);
-    }, 600);
-  });
-
-  function openForm(index = -1) {
-    fields.index.value = index;
-    pendingAvatarUrl  = null;
-    pendingAvatarUser = null;
-    igPreviewWrap.classList.remove('visible');
-
-    if (index >= 0) {
-      const ev = currentEvents[index];
-      formTitle.textContent = 'Edit Event';
-      fields.venue.value     = ev.venue || '';
-      fields.address.value   = ev.address || '';
-      fields.date.value      = ev.date || '';
-      fields.start.value     = ev.start_time || '';
-      fields.end.value       = ev.end_time || '';
-      fields.instagram.value = ev.instagram || '';
-      fields.image.value     = ev.image || '';
-      // Show existing image or fetch from Instagram
-      const username = extractIgUsername(ev.instagram);
-      showAvatarPreview(username, ev.image || null);
-    } else {
-      formTitle.textContent = 'Add Event';
-      [fields.venue, fields.address, fields.date, fields.start,
-       fields.end, fields.instagram, fields.image].forEach(f => f.value = '');
+  function openRequests(idx) {
+    reqEventIdx = idx;
+    const ev = currentEvents[idx];
+    const avatarEl = document.getElementById('req-event-avatar-img');
+    if (avatarEl) {
+      const src = ev?.image ? '../' + ev.image.replace(/^\//, '') : '';
+      avatarEl.src = src;
+      avatarEl.style.opacity = '';
     }
-    overlay.classList.add('open');
+    reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => fields.venue.focus(), 50);
+    loadRequests();
   }
 
-  function closeForm() {
-    overlay.classList.remove('open');
+  function closeRequests() {
+    reqOverlay.classList.remove('open');
     document.body.style.overflow = '';
+    reqList = [];
   }
 
-  document.getElementById('add-event-btn').addEventListener('click', () => openForm());
-  document.getElementById('form-close-btn').addEventListener('click', closeForm);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeForm(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeForm(); });
-
-  document.getElementById('save-event-btn').addEventListener('click', async () => {
-    const venue = fields.venue.value.trim();
-    if (!venue) { fields.venue.classList.add('invalid'); fields.venue.focus(); return; }
-    fields.venue.classList.remove('invalid');
-
-    const saveBtn = document.getElementById('save-event-btn');
-    saveBtn.disabled = true;
-
-    // Try to fetch + upload the Instagram avatar if we have a pending one
-    let imagePath = fields.image.value.trim();
-    if (pendingAvatarUrl && pendingAvatarUser && !imagePath) {
-      igPreviewStatus.textContent = 'Uploading photo…';
-      igPreviewStatus.className = 'ig-preview-status';
-      try {
-        imagePath = await uploadAvatarToGitHub(pendingAvatarUrl, pendingAvatarUser);
-        igPreviewStatus.textContent = 'Photo saved ✓';
-        igPreviewStatus.className = 'ig-preview-status ok';
-      } catch (e) {
-        // CORS or network issue — fall back gracefully
-        console.warn('Avatar upload failed:', e);
-        igPreviewStatus.textContent = 'Could not auto-save photo — you can add it manually later.';
-        igPreviewStatus.className = 'ig-preview-status err';
-        imagePath = ''; // leave empty rather than use external URL
-      }
-    }
-
-    const ev = {
-      venue,
-      address:    fields.address.value.trim(),
-      date:       fields.date.value,
-      start_time: fields.start.value,
-      end_time:   fields.end.value,
-      instagram:  fields.instagram.value.trim(),
-      image:      imagePath,
-    };
-
-    const idx = parseInt(fields.index.value);
-    const isNew = idx < 0;
-    if (isNew) currentEvents.push(ev);
-    else currentEvents[idx] = ev;
-
-    closeForm();
-    renderList();
-    saveBtn.disabled = false;
+  async function loadRequests() {
+    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
     try {
-      await saveEvents(isNew ? `Add event: ${venue}` : `Update event: ${venue}`);
-      showToast(isNew ? `"${venue}" added` : `"${venue}" updated`, 'success');
+      const res = await fetch('/api/requests');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      reqList = await res.json();
     } catch (e) {
-      showToast('Save failed — ' + e.message, 'error');
-      loadEvents();
+      reqBody.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed: ${e.message}</div>`;
+      return;
+    }
+    renderRequests();
+  }
+
+  function renderRequests() {
+    reqBody.innerHTML = '';
+    // Section heading
+    const heading = document.createElement('p');
+    heading.className = 'req-section-title';
+    heading.textContent = 'Requests';
+    reqBody.appendChild(heading);
+
+    if (!reqList.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No requests yet.';
+      reqBody.appendChild(empty);
+      return;
+    }
+    reqList.forEach(r => {
+      const isPlayed = r.status === 'played';
+      const card = document.createElement('div');
+      card.className = 'req-card';
+      card.dataset.id = r.id;
+      // Format timestamp
+      let timeStr = '';
+      if (r.created_at) {
+        const d = new Date(r.created_at);
+        timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      card.innerHTML = `
+        <img class="req-art" src="${r.image || ''}" alt="" onerror="this.style.background='var(--brand-90)'">
+        <div class="req-info">
+          <p class="req-title">${escReq(r.title)}</p>
+          ${r.artist ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
+          ${timeStr   ? `<p class="req-time">${escReq(timeStr)}</p>`   : ''}
+        </div>
+        <div class="req-controls">
+          <button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>
+        </div>`;
+      reqBody.appendChild(card);
+    });
+  }
+
+  document.getElementById('req-close-btn').addEventListener('click', closeRequests);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && reqOverlay.classList.contains('open')) closeRequests(); });
+  document.getElementById('req-refresh-btn').addEventListener('click', loadRequests);
+
+  reqBody.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-req-action]');
+    if (!btn) return;
+    const { reqAction, id, status } = btn.dataset;
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, status: reqAction === 'delete' ? 'deleted' : status })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
+      if (reqAction === 'delete') reqList = reqList.filter(r => r.id !== id);
+      else { const i = reqList.findIndex(r => r.id === id); if (i >= 0) reqList[i].status = status; }
+      renderRequests();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+      btn.disabled = false;
     }
   });
 
-  // ── Toast ──
+  function escReq(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+
+  // ── Utils ─────────────────────────────────────────────────────────────────────
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+
   let toastTimer;
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -654,232 +1541,8 @@
     toastTimer = setTimeout(() => { t.className = 'toast'; }, 3000);
   }
 
-  // ── Init ──
-  if (token) {
-    showScreen('events-screen');
-    loadEvents();
-  }
-
-  // ══════════════════════════════════════════════
-  // REQUESTS
-  // ══════════════════════════════════════════════
-
-  let reqList = [];
-  let reqPollTimer = null;
-
-  async function loadRequests() {
-    const listEl = document.getElementById('req-list');
-    listEl.innerHTML = '<p class="req-empty">Loading…</p>';
-    try {
-      const res = await fetch('/api/requests');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      reqList = await res.json();
-    } catch (e) {
-      listEl.innerHTML = `<p class="req-empty" style="color:var(--red)">Failed to load: ${e.message}</p>`;
-      return;
-    }
-    renderRequests();
-    // Auto-refresh every 10 s while on this screen
-    clearInterval(reqPollTimer);
-    reqPollTimer = setInterval(() => {
-      if (document.getElementById('requests-screen').classList.contains('active')) {
-        loadRequests();
-      }
-    }, 10_000);
-  }
-
-  function renderRequests() {
-    const listEl = document.getElementById('req-list');
-    listEl.innerHTML = '';
-    if (!reqList.length) {
-      listEl.innerHTML = '<p class="req-empty">No requests yet.</p>';
-      return;
-    }
-    reqList.forEach(r => {
-      const isPlayed = r.status === 'played';
-      const card = document.createElement('div');
-      card.className = 'req-card';
-      card.dataset.id = r.id;
-      card.innerHTML = `
-        <img class="req-art" src="${r.image || ''}" alt=""
-             onerror="this.style.background='var(--brand-90)'">
-        <div class="req-info">
-          <p class="req-title">${escReq(r.title)}</p>
-          ${r.artist ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
-        </div>
-        <div class="req-controls">
-          <button class="req-switch${isPlayed ? ' on' : ''}"
-                  aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}"
-                  data-action="toggle" data-id="${r.id}"
-                  data-status="${isPlayed ? 'sent' : 'played'}"></button>
-          <button class="req-delete" aria-label="Delete request"
-                  data-action="delete" data-id="${r.id}">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>`;
-      listEl.appendChild(card);
-    });
-  }
-
-  function escReq(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
-
-  // Toggle played/sent + delete
-  document.getElementById('req-list').addEventListener('click', async e => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id, status } = btn.dataset;
-    btn.disabled = true;
-
-    if (action === 'toggle') {
-      try {
-        const res = await fetch('/api/requests', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ id, status })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
-        const idx = reqList.findIndex(r => r.id === id);
-        if (idx >= 0) reqList[idx].status = status;
-        renderRequests();
-      } catch (err) {
-        showToast('Failed: ' + err.message, 'error');
-        btn.disabled = false;
-      }
-    }
-
-    if (action === 'delete') {
-      try {
-        const res = await fetch('/api/requests', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ id, status: 'deleted' })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
-        reqList = reqList.filter(r => r.id !== id);
-        renderRequests();
-      } catch (err) {
-        showToast('Failed: ' + err.message, 'error');
-        btn.disabled = false;
-      }
-    }
-  });
-
-  // Refresh button
-  document.getElementById('req-refresh-btn').addEventListener('click', loadRequests);
-
-  // ══════════════════════════════════════════════
-  // COPY EDITOR
-  // ══════════════════════════════════════════════
-
-  const COPY_SECTIONS = [
-    { id: 'nav',      label: 'Navigation',    keys: ['nav.live'] },
-    { id: 'intro',    label: 'Intro',         keys: ['intro.tag.radio-host','intro.bio','intro.btn.book'] },
-    { id: 'events',   label: 'Next Events',   keys: ['next-events.heading','next-events.live','next-events.btn.go'] },
-    { id: 'reviews',  label: 'Reviews',       keys: ['reviews.heading','reviews.simone.text','reviews.tmo.text','reviews.jessie.text'] },
-    { id: 'demos',    label: 'Demos',         keys: ['demos.le-bon-groove.desc','demos.jazzy-house.desc','demos.chill.desc','demos.dancehall.desc','demos.coming-soon'] },
-    { id: 'timeline', label: 'Timeline',      keys: ['timeline.1990s','timeline.2000s','timeline.2010s','timeline.2020s','timeline.la-constellation.desc','timeline.ast-du-son.desc','timeline.taktika.desc','timeline.83.desc','timeline.focus.desc','timeline.buvette-simone.desc','timeline.twitch.desc','timeline.demain.desc','timeline.les-yeux-bleus.desc','timeline.quebec-kebs.desc','timeline.source.desc','timeline.red-bull.desc','timeline.pagail.desc'] },
-    { id: 'footer',   label: 'Footer',        keys: ['footer.copy'] },
-    { id: 'booking',  label: 'Booking Form',  keys: ['booking.title','booking.subtitle','booking.confirm.title','booking.confirm.copy','booking.btn.close','booking.btn.send','booking.field.name','booking.field.phone','booking.field.email','booking.field.company','booking.field.desc','booking.field.date'] },
-    { id: 'request',  label: 'Request Page',  keys: ['req.btn','req.live','req.details','req.tab.requested','req.tab.played','req.empty','req.playing','req.overlay.title','req.overlay.subtitle','req.overlay.field.spotify','req.overlay.btn.send','req.confirm.title','req.confirm.copy','req.confirm.btn.close'] },
-  ];
-
-  let copyData  = { en: null, fr: null };
-  let copyLang  = 'en';
-  let copySha   = { en: null, fr: null };
-
-  async function loadCopyEditor() {
-    const fieldsEl = document.getElementById('copy-fields');
-    if (copyData[copyLang]) { renderCopyFields(); return; }
-    fieldsEl.innerHTML = '<p style="color:var(--brand-80);font-size:14px;font-weight:300;">Loading…</p>';
-    try {
-      await Promise.all(['en','fr'].map(async lang => {
-        const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json?ref=${BRANCH}`);
-        if (!res.ok) { copyData[lang] = {}; return; }
-        const j = await res.json();
-        copySha[lang] = j.sha;
-        copyData[lang] = JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
-      }));
-    } catch(e) { copyData.en = {}; copyData.fr = {}; }
-    renderCopyFields();
-  }
-
-  function renderCopyFields() {
-    const fieldsEl = document.getElementById('copy-fields');
-    const copy = copyData[copyLang] || {};
-    fieldsEl.innerHTML = '';
-    COPY_SECTIONS.forEach(sec => {
-      const wrap = document.createElement('div');
-      wrap.className = 'copy-section';
-      wrap.innerHTML = `<p class="copy-section-title">${sec.label}</p>`;
-      sec.keys.forEach(key => {
-        const row = document.createElement('div');
-        row.className = 'copy-row';
-        const isLong = (copy[key] || '').length > 80;
-        row.innerHTML = `
-          <span class="copy-key">${key}</span>
-          ${isLong
-            ? `<textarea class="copy-input" data-copy-key="${key}" rows="3">${escHtml(copy[key] || '')}</textarea>`
-            : `<input class="copy-input" type="text" data-copy-key="${key}" value="${escHtml(copy[key] || '')}">`
-          }`;
-        wrap.appendChild(row);
-      });
-      fieldsEl.appendChild(wrap);
-    });
-  }
-
-  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-  // Lang toggle
-  document.getElementById('copy-lang-en').addEventListener('click', () => {
-    copyLang = 'en';
-    document.getElementById('copy-lang-en').classList.add('active');
-    document.getElementById('copy-lang-fr').classList.remove('active');
-    renderCopyFields();
-  });
-  document.getElementById('copy-lang-fr').addEventListener('click', () => {
-    copyLang = 'fr';
-    document.getElementById('copy-lang-fr').classList.add('active');
-    document.getElementById('copy-lang-en').classList.remove('active');
-    renderCopyFields();
-  });
-
-  // Save
-  document.getElementById('copy-save-btn').addEventListener('click', async () => {
-    const saveBtn = document.getElementById('copy-save-btn');
-    const savedMsg = document.getElementById('copy-saved-msg');
-    // Collect current field values
-    document.querySelectorAll('[data-copy-key]').forEach(el => {
-      copyData[copyLang][el.dataset.copyKey] = el.value;
-    });
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving…';
-    try {
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(copyData[copyLang], null, 2))));
-      const body = JSON.stringify({
-        message: `Update copy/${copyLang}.json via admin`,
-        content,
-        sha: copySha[copyLang],
-        branch: BRANCH
-      });
-      const res = await ghFetch(`/repos/${REPO}/contents/copy/${copyLang}.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body
-      });
-      if (!res.ok) throw new Error((await res.json()).message);
-      const j = await res.json();
-      copySha[copyLang] = j.content.sha;
-      savedMsg.classList.add('show');
-      setTimeout(() => savedMsg.classList.remove('show'), 2500);
-      showToast('Copy saved — deploy to go live', 'success');
-    } catch(e) {
-      showToast('Save failed: ' + e.message, 'error');
-    }
-    saveBtn.disabled = false;
-    saveBtn.textContent = 'Save';
-  });
+  // ── Init ──────────────────────────────────────────────────────────────────────
+  if (token) showAdmin();
 </script>
 </body>
 </html>

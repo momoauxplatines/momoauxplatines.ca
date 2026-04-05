@@ -1,0 +1,342 @@
+# Momo Aux Platines — Design System
+
+Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines
+
+---
+
+## Screens
+
+| Screen | Viewports |
+|--------|-----------|
+| DJ (main portfolio) | Mobile · Tablet · Desktop |
+| DJ • Live (live event active) | Mobile · Tablet · Desktop |
+| Live • Form Default | Mobile |
+| Live • Form Filled | Mobile |
+| Live • Form Submitted | Mobile |
+| Live • Requested | Mobile |
+| Live • Played | Mobile |
+| Request Sent | Mobile |
+| Contact • Form | Mobile |
+| Contact • Confirmation | Mobile |
+
+---
+
+## Breakpoints
+
+| Name | Width |
+|------|-------|
+| Mobile | 390px |
+| Tablet | 834px |
+| Desktop | 1440px |
+
+Content padding: `32px` on all viewports.
+Section gap: `80px` between sections.
+Card gap within a section: `16px` (cards), `24px` (admin list items).
+
+---
+
+## Color Palette
+
+### Brand (neutral scale — dark to light)
+
+| Token | Hex | CSS var |
+|-------|-----|---------|
+| Brand/105 | `#111210` | `--brand-105` — page background |
+| Brand/100 | `#141513` | `--brand-100` — deepest surface |
+| Brand/95  | `#20221f` | `--brand-95`  — card background |
+| Brand/90  | `#282a27` | `--brand-90`  — elevated surface / button bg |
+| Brand/80  | `#51534e` | `--brand-80`  — borders, muted |
+| Brand/70  | `#797f73` | `--brand-70`  — border hover |
+| Brand/60  | `#a2a89b` | `--brand-60`  — placeholder text |
+| Brand/50  | `#c9d3c0` | `--brand-50`  — secondary text / section headings |
+| Brand/40  | `#d5dccc` | `--brand-40` |
+| Brand/30  | `#dee4da` | `--brand-30`  — primary body text on dark |
+| Brand/20  | `#eaede5` | `--brand-20`  — primary button bg |
+| Brand/10  | `#f4f6f3` | `--brand-10`  — primary button default |
+| Brand/00  | `#fafbf9` | `--brand-00`  — primary button hover / button text |
+
+### Event / Semantic
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| Event/Black | `#000000` | Live event card bg |
+| Event/Red   | `#d34242` | Live indicator dot & label, delete button |
+| Event/Blue  | `#007aff` | Next event date badge, song request link |
+| Event/Green | `#34c759` | Song played state |
+
+---
+
+## Typography
+
+All headings use **Kanit Black (900)**. Body and UI text use **SF Pro** (system-ui as fallback). No italic.
+
+| Token | Family | Weight | Size | Line-height |
+|-------|--------|--------|------|-------------|
+| H1 | Kanit Black | 900 | 52px | 52px |
+| H2 | Kanit Black | 900 | 44px | 48px |
+| H3 | Kanit Black | 900 | 32px | 34px |
+| H4 | Kanit Black | 900 | 28px | 31px |
+| H5 | Kanit Black | 900 | 20px | 26px |
+| Body | SF Pro Light | 274 | 18px | 26px |
+| Small Body | SF Pro Light | 274 | 16px | 20px |
+| Bold | SF Pro Bold | 700 | 18px | 100% |
+| Button | SF Pro Black | 1000 | 18px | 26px |
+| Tab | SF Pro Black | 1000 | 18px | 24px |
+| Skill | SF Pro Black | 1000 | 16px | 30px |
+| Link | SF Pro Light | 274 | 18px | 26px |
+
+Google Fonts import: `Kanit` weights `300, 600, 700, 900`.
+
+---
+
+## Buttons
+
+### Primary (large)
+- Height: `56px` · Border-radius: `8px` · Padding: `0 16px`
+- **Default** — bg: `Brand/10` (#f4f6f3) · text: `Brand/100` · font: Button (uppercase)
+- **Hover** — bg: `Brand/00` (#fafbf9)
+- **Disabled** — bg: `Brand/80` (#51534e) · text: `Brand/100`
+
+### Ti Bouton (small)
+- Height: `40px` · Border-radius: `8px` · Padding: `0 16px`
+- **Default** — bg: `Brand/90` (#282a27) · border: `Brand/80` · text: `Brand/00` · font: Body (Light 18px)
+- **Hover** — border: `Brand/70`
+- **Disabled** — bg: `Brand/100` · border: `Brand/90` · text: `Brand/80`
+
+### Admin Delete
+- Height: `56px` · Border-radius: `8px` · Full-width · font: Body Light 18px
+- **Default** — bg: `Brand/90` (#282a27) · border: `Event/Red` · text: `Event/Red`
+- **Hover** — bg: `Event/Red` (solid fill) · no border · text: `Brand/00`
+
+### Dark (Refresh / secondary)
+- Height: `56px` · Border-radius: `8px` · Full-width
+- bg: `Brand/90` · border: `Brand/80` · text: `Brand/00` · font: Body
+
+---
+
+## Form Fields
+
+- Background: `Brand/100`
+- Border: `1px solid Brand/50`
+- Border-radius: `12px`
+- Padding: `16px 20px`
+- Font: Body (Light, 18px, `Brand/50` text)
+- Focus: border → `Brand/30`, text → `Brand/30`
+- Empty/unfilled: bg: `Brand/90`, border: `Brand/80`, text: `Brand/60`
+- Label: Body Light, `Brand/30`, 18px
+
+---
+
+## Cards
+
+### Event Card (home page)
+- bg: `Brand/95` · border-radius: `16px` · padding: `16px`
+- Gap between inner elements: `16px`
+- **Top row**: 48×48px avatar (rounded-8px, border: `Brand/100`) + status badge (right-aligned)
+  - Live badge: red dot (12px, pulsing) + "LIVE" Kanit Black 20px `Event/Red`
+  - Next badge: date string, Kanit Black 20px `Event/Blue`
+- **Copy block**: venue name H4 uppercase `Brand/30` · address Small Body `Brand/30` · hours Small Body `Brand/50` · Instagram link underlined `Brand/30`
+- **Live only** — black "EVENT PAGE" button (56px, bg: `#000`, font: Button)
+
+### Review Card
+- bg: `Brand/95` · border-radius: `16px` · padding: `16px`
+- 80×80px avatar (rounded-8px)
+- Name: H3 uppercase · Role: Body Light `Brand/50`
+- Review text: Body Light `Brand/10`
+- Instagram link: Body Light `Brand/00` underlined
+
+### Demo / Video Card
+- bg: `Brand/95` · border-radius: `16px` · padding: `16px`
+- Full-bleed thumbnail at top (rounded-16px) with play button overlay
+- Title: H3 uppercase · Description: Body Light · Link: Body Light `Event/Blue`
+
+### Timeline Card
+- Same as Review card structure
+- Name: H3 · Dates: Body Light `Brand/50` · Role description: Body Light
+
+### Song Request Card (live page)
+- bg: `Brand/95` · border-radius: `16px` · padding: `8px`
+- 64×64px album art (rounded-8px, border: `Brand/100`)
+- Song title: Bold 18px `Brand/30` · Artist: Small Body `Brand/30` · Spotify: link `Event/Blue`
+- Status icon: green checkmark (`Event/Green`) when played
+- Currently playing: "Playing" label in `Event/Green`, Kanit Black 20px
+
+---
+
+## MOMO Stamp (Hero)
+
+- Composite of 3 SVG layers: base stamp + top arc text + bottom arc text
+- Container: `290×291px`, `overflow: hidden`
+- Scale: `transform: translate(-50%, -50%) scale(0.6631)` centered in container
+- Rotation: `60s` full rotation (1 BPM) — `animation: spin 60s linear infinite`
+- Radial gradient overlay: `Brand/50` → `transparent` (fades at ~90%), full-viewport `position: absolute`
+
+---
+
+## Fixed Header
+
+- `position: fixed` · `max-width` matches breakpoint · `z-index: 100`
+- Padding: `24px`
+- Hides on scroll-down, reappears after 200px upward scroll
+- **Right**: Language toggle (FR / EN) — Kanit Black 20px `Brand/50`
+- **Left**: "SCHOOL" text link
+- **Centre (live only)**: pulsing red dot + "LIVE" / "EN DIRECT" label — Kanit Black 20px `Event/Red`, absolutely centred regardless of left/right content
+
+---
+
+## Page Sections (Mobile, top to bottom)
+
+### 1. Hero
+- `100dvh` · full-bleed stamp + gradient
+- No content padding (stamp is absolutely centred)
+
+### 2. Live Event *(conditional — shown when event is live and `show: true`)*
+- Appears between Hero and Intro
+- Section label: "LIVE" — H4 Kanit Black `Brand/50`
+- Contains 1 Event Card (live variant)
+
+### 3. Intro
+- Avatar: `112px` circle
+- Name: H1 Kanit Black `Brand/50` uppercase
+- Skill tags: `Brand/90` bg, `Brand/00` text, `rounded-8px`, padding `4px 16px`, Skill font
+- Bio: Body Light `Brand/00`
+- CTA: Primary button ("CONTACT" → opens booking modal)
+
+### 4. Next Gigs *(conditional — shown when upcoming events with `show: true` exist)*
+- Heading: H2 Kanit Black `Brand/50`
+- List of Event Cards (next variant) — `gap: 16px`
+
+### 5. Reviews
+- Heading: H2 Kanit Black `Brand/50`
+- Horizontal scroll row of Review Cards — `margin: 0 -32px; padding: 0 32px`
+- Card width: `310px`
+
+### 6. Demos
+- Heading: H2 Kanit Black `Brand/50`
+- Genre filter tabs (Kanit Black, `Brand/50` inactive / `Brand/00` active)
+- Horizontal scroll row of Demo Cards
+
+### 7. Timeline
+- Heading: H2 Kanit Black `Brand/50`
+- Decade tabs: 1990s / 2000s / 2010s / 2020s
+- Horizontal scroll row of Timeline Cards per decade
+
+### 8. Footer
+- Logo mark (80px)
+- Site name: H4 Kanit Black `Brand/30` centred
+- Links: INSTAGRAM · TWITCH · SCHOOL — Ti Bouton style
+- Copyright: Small Body Light `Brand/50` centred
+
+---
+
+## Live Page (request.html)
+
+Separate page, active when an event is live.
+
+### Header
+- Logo mark (left) · "REQUEST" centred · "FR" language toggle (right)
+
+### Event Card (compact, 80px tall)
+- Venue thumbnail · "● LIVE" red badge · "Détails ▾" dropdown
+
+### Tabs
+- **REQUESTS** | **PLAYED** — Tab font, full-width, `Brand/95` bg, active tab `Brand/00`
+
+### Song Request Card
+- Album art 64×64px · Title (Bold) / Artist (Small Body) / Spotify link (Small Body `Event/Blue`)
+- Status badge: green checkmark = played
+
+### Now Playing Bar (bottom, sticky)
+- Album art 64×64px · Song & artist · "▶ Playing" in `Event/Green` Kanit Black
+
+### Request Form
+- Accessible via "REQUEST" button in header
+- Heading: "SEND A REQUEST" — H3 Kanit Black uppercase
+- Spotify link field (search icon, rounded-full pill shape)
+- Primary button: "SEND YOUR REQUEST"
+
+---
+
+## Contact / Booking Modal
+
+Overlay, `position: fixed; inset: 0`.
+
+### Form
+- Title: "CONTACT MOMO" — H3 Kanit Black
+- Subtitle: Body Light `Brand/50`
+- Fields: Name*, Phone*, Email*, Company*, Description* (textarea), Date
+- CTA: Primary button "SEND"
+
+### Confirmation
+- Green checkmark circle (80px, `Event/Green`)
+- Title: "BOOKING REQUEST JUST SENT!" — H3 Kanit Black centred
+- Body text: Body Light centred
+- CTA: Primary button "CLOSE"
+
+---
+
+## Admin Panel (admin/index.html)
+
+Separate admin UI. Max content width: `800px`, centred.
+
+### Sections
+- **Live** — shows current live event card (if any)
+- **Next Gigs** — list of upcoming gig cards + Add button
+- **Intro** — editable intro block
+- **Reviews** — list of review cards + Add button
+- **Demos** — list of demo cards + Add button
+- **Timeline** — grouped by decade, each with Add button
+
+### Gig Card (admin)
+- bg: `#000` · border: `Brand/50` · border-radius: `16px` · padding: `16px`
+- **Top**: 72×72px avatar (rounded-8px) + venue name (Bold 18px) / date / time (Small Body)
+- **Actions row**: Live status (red dot + "LIVE" Kanit Black 20px) on left · Edit button (Ti Bouton) on right
+- Clicking card body → opens Requests overlay
+- Clicking Edit → opens edit form
+
+### Edit Form (overlay)
+- `position: fixed; inset: 0` · `z-index: 100`
+- **Mobile** — full-screen, bg: `Brand/100`, flex column (header → scrollable body → footer)
+- **Desktop (≥ 860px)** — overlay becomes a dark backdrop (`rgba(0,0,0,0.72)`), inner `.edit-panel` floats centred: `max-width: 800px`, `max-height: 90vh`, `border-radius: 16px`, bg: `Brand/100`
+- Header: title (H3) + close (×) button · subtitle (Body Light)
+- Body: scrollable form fields
+- Footer: Primary Save button (disabled until first change)
+
+### Gig Edit Form Fields
+- Venue*, Address, Date*, Start*, End*, Instagram URL, Photo (image picker)
+- **Show on home page** toggle — iOS-style switch (36×20px, grey off / blue on)
+- Delete event button (Destructive style, 56px)
+
+### Requests Overlay
+- Header: ← Back button (Body Light `Brand/50`) + event avatar (40×40px, right)
+- Section title: "REQUESTS" — H5 Kanit Black `Brand/50` uppercase
+- Request cards: album art 64×64px · Title (Bold) / Artist (Small Body) / Time (Small Body) · toggle switch only
+- Footer: Dark "Refresh" button
+
+### Toggle Switch
+- Width: `36px` · Height: `20px` · Border-radius: `100px`
+- Off: bg `#d2d5da` (iOS gray) · knob left `2px`
+- On: bg `#2563eb` (iOS blue) · knob right `18px`
+- Knob: `16px` circle, white, `box-shadow: 0 2px 4px rgba(39,39,39,0.1)`
+
+---
+
+## Spacing System
+
+| Use | Value |
+|-----|-------|
+| Content side padding | `32px` |
+| Section gap | `80px` |
+| Card internal gap | `16px` |
+| Admin list item gap | `24px` |
+| Card padding | `16px` |
+| Form field gap | `8px` (label → input) |
+| Form section gap | `16px` between fields |
+| Button height (primary) | `56px` |
+| Button height (Ti Bouton) | `40px` |
+| Avatar sizes | `40px`, `48px`, `64px`, `72px`, `80px`, `112px` |
+| Border radius — cards | `16px` |
+| Border radius — buttons | `8px` |
+| Border radius — inputs | `12px` |
+| Border radius — tags | `8px` |
+| Border radius — avatar | `8px` (square), `560px` (circle) |
