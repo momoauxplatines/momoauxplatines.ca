@@ -1,3 +1,15 @@
 {
-  "events": []
+  "events": [
+    {
+      "slug": "testing-the-thingy-thing",
+      "venue": "Testing the thingy thing",
+      "address": "2242 rue de la roche, montréal",
+      "date": "",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "instagram": "https://www.instagram.com/djmomoauxplatines/",
+      "image": "/images/events/testing-the-thingy-thing-mnm4ojni.jpg",
+      "show": true
+    }
+  ]
 }
