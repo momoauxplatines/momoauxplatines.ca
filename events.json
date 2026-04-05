@@ -1,3 +1,15 @@
 {
-  "events": []
+  "events": [
+    {
+      "slug": "testing-the-thingy-2026-05-06",
+      "venue": "Testing the thingy",
+      "address": "2242 rue de la roche, montréal",
+      "date": "2026-05-06",
+      "start_time": "16:00",
+      "end_time": "17:00",
+      "instagram": "https://www.instagram.com/barlesyeuxbleus/",
+      "image": "/images/events/testing-the-thingy-mnm3c136.jpg",
+      "show": true
+    }
+  ]
 }
