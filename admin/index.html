@@ -169,11 +169,7 @@
     .gig-card-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .gig-card-name { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; }
     .gig-card-meta { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
-    .gig-card-actions { display: flex; justify-content: flex-end; }
-    .gig-card-url { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--brand-90); padding-top: 10px; pointer-events: auto; }
-    .gig-url-label { flex: 1; font-size: 12px; font-weight: 300; color: var(--brand-60); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-    .btn-copy-url { background: none; border: 1px solid var(--brand-80); border-radius: 6px; color: var(--brand-50); font-family: inherit; font-size: 12px; font-weight: 300; padding: 0 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; height: 28px; transition: background 0.15s, color 0.15s; }
-    .btn-copy-url:hover { background: var(--brand-90); color: var(--brand-00); }
+    .gig-card-actions { display: flex; align-items: center; justify-content: space-between; }
 
     /* ── Requests overlay ── */
     .req-back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 18px; font-weight: 300; padding: 0; line-height: 26px; }
@@ -646,16 +642,15 @@
           </div>
         </div>
         <div class="gig-card-actions" style="pointer-events:none;">
-          <div class="gig-live-status">
+          <div class="gig-live-status" style="pointer-events:none;">
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">Live</span>
           </div>
-          <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
+          <div style="display:flex;gap:8px;pointer-events:none;">
+            ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">Copy URL</button>` : ''}
+            <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
+          </div>
         </div>
-        ${liveEvent.slug ? `<div class="gig-card-url" style="pointer-events:none;">
-          <span class="gig-url-label">${esc(requestUrl(liveEvent.slug))}</span>
-          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">Copy URL</button>
-        </div>` : ''}
       </div>`;
   }
 
@@ -706,12 +701,9 @@
           </div>
         </div>
         <div class="gig-card-actions" style="pointer-events:none;">
+          ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>` : '<div></div>'}
           <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
-        </div>
-        ${ev.slug ? `<div class="gig-card-url" style="pointer-events:none;">
-          <span class="gig-url-label">${esc(requestUrl(ev.slug))}</span>
-          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>
-        </div>` : ''}`;
+        </div>`;
       el.appendChild(card);
     });
   }
