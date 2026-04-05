@@ -692,8 +692,9 @@
       const idx = currentEvents.indexOf(ev);
       const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
       const card = document.createElement('div');
-      card.className = 'gig-card' + (ev.slug ? ' gig-card--link' : '');
-      if (ev.slug) { card.dataset.action = 'open-event-page'; card.dataset.url = requestUrl(ev.slug); }
+      card.className = 'gig-card gig-card--link';
+      card.dataset.action = 'open-requests';
+      card.dataset.index = String(idx);
       card.innerHTML = `
         <div class="gig-card-top" style="pointer-events:none;">
           <div class="gig-card-avatar">

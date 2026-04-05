@@ -823,6 +823,20 @@
     document.getElementById('event-live-row').style.display = 'none';
     document.getElementById('now-playing-bar').style.display = 'none';
 
+    // Clear all hardcoded placeholder event card data immediately
+    const _venueImg = document.querySelector('.event-venue-img');
+    if (_venueImg) _venueImg.src = '';
+    const _eventName = document.querySelector('.event-name');
+    if (_eventName) _eventName.textContent = '';
+    const _eventDate = document.getElementById('event-date');
+    if (_eventDate) _eventDate.textContent = '';
+    const _eventAddress = document.querySelector('.event-address');
+    if (_eventAddress) _eventAddress.textContent = '';
+    const _eventHours = document.querySelector('.event-hours');
+    if (_eventHours) _eventHours.textContent = '';
+    const _igLink = document.querySelector('.event-ig-link');
+    if (_igLink) _igLink.style.display = 'none';
+
     // Clear hardcoded placeholder songs from played list
     const playedList = document.getElementById('played-list');
     if (playedList) playedList.innerHTML = '<div class="empty-state">Nothing has been played yet.<br><br>Open the event details card to know when this event will be live and where.</div>';
