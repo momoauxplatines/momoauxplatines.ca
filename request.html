@@ -135,6 +135,10 @@
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
     }
+    .event-date {
+      font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
+      text-transform: capitalize;
+    }
     .event-hours {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
@@ -437,6 +441,7 @@
       <div class="event-expanded" id="event-expanded">
         <div class="event-copy">
           <p class="event-name">Buvette chez Simone</p>
+          <p class="event-date" id="event-date"></p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
           <p class="event-hours">19:00 – 01:00</p>
           <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
@@ -838,6 +843,14 @@
         if (venueImg && ev.image) venueImg.src = ev.image.replace(/^\//, '');
         const eventName = document.querySelector('.event-name');
         if (eventName) eventName.textContent = ev.venue || '';
+        const eventDateEl = document.getElementById('event-date');
+        if (eventDateEl && ev.date) {
+          const d = new Date(ev.date + 'T12:00:00');
+          const locale = currentLang === 'fr' ? 'fr-CA' : 'en-CA';
+          eventDateEl.textContent = d.toLocaleDateString(locale, {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+          });
+        }
         const eventAddress = document.querySelector('.event-address');
         if (eventAddress) eventAddress.textContent = ev.address || '';
         const eventHours = document.querySelector('.event-hours');
