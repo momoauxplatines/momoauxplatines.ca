@@ -420,7 +420,7 @@
     <div class="event-card" id="event-card">
       <div class="event-card-top">
         <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
-        <div class="event-live-row">
+        <div class="event-live-row" id="event-live-row">
           <div class="live-dot"></div>
           <span class="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
         </div>
@@ -633,7 +633,7 @@
   </div>
 
   <!-- Now Playing Footer -->
-  <div class="now-playing-bar">
+  <div class="now-playing-bar" id="now-playing-bar">
     <div class="now-playing-card">
       <img class="now-playing-art" src="https://i.scdn.co/image/ab67616d0000b2732e8ed79e177ff6011076f5f0" alt="Get Busy"
            onerror="this.style.background='var(--brand-90)'">
@@ -783,15 +783,52 @@
   applyLang(currentLang);
 
   // ─────────────────────────────────────────────
+  // Liveness check helper
+  // ─────────────────────────────────────────────
+  function parseMins(t) { if (!t) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+
+  function checkEventLive(ev) {
+    if (!ev.date || !ev.start_time) return false;
+    const now     = new Date();
+    const today   = now.toISOString().slice(0, 10);
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const start   = parseMins(ev.start_time);
+    const end     = parseMins(ev.end_time);
+    if (end === null) return ev.date === today && nowMins >= start;
+    const overnight = start > end;
+    if (overnight) {
+      const nextDay = new Date(ev.date + 'T00:00:00');
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().slice(0, 10);
+      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
+    }
+    return ev.date === today && nowMins >= start && nowMins < end;
+  }
+
+  // ─────────────────────────────────────────────
   // Populate event card from events.json when slug is provided
   // ─────────────────────────────────────────────
   if (EVENT_SLUG) {
-    fetch('/events.json')
+    // Hide live indicators by default — shown only if event is confirmed live
+    document.getElementById('event-live-row').style.display = 'none';
+    document.getElementById('now-playing-bar').style.display = 'none';
+
+    // Clear hardcoded placeholder songs from played list
+    const playedList = document.getElementById('played-list');
+    if (playedList) playedList.innerHTML = '<div class="empty-state" data-en="No songs played yet." data-fr="Aucune chanson jouée pour l\'instant.">No songs played yet.</div>';
+
+    const eventsUrl = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'https://raw.githubusercontent.com/momoauxplatines/momoauxplatines.ca/main/events.json'
+      : '/events.json';
+
+    fetch(eventsUrl)
       .then(r => r.json())
       .then(data => {
         const events = Array.isArray(data) ? data : (data.events || []);
         const ev = events.find(e => e.slug === EVENT_SLUG);
         if (!ev) return;
+
+        // Populate event card details
         const venueImg = document.querySelector('.event-venue-img');
         if (venueImg && ev.image) venueImg.src = ev.image.replace(/^\//, '');
         const eventName = document.querySelector('.event-name');
@@ -804,6 +841,14 @@
         if (igLink) {
           if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
           else igLink.style.display = 'none';
+        }
+
+        // Show live indicator and start polling only when event is actually live
+        if (checkEventLive(ev)) {
+          document.getElementById('event-live-row').style.display = '';
+          document.getElementById('now-playing-bar').style.display = '';
+          pollLivePlaylist();
+          setInterval(pollLivePlaylist, 30_000);
         }
       })
       .catch(() => {});
@@ -1236,9 +1281,12 @@
     } catch { /* network error — keep existing content */ }
   }
 
-  // Start polling: immediately on load, then every 30 s
-  pollLivePlaylist();
-  setInterval(pollLivePlaylist, 30_000);
+  // Start polling only when no event slug (legacy/demo mode)
+  // When EVENT_SLUG is set, polling is started conditionally above after liveness check
+  if (!EVENT_SLUG) {
+    pollLivePlaylist();
+    setInterval(pollLivePlaylist, 30_000);
+  }
 </script>
 </body>
 </html>
