@@ -160,8 +160,9 @@
     .ig-preview-status.err { color: var(--red); }
 
     /* ── Gig card ── */
-    .gig-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; transition: opacity 0.15s; }
-    .gig-card:hover { opacity: 0.85; }
+    .gig-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: default; transition: opacity 0.15s; }
+    .gig-card--link { cursor: pointer; }
+    .gig-card--link:hover { opacity: 0.85; }
     .gig-card-top { display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
     .gig-card-avatar { width: 72px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--brand-90); }
     .gig-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -633,8 +634,8 @@
 
     const liveIdx = currentEvents.indexOf(liveEvent);
     el.innerHTML = `
-      <div class="gig-card" style="cursor:default;">
-        <div class="gig-card-top">
+      <div class="gig-card${liveEvent.slug ? ' gig-card--link' : ''}" ${liveEvent.slug ? `data-action="open-event-page" data-url="${esc(requestUrl(liveEvent.slug))}"` : ''}>
+        <div class="gig-card-top" style="pointer-events:none;">
           <div class="gig-card-avatar">
             <img src="${liveEvent.image ? '../' + liveEvent.image.replace(/^\//, '') : ''}" alt="${esc(liveEvent.venue)}" onerror="this.style.opacity='0'">
           </div>
@@ -644,17 +645,16 @@
             <p class="gig-card-meta">${esc(liveEvent.start_time || '')}–${esc(liveEvent.end_time || '')}</p>
           </div>
         </div>
-        <div class="gig-card-actions">
-          <div class="gig-live-status" style="pointer-events:none;">
+        <div class="gig-card-actions" style="pointer-events:none;">
+          <div class="gig-live-status">
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">Live</span>
           </div>
-          <button class="btn-card-edit" data-action="open-requests" data-index="${liveIdx}" style="pointer-events:auto;">Requests</button>
           <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
         </div>
-        ${liveEvent.slug ? `<div class="gig-card-url">
+        ${liveEvent.slug ? `<div class="gig-card-url" style="pointer-events:none;">
           <span class="gig-url-label">${esc(requestUrl(liveEvent.slug))}</span>
-          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}">Copy URL</button>
+          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">Copy URL</button>
         </div>` : ''}
       </div>`;
   }
@@ -692,10 +692,10 @@
       const idx = currentEvents.indexOf(ev);
       const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
       const card = document.createElement('div');
-      card.className = 'gig-card';
-      card.style.cursor = 'default';
+      card.className = 'gig-card' + (ev.slug ? ' gig-card--link' : '');
+      if (ev.slug) { card.dataset.action = 'open-event-page'; card.dataset.url = requestUrl(ev.slug); }
       card.innerHTML = `
-        <div class="gig-card-top">
+        <div class="gig-card-top" style="pointer-events:none;">
           <div class="gig-card-avatar">
             <img src="${imgSrc}" alt="${esc(ev.venue)}" onerror="this.style.opacity='0'">
           </div>
@@ -705,13 +705,12 @@
             <p class="gig-card-meta">${esc(ev.start_time || '')}–${esc(ev.end_time || '')}</p>
           </div>
         </div>
-        <div class="gig-card-actions">
-          <button class="btn-card-edit" data-action="open-requests" data-index="${idx}">Requests</button>
-          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}">Edit</button>
+        <div class="gig-card-actions" style="pointer-events:none;">
+          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
         </div>
-        ${ev.slug ? `<div class="gig-card-url">
+        ${ev.slug ? `<div class="gig-card-url" style="pointer-events:none;">
           <span class="gig-url-label">${esc(requestUrl(ev.slug))}</span>
-          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}">Copy URL</button>
+          <button class="btn-copy-url" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>
         </div>` : ''}`;
       el.appendChild(card);
     });
@@ -804,6 +803,7 @@
     if (action === 'edit-gig')      openForm('gig',      { index: parseInt(index) });
     if (action === 'delete-gig')    deleteGig(parseInt(index));
     if (action === 'open-requests') openRequests(parseInt(index));
+    if (action === 'open-event-page') window.open(btn.dataset.url, '_blank');
     if (action === 'copy-url') {
       e.stopPropagation();
       navigator.clipboard.writeText(btn.dataset.url).then(() => {
