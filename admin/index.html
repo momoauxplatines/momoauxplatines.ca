@@ -371,8 +371,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const REPO   = 'momoauxplatines/momoauxplatines.ca';
-  const BRANCH = 'main';
+  const REPO    = 'momoauxplatines/momoauxplatines.ca';
+  const BRANCH  = 'main';
+  const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
   // ── Static content metadata ─────────────────────────────────────────────────
 
@@ -542,6 +543,16 @@
   async function loadAllCopy() {
     await Promise.all(['en', 'fr'].map(async lang => {
       if (copyData[lang]) return;
+      if (!IS_LOCAL) {
+        // Production: load from Blob API
+        try {
+          const res = await fetch(`/api/copy?lang=${lang}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) { copyData[lang] = await res.json(); return; }
+        } catch {}
+      }
+      // Localhost or API failure: fall back to GitHub Contents API
       const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json?ref=${BRANCH}`);
       if (!res.ok) { copyData[lang] = {}; return; }
       const j = await res.json();
@@ -555,20 +566,45 @@
   }
 
   async function saveCopy(lang, message) {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(copyData[lang], null, 2))));
-    const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, content, sha: copySha[lang], branch: BRANCH })
-    });
-    if (!res.ok) throw new Error(`GitHub ${res.status}`);
-    const data = await res.json();
-    copySha[lang] = data.content.sha;
+    if (!IS_LOCAL) {
+      // Production: save to Blob via API (no deploy triggered)
+      const res = await fetch(`/api/copy?lang=${lang}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(copyData[lang])
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+    } else {
+      // Localhost: save to GitHub (triggers deploy on push)
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(copyData[lang], null, 2))));
+      const res = await ghFetch(`/repos/${REPO}/contents/copy/${lang}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, content, sha: copySha[lang], branch: BRANCH })
+      });
+      if (!res.ok) throw new Error(`GitHub ${res.status}`);
+      const data = await res.json();
+      copySha[lang] = data.content.sha;
+    }
     copyBroadcast?.postMessage({ lang, data: copyData[lang] });
   }
 
   // ── Load events ──────────────────────────────────────────────────────────────
   async function loadEvents() {
+    if (!IS_LOCAL) {
+      // Production: load from Blob API
+      try {
+        const res = await fetch('/api/events', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          currentEvents = Array.isArray(data) ? data : (data.events || []);
+          return;
+        }
+      } catch {}
+    }
+    // Localhost or API failure: fall back to GitHub Contents API
     const res = await ghFetch(`/repos/${REPO}/contents/events.json?ref=${BRANCH}`);
     if (!res.ok) return;
     const data = await res.json();
@@ -579,17 +615,28 @@
 
   async function saveEvents(message) {
     const body = JSON.stringify({ events: currentEvents }, null, 2);
-    const res = await ghFetch(`/repos/${REPO}/contents/events.json`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message, content: btoa(unescape(encodeURIComponent(body))),
-        sha: eventsSha, branch: BRANCH
-      })
-    });
-    if (!res.ok) throw new Error(`GitHub ${res.status}`);
-    const data = await res.json();
-    eventsSha = data.content.sha;
+    if (!IS_LOCAL) {
+      // Production: save to Blob via API (no deploy triggered)
+      const res = await fetch('/api/events', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+    } else {
+      // Localhost: save to GitHub
+      const res = await ghFetch(`/repos/${REPO}/contents/events.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message, content: btoa(unescape(encodeURIComponent(body))),
+          sha: eventsSha, branch: BRANCH
+        })
+      });
+      if (!res.ok) throw new Error(`GitHub ${res.status}`);
+      const data = await res.json();
+      eventsSha = data.content.sha;
+    }
   }
 
   // ── Language tabs ────────────────────────────────────────────────────────────
