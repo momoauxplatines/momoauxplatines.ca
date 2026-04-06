@@ -746,6 +746,8 @@
       <h2 class="section-heading">Demos</h2>
       <div class="scroll-row" id="demos-scroll-row">
 
+        <div id="demos-dynamic"></div>
+
         <div class="video-card">
           <div class="video-thumb-wrapper" data-yt="eqyngbFuLcU">
             <img class="video-thumb" src="images/video-le-bon-groove.png" alt="Le Bon Groove">
@@ -797,8 +799,6 @@
             <span class="card-link-soon" data-key="demos.coming-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
-
-        <div id="demos-dynamic"></div>
 
       </div>
     </section>
@@ -1665,7 +1665,7 @@
       const ytAttr   = ytId ? ` data-yt="${ytId}"` : '';
       const linkHtml = soon
         ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
-        : (link ? `<a class="card-link" href="${link}" target="_blank" rel="noopener">YouTube</a>` : '');
+        : '';
       const card = document.createElement('div');
       card.className = 'video-card';
       card.innerHTML = `
