@@ -60,5 +60,11 @@
   "req.confirm.copy": "Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.",
   "req.confirm.btn.close": "FERMER",
   "intro.title": "MOMO AUX PLATINES",
-  "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO"
+  "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO",
+  "demos.registry": "house-de-p-ques-mnnkzkf8",
+  "demos.house-de-p-ques-mnnkzkf8.avatar": "/images/demos/house-de-p-ques-mnnkzkf8.jpg",
+  "demos.house-de-p-ques-mnnkzkf8.title": "House de Pâques",
+  "demos.house-de-p-ques-mnnkzkf8.desc": "Somehow festive house on easter Monday.\n\nRhye, Mochakk, Channel Tres, & not_oguz",
+  "demos.house-de-p-ques-mnnkzkf8.link": "https://www.youtube.com/watch?v=--8Sx0cEkC8",
+  "demos.house-de-p-ques-mnnkzkf8.coming-soon": "false"
 }
