@@ -1240,7 +1240,7 @@
         const title = document.getElementById('ef-title')?.value.trim();
         if (!title) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
         const id = isNew ? slugify(title) : editFormMeta.id;
-        const thumbRepoPath = isNew ? `images/demos/${id}.jpg` : editFormMeta.thumb.replace(/^\.\.\//, '');
+        const thumbRepoPath = isNew ? `images/demos/${id}.jpg` : editFormMeta.thumb.replace(/^\.\.\//, '').replace(/^\//, '');
         const imgInput = document.getElementById('ef-img-input');
         if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], thumbRepoPath, `${isNew ? 'Add' : 'Update'} demo thumb: ${id}`);
         const descVal    = document.getElementById('ef-desc')?.value ?? '';
@@ -1262,7 +1262,7 @@
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} demo: ${title} (${lang})`);
         }
         if (isNew) {
-          DEMOS.push({ id, title, thumb: '../' + thumbRepoPath, ytId: '', descKey: `demos.${id}.desc` });
+          DEMOS.push({ id, title, thumb: '/' + thumbRepoPath, ytId: '', descKey: `demos.${id}.desc` });
         } else {
           const d = DEMOS.find(x => x.id === id);
           if (d) d.title = title;

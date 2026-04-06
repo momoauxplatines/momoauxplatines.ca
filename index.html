@@ -742,7 +742,7 @@
     ══════════════════════════════════════════════ -->
     <section class="demos">
       <h2 class="section-heading">Demos</h2>
-      <div class="scroll-row">
+      <div class="scroll-row" id="demos-scroll-row">
 
         <div class="video-card">
           <div class="video-thumb-wrapper" data-yt="eqyngbFuLcU">
@@ -795,6 +795,8 @@
             <span class="card-link-soon" data-key="demos.coming-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
+
+        <div id="demos-dynamic"></div>
 
       </div>
     </section>
@@ -1598,6 +1600,57 @@
     }
     langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
     currentLang = lang;
+    renderDynamicDemos(lang);
+  }
+
+  function renderDynamicDemos(lang) {
+    const container = document.getElementById('demos-dynamic');
+    if (!container) return;
+    const copy = COPY[lang] || COPY.en || {};
+    const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
+    container.innerHTML = '';
+    registry.forEach(id => {
+      const title  = copy[`demos.${id}.title`]  || id;
+      const desc   = copy[`demos.${id}.desc`]   || '';
+      const avatar = copy[`demos.${id}.avatar`] || '';
+      const link   = copy[`demos.${id}.link`]   || '';
+      const soon   = copy[`demos.${id}.coming-soon`] === 'true';
+      // Extract YouTube ID from full URL or short URL
+      let ytId = '';
+      const ytMatch = link.match(/[?&]v=([^&]+)/) || link.match(/youtu\.be\/([^?&/]+)/);
+      if (ytMatch) ytId = ytMatch[1];
+      const thumbHtml = avatar
+        ? `<img class="video-thumb" src="${avatar}" alt="${title}">`
+        : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
+      const playHtml = ytId ? `<img class="play-btn" src="images/video-play-btn.png" alt="Play">` : '';
+      const ytAttr   = ytId ? ` data-yt="${ytId}"` : '';
+      const linkHtml = soon
+        ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
+        : (link ? `<a class="card-link" href="${link}" target="_blank" rel="noopener">YouTube</a>` : '');
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <div class="video-thumb-wrapper"${ytAttr}>${thumbHtml}${playHtml}</div>
+        <div class="video-content">
+          <div class="video-info">
+            <p class="video-title">${title}</p>
+            ${desc ? `<p class="video-desc">${desc}</p>` : ''}
+          </div>
+          ${linkHtml}
+        </div>`;
+      if (ytId) {
+        const wrapper = card.querySelector('.video-thumb-wrapper');
+        wrapper.addEventListener('click', () => {
+          wrapper.innerHTML = `<iframe
+            src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            title="YouTube video player"
+          ></iframe>`;
+        });
+      }
+      container.appendChild(card);
+    });
   }
 
   langBtn.addEventListener('click', () => {
