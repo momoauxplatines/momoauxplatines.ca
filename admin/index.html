@@ -1207,7 +1207,7 @@
         const name  = document.getElementById('ef-name')?.value.trim();
         if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
         const id = isNew ? slugify(name) : editFormMeta.id;
-        const avatarRepoPath = isNew ? `images/reviews/${id}.jpg` : editFormMeta.avatar.replace(/^\.\.\//, '');
+        const avatarRepoPath = isNew ? `images/reviews/${id}.jpg` : editFormMeta.avatar.replace(/^\.\.\//, '').replace(/^\//, '');
         const imgInput = document.getElementById('ef-img-input');
         if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], avatarRepoPath, `${isNew ? 'Add' : 'Update'} review photo: ${id}`);
         const textVal     = document.getElementById('ef-text')?.value ?? '';
@@ -1229,7 +1229,7 @@
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} review: ${name} (${lang})`);
         }
         if (isNew) {
-          REVIEWS.push({ id, name, venue: venueVal, instagram: igVal, avatar: '../' + avatarRepoPath, textKey: `reviews.${id}.text` });
+          REVIEWS.push({ id, name, venue: venueVal, instagram: igVal, avatar: '/' + avatarRepoPath, textKey: `reviews.${id}.text` });
         } else {
           const r = REVIEWS.find(x => x.id === id);
           if (r) { r.name = name; r.venue = venueVal; r.instagram = igVal; }

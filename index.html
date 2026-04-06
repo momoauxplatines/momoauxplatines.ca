@@ -734,6 +734,8 @@
           <a class="card-link" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
         </div>
 
+        <div id="reviews-dynamic"></div>
+
       </div>
     </section>
 
@@ -1600,7 +1602,40 @@
     }
     langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
     currentLang = lang;
+    renderDynamicReviews(lang);
     renderDynamicDemos(lang);
+  }
+
+  function renderDynamicReviews(lang) {
+    const container = document.getElementById('reviews-dynamic');
+    if (!container) return;
+    const copy = COPY[lang] || COPY.en || {};
+    const registry = (copy['reviews.registry'] || '').split('|').filter(Boolean);
+    // Newest first
+    const sorted = [...registry].reverse();
+    container.innerHTML = '';
+    sorted.forEach(id => {
+      const name      = copy[`reviews.${id}.name`]      || id;
+      const venue     = copy[`reviews.${id}.venue`]     || '';
+      const instagram = copy[`reviews.${id}.instagram`] || '';
+      const avatar    = copy[`reviews.${id}.avatar`]    || '';
+      const text      = copy[`reviews.${id}.text`]      || '';
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="review-card-header">
+          <div class="review-avatar">
+            <img src="${avatar}" alt="${name}" onerror="this.style.background='var(--brand-90)'">
+          </div>
+          <div class="review-info">
+            <p class="review-name">${name}</p>
+            ${venue ? `<p class="review-subtitle">${venue}</p>` : ''}
+          </div>
+        </div>
+        <p class="review-text">${text}</p>
+        ${instagram ? `<a class="card-link" href="${instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}`;
+      container.appendChild(card);
+    });
   }
 
   function renderDynamicDemos(lang) {
