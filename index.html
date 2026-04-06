@@ -1608,8 +1608,12 @@
     if (!container) return;
     const copy = COPY[lang] || COPY.en || {};
     const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
+    // Sort: available demos newest-first, coming-soon demos at the end
+    const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
+    const comingSoon = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
+    const sorted = [...available.reverse(), ...comingSoon];
     container.innerHTML = '';
-    registry.forEach(id => {
+    sorted.forEach(id => {
       const title  = copy[`demos.${id}.title`]  || id;
       const desc   = copy[`demos.${id}.desc`]   || '';
       const avatar = copy[`demos.${id}.avatar`] || '';

@@ -738,7 +738,10 @@
   function renderDemos() {
     const el = document.getElementById('demos-list');
     el.innerHTML = '';
-    DEMOS.forEach(d => {
+    // Sort: available demos newest-first, coming-soon demos at the end
+    const _dAvail  = DEMOS.filter(d => !(copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
+    const _dSoonGrp = DEMOS.filter(d =>   copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false'));
+    [..._dAvail.reverse(), ..._dSoonGrp].forEach(d => {
       const card = document.createElement('div');
       card.className = 'admin-card';
       const dTitle = copy(`demos.${d.id}.title`) || d.title;
