@@ -1582,6 +1582,31 @@
     applyLang(currentLang);
   });
 
+  // Live-sync: admin broadcasts copy changes to open tabs instantly
+  try {
+    new BroadcastChannel('momo-copy').onmessage = ({ data: msg }) => {
+      if (msg.lang && msg.data) {
+        COPY[msg.lang] = msg.data;
+        renderDynamicDemos(currentLang);
+        renderDynamicReviews(currentLang);
+      }
+    };
+  } catch (_) {}
+
+  // Re-fetch copy when tab becomes visible (picks up post-deploy updates)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    Promise.all([
+      fetch('/copy/en.json?_=' + Date.now()).then(r => r.json()).catch(() => null),
+      fetch('/copy/fr.json?_=' + Date.now()).then(r => r.json()).catch(() => null)
+    ]).then(([en, fr]) => {
+      if (en) COPY.en = en;
+      if (fr) COPY.fr = fr;
+      renderDynamicDemos(currentLang);
+      renderDynamicReviews(currentLang);
+    });
+  });
+
   function applyLang(lang) {
     const copy = COPY[lang] || {};
     document.querySelectorAll('[data-key]').forEach(el => {

@@ -415,6 +415,7 @@
   let currentLang = 'en';
   let copyData = { en: null, fr: null };
   let copySha  = { en: null, fr: null };
+  const copyBroadcast = (() => { try { return new BroadcastChannel('momo-copy'); } catch(_) { return null; } })();
   let currentEvents = [];
   let eventsSha = '';
   let editFormType = null; // 'intro' | 'review' | 'demo' | 'timeline' | 'gig'
@@ -563,6 +564,7 @@
     if (!res.ok) throw new Error(`GitHub ${res.status}`);
     const data = await res.json();
     copySha[lang] = data.content.sha;
+    copyBroadcast?.postMessage({ lang, data: copyData[lang] });
   }
 
   // ── Load events ──────────────────────────────────────────────────────────────
