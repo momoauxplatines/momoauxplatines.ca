@@ -44,17 +44,30 @@ export default async (req) => {
 
   // ── GET ──────────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
-    const raw = await store.get(`copy-${lang}`).catch(() => null);
-    if (raw) {
-      return new Response(raw, { headers: CORS });
-    }
-    // First-run fallback: serve the static file that was last deployed
+    // Load static seed (always present after deploy)
+    let staticData = {};
     try {
-      const data = readFileSync(join(process.cwd(), 'copy', `${lang}.json`), 'utf8');
-      return new Response(data, { headers: CORS });
-    } catch {
-      return new Response('{}', { headers: CORS });
-    }
+      staticData = JSON.parse(readFileSync(join(process.cwd(), 'copy', `${lang}.json`), 'utf8'));
+    } catch { /* no static file — proceed with empty */ }
+
+    // Load blob override (may be absent on first run)
+    const blobRaw = await store.get(`copy-${lang}`).catch(() => null);
+    const blobData = blobRaw ? JSON.parse(blobRaw) : {};
+
+    // Shallow merge: static values are the defaults, blob values win
+    const merged = { ...staticData, ...blobData };
+
+    // Smart registry merge: union(staticIds, blobOnlyIds) minus tombstoned IDs
+    const staticIds  = (staticData['demos.registry'] || '').split('|').filter(Boolean);
+    const blobIds    = (blobData['demos.registry']   || '').split('|').filter(Boolean);
+    const blobOnlyIds = blobIds.filter(id => !staticIds.includes(id));
+    const tombstoned  = staticIds.filter(id => blobData[`demos.${id}.deleted`] === 'true');
+    merged['demos.registry'] = [
+      ...staticIds.filter(id => !tombstoned.includes(id)),
+      ...blobOnlyIds,
+    ].join('|');
+
+    return new Response(JSON.stringify(merged), { headers: CORS });
   }
 
   // ── PUT ──────────────────────────────────────────────────────────────────────

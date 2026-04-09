@@ -1431,7 +1431,9 @@
     if (idx >= 0) DEMOS.splice(idx, 1);
     renderDemos();
     try {
-      // Remove from registry and all copy keys for both languages
+      // Remove from registry and all copy keys for both languages.
+      // Tombstone prevents static-seed merge in copy.mjs from re-surfacing
+      // demos that originated from the static JSON files.
       for (const lang of ['en', 'fr']) {
         if (!copyData[lang]) continue;
         copyData[lang]['demos.registry'] = (copyData[lang]['demos.registry'] || '')
@@ -1439,6 +1441,7 @@
         Object.keys(copyData[lang]).forEach(k => {
           if (k.startsWith(`demos.${id}.`)) delete copyData[lang][k];
         });
+        copyData[lang][`demos.${id}.deleted`] = 'true';
         await saveCopy(lang, `Delete demo: ${id} (${lang})`);
       }
       showToast(`"${d?.title || id}" deleted`, 'success');
