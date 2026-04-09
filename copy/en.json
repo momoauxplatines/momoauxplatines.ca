@@ -60,7 +60,7 @@
   "req.confirm.btn.close": "CLOSE",
   "intro.title": "MOMO AUX PLATINES",
   "intro.tags": "DJ|TURNTABLIST|RADIO HOST",
-  "demos.registry": "dancehall-mnryramu",
+  "demos.registry": "dancehall-mnryramu|house-de-p-ques-mnrzeyf0",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.link": "https://youtu.be/eqyngbFuLcU",
   "demos.le-bon-groove.coming-soon": "false",
@@ -71,5 +71,10 @@
   "demos.dancehall-mnryramu.coming-soon": "false",
   "demos.chill.title": "Chill",
   "demos.chill.link": "https://www.youtube.com/watch?v=Bu2YCXoDMe4",
-  "demos.chill.coming-soon": "false"
+  "demos.chill.coming-soon": "false",
+  "demos.house-de-p-ques-mnrzeyf0.avatar": "/images/demos/house-de-p-ques-mnrzeyf0.jpg",
+  "demos.house-de-p-ques-mnrzeyf0.title": "House de Pâques",
+  "demos.house-de-p-ques-mnrzeyf0.desc": "Somehow festive house on easter Monday.",
+  "demos.house-de-p-ques-mnrzeyf0.link": "https://youtu.be/--8Sx0cEkC8",
+  "demos.house-de-p-ques-mnrzeyf0.coming-soon": "false"
 }
