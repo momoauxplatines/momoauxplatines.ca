@@ -1424,9 +1424,12 @@
   async function deleteDemo(id) {
     const d = DEMOS.find(x => x.id === id);
     if (!confirm(`Delete "${d?.title || id}"?\nThis cannot be undone.`)) return;
+    // Close immediately after confirmation — saves happen in the background
+    closeForm();
     // Remove from in-memory array
     const idx = DEMOS.findIndex(x => x.id === id);
     if (idx >= 0) DEMOS.splice(idx, 1);
+    renderDemos();
     try {
       // Remove from registry and all copy keys for both languages
       for (const lang of ['en', 'fr']) {
@@ -1438,8 +1441,6 @@
         });
         await saveCopy(lang, `Delete demo: ${id} (${lang})`);
       }
-      closeForm();
-      renderDemos();
       showToast(`"${d?.title || id}" deleted`, 'success');
     } catch (e) {
       showToast('Delete failed — ' + e.message, 'error');
