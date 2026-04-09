@@ -1686,7 +1686,7 @@
       const thumbHtml = avatar
         ? `<img class="video-thumb" src="${avatar}" alt="${title}">`
         : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
-      const playHtml = ytId ? `<img class="play-btn" src="images/video-play-btn.png" alt="Play">` : '';
+      const playHtml = !soon ? `<img class="play-btn" src="images/video-play-btn.png" alt="Play">` : '';
       const ytAttr   = ytId ? ` data-yt="${ytId}"` : '';
       const linkHtml = soon
         ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
