@@ -10,7 +10,7 @@
   "reviews.simone.text": "Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.",
   "reviews.tmo.text": "A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.",
   "reviews.jessie.text": "We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!",
-  "demos.registry": "le-bon-groove|jazzy-house|chill",
+  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.desc": "Head nodding on the couch and dancing a bit when getting up to go to the fridge.",
   "demos.le-bon-groove.avatar": "images/video-le-bon-groove.png",
@@ -71,5 +71,10 @@
   "req.confirm.copy": "Momo received your request and will do their best to play it tonight.",
   "req.confirm.btn.close": "CLOSE",
   "intro.title": "MOMO AUX PLATINES",
-  "intro.tags": "DJ|TURNTABLIST|RADIO HOST"
+  "intro.tags": "DJ|TURNTABLIST|RADIO HOST",
+  "demos.house-de-p-ques-mnrzzoto.avatar": "/images/demos/house-de-p-ques-mnrzzoto.jpg",
+  "demos.house-de-p-ques-mnrzzoto.title": "House de Pâques",
+  "demos.house-de-p-ques-mnrzzoto.desc": "Somehow festive house on easter Monday.",
+  "demos.house-de-p-ques-mnrzzoto.link": "https://youtu.be/--8Sx0cEkC8",
+  "demos.house-de-p-ques-mnrzzoto.coming-soon": "false"
 }
