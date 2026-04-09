@@ -351,15 +351,14 @@
       border-radius: 16px; display: flex; flex-direction: column;
       gap: 24px; padding: 16px;
     }
-    .video-thumb-wrapper { position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; cursor: pointer; }
-    .video-thumb-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
-    .video-thumb { width: 100%; height: 100%; object-fit: contain; }
-    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; }
-    .video-thumb-wrapper:hover .play-btn { opacity: 0.85; }
-    .video-content { display: flex; flex-direction: column; gap: 16px; }
+    .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; text-decoration: none; }
+    .video-thumb { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; transition: opacity 0.15s; }
+    .video-thumb-wrapper:hover .play-btn { opacity: 0.8; }
+    .video-content { display: flex; flex-direction: column; flex: 1; gap: 16px; }
     .video-info { display: flex; flex-direction: column; gap: 16px; color: var(--brand-30); }
-    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; }
-    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; }
+    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; color: var(--brand-30); }
+    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
 
     /* ─── Timeline Mobile ─── */
     .timeline-section { display: flex; flex-direction: column; gap: 40px; }
@@ -749,10 +748,10 @@
         <div id="demos-dynamic"></div>
 
         <div class="video-card">
-          <div class="video-thumb-wrapper" data-yt="eqyngbFuLcU">
+          <a class="video-thumb-wrapper" href="https://youtu.be/eqyngbFuLcU" target="_blank" rel="noopener">
             <img class="video-thumb" src="images/video-le-bon-groove.png" alt="Le Bon Groove">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </div>
+            <img class="play-btn" src="images/video-play-btn.png" alt="">
+          </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Le Bon Groove</p>
@@ -762,10 +761,10 @@
         </div>
 
         <div class="video-card">
-          <div class="video-thumb-wrapper" data-yt="cQRz7w4A7pc">
+          <a class="video-thumb-wrapper" href="https://youtu.be/cQRz7w4A7pc" target="_blank" rel="noopener">
             <img class="video-thumb" src="images/video-jazzy-house.png" alt="Jazzy House">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </div>
+            <img class="play-btn" src="images/video-play-btn.png" alt="">
+          </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Jazzy House</p>
@@ -775,10 +774,10 @@
         </div>
 
         <div class="video-card">
-          <div class="video-thumb-wrapper" data-yt="Bu2YCXoDMe4">
+          <a class="video-thumb-wrapper" href="https://youtu.be/Bu2YCXoDMe4" target="_blank" rel="noopener">
             <img class="video-thumb" src="images/video-chill.png" alt="Chill">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </div>
+            <img class="play-btn" src="images/video-play-btn.png" alt="">
+          </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">1,2,3 Chill</p>
@@ -788,15 +787,15 @@
         </div>
 
         <div class="video-card">
-          <div class="video-thumb-wrapper">
+          <a class="video-thumb-wrapper" href="https://youtu.be/hy4gYgrcCfg" target="_blank" rel="noopener">
             <img class="video-thumb" src="images/video-dancehall.png" alt="Dancehall">
-          </div>
+            <img class="play-btn" src="images/video-play-btn.png" alt="">
+          </a>
           <div class="video-content">
             <div class="video-info">
               <p class="video-title">Dancehall</p>
-              <p class="video-desc" data-key="demos.dancehall.desc" data-en="Shake your bum bum a bit. Stay classy but move around like you want the right person to see you." data-fr="Restez classy mais bougez votre popotin comme si vous vouliez quelqu'un vous voit.">Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.</p>
+              <p class="video-desc" data-key="demos.dancehall.desc" data-en="Four tunes to make yo bum bum twerk and gigue." data-fr="Quatre tounes pour faire twerker et giguer votre popotin.">Four tunes to make yo bum bum twerk and gigue.</p>
             </div>
-            <span class="card-link-soon" data-key="demos.coming-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
           </div>
         </div>
 
@@ -1686,15 +1685,18 @@
       const thumbHtml = avatar
         ? `<img class="video-thumb" src="${avatar}" alt="${title}">`
         : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
-      const playHtml = !soon ? `<img class="play-btn" src="images/video-play-btn.png" alt="Play">` : '';
-      const ytAttr   = ytId ? ` data-yt="${ytId}"` : '';
-      const linkHtml = soon
+      const playHtml  = !soon ? `<img class="play-btn" src="images/video-play-btn.png" alt="">` : '';
+      const thumbTag  = (link && !soon)
+        ? `<a class="video-thumb-wrapper" href="${link}" target="_blank" rel="noopener">`
+        : `<div class="video-thumb-wrapper">`;
+      const thumbClose = (link && !soon) ? `</a>` : `</div>`;
+      const linkHtml  = soon
         ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
         : '';
       const card = document.createElement('div');
       card.className = 'video-card';
       card.innerHTML = `
-        <div class="video-thumb-wrapper"${ytAttr}>${thumbHtml}${playHtml}</div>
+        ${thumbTag}${thumbHtml}${playHtml}${thumbClose}
         <div class="video-content">
           <div class="video-info">
             <p class="video-title">${title}</p>
@@ -1702,17 +1704,6 @@
           </div>
           ${linkHtml}
         </div>`;
-      if (ytId) {
-        const wrapper = card.querySelector('.video-thumb-wrapper');
-        wrapper.addEventListener('click', () => {
-          wrapper.innerHTML = `<iframe
-            src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-            title="YouTube video player"
-          ></iframe>`;
-        });
-      }
       container.appendChild(card);
     });
   }
@@ -1721,18 +1712,6 @@
     applyLang(currentLang === 'en' ? 'fr' : 'en');
   });
 
-  // ── YouTube click-to-play ──
-  document.querySelectorAll('.video-thumb-wrapper[data-yt]').forEach(wrapper => {
-    wrapper.addEventListener('click', () => {
-      const id = wrapper.dataset.yt;
-      wrapper.innerHTML = `<iframe
-        src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen
-        title="YouTube video player"
-      ></iframe>`;
-    });
-  });
 
   // Netlify Identity — redirect to admin after login via invite link
   if (window.netlifyIdentity) {
