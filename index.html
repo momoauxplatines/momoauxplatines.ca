@@ -343,6 +343,9 @@
 
     /* ─── Demos ─── */
     .demos { display: flex; flex-direction: column; gap: 32px; }
+    /* Make the dynamic container transparent to flex layout so cards become
+       direct children of .scroll-row and participate in horizontal scrolling */
+    #demos-dynamic { display: contents; }
 
     /* Video card */
     .video-card {
@@ -1617,10 +1620,10 @@
     if (!container) return;
     const copy = COPY[lang] || COPY.en || {};
     const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
-    // Sort: available demos newest-first, coming-soon demos at the end
+    // Sort: available demos in date-added order (left = oldest), coming-soon at the end
     const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
     const comingSoon = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
-    const sorted = [...available.reverse(), ...comingSoon];
+    const sorted = [...available, ...comingSoon];
     container.innerHTML = '';
     sorted.forEach(id => {
       const title  = copy[`demos.${id}.title`]  || id;
