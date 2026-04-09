@@ -803,8 +803,7 @@
         <p class="card-name">${esc(dTitle)}</p>
         <p class="card-text">${esc(copy(d.descKey))}</p>
         ${dSoon ? '<p class="card-sub">Coming soon</p>' : dLink ? `<p class="card-link-text">YouTube</p>` : ''}
-        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>
-        <button class="btn-delete-gig" data-action="delete-demo" data-id="${d.id}">Delete</button>`;
+        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>`;
       el.appendChild(card);
     });
   }
@@ -1022,7 +1021,8 @@
         <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;">
           <input type="checkbox" id="ef-coming-soon" ${comingSoon ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--brand-80);flex-shrink:0;">
           <span class="edit-label" style="margin:0;">Coming soon</span>
-        </label>`;
+        </label>
+        ${!isNew ? `<button class="btn-delete-gig" data-action="delete-demo" data-id="${meta.id}">Delete demo</button>` : ''}`;
       const imgInput = document.getElementById('ef-img-input');
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
