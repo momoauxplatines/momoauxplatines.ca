@@ -803,7 +803,8 @@
         <p class="card-name">${esc(dTitle)}</p>
         <p class="card-text">${esc(copy(d.descKey))}</p>
         ${dSoon ? '<p class="card-sub">Coming soon</p>' : dLink ? `<p class="card-link-text">YouTube</p>` : ''}
-        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>`;
+        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>
+        <button class="btn-delete-gig" data-action="delete-demo" data-id="${d.id}">Delete</button>`;
       el.appendChild(card);
     });
   }
@@ -849,6 +850,7 @@
     if (action === 'edit-intro')    openForm('intro');
     if (action === 'edit-review')   openForm('review',   REVIEWS.find(r => r.id === id));
     if (action === 'edit-demo')     openForm('demo',     DEMOS.find(d => d.id === id));
+    if (action === 'delete-demo')   deleteDemo(id);
     if (action === 'edit-timeline') openForm('timeline', { item: TIMELINE[decade]?.find(x => x.id === id), decade });
     if (action === 'edit-gig')      openForm('gig',      { index: parseInt(index) });
     if (action === 'delete-gig')    deleteGig(parseInt(index));
@@ -1417,6 +1419,33 @@
     saveBtn.disabled = false;
     saveBtn.textContent = 'Save';
   });
+
+  // ── Delete demo ───────────────────────────────────────────────────────────────
+  async function deleteDemo(id) {
+    const d = DEMOS.find(x => x.id === id);
+    if (!confirm(`Delete "${d?.title || id}"?\nThis cannot be undone.`)) return;
+    // Remove from in-memory array
+    const idx = DEMOS.findIndex(x => x.id === id);
+    if (idx >= 0) DEMOS.splice(idx, 1);
+    try {
+      // Remove from registry and all copy keys for both languages
+      for (const lang of ['en', 'fr']) {
+        if (!copyData[lang]) continue;
+        copyData[lang]['demos.registry'] = (copyData[lang]['demos.registry'] || '')
+          .split('|').filter(Boolean).filter(x => x !== id).join('|');
+        Object.keys(copyData[lang]).forEach(k => {
+          if (k.startsWith(`demos.${id}.`)) delete copyData[lang][k];
+        });
+        await saveCopy(lang, `Delete demo: ${id} (${lang})`);
+      }
+      renderDemos();
+      showToast(`"${d?.title || id}" deleted`, 'success');
+    } catch (e) {
+      showToast('Delete failed — ' + e.message, 'error');
+      // Restore on failure
+      loadAllCopy().then(() => { loadRegistries(); renderDemos(); });
+    }
+  }
 
   // ── Delete gig ────────────────────────────────────────────────────────────────
   async function deleteGig(index) {
