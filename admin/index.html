@@ -1438,6 +1438,7 @@
         });
         await saveCopy(lang, `Delete demo: ${id} (${lang})`);
       }
+      closeForm();
       renderDemos();
       showToast(`"${d?.title || id}" deleted`, 'success');
     } catch (e) {
