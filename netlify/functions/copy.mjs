@@ -52,7 +52,8 @@ export default async (req) => {
 
     // Load blob override (may be absent on first run)
     const blobRaw = await store.get(`copy-${lang}`).catch(() => null);
-    const blobData = blobRaw ? JSON.parse(blobRaw) : {};
+    let blobData = {};
+    try { if (blobRaw) blobData = JSON.parse(blobRaw); } catch { /* corrupted blob — ignore */ }
 
     // Shallow merge: static values are the defaults, blob values win
     const merged = { ...staticData, ...blobData };

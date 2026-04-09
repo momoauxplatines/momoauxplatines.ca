@@ -343,9 +343,6 @@
 
     /* ─── Demos ─── */
     .demos { display: flex; flex-direction: column; gap: 32px; }
-    /* Make the dynamic container transparent to flex layout so cards become
-       direct children of .scroll-row and participate in horizontal scrolling */
-    #demos-dynamic { display: contents; }
 
     /* Video card */
     .video-card {
@@ -748,11 +745,7 @@
     ══════════════════════════════════════════════ -->
     <section class="demos">
       <h2 class="section-heading">Demos</h2>
-      <div class="scroll-row" id="demos-scroll-row">
-
-        <div id="demos-dynamic"></div>
-
-      </div>
+      <div class="scroll-row" id="demos-scroll-row"></div>
     </section>
 
     <!-- ══════════════════════════════════════════════
@@ -1525,11 +1518,18 @@
   const langBtn = document.getElementById('lang-btn');
   const COPY = { en: {}, fr: {} };
 
+  // Load copy: try the API first, fall back to the static JSON file
+  async function fetchCopy(lang) {
+    try {
+      const r = await fetch(`/api/copy?lang=${lang}`);
+      if (r.ok) { const d = await r.json(); if (d && d['demos.registry']) return d; }
+    } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+
   // Load both copy files in parallel; re-apply once loaded
-  Promise.all([
-    fetch('/api/copy?lang=en').then(r => r.json()).catch(() => ({})),
-    fetch('/api/copy?lang=fr').then(r => r.json()).catch(() => ({}))
-  ]).then(([en, fr]) => {
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
     COPY.en = en; COPY.fr = fr;
     applyLang(currentLang);
   });
@@ -1616,7 +1616,7 @@
   }
 
   function renderDynamicDemos(lang) {
-    const container = document.getElementById('demos-dynamic');
+    const container = document.getElementById('demos-scroll-row');
     if (!container) return;
     const copy = COPY[lang] || COPY.en || {};
     const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
