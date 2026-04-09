@@ -60,8 +60,13 @@
   "req.confirm.btn.close": "CLOSE",
   "intro.title": "MOMO AUX PLATINES",
   "intro.tags": "DJ|TURNTABLIST|RADIO HOST",
-  "demos.registry": "",
+  "demos.registry": "dancehall-mnryramu",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.link": "https://youtu.be/eqyngbFuLcU",
-  "demos.le-bon-groove.coming-soon": "false"
+  "demos.le-bon-groove.coming-soon": "false",
+  "demos.dancehall-mnryramu.avatar": "/images/demos/dancehall-mnryramu.jpg",
+  "demos.dancehall-mnryramu.title": "Dancehall",
+  "demos.dancehall-mnryramu.desc": "Four tunes to make yo bum bum twerk and gigue.",
+  "demos.dancehall-mnryramu.link": "https://youtu.be/hy4gYgrcCfg",
+  "demos.dancehall-mnryramu.coming-soon": "false"
 }
