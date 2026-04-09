@@ -10,7 +10,7 @@
   "reviews.simone.text": "Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.",
   "reviews.tmo.text": "Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.",
   "reviews.jessie.text": "On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!",
-  "demos.registry": "le-bon-groove|jazzy-house|chill",
+  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.desc": "Hocher la tête, danser un peu en allant au frigo.",
   "demos.le-bon-groove.avatar": "images/video-le-bon-groove.png",
@@ -72,5 +72,10 @@
   "req.confirm.copy": "Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.",
   "req.confirm.btn.close": "FERMER",
   "intro.title": "MOMO AUX PLATINES",
-  "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO"
+  "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO",
+  "demos.house-de-p-ques-mnrzzoto.avatar": "/images/demos/house-de-p-ques-mnrzzoto.jpg",
+  "demos.house-de-p-ques-mnrzzoto.title": "House de Pâques",
+  "demos.house-de-p-ques-mnrzzoto.desc": "Somehow festive house on easter Monday.",
+  "demos.house-de-p-ques-mnrzzoto.link": "https://youtu.be/--8Sx0cEkC8",
+  "demos.house-de-p-ques-mnrzzoto.coming-soon": "false"
 }
