@@ -78,6 +78,8 @@
     .card-link-text { font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
     .card-thumb { position: relative; display: inline-grid; }
     .card-thumb-img { width: 91px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid var(--brand-50); }
+    .card-thumb-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.40); border-radius: 8px; pointer-events: none; }
+    .card-thumb-play svg { width: 20px; height: 20px; fill: #fff; opacity: 0.9; }
     .btn-card-edit { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; width: 100%; cursor: pointer; }
     .btn-card-edit:hover { background: var(--brand-80); }
     .gig-card-actions .btn-card-edit { width: auto; padding: 0 16px; }
@@ -799,10 +801,11 @@
       card.innerHTML = `
         <div class="card-thumb">
           <img class="card-thumb-img" src="${d.thumb}" alt="${esc(dTitle)}">
+          ${!dSoon ? `<div class="card-thumb-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>` : ''}
         </div>
         <p class="card-name">${esc(dTitle)}</p>
         <p class="card-text">${esc(copy(d.descKey))}</p>
-        ${dSoon ? '<p class="card-sub">Coming soon</p>' : dLink ? `<p class="card-link-text">YouTube</p>` : ''}
+        ${dSoon ? '<p class="card-sub">Coming soon</p>' : ''}
         <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>`;
       el.appendChild(card);
     });
