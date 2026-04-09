@@ -60,10 +60,15 @@
   "req.confirm.btn.close": "FERMER",
   "intro.title": "MOMO AUX PLATINES",
   "intro.tags": "DJ|TURNTABLIST|ANIMATEUR RADIO",
-  "demos.registry": "dancehall-mnryramu",
+  "demos.registry": "dancehall-mnryramu|house-de-p-ques-mnrzeyf0",
   "demos.dancehall-mnryramu.avatar": "/images/demos/dancehall-mnryramu.jpg",
   "demos.dancehall-mnryramu.title": "Dancehall",
   "demos.dancehall-mnryramu.desc": "Four tunes to make yo bum bum twerk and gigue.",
   "demos.dancehall-mnryramu.link": "https://youtu.be/hy4gYgrcCfg",
-  "demos.dancehall-mnryramu.coming-soon": "false"
+  "demos.dancehall-mnryramu.coming-soon": "false",
+  "demos.house-de-p-ques-mnrzeyf0.avatar": "/images/demos/house-de-p-ques-mnrzeyf0.jpg",
+  "demos.house-de-p-ques-mnrzeyf0.title": "House de Pâques",
+  "demos.house-de-p-ques-mnrzeyf0.desc": "Somehow festive house on easter Monday.",
+  "demos.house-de-p-ques-mnrzeyf0.link": "https://youtu.be/--8Sx0cEkC8",
+  "demos.house-de-p-ques-mnrzeyf0.coming-soon": "false"
 }
