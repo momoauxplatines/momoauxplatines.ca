@@ -353,7 +353,7 @@
     }
     .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; text-decoration: none; }
     .video-thumb-wrapper[data-ytid] { cursor: pointer; }
-    .video-thumb { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .video-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
     .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; transition: opacity 0.15s; }
     .video-thumb-wrapper:hover .play-btn { opacity: 0.8; }
     .video-thumb-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -1637,8 +1637,10 @@
       let ytId = '';
       const ytMatch = link.match(/[?&]v=([^&]+)/) || link.match(/youtu\.be\/([^?&/]+)/);
       if (ytMatch) ytId = ytMatch[1];
-      const thumbHtml = avatar
-        ? `<img class="video-thumb" src="${avatar}" alt="${title}">`
+      const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '';
+      const thumbSrc = ytThumb || avatar;
+      const thumbHtml = thumbSrc
+        ? `<img class="video-thumb" src="${thumbSrc}" alt="${title}">`
         : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
       const playHtml  = (!soon && ytId) ? `<img class="play-btn" src="images/video-play-btn.png" alt="">` : '';
       const ytAttr    = (!soon && ytId) ? ` data-ytid="${ytId}"` : '';
