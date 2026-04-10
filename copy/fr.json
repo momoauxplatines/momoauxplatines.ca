@@ -10,7 +10,7 @@
   "reviews.simone.text": "Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.",
   "reviews.tmo.text": "Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.",
   "reviews.jessie.text": "On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!",
-  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto",
+  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto|dancehall-mnstmiya",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.desc": "Hocher la tête, danser un peu en allant au frigo.",
   "demos.le-bon-groove.avatar": "images/video-le-bon-groove.png",
@@ -78,5 +78,10 @@
   "demos.house-de-p-ques-mnrzzoto.desc": "Somehow festive house on easter Monday.",
   "demos.house-de-p-ques-mnrzzoto.link": "https://youtu.be/--8Sx0cEkC8",
   "demos.house-de-p-ques-mnrzzoto.coming-soon": "false",
-  "demos.dancehall.deleted": "true"
+  "demos.dancehall.deleted": "true",
+  "demos.dancehall-mnstmiya.avatar": "/images/demos/dancehall-mnstmiya.jpg",
+  "demos.dancehall-mnstmiya.title": "Dancehall",
+  "demos.dancehall-mnstmiya.desc": "Four tunes to make yo bum bum twerk and gigue.",
+  "demos.dancehall-mnstmiya.link": "https://www.youtube.com/watch?v=hy4gYgrcCfg",
+  "demos.dancehall-mnstmiya.coming-soon": "false"
 }
