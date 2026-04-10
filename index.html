@@ -1621,6 +1621,7 @@
     // Don't re-render while a video is playing — it would destroy the iframe
     if (container.querySelector('iframe')) return;
     const copy = COPY[lang] || COPY.en || {};
+    const enCopy = COPY.en || {};
     const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
     // Sort: newest demos on the left, coming-soon at the end
     const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
@@ -1629,7 +1630,7 @@
     container.innerHTML = '';
     sorted.forEach(id => {
       const title  = copy[`demos.${id}.title`]  || id;
-      const desc   = copy[`demos.${id}.desc`]   || '';
+      const desc   = copy[`demos.${id}.desc`]   || enCopy[`demos.${id}.desc`] || '';
       const avatar = copy[`demos.${id}.avatar`] || '';
       const link   = copy[`demos.${id}.link`]   || '';
       const soon   = copy[`demos.${id}.coming-soon`] === 'true';

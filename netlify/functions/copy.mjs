@@ -68,6 +68,18 @@ export default async (req) => {
       ...blobOnlyIds,
     ].join('|');
 
+    // Translation guard: if a demos.*.desc in the blob is identical to the English
+    // original, it was never translated. Prefer the static translation if one exists.
+    if (lang !== 'en') {
+      let enStatic = {};
+      try { enStatic = JSON.parse(readFileSync(join(process.cwd(), 'copy', 'en.json'), 'utf8')); } catch {}
+      for (const key of Object.keys(merged)) {
+        if (/^demos\.[^.]+\.desc$/.test(key) && blobData[key] && blobData[key] === enStatic[key] && staticData[key] && staticData[key] !== enStatic[key]) {
+          merged[key] = staticData[key];
+        }
+      }
+    }
+
     return new Response(JSON.stringify(merged), { headers: CORS });
   }
 
