@@ -10,7 +10,7 @@
   "reviews.simone.text": "Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.",
   "reviews.tmo.text": "A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.",
   "reviews.jessie.text": "We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!",
-  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto|dancehall-mnstmiya",
+  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto|dancehall-mnstmiya|sunday-brunch-mnsuri1b",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.desc": "Head nodding on the couch and dancing a bit when getting up to go to the fridge.",
   "demos.le-bon-groove.avatar": "images/video-le-bon-groove.png",
@@ -86,5 +86,10 @@
   "demos.dancehall.title": "Dancehall",
   "demos.dancehall.desc": "",
   "demos.dancehall.link": "",
-  "demos.dancehall.coming-soon": "false"
+  "demos.dancehall.coming-soon": "false",
+  "demos.sunday-brunch-mnsuri1b.avatar": "/images/demos/sunday-brunch-mnsuri1b.jpg",
+  "demos.sunday-brunch-mnsuri1b.title": "Sunday Brunch",
+  "demos.sunday-brunch-mnsuri1b.desc": "Afro beats match great with mimosas and friends.",
+  "demos.sunday-brunch-mnsuri1b.link": "https://youtu.be/Dc_TQ0Wi0xg",
+  "demos.sunday-brunch-mnsuri1b.coming-soon": "false"
 }
