@@ -10,7 +10,7 @@
   "reviews.simone.text": "Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.",
   "reviews.tmo.text": "Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.",
   "reviews.jessie.text": "On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!",
-  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto|dancehall-mnstmiya",
+  "demos.registry": "le-bon-groove|jazzy-house|chill|house-de-p-ques-mnrzzoto|dancehall-mnstmiya|sunday-brunch-mnsuri1b",
   "demos.le-bon-groove.title": "Le Bon Groove",
   "demos.le-bon-groove.desc": "Hocher la tête, danser un peu en allant au frigo.",
   "demos.le-bon-groove.avatar": "images/video-le-bon-groove.png",
@@ -83,5 +83,10 @@
   "demos.dancehall-mnstmiya.title": "Dancehall",
   "demos.dancehall-mnstmiya.desc": "Quatre tounes pour faire twerker et giguer votre popotin.",
   "demos.dancehall-mnstmiya.link": "https://www.youtube.com/watch?v=hy4gYgrcCfg",
-  "demos.dancehall-mnstmiya.coming-soon": "false"
+  "demos.dancehall-mnstmiya.coming-soon": "false",
+  "demos.sunday-brunch-mnsuri1b.avatar": "/images/demos/sunday-brunch-mnsuri1b.jpg",
+  "demos.sunday-brunch-mnsuri1b.title": "Sunday Brunch",
+  "demos.sunday-brunch-mnsuri1b.desc": "Afro beats match great with mimosas and friends.",
+  "demos.sunday-brunch-mnsuri1b.link": "https://youtu.be/Dc_TQ0Wi0xg",
+  "demos.sunday-brunch-mnsuri1b.coming-soon": "false"
 }
