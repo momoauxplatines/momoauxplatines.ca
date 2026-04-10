@@ -1618,12 +1618,14 @@
   function renderDynamicDemos(lang) {
     const container = document.getElementById('demos-scroll-row');
     if (!container) return;
+    // Don't re-render while a video is playing — it would destroy the iframe
+    if (container.querySelector('iframe')) return;
     const copy = COPY[lang] || COPY.en || {};
     const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
-    // Sort: available demos in date-added order (left = oldest), coming-soon at the end
+    // Sort: newest demos on the left, coming-soon at the end
     const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
     const comingSoon = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
-    const sorted = [...available, ...comingSoon];
+    const sorted = [...available.slice().reverse(), ...comingSoon];
     container.innerHTML = '';
     sorted.forEach(id => {
       const title  = copy[`demos.${id}.title`]  || id;
