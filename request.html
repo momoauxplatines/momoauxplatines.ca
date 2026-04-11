@@ -154,7 +154,8 @@
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
     }
-    .event-hours {
+    .event-datetime-row { display: flex; gap: 12px; align-items: center; }
+    .event-date, .event-hours {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
     .event-ig-link {
@@ -459,7 +460,10 @@
         <div class="event-copy">
           <p class="event-name">Buvette chez Simone</p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
-          <p class="event-hours" id="event-date-hours">19:00 – 01:00</p>
+          <div class="event-datetime-row">
+            <span class="event-date" id="event-date"></span>
+            <span class="event-hours" id="event-hours"></span>
+          </div>
           <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
         </div>
       </div>
@@ -655,7 +659,7 @@
 
   <!-- Requested List -->
   <div class="song-list" id="requested-list">
-    <div class="empty-state" id="requested-empty" data-en="No requests have been made yet." data-fr="Aucune demande pour le moment.">No requests have been made yet.</div>
+    <div class="empty-state" id="requested-empty"></div>
   </div>
 
   <!-- Now Playing Footer -->
@@ -863,8 +867,10 @@
     if (_eventName) _eventName.textContent = '';
     const _eventAddress = document.querySelector('.event-address');
     if (_eventAddress) _eventAddress.textContent = '';
-    const _eventDateHours = document.getElementById('event-date-hours');
-    if (_eventDateHours) _eventDateHours.textContent = '';
+    const _eventDate = document.getElementById('event-date');
+    if (_eventDate) _eventDate.textContent = '';
+    const _eventHours = document.getElementById('event-hours');
+    if (_eventHours) _eventHours.textContent = '';
     const _igLink = document.querySelector('.event-ig-link');
     if (_igLink) _igLink.style.display = 'none';
 
@@ -893,11 +899,10 @@
         if (eventName) eventName.textContent = ev.venue || '';
         const eventAddress = document.querySelector('.event-address');
         if (eventAddress) eventAddress.textContent = ev.address || '';
-        const eventDateHours = document.getElementById('event-date-hours');
-        if (eventDateHours) {
-          const hours = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
-          eventDateHours.textContent = ev.date ? ev.date + (hours ? '  ' + hours : '') : hours;
-        }
+        const eventDateEl = document.getElementById('event-date');
+        if (eventDateEl) eventDateEl.textContent = ev.date || '';
+        const eventHoursEl = document.getElementById('event-hours');
+        if (eventHoursEl) eventHoursEl.textContent = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
         const igLink = document.querySelector('.event-ig-link');
         if (igLink) {
           if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
@@ -1240,7 +1245,9 @@
 
     if (!mine.length) {
       if (EVENT_SLUG) {
-        emptyEl.innerHTML = 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
+        emptyEl.innerHTML = currentLang === 'fr'
+          ? 'Aucune demande pour le moment.<br><br>Faites une demande en appuyant sur le bouton Demander en haut.'
+          : 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
       } else {
         emptyEl.textContent = currentLang === 'fr'
           ? 'Pas encore de demandes. Soyez le premier !'
