@@ -1,389 +1,515 @@
 {
   "_meta": {
-    "version": "1.0",
+    "version": "2.0",
     "figma_file": "jLKivsLOR22DJmngjsCcYz",
     "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines",
-    "last_synced": "2026-03-28",
+    "figma_pages": {
+      "Cover":   "522:4072",
+      "_DJ":     "0:1",
+      "_School": "51:970",
+      "_Admin":  "473:3188",
+      "_System": "1:2"
+    },
+    "canonical_token_collection": "Momo (VariableCollectionId:542:6050)",
+    "last_synced": "2026-04-10",
     "how_to_sync": "Share the changed Figma node URL → Claude fetches get_design_context → updates matching CSS classes and HTML in the listed files → single commit"
   },
 
   "design_tokens": {
     "colors": {
-      "brand-00":  "#FAFBF9",
-      "brand-10":  "#F4F6F3",
-      "brand-20":  "#EAEDE5",
-      "brand-30":  "#DEE4DA",
-      "brand-40":  "#D5DCCC",
-      "brand-50":  "#C9D3C0",
-      "brand-80":  "#51534E",
-      "brand-90":  "#2B2D2A",
-      "brand-95":  "#20221F",
-      "brand-100": "#141513",
-      "bg":        "#111210",
-      "green":     "#34C759",
-      "red":       "#D34242",
-      "blue":      "#007AFF"
+      "brand-00":    "#fafbf9",
+      "brand-10":    "#f4f6f3",
+      "brand-20":    "#eaede5",
+      "brand-30":    "#dee4da",
+      "brand-40":    "#d5dccc",
+      "brand-50":    "#c9d3c0",
+      "brand-60":    "#a2a89b",
+      "brand-70":    "#797f73",
+      "brand-80":    "#51534e",
+      "brand-90":    "#282a27",
+      "brand-95":    "#20221f",
+      "brand-100":   "#141513",
+      "brand-105":   "#111210",
+      "event-black": "#000000",
+      "event-red":   "#d34242",
+      "event-blue":  "#007aff",
+      "event-green": "#34c759"
     },
     "typography": {
-      "H1":         { "family": "Kanit", "weight": 900, "size": 64,  "lineHeight": 68 },
-      "H2":         { "family": "Kanit", "weight": 900, "size": 48,  "lineHeight": 52 },
-      "H3":         { "family": "Kanit", "weight": 900, "size": 32,  "lineHeight": 34 },
-      "H4":         { "family": "Kanit", "weight": 900, "size": 28,  "lineHeight": 31 },
-      "H5":         { "family": "Kanit", "weight": 900, "size": 20,  "lineHeight": 26 },
-      "H6":         { "family": "Kanit", "weight": 900, "size": 16,  "lineHeight": 31 },
-      "Body":       { "family": "SF Pro / system-ui", "weight": 300, "size": 18, "lineHeight": 26 },
-      "Small Body": { "family": "SF Pro / system-ui", "weight": 300, "size": 16, "lineHeight": 20 },
-      "Bold":       { "family": "SF Pro / system-ui", "weight": 700, "size": 18, "lineHeight": "normal" },
-      "Link":       { "family": "SF Pro / system-ui", "weight": 300, "size": 18, "lineHeight": 26, "decoration": "underline", "color": "brand-00" },
-      "Button":     { "family": "Kanit / SF Pro Black", "weight": 900, "size": 18, "lineHeight": 26, "transform": "uppercase" },
-      "Tab":        { "family": "Kanit / SF Pro Black", "weight": 900, "size": 18, "lineHeight": 24, "transform": "uppercase" }
+      "H1":         { "family": "Kanit", "weight": 900, "size": 52, "lineHeight": 52 },
+      "H2":         { "family": "Kanit", "weight": 900, "size": 44, "lineHeight": 48 },
+      "H3":         { "family": "Kanit", "weight": 900, "size": 32, "lineHeight": 34 },
+      "H4":         { "family": "Kanit", "weight": 900, "size": 28, "lineHeight": 31 },
+      "H5":         { "family": "Kanit", "weight": 900, "size": 20, "lineHeight": 26 },
+      "Body":       { "family": "SF Pro / system-ui", "weight": 274, "size": 18, "lineHeight": 26 },
+      "Small Body": { "family": "SF Pro / system-ui", "weight": 274, "size": 16, "lineHeight": 20 },
+      "Bold":       { "family": "SF Pro / system-ui", "weight": 700, "size": 18, "lineHeight": "100%" },
+      "Button":     { "family": "SF Pro Black / system-ui", "weight": 900, "size": 18, "lineHeight": 26, "transform": "uppercase" },
+      "Tab":        { "family": "SF Pro Black / system-ui", "weight": 900, "size": 18, "lineHeight": 24, "transform": "uppercase" },
+      "Skill":      { "family": "SF Pro Black / system-ui", "weight": 900, "size": 16, "lineHeight": 30 },
+      "Link":       { "family": "SF Pro / system-ui", "weight": 274, "size": 18, "lineHeight": 26, "decoration": "underline" }
+    },
+    "spacing": {
+      "content-padding":   32,
+      "section-gap":       80,
+      "card-gap":          16,
+      "admin-list-gap":    24,
+      "card-padding":      16,
+      "field-label-gap":   8,
+      "field-section-gap": 16,
+      "avatar-header":     40,
+      "avatar-event-card": 48,
+      "avatar-song-card":  64,
+      "avatar-admin-gig":  72,
+      "avatar-home-page":  80,
+      "avatar-intro":      112
+    },
+    "radii": {
+      "card":          16,
+      "button":        8,
+      "input":         12,
+      "tag":           8,
+      "avatar-square": 8,
+      "avatar-circle": 560
     }
   },
 
   "components": [
 
     {
-      "name": "Tabs",
-      "figma_node": "232:2453",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=232-2453",
-      "files": ["request.html"],
-      "css_classes": [".tabs-row", ".tab-btn", ".tab-btn.active", ".tab-btn.inactive"],
-      "variants": {
-        "active":   { "bg": "#000 (black)", "text": "brand-00 (#FAFBF9)", "border-radius": "8px 0 0 8px" },
-        "inactive": { "bg": "brand-100 (#141513)", "text": "brand-40 (#D5DCCC)", "border-radius": "0 8px 8px 0" }
-      },
-      "specs": {
-        "height": "48px",
-        "font": "Kanit Black 900, 18px, line-height 24px, uppercase",
-        "border": "1px solid brand-100",
-        "join": "margin-right: -1px (shared border)"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "Synced from node 232:2430. Active tab bg is pure black (#000). Font updated to 900/18px/24px."
-    },
-
-    {
-      "name": "Song Card",
-      "figma_node": "71:4680",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=71-4680",
-      "files": ["request.html"],
-      "css_classes": [".song-card", ".song-art", ".song-info", ".song-artist", ".song-title", ".song-link", ".song-request-col", ".req-icon-wrap", ".req-icon-played", ".req-icon-added"],
-      "variants": {
-        "played":    { "request_icon": "req-icon-played-base.png + req-icon-played-vector.png (composite)" },
-        "requested": { "request_icon": "req-icon-added-base.png + req-icon-added-plus.png (composite)" }
-      },
-      "specs": {
-        "bg": "#000 (black)",
-        "padding": "8px all sides",
-        "border-radius": "16px",
-        "album_art": "64×64px, border-radius 8px, border 1px brand-100",
-        "track_title": "SF Pro Bold 700, 18px — displayed FIRST",
-        "artist_name": "SF Pro Light 300, 16px — displayed SECOND",
-        "spotify_link": "brand-00 (#FAFBF9), underlined, 16px Light",
-        "request_col": "padding 0 16px, centered, self-stretch",
-        "icon_size": "20×18.333px"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "bg updated to black. border-radius updated to 16px. Icons are composite two-image structure from node 164:5515."
-    },
-
-    {
-      "name": "Now Playing Footer",
-      "figma_node": "72:4867",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=72-4867",
-      "files": ["request.html"],
-      "css_classes": [".now-playing-bar", ".now-playing-card", ".now-playing-art", ".now-playing-info", ".now-playing-title", ".now-playing-artist", ".now-playing-state"],
-      "specs": {
-        "bg": "brand-100 (#141513)",
-        "card_bg": "brand-100",
-        "card_border": "none (no green border in Figma)",
-        "padding": "16px",
-        "album_art": "64×64px, border 1px brand-100",
-        "track_title": "SF Pro Bold 700, 18px",
-        "artist_name": "SF Pro Light 300, 16px",
-        "playing_state": "green triangle icon + 'Playing' text, green #34C759"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "Figma does NOT show a green border on the card — only the 'Playing' text and icon are green. Code currently has border: 1px solid var(--green) on now-playing-card."
-    },
-
-    {
-      "name": "Event Card — Live (Home Page)",
-      "figma_node": "185:6595",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=185-6595",
-      "files": ["index.html"],
-      "css_classes": [".event-card-home", ".event-card-home-top", ".ev-live-dot", ".ev-live-label", ".ev-go-btn", ".ev-content", ".ev-venue-name", ".ev-address", ".ev-hours", ".ev-ig"],
-      "variants": {
-        "live": { "status": "red dot + LIVE label" },
-        "next": { "status": "blue date string (e.g. 15/09)" }
-      },
-      "specs": {
-        "bg": "brand-95 (#20221F)",
-        "border-radius": "16px",
-        "padding": "16px horizontal, 16px top, 20px bottom",
-        "gap": "16px between sections",
-        "venue_img": "48×48px, border-radius 8px, border 1px brand-100",
-        "venue_name": "Kanit Black 900, 28px, uppercase, brand-30",
-        "address": "SF Pro Light 300, 16px, brand-30 (no postal code)",
-        "hours": "SF Pro Light 300, 16px, brand-50",
-        "instagram": "SF Pro Light 300, 16px, brand-30, underlined",
-        "go_btn": "bg brand-100 (#141513), height 56px, Kanit Black 900 18px, brand-00, border-radius 8px"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "Postal code must always be hidden from address. 'Go to Event Page' button links to request.html."
-    },
-
-    {
-      "name": "Event Card — Next (Home Page)",
-      "figma_node": "220:7735",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=220-7735",
-      "files": ["index.html"],
-      "css_classes": [".next-event-card"],
-      "specs": {
-        "bg": "brand-95 (#20221F)",
-        "border-radius": "16px",
-        "date_badge": "Kanit Black 900, 20px, blue #007AFF, uppercase — top right",
-        "venue_img": "48×48px top left, border 1px brand-100",
-        "venue_name": "Kanit Black 900, 28px, uppercase, brand-30",
-        "address": "SF Pro Light 300, 16px, brand-30 (no postal code)",
-        "hours": "SF Pro Light 300, 16px, brand-50",
-        "instagram": "SF Pro Light 300, 16px, brand-30, underlined"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "Date is displayed top-right in blue as DD/MM. No 'Go to Event Page' button in next state — appears only when live. Visible only before start_time, hidden after end_time."
-    },
-
-    {
-      "name": "Next Events Section",
-      "figma_node": "220:7774",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=220-7774",
-      "files": ["index.html"],
-      "css_classes": [".events-section", ".events-section-title"],
-      "specs": {
-        "title": "Kanit Black 900, 44px, line-height 48px, brand-50, uppercase",
-        "gap": "40px between title and card",
-        "card_max_width": "400px tablet, 480px desktop, full-width mobile",
-        "alignment": "left-aligned at all breakpoints"
-      },
-      "last_synced": "2026-03-28"
-    },
-
-    {
-      "name": "Header — Live (Home Page)",
-      "figma_node": "185:6335",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=185-6335",
-      "files": ["index.html"],
-      "css_classes": [".site-header", ".header-live-badge"],
-      "variants": {
-        "default": { "center": "empty" },
-        "live":    { "center": "red dot + LIVE label, clickable → scrolls to event card" }
-      },
-      "specs": {
-        "padding": "24px",
-        "left_btn": "SCHOOL (hidden per user request)",
-        "center_live": "red dot 12px + 'LIVE' Kanit Black 20px red #D34242",
-        "right_btn": "FR/EN toggle, bg brand-90, height 39px, border-radius 8px"
-      },
-      "last_synced": "2026-03-28"
-    },
-
-    {
-      "name": "Header — Request Page",
-      "figma_node": "71:4610",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=71-4610",
-      "files": ["request.html"],
-      "css_classes": [".req-header", ".header-logo", ".req-btn"],
-      "specs": {
-        "padding": "24px",
-        "logo": "og-image.png 40×40px, border-radius 8px",
-        "request_btn": "bg brand-100, border 1px brand-30 (from Figma: blue text #007AFF, no border)",
-        "position": "sticky top-0"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "Figma shows REQUEST button text in blue #007AFF with no border/background. Code currently uses brand-100 bg with brand-30 border. Discrepancy to review."
-    },
-
-    {
-      "name": "Event Card — Request Page",
-      "figma_node": "236:2751",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=236-2751",
-      "files": ["request.html"],
-      "css_classes": [".event-card", ".event-card-top", ".event-venue-img", ".event-live-row", ".live-dot", ".live-label", ".event-details-btn", ".event-expanded"],
-      "variants": {
-        "collapsed": { "height": "80px, shows venue img + LIVE + Details button" },
-        "expanded":  { "shows": "venue name, address (no postal code), hours, Instagram link" }
-      },
-      "specs": {
-        "bg": "brand-100 (#141513)",
-        "border-radius": "16px",
-        "padding": "16px",
-        "venue_img": "48×48px, border-radius 8px, border 1px brand-100",
-        "details_btn": "always says 'Details'/'Détails', caret-up/down 8px",
-        "expand_collapse": "JS toggles .event-expanded.visible + .event-details-btn.open"
-      },
-      "last_synced": "2026-03-28"
-    },
-
-    {
-      "name": "Demo Card (Video Card)",
-      "figma_node": "198:7091",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=198-7091",
-      "files": ["index.html"],
-      "css_classes": [".demo-card", ".demo-thumb", ".demo-play", ".demo-title", ".demo-desc", ".card-link"],
-      "specs": {
-        "bg": "brand-95 (#20221F)",
-        "border-radius": "16px",
-        "padding": "16px",
-        "width": "310px (scrollable row)",
-        "thumbnail": "full-width, height 171px, border-radius 16px, object-fit contain",
-        "play_icon": "centered overlay 21.58% wide",
-        "title": "Kanit Black 900, 32px, uppercase, brand-30",
-        "description": "SF Pro Light 300, 18px, brand-30, height 104px",
-        "link": "SF Pro Light 300, 18px, brand-30 (#DEE4DA), underlined",
-        "gap_between_sections": "24px"
-      },
-      "last_synced": "2026-03-28",
-      "notes": "bg updated to brand-95. Link color is brand-30. 'Coming soon' is red #D71A1A underlined."
-    },
-
-    {
       "name": "Button",
       "figma_node": "22:206",
       "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=22-206",
-      "files": ["index.html"],
-      "css_classes": [".btn", ".ev-go-btn"],
+      "figma_page": "_System",
+      "files": ["index.html", "request.html", "admin/index.html"],
+      "css_classes": [".btn", ".btn-primary", ".btn-secondary", ".btn-tertiary", ".btn-admin", ".btn-admin-sm", ".btn-admin-delete", ".btn-tag", ".ev-go-btn"],
       "variants": {
-        "primary":   { "bg": "brand-10 (#F4F6F3)", "text": "brand-100 (#141513)" },
-        "secondary": { "bg": "brand-90 (#2B2D2A)", "text": "brand-00 (#FAFBF9)" },
-        "tertiary":  { "bg": "#000 (black)", "text": "brand-00 (#FAFBF9)" }
+        "Type=Primary":      { "bg": "brand-10 (#f4f6f3)", "text": "brand-100 (#141513)", "height": "56px", "font": "Button", "note": "hover → brand-00, disabled → brand-80 bg / brand-100 text" },
+        "Type=Secondary":    { "bg": "brand-90 (#282a27)", "border": "brand-80", "text": "brand-00 (#fafbf9)", "height": "56px", "font": "Body", "note": "Dark/Refresh action" },
+        "Type=Tertiary":     { "bg": "transparent / light fill", "height": "56px", "font": "Body" },
+        "Type=Admin":        { "bg": "brand-90 (#282a27)", "border": "brand-80", "text": "brand-00", "height": "56px", "font": "Body" },
+        "Type=Admin Small":  { "bg": "brand-90 (#282a27)", "border": "brand-80", "text": "brand-00", "height": "40px", "font": "Body Light 18px", "note": "hover → border brand-70, disabled → brand-100 bg / brand-90 border / brand-80 text" },
+        "Type=Admin Delete": { "bg": "brand-90 (#282a27)", "border": "event-red", "text": "event-red", "height": "56px", "font": "Body Light 18px", "note": "hover → event-red bg / brand-00 text / no border" },
+        "Type=Tag":          { "bg": "brand-90 (#282a27)", "text": "brand-00", "height": "40px", "padding": "4px 16px", "font": "Skill (SF Pro Black 16px)", "borderRadius": "8px" }
       },
       "specs": {
-        "height": "56px",
         "border-radius": "8px",
-        "font": "Kanit Black 900, 18px, line-height 26px, uppercase",
         "padding": "0 16px"
       },
-      "last_synced": "2026-03-28"
+      "last_synced": "2026-04-10"
     },
 
     {
-      "name": "Demo Cards Scroll",
-      "figma_node": "1:161",
-      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=1-161",
-      "files": ["index.html"],
-      "css_classes": [".demos-scroll"],
-      "specs": {
-        "layout": "horizontal scroll row",
-        "gap": "16px between cards",
-        "card_width": "310px",
-        "overflow": "overflow-x: auto, scrollbar-width: none"
+      "name": "Tabs",
+      "figma_node": "236:2897",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=236-2897",
+      "figma_page": "_System",
+      "files": ["request.html"],
+      "css_classes": [".tabs-row", ".tab-btn", ".tab-btn.active", ".tab-btn.inactive"],
+      "variants": {
+        "Activated=Left":  { "activeTab": "left" },
+        "Activated=Right": { "activeTab": "right" }
       },
-      "last_synced": "2026-03-28"
+      "specs": {
+        "height": "48px",
+        "font": "Tab — SF Pro Black / Kanit 900, 18px, line-height 24px, uppercase",
+        "bg": "brand-95",
+        "active-text": "brand-00",
+        "inactive-text": "brand-50",
+        "border": "1px solid brand-100",
+        "border-radius": "8px"
+      },
+      "last_synced": "2026-04-10"
     },
 
     {
-      "name": "Review Card",
-      "figma_node": "TBD — not yet fetched",
-      "files": ["index.html"],
-      "css_classes": [".review-card", ".review-avatar"],
-      "specs": {
-        "bg": "brand-95 (#20221F)",
-        "avatar": "80×80px, border-radius 8px"
+      "name": "Switch",
+      "figma_node": "356:2479",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=356-2479",
+      "figma_page": "_System",
+      "files": ["admin/index.html"],
+      "css_classes": [".toggle-switch", ".toggle-knob"],
+      "variants": {
+        "State=On":  { "bg": "#2563eb", "knob-position": "right 2px" },
+        "State=Off": { "bg": "#d2d5da", "knob-position": "left 2px" }
       },
-      "last_synced": "2026-03-28",
-      "notes": "bg updated to brand-95. Avatar updated to 80px with 8px border-radius (was circular). Node ID not yet captured."
+      "specs": {
+        "width": "36px",
+        "height": "20px",
+        "border-radius": "100px",
+        "knob-size": "16px",
+        "knob-color": "#ffffff",
+        "knob-shadow": "0 2px 4px rgba(39,39,39,0.1)"
+      },
+      "last_synced": "2026-04-10"
     },
 
     {
-      "name": "Timeline Card",
-      "figma_node": "TBD — not yet fetched",
-      "files": ["index.html"],
-      "css_classes": [".timeline-card", ".timeline-card-lg", ".timeline-thumb", ".timeline-thumb-lg"],
-      "specs": {
-        "bg": "brand-95 (#20221F)",
-        "avatar_mobile": "80×80px, border-radius 8px",
-        "avatar_desktop": "80×80px, border-radius 8px"
+      "name": "Request Icon",
+      "figma_node": "164:5515",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=164-5515",
+      "figma_page": "_System",
+      "files": ["request.html"],
+      "css_classes": [".req-icon-wrap", ".req-icon-played", ".req-icon-added"],
+      "variants": {
+        "Type=Played":    { "icon": "req-icon-played-base.png + req-icon-played-vector.png", "color": "event-green" },
+        "Type=Requested": { "icon": "req-icon-added-base.png + req-icon-added-plus.png" },
+        "Type=X":         { "icon": "close/remove icon", "size": "16×16px" }
       },
-      "last_synced": "2026-03-28",
-      "notes": "bg updated to brand-95. Mobile avatar updated to 80px (was 64px). Node ID not yet captured."
+      "specs": {
+        "icon-size": "20×18.33px",
+        "container": "padding 0 16px, centered, self-stretch"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Event Status",
+      "figma_node": "220:7590",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=220-7590",
+      "figma_page": "_System",
+      "files": ["index.html", "request.html"],
+      "css_classes": [".ev-live-dot", ".ev-live-label", ".ev-next-date"],
+      "variants": {
+        "Type=Live": { "dot": "12px red pulsing", "label": "LIVE Kanit Black 20px event-red" },
+        "Type=Next": { "date": "DD/MM Kanit Black 20px event-blue" }
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Card / Web / Event",
+      "figma_node": "70:1019",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=70-1019",
+      "figma_page": "_System",
+      "files": ["index.html", "request.html"],
+      "css_classes": [".event-card-home", ".next-event-card", ".event-card", ".event-card-top", ".ev-content", ".ev-venue-name", ".ev-address", ".ev-hours", ".ev-ig", ".ev-go-btn", ".event-expanded"],
+      "variants": {
+        "Location=Home, State=Live":            { "figma_node": "185:6595", "css": ".event-card-home (live)" },
+        "Location=Home, State=Next":            { "figma_node": "220:7735", "css": ".next-event-card" },
+        "Location=Event, State=Live – Open":    { "figma_node": "236:2737", "css": ".event-card expanded" },
+        "Location=Event, State=Next – Open":    { "figma_node": "555:3596", "css": ".event-card expanded" },
+        "Location=Event, State=Live – Closed":  { "figma_node": "236:2751", "css": ".event-card collapsed", "height": "80px" },
+        "Location=Event, State=Next – Closed":  { "figma_node": "555:3609", "css": ".event-card collapsed", "height": "80px" }
+      },
+      "specs": {
+        "bg": "brand-95 (#20221f)",
+        "border-radius": "16px",
+        "padding": "16px",
+        "gap": "16px",
+        "venue-img": "48×48px, border-radius 8px, border 1px brand-100",
+        "venue-name": "H4 Kanit Black 28px uppercase brand-30",
+        "address": "Small Body 16px brand-30 — no postal code",
+        "hours": "Small Body 16px brand-50",
+        "instagram": "Small Body 16px brand-30 underlined",
+        "go-btn": "bg #000, height 56px, Button font, brand-00"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Card / Web / Song",
+      "figma_node": "70:1050",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=70-1050",
+      "figma_page": "_System",
+      "files": ["request.html"],
+      "css_classes": [".song-card", ".song-art", ".song-info", ".song-title", ".song-artist", ".song-link", ".song-request-col"],
+      "variants": {
+        "Type=Song, State=Played, Requested=No":               { "figma_node": "70:823" },
+        "Type=Song, State=Request - Form, Requested=No":       { "figma_node": "71:1946" },
+        "Type=Song, State=Request, Requested=Yes":             { "figma_node": "71:1722" },
+        "Type=Song, State=Played, Requested=Yes":              { "figma_node": "164:5471" },
+        "Type=Song, State=Playing, Requested=No":              { "figma_node": "70:1040" },
+        "Type=Song, State=Requested - Playing, Requested=Yes": { "figma_node": "71:1731" }
+      },
+      "specs": {
+        "bg": "brand-100 (#141513)",
+        "border-radius": "16px",
+        "padding": "8px",
+        "album-art": "64×64px, border-radius 8px, border 1px brand-100",
+        "track-title": "Bold SF Pro 700, 18px, brand-30",
+        "artist-name": "Small Body SF Pro 274, 16px, brand-30",
+        "spotify-link": "Small Body, event-blue #007aff, underlined"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Card / Web / Content",
+      "figma_node": "22:217",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=22-217",
+      "figma_page": "_System",
+      "files": ["index.html"],
+      "variants": {
+        "Type=Demo": {
+          "figma_node": "1:186",
+          "css_classes": [".demo-card", ".demo-thumb", ".demo-play", ".demo-title", ".demo-desc", ".card-link"],
+          "specs": {
+            "bg": "brand-95 (#20221f)", "border-radius": "16px", "padding": "16px", "width": "310px",
+            "thumbnail": "full-width, 171px height, border-radius 16px, object-fit contain",
+            "title": "H3 Kanit Black 32px uppercase brand-30",
+            "description": "Body Light 18px brand-30",
+            "link": "Body Light 18px brand-30 underlined"
+          }
+        },
+        "Type=Review": {
+          "figma_node": "1:198",
+          "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=1-198",
+          "css_classes": [".review-card", ".review-avatar", ".review-name", ".review-role", ".review-text", ".review-ig"],
+          "specs": {
+            "bg": "brand-95 (#20221f)", "padding": "16px", "width": "310px", "height": "336px",
+            "avatar": "80×80px, border-radius 800px (CIRCLE — not square)",
+            "name": "H3 Kanit Black 32px uppercase brand-30",
+            "role": "Small Body SF Pro Light 16px brand-50 (2 lines max)",
+            "text": "Body Light 18px brand-10, flex-1",
+            "instagram": "Body Light 18px brand-00 underlined",
+            "layout": "flex-col justify-between"
+          },
+          "last_synced": "2026-04-10"
+        },
+        "Type=Timeline": {
+          "figma_node": "16:229",
+          "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=16-229",
+          "css_classes": [".timeline-card", ".timeline-thumb", ".timeline-card-lg", ".timeline-thumb-lg"],
+          "specs": {
+            "bg": "brand-95 (#20221f)", "border-radius": "16px", "padding": "16px",
+            "width": "320px", "height": "400px",
+            "avatar": "80×80px, border-radius 8px (square)",
+            "name": "H3 Kanit Black 32px uppercase brand-30",
+            "description": "Body Light 18px brand-30",
+            "dates": "Small Body 16px brand-50",
+            "instagram": "Body Light 18px brand-00 underlined",
+            "layout": "flex-col justify-between gap-16px"
+          },
+          "last_synced": "2026-04-10"
+        }
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Card / Admin",
+      "figma_node": "532:3367",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=532-3367",
+      "figma_page": "_System",
+      "files": ["admin/index.html"],
+      "variants": {
+        "Type=admin-card":      { "figma_node": "487:3622", "css_classes": [".admin-gig-card"] },
+        "Type=admin-card live": { "figma_node": "487:3816", "css_classes": [".admin-gig-card.live"] },
+        "Type=Request Live":    { "figma_node": "356:2362", "css_classes": [".admin-request-card"] },
+        "Type=Request Next":    { "figma_node": "555:4256", "css_classes": [".admin-request-card.next"] },
+        "Type=Demo":            { "figma_node": "532:3368", "css_classes": [".admin-demo-card"] },
+        "Type=Review":          { "figma_node": "532:3378", "css_classes": [".admin-review-card"] },
+        "Type=Timeline":        { "figma_node": "532:3387", "css_classes": [".admin-timeline-card"] },
+        "Type=Intro":           { "figma_node": "538:3730", "css_classes": [".admin-intro-card"] }
+      },
+      "specs": {
+        "bg": "#000000",
+        "border": "1px solid brand-50",
+        "border-radius": "16px",
+        "padding": "16px",
+        "avatar": "72×72px, border-radius 8px",
+        "venue-name": "Bold 18px",
+        "live-label": "Kanit Black 20px event-red",
+        "edit-btn": "Type=Admin Small"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Field / Text",
+      "figma_node": "390:2756",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=390-2756",
+      "figma_page": "_System",
+      "files": ["index.html", "admin/index.html"],
+      "css_classes": [".field-wrap", ".field-label", ".field-input", ".field-input:focus", ".field-input:disabled"],
+      "states": ["Default", "Active", "Filled", "Error", "Disabled"],
+      "specs": {
+        "bg": "brand-100 (#141513)",
+        "border": "1px solid brand-50",
+        "border-radius": "12px",
+        "padding": "16px 20px",
+        "font": "Body Light 274, 18px, brand-50 text",
+        "focus": "border brand-30, text brand-30",
+        "empty": "bg brand-90, border brand-80, text brand-60",
+        "label": "Body Light brand-30 18px"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Field / Search",
+      "figma_node": "71:1921",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=71-1921",
+      "figma_page": "_System",
+      "files": ["request.html"],
+      "css_classes": [".search-field", ".search-icon"],
+      "states": ["Default", "Active", "Filled", "Error", "Disabled"],
+      "specs": {
+        "same-as": "Field / Text",
+        "extra": "loupe icon left, pill shape (rounded-full) sur request.html"
+      },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Field / Selector",
+      "figma_node": "443:3023",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=443-3023",
+      "figma_page": "_System",
+      "files": ["admin/index.html"],
+      "css_classes": [".field-selector"],
+      "states": ["Default", "Filled", "Error", "Disabled"],
+      "specs": { "same-as": "Field / Text" },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Field / Drop Down",
+      "figma_node": "473:3366",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=473-3366",
+      "figma_page": "_System",
+      "files": ["admin/index.html"],
+      "css_classes": [".field-dropdown", ".field-dropdown-list", ".dropdown-item"],
+      "states": ["Default", "Active", "Filled", "Error", "Disabled", "Choice Middle", "Choice Last"],
+      "specs": { "same-as": "Field / Text", "extra": "caret icon, expandable list" },
+      "last_synced": "2026-04-10"
+    },
+
+    {
+      "name": "Header",
+      "figma_node": "185:6674",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=185-6674",
+      "figma_page": "_System",
+      "files": ["index.html", "request.html", "admin/index.html"],
+      "css_classes": [".site-header", ".header-live-badge", ".header-live-link", ".req-header"],
+      "variants": {
+        "Type=Main, Live=No":      { "figma_node": "61:912",   "files": ["index.html"] },
+        "Type=Main, Live=Yes":     { "figma_node": "185:6669", "files": ["index.html"] },
+        "Type=Requests, Live=Yes": { "figma_node": "70:1348",  "files": ["request.html"] },
+        "Type=Admin, Live=No":     { "figma_node": "473:3209", "files": ["admin/index.html"] },
+        "Type=Event, Live=No":     { "figma_node": "487:3878" },
+        "Type=Modal, Live=Yes":    { "figma_node": "390:2790", "files": ["index.html"] }
+      },
+      "specs": {
+        "position": "fixed, max-width breakpoint, z-index 100",
+        "padding": "24px",
+        "behavior": "hides on scroll-down, reappears after 200px scroll-up",
+        "right": "FR/EN toggle Kanit Black 20px brand-50",
+        "live-center": "red dot 12px pulsing + LIVE Kanit Black 20px event-red, absolutely centred"
+      },
+      "last_synced": "2026-04-10"
     },
 
     {
       "name": "Footer",
-      "figma_node": "TBD — not yet fetched",
-      "files": ["index.html"],
-      "css_classes": [".site-footer"],
-      "last_synced": null,
-      "notes": "Node ID not yet captured. Share the Figma node URL to sync."
+      "figma_node": "48:611",
+      "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=48-611",
+      "figma_page": "_System",
+      "files": ["index.html", "request.html"],
+      "css_classes": [".site-footer", ".now-playing-bar"],
+      "variants": {
+        "Context=DJ":          { "figma_node": "48:565",  "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=48-565", "files": ["index.html"] },
+        "Context=School":      { "figma_node": "48:610" },
+        "Context=Requests ID": { "figma_node": "71:1472", "files": ["request.html"] },
+        "Context=Playing":     { "figma_node": "72:4866", "files": ["request.html"], "css": ".now-playing-bar" }
+      },
+      "specs": {
+        "bg": "brand-105 (#111210)",
+        "padding": "80px vertical, 131–132px horizontal",
+        "logo": "80×80px (Logo/DJ composante)",
+        "site-name": "H3 Kanit Black 32px uppercase brand-30 centred — NOTE: H3 (32px), pas H4 (28px)",
+        "buttons": "Type=Admin Small — bg brand-90, h-40px, rounded-8px, SF Pro Black 1000 18px brand-00 uppercase",
+        "button-gap": "8px entre les boutons",
+        "copyright": "Small Body 16px brand-50 centred",
+        "now-playing": "album art 64×64px + track/artist + Playing label event-green Kanit Black"
+      },
+      "last_synced": "2026-04-10"
     },
 
     {
       "name": "Booking Overlay",
-      "figma_node": "TBD — not yet fetched",
+      "figma_page": "_System",
+      "variants": {
+        "Form":         { "figma_node": "584:160681", "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=584-160681" },
+        "Confirmation": { "figma_node": "594:160770", "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=594-160770" }
+      },
       "files": ["index.html"],
-      "css_classes": [".booking-overlay", ".booking-panel", ".booking-header", ".booking-body", ".booking-footer"],
-      "last_synced": null,
-      "notes": "Node ID not yet captured. Share the Figma node URL to sync."
+      "css_classes": [".booking-overlay", ".booking-panel", ".booking-header", ".booking-body", ".booking-footer", ".booking-confirm"],
+      "specs": {
+        "panel-bg":          "brand-100 (#141513)",
+        "panel-border-radius": "16px",
+        "panel-size":        "400×915px (desktop)",
+        "backdrop":          "rgba(17,18,16,0.75) + backdrop-filter: blur(6px)",
+        "header-bg":         "brand-100",
+        "header-padding":    "24px",
+        "header-gap":        "16px between title row and subtitle",
+        "title":             "Kanit Black 32px line-height 34px uppercase brand-50 (#c9d3c0)",
+        "subtitle":          "SF Pro Light 18px line-height 26px brand-50",
+        "close-btn":         "Card/Button/Close — 46×40px, bg brand-100, rounded-8px",
+        "field-label":       "SF Pro Light 18px line-height 26px brand-50",
+        "field-input":       "bg brand-90 (#282a27), border 1px brand-80, rounded-12px, padding 16px 20px, SF Pro Light 18px brand-60 (placeholder)",
+        "field-gap":         "8px between label and input, 16px between fields",
+        "fields-list":       ["Name *", "Phone number *", "Email *", "Company name *", "Description *", "Date *"],
+        "cta-area":          "sticky bottom, bg brand-100, padding 24px",
+        "send-btn":          "bg brand-20 (#eaede5), 56px, rounded-8px, SF Pro Black 1000 18px brand-100 uppercase — disabled until form valid",
+        "confirm-layout":    "content centered vertically (translate -50% -50%), width 342px, gap 32px",
+        "confirm-check":     "80×80px image asset (checkmark SVG)",
+        "confirm-title":     "Kanit Black 32px uppercase brand-50 — 'Booking request just sent!'",
+        "confirm-copy":      "SF Pro Light 18px brand-50 — 'Thank you for reaching out! I have received your message and will get back to you as soon as possible.'",
+        "confirm-btn":       "bg brand-20, 56px, SF Pro Black 1000, 'CLOSE'"
+      },
+      "code_discrepancies": [
+        { "property": "panel bg",          "figma": "brand-100 (#141513)", "code": "var(--bg) = brand-105 (#111210)", "fix": "change .booking-panel background to var(--brand-100)" },
+        { "property": "border-radius",     "figma": "16px", "code": "20px (desktop)", "fix": "change .booking-panel border-radius to 16px" },
+        { "property": "title color",       "figma": "brand-50 (#c9d3c0)", "code": "var(--brand-30)", "fix": "change .booking-title color to var(--brand-50)" },
+        { "property": "subtitle font-size","figma": "18px", "code": "16px", "fix": "change .booking-subtitle font-size to 18px" },
+        { "property": "field label style", "figma": "SF Pro Light 18px brand-50", "code": "Kanit SemiBold 13px brand-50 uppercase", "fix": "change .form-label to match Figma" },
+        { "property": "send btn bg",       "figma": "brand-20 (#eaede5)", "code": "uses .btn class (brand-10)", "fix": "verify button renders brand-20 bg" }
+      ],
+      "last_synced": "2026-04-10"
     },
 
     {
-      "name": "Request Overlay (Form)",
-      "figma_node": "TBD — not yet fetched",
+      "name": "Request Overlay",
+      "figma_page": "_System",
+      "variants": {
+        "Form":         { "figma_node": "594:160759", "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=594-160759" },
+        "Confirmation": { "figma_node": "594:160789", "figma_url": "https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Platines?node-id=594-160789" }
+      },
       "files": ["request.html"],
-      "css_classes": [".request-overlay", ".request-panel", ".request-header", ".request-body", ".request-footer"],
-      "last_synced": null,
-      "notes": "Node ID not yet captured. Share the Figma node URL to sync."
+      "css_classes": [".request-overlay", ".request-panel", ".request-header", ".request-body", ".request-footer", ".request-confirm"],
+      "specs": {
+        "panel-bg":          "brand-100 (#141513)",
+        "panel-border-radius": "16px",
+        "panel-size":        "400×584px (desktop)",
+        "header-bg":         "brand-100",
+        "header-padding":    "24px",
+        "title":             "Kanit Black 32px uppercase brand-50 — 'Request a song'",
+        "subtitle":          "SF Pro Light 18px brand-50 — 'Paste a Spotify link and Momo will do their best to play it.'",
+        "close-btn":         "Card/Button/Close — 46×40px, bg brand-100",
+        "body-top":          "156px from top (below header)",
+        "body-padding":      "px 24px, py 16px",
+        "field":             "Spotify link * — label SF Pro Light 18px brand-50 + input bg brand-90 border brand-80 rounded-12px px 20px py 16px, placeholder brand-60",
+        "song-preview":      "Card / Web / Song (State=Request-Form) — full width, bg black, rounded-16px",
+        "cta-area":          "sticky bottom, bg brand-100, padding 24px",
+        "send-btn":          "bg brand-20 (#eaede5), 56px, rounded-8px, SF Pro Black 1000, 'SEND' — disabled until valid Spotify URL",
+        "confirm-layout":    "content centered (top 50% left 50% translate -50% -50%), width 342px, gap 32px",
+        "confirm-check":     "80×80px image asset (checkmark)",
+        "confirm-title":     "Kanit Black 32px uppercase brand-50 — 'Request sent!'",
+        "confirm-copy":      "SF Pro Light 18px brand-50 — 'Your request has been sent. Momo will do their best to play it tonight.'",
+        "confirm-btn":       "bg brand-20, 56px, SF Pro Black 1000, 'CLOSE'"
+      },
+      "code_discrepancies": [
+        { "property": "panel bg",          "figma": "brand-100 (#141513)", "code": "var(--bg) = brand-105 (#111210)", "fix": "change .request-panel background to var(--brand-100)" },
+        { "property": "border-radius",     "figma": "16px", "code": "20px (desktop)", "fix": "change .request-panel border-radius to 16px" },
+        { "property": "title color",       "figma": "brand-50", "code": "var(--brand-30)", "fix": "change .request-header-title color to var(--brand-50)" },
+        { "property": "subtitle font-size","figma": "18px", "code": "16px", "fix": "change .request-header-sub font-size to 18px" },
+        { "property": "field label style", "figma": "SF Pro Light 18px brand-50", "code": "Kanit SemiBold 13px brand-50 uppercase", "fix": "change .form-label to match Figma" }
+      ],
+      "last_synced": "2026-04-10"
     }
   ],
 
-  "known_discrepancies": [
-    {
-      "component": "Tabs",
-      "property": "height",
-      "figma": "48px",
-      "code": "40px",
-      "file": "request.html",
-      "action": "resolved"
-    },
-    {
-      "component": "Song Card",
-      "property": "background",
-      "figma": "#141513 (brand-100)",
-      "code": "#111210 (var(--bg))",
-      "file": "request.html",
-      "action": "resolved"
-    },
-    {
-      "component": "Song Card",
-      "property": "spotify link color",
-      "figma": "#FAFBF9 (brand-00)",
-      "code": "var(--brand-50)",
-      "file": "request.html",
-      "action": "resolved"
-    },
-    {
-      "component": "Now Playing Footer",
-      "property": "card border",
-      "figma": "none",
-      "code": "1px solid var(--green)",
-      "file": "request.html",
-      "action": "resolved"
-    },
-    {
-      "component": "Demo Card",
-      "property": "play link color",
-      "figma": "#DEE4DA (brand-30) underlined",
-      "code": "#007AFF (blue)",
-      "file": "index.html",
-      "action": "resolved"
-    },
-    {
-      "component": "Header — Request Page",
-      "property": "REQUEST button style",
-      "figma": "blue text #007AFF, no border, no bg",
-      "code": "brand-100 bg, brand-30 border",
-      "file": "request.html",
-      "action": "resolved"
-    }
-  ]
+  "known_discrepancies": []
 }

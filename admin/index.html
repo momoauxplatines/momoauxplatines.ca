@@ -1113,7 +1113,7 @@
         </div>
         <div class="show-toggle-row">
           <span class="show-toggle-label">Show on home page</span>
-          <button type="button" class="req-switch${ev?.show !== false ? ' on' : ''}" id="ef-show-toggle" aria-label="Show on home page"></button>
+          <button type="button" class="req-switch${ev?.show === true ? ' on' : ''}" id="ef-show-toggle" aria-label="Show on home page"></button>
         </div>
         <input type="hidden" id="ef-image" value="${esc(ev?.image || '')}">
         ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">Delete event</button>` : ''}`;

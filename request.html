@@ -25,7 +25,7 @@
       --brand-40: #D5DCCC;
       --brand-50: #C9D3C0;
       --brand-80: #51534E;
-      --brand-90: #2B2D2A;
+      --brand-90: #282a27;
       --brand-100: #141513;
       --green: #34C759;
       --red: #D34242;
@@ -64,11 +64,25 @@
 
     /* ── Header ── */
     .req-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 24px 16px;
+      display: flex; align-items: center;
+      padding: 16px;
+      gap: 0;
     }
+    .req-header > a { flex-shrink: 0; }
+
+    .lang-btn {
+      flex-shrink: 0;
+      background: var(--brand-90); border: 1px solid var(--brand-80);
+      border-radius: 8px; color: var(--brand-00);
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 18px; letter-spacing: 0.02em;
+      height: 40px; padding: 0 14px; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .lang-btn:hover { border-color: var(--brand-70); }
 
     .req-btn {
+      flex: 1; text-align: center;
       background: none;
       border: none;
       border-radius: 8px;
@@ -111,6 +125,11 @@
       font-size: 20px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
     }
+    .event-next-date {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 20px; line-height: 26px;
+      color: var(--blue);
+    }
     .event-details-btn {
       display: flex; align-items: center; gap: 8px;
       background: none; border: none; cursor: pointer;
@@ -134,10 +153,6 @@
     }
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
-    }
-    .event-date {
-      font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
-      text-transform: capitalize;
     }
     .event-hours {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
@@ -309,7 +324,7 @@
 
     .request-panel {
       width: 100%; height: 100dvh;
-      background: var(--bg);
+      background: var(--brand-100);
       display: flex; flex-direction: column; overflow: hidden;
     }
 
@@ -324,10 +339,10 @@
     .request-header-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 36px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-50); text-transform: uppercase;
     }
     .request-header-sub {
-      font-weight: 300; font-size: 16px; line-height: 22px; color: var(--brand-50);
+      font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50);
     }
     .request-close {
       position: absolute; top: 28px; right: 24px;
@@ -347,12 +362,12 @@
     /* Form fields — identical to booking */
     .form-field { display: flex; flex-direction: column; gap: 8px; }
     .form-label {
-      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px;
-      color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em;
+      font-family: inherit; font-weight: 300; font-size: 18px;
+      color: var(--brand-50);
     }
     .form-input {
       background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 12px; padding: 12px 16px;
+      border-radius: 12px; padding: 16px 20px;
       font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
       color: var(--brand-00); outline: none; width: 100%;
       transition: border-color 0.2s; -webkit-appearance: none;
@@ -409,7 +424,7 @@
       .request-overlay { align-items: center; }
       .request-panel {
         width: 400px; height: auto; max-height: 90dvh;
-        border-radius: 20px;
+        border-radius: 16px;
         box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
       }
     }
@@ -423,6 +438,7 @@
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
       <button class="req-btn" id="open-request" data-key="req.btn" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+      <button class="lang-btn" id="lang-btn" aria-label="Switch language">FR</button>
     </header>
 
     <!-- Event Card -->
@@ -430,8 +446,9 @@
       <div class="event-card-top">
         <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
         <div class="event-live-row" id="event-live-row">
-          <div class="live-dot"></div>
-          <span class="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+          <div class="live-dot" id="live-dot"></div>
+          <span class="live-label" id="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+          <span class="event-next-date" id="event-next-date" style="display:none;"></span>
         </div>
         <button class="event-details-btn" id="event-details-btn">
           <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
@@ -441,16 +458,15 @@
       <div class="event-expanded" id="event-expanded">
         <div class="event-copy">
           <p class="event-name">Buvette chez Simone</p>
-          <p class="event-date" id="event-date"></p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
-          <p class="event-hours">19:00 – 01:00</p>
+          <p class="event-hours" id="event-date-hours">19:00 – 01:00</p>
           <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
         </div>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs-row">
+    <!-- Tabs — hidden for non-live events, shown only when live -->
+    <div class="tabs-row" id="tabs-row" style="display:none;">
       <button class="tab-btn active"   id="tab-requested" data-key="req.tab.requested" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
       <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
     </div>
@@ -793,6 +809,23 @@
   applyLang(currentLang);
 
   // ─────────────────────────────────────────────
+  // Language toggle
+  // ─────────────────────────────────────────────
+  const langBtn = document.getElementById('lang-btn');
+  if (langBtn) {
+    langBtn.textContent = currentLang === 'fr' ? 'EN' : 'FR';
+    langBtn.addEventListener('click', () => {
+      const newLang = currentLang === 'fr' ? 'en' : 'fr';
+      applyLang(newLang);
+      langBtn.textContent = newLang === 'fr' ? 'EN' : 'FR';
+      const url = new URL(window.location.href);
+      if (newLang === 'fr') url.searchParams.set('lang', 'fr');
+      else url.searchParams.delete('lang');
+      history.replaceState(null, '', url.toString());
+    });
+  }
+
+  // ─────────────────────────────────────────────
   // Liveness check helper
   // ─────────────────────────────────────────────
   function parseMins(t) { if (!t) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
@@ -828,12 +861,10 @@
     if (_venueImg) _venueImg.src = '';
     const _eventName = document.querySelector('.event-name');
     if (_eventName) _eventName.textContent = '';
-    const _eventDate = document.getElementById('event-date');
-    if (_eventDate) _eventDate.textContent = '';
     const _eventAddress = document.querySelector('.event-address');
     if (_eventAddress) _eventAddress.textContent = '';
-    const _eventHours = document.querySelector('.event-hours');
-    if (_eventHours) _eventHours.textContent = '';
+    const _eventDateHours = document.getElementById('event-date-hours');
+    if (_eventDateHours) _eventDateHours.textContent = '';
     const _igLink = document.querySelector('.event-ig-link');
     if (_igLink) _igLink.style.display = 'none';
 
@@ -850,33 +881,46 @@
 
         // Populate event card details
         const venueImg = document.querySelector('.event-venue-img');
-        if (venueImg && ev.image) venueImg.src = ev.image.replace(/^\//, '');
+        if (venueImg) {
+          if (ev.image) {
+            venueImg.src = ev.image;
+          } else if (ev.instagram) {
+            const igUser = (ev.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1]?.replace(/\/$/, '');
+            if (igUser) venueImg.src = `https://unavatar.io/instagram/${igUser}`;
+          }
+        }
         const eventName = document.querySelector('.event-name');
         if (eventName) eventName.textContent = ev.venue || '';
-        const eventDateEl = document.getElementById('event-date');
-        if (eventDateEl && ev.date) {
-          const d = new Date(ev.date + 'T12:00:00');
-          const locale = currentLang === 'fr' ? 'fr-CA' : 'en-CA';
-          eventDateEl.textContent = d.toLocaleDateString(locale, {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-          });
-        }
         const eventAddress = document.querySelector('.event-address');
         if (eventAddress) eventAddress.textContent = ev.address || '';
-        const eventHours = document.querySelector('.event-hours');
-        if (eventHours) eventHours.textContent = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
+        const eventDateHours = document.getElementById('event-date-hours');
+        if (eventDateHours) {
+          const hours = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
+          eventDateHours.textContent = ev.date ? ev.date + (hours ? '  ' + hours : '') : hours;
+        }
         const igLink = document.querySelector('.event-ig-link');
         if (igLink) {
           if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
           else igLink.style.display = 'none';
         }
 
-        // Show live indicator and start polling only when event is actually live
+        // Show live or next-date badge in event card top row
         if (checkEventLive(ev)) {
           document.getElementById('event-live-row').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
+          document.getElementById('tabs-row').style.display = '';
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
+        } else if (ev.date) {
+          // Upcoming event — show blue date badge instead of LIVE
+          const liveRow = document.getElementById('event-live-row');
+          const liveDot = document.getElementById('live-dot');
+          const liveLabel = document.getElementById('live-label');
+          const nextDateEl = document.getElementById('event-next-date');
+          if (liveDot) liveDot.style.display = 'none';
+          if (liveLabel) liveLabel.style.display = 'none';
+          if (nextDateEl) { nextDateEl.textContent = ev.date; nextDateEl.style.display = ''; }
+          if (liveRow) liveRow.style.display = '';
         }
       })
       .catch(() => {});
@@ -902,12 +946,16 @@
   const playedList   = document.getElementById('played-list');
   const requestedList= document.getElementById('requested-list');
 
-  // Non-slug (live) page defaults to PLAYED tab; slug pages keep REQUESTS default
+  // General live page (no slug) — show tabs immediately, default to PLAYED
   if (!EVENT_SLUG) {
+    document.getElementById('tabs-row').style.display = '';
     tabPlayed.className    = 'tab-btn active';
     tabRequested.className = 'tab-btn inactive';
     playedList.classList.remove('hidden');
     requestedList.classList.add('hidden');
+  } else {
+    // Event-specific page — show requested list directly, no tabs until confirmed live
+    requestedList.classList.remove('hidden');
   }
 
   tabPlayed.addEventListener('click', () => {
