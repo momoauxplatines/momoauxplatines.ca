@@ -10,6 +10,17 @@
       "instagram": "https://www.instagram.com/djmomoauxplatines/",
       "image": "/images/events/testing-the-thingy-thing-mnm4ojni.jpg",
       "show": true
+    },
+    {
+      "slug": "testing-one-two-2026-06-24",
+      "venue": "Testing one two",
+      "address": "2242 rue de la roche, montréal",
+      "date": "2026-06-24",
+      "start_time": "16:00",
+      "end_time": "20:00",
+      "instagram": "",
+      "image": "/images/events/testing-one-two-mnunulj8.jpg",
+      "show": false
     }
   ]
 }
