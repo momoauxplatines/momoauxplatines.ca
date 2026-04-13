@@ -828,8 +828,6 @@
       el.placeholder = lang === 'fr' ? (el.dataset.placeholderFr || '') : (el.dataset.placeholderEn || '');
     });
     document.documentElement.lang = lang;
-    // Re-render the empty state so its text matches the current language
-    if (typeof renderRequestedList === 'function') renderRequestedList();
   }
 
   // Apply on load
@@ -844,6 +842,7 @@
     langBtn.addEventListener('click', () => {
       const newLang = currentLang === 'fr' ? 'en' : 'fr';
       applyLang(newLang);
+      renderRequestedList();
       langBtn.textContent = newLang === 'fr' ? 'EN' : 'FR';
       const url = new URL(window.location.href);
       if (newLang === 'fr') url.searchParams.set('lang', 'fr');
