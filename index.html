@@ -37,7 +37,7 @@
       --brand-40: #D5DCCC;
       --brand-50: #C9D3C0;
       --brand-80: #51534E;
-      --brand-90: #2B2D2A;
+      --brand-90: #282a27;
       --brand-95: #20221F;
       --brand-100: #141513;
       --brand-105: #111210;
@@ -460,7 +460,7 @@
 
     .booking-panel {
       width: 100%; height: 100dvh;
-      background: var(--bg);
+      background: var(--brand-100);
       display: flex; flex-direction: column; overflow: hidden;
     }
 
@@ -483,10 +483,10 @@
     .booking-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 36px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-50); text-transform: uppercase;
     }
     .booking-subtitle {
-      font-weight: 300; font-size: 16px; line-height: 22px;
+      font-weight: 300; font-size: 18px; line-height: 22px;
       color: var(--brand-50);
     }
 
@@ -498,12 +498,12 @@
 
     .form-field { display: flex; flex-direction: column; gap: 8px; }
     .form-label {
-      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px;
-      color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em;
+      font-family: inherit; font-weight: 300; font-size: 18px;
+      color: var(--brand-50);
     }
     .form-input {
       background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 12px; padding: 12px 16px;
+      border-radius: 12px; padding: 16px 20px;
       font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
       color: var(--brand-00); outline: none; width: 100%;
       transition: border-color 0.2s; -webkit-appearance: none;
@@ -591,7 +591,7 @@
       .booking-overlay { align-items: center; }
       .booking-panel {
         width: 400px; height: auto; max-height: 90dvh;
-        border-radius: 20px;
+        border-radius: 16px;
         box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
       }
 
@@ -1470,7 +1470,7 @@
               ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
               ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
             </div>
-            <a class="ev-go-btn" href="request.html${ev.slug ? '?event=' + encodeURIComponent(ev.slug) : ''}"
+            <a class="ev-go-btn" href="/requests${ev.slug ? '?event=' + encodeURIComponent(ev.slug) : ''}"
                data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
           liveSection.appendChild(card);
         });
