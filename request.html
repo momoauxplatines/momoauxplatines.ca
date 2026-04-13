@@ -811,6 +811,8 @@
       el.placeholder = lang === 'fr' ? (el.dataset.placeholderFr || '') : (el.dataset.placeholderEn || '');
     });
     document.documentElement.lang = lang;
+    // Re-render the empty state so its text matches the current language
+    if (typeof renderRequestedList === 'function') renderRequestedList();
   }
 
   // Apply on load
