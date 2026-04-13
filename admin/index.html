@@ -1143,7 +1143,9 @@
 
         // Initial state
         if (ev?.image) {
-          showGigPreview('../' + ev.image.replace(/^\//, ''), 'Current photo');
+          // Blob images already have an absolute URL (/api/images?key=...); only prepend ../ for repo-relative paths
+          const previewSrc = ev.image.startsWith('/api/') ? ev.image : '../' + ev.image.replace(/^\//, '');
+          showGigPreview(previewSrc, 'Current photo');
           pendingAvatarUrl = null; pendingAvatarUser = null;
         } else if (ev?.instagram) {
           const u = extractIgUsername(ev.instagram);
@@ -1372,16 +1374,13 @@
         const igVal   = igInput?.value.trim() || '';
         if (pendingCustomFile) {
           try {
-            const repoPath = imagePath
-              ? imagePath.replace(/^\//, '')
-              : `images/events/${slugify(venue)}.jpg`;
-            await uploadImageToGitHub(pendingCustomFile, repoPath, `Update gig photo: ${venue}`);
-            imagePath = '/' + repoPath;
+            const key = `events/${slugify(venue)}.jpg`;
+            imagePath = await uploadImageToBlob(pendingCustomFile, key);
             pendingCustomFile = null;
           } catch (e) { showToast('Image upload failed: ' + e.message, 'error'); }
         } else if (pendingAvatarUrl && pendingAvatarUser) {
           try {
-            imagePath = await uploadAvatarToGitHub(pendingAvatarUrl, pendingAvatarUser);
+            imagePath = await uploadAvatarToBlob(pendingAvatarUrl, pendingAvatarUser);
           } catch (_) { imagePath = ''; }
         }
 
@@ -1517,6 +1516,29 @@
     });
     if (!up.ok) throw new Error(`GitHub upload ${up.status}`);
     return `/${path}`;
+  }
+
+  // ── Netlify Blob image upload (no deploy needed) ───────────────────────────
+  async function uploadImageToBlob(file, key) {
+    const res = await fetch(`/api/images?key=${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type || 'application/octet-stream',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: file,
+    });
+    if (!res.ok) throw new Error(`Blob upload failed: ${res.status}`);
+    return `/api/images?key=${encodeURIComponent(key)}`;
+  }
+
+  async function uploadAvatarToBlob(avatarUrl, username) {
+    const res = await fetch(avatarUrl);
+    if (!res.ok) throw new Error('Avatar fetch failed');
+    const blob = await res.blob();
+    const ext = blob.type.includes('png') ? 'png' : 'jpg';
+    const key = `events/${username}.${ext}`;
+    return uploadImageToBlob(blob, key);
   }
 
   function showAvatarPreview(username, existingImagePath) {
