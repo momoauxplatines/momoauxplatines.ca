@@ -64,35 +64,37 @@
 
     /* ── Header ── */
     .req-header {
-      display: flex; align-items: center;
-      padding: 16px;
-      gap: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 16px;
     }
     .req-header > a { flex-shrink: 0; }
+    .req-header-actions {
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .req-btn {
+      background: var(--blue);
+      border: none;
+      border-radius: 8px;
+      color: var(--brand-00);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900; font-size: 16px; line-height: 30px;
+      padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .req-btn:hover { opacity: 0.85; }
 
     .lang-btn {
-      flex-shrink: 0;
-      background: var(--brand-90); border: 1px solid var(--brand-80);
+      background: var(--brand-90); border: none;
       border-radius: 8px; color: var(--brand-00);
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 18px; letter-spacing: 0.02em;
-      height: 40px; padding: 0 14px; cursor: pointer;
-      transition: border-color 0.15s;
-    }
-    .lang-btn:hover { border-color: var(--brand-70); }
-
-    .req-btn {
-      flex: 1; text-align: center;
-      background: none;
-      border: none;
-      border-radius: 8px;
-      color: var(--blue);
-      font-family: 'Kanit', sans-serif;
-      font-weight: 900; font-size: 18px; line-height: 26px;
-      padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
+      height: 39px; padding: 0 16px; cursor: pointer;
+      white-space: nowrap;
       transition: opacity 0.15s;
     }
-    .req-btn:hover { opacity: 0.7; }
+    .lang-btn:hover { opacity: 0.85; }
 
     /* ── Event Card ── */
     .event-card {
@@ -103,7 +105,7 @@
     }
     .event-card:has(.event-expanded.visible) { padding-bottom: 20px; }
     .event-card-top {
-      display: flex; align-items: center; gap: 16px;
+      display: flex; align-items: center; gap: 16px; justify-content: space-between;
     }
     .event-venue-img {
       width: 48px; height: 48px; border-radius: 8px;
@@ -438,8 +440,10 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-      <button class="req-btn" id="open-request" data-key="req.btn" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
-      <button class="lang-btn" id="lang-btn" aria-label="Switch language">FR</button>
+      <div class="req-header-actions">
+        <button class="req-btn" id="open-request" data-key="req.btn" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+        <button class="lang-btn" id="lang-btn" aria-label="Switch language">FR</button>
+      </div>
     </header>
 
     <!-- Event Card -->
@@ -909,24 +913,15 @@
           else igLink.style.display = 'none';
         }
 
-        // Show live or next-date badge in event card top row
+        // Show LIVE indicator + tabs only when event is actually live
         if (checkEventLive(ev)) {
           document.getElementById('event-live-row').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           document.getElementById('tabs-row').style.display = '';
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
-        } else if (ev.date) {
-          // Upcoming event — show blue date badge instead of LIVE
-          const liveRow = document.getElementById('event-live-row');
-          const liveDot = document.getElementById('live-dot');
-          const liveLabel = document.getElementById('live-label');
-          const nextDateEl = document.getElementById('event-next-date');
-          if (liveDot) liveDot.style.display = 'none';
-          if (liveLabel) liveLabel.style.display = 'none';
-          if (nextDateEl) { nextDateEl.textContent = ev.date; nextDateEl.style.display = ''; }
-          if (liveRow) liveRow.style.display = '';
         }
+        // For upcoming events: card-top stays as avatar + Détails only (no badge)
       })
       .catch(() => {});
   }
