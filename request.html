@@ -60,6 +60,7 @@
       position: sticky; top: 0; z-index: 50;
       background: var(--bg);
       display: flex; flex-direction: column;
+      padding-bottom: 16px;
     }
 
     /* ── Header ── */
@@ -168,7 +169,7 @@
 
     /* ── Tabs ── */
     .tabs-row {
-      display: flex; gap: 0; padding: 16px;
+      display: flex; gap: 0; padding: 16px 16px 0;
     }
     .tab-btn {
       flex: 1; height: 48px; border: 1px solid var(--brand-100);
@@ -184,7 +185,7 @@
 
     /* ── Song List ── */
     .song-list {
-      padding: 0 16px 16px;
+      padding: 16px 16px 16px;
       display: flex; flex-direction: column; gap: 8px;
     }
     .song-list.hidden { display: none; }
@@ -460,16 +461,15 @@
         <div class="event-live-row" id="event-live-row">
           <div class="live-dot" id="live-dot"></div>
           <span class="live-label" id="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-          <span class="event-next-date" id="event-next-date" style="display:none;"></span>
         </div>
         <button class="event-details-btn" id="event-details-btn">
           <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
           <img class="event-details-caret" id="event-details-caret" src="images/caret-down.png" alt="">
         </button>
       </div>
+      <p class="event-name">Buvette chez Simone</p>
       <div class="event-expanded" id="event-expanded">
         <div class="event-copy">
-          <p class="event-name">Buvette chez Simone</p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
           <div class="event-datetime-row">
             <span class="event-date" id="event-date"></span>
@@ -704,7 +704,7 @@
       <div class="request-header">
         <div class="request-header-titles">
           <h2 class="request-header-title" id="request-title"
-              data-key="req.overlay.title" data-en="REQUEST A SONG" data-fr="DEMANDER UNE CHANSON">REQUEST A SONG</h2>
+              data-key="req.overlay.title" data-en="Request a song" data-fr="DEMANDER UNE CHANSON">Request a song</h2>
           <p class="request-header-sub"
              data-key="req.overlay.subtitle" data-en="Copy the Spotify sharing link from the mobile app."
              data-fr="Copiez le lien de partage Spotify depuis l'application mobile.">Copy the Spotify sharing link from the mobile app.</p>
@@ -842,7 +842,8 @@
     langBtn.addEventListener('click', () => {
       const newLang = currentLang === 'fr' ? 'en' : 'fr';
       applyLang(newLang);
-      renderRequestedList();
+      if (EVENT_SLUG) renderAllRequests(allRequestsCache);
+      else renderRequestedList();
       langBtn.textContent = newLang === 'fr' ? 'EN' : 'FR';
       const url = new URL(window.location.href);
       if (newLang === 'fr') url.searchParams.set('lang', 'fr');
@@ -1190,11 +1191,86 @@
     } catch { /* non-blocking */ }
   }
 
-  // Poll while page is visible — 5 s on event pages (icon flips to Played), 10 s on general live page
-  setInterval(() => { if (!document.hidden) syncStatuses(); }, EVENT_SLUG ? 5_000 : 10_000);
-  syncStatuses();
-  // Render requested list on load so the correct empty-state text shows immediately
-  renderRequestedList();
+  // ─────────────────────────────────────────────
+  // Event pages: fetch ALL requests from API and render them
+  // ─────────────────────────────────────────────
+  let allRequestsCache = [];
+
+  async function fetchAndRenderAllRequests() {
+    try {
+      const res = await fetch(API_BASE);
+      if (!res.ok) {
+        // Show error in empty state if the API call fails
+        const emptyEl = document.getElementById('requested-empty');
+        if (emptyEl) {
+          emptyEl.textContent = currentLang === 'fr'
+            ? 'Impossible de charger les demandes. Réessayez plus tard.'
+            : 'Could not load requests. Please try again later.';
+          emptyEl.style.display = '';
+        }
+        return;
+      }
+      const all = await res.json();
+      allRequestsCache = all;
+      renderAllRequests(all);
+    } catch (err) {
+      const emptyEl = document.getElementById('requested-empty');
+      if (emptyEl) {
+        emptyEl.textContent = currentLang === 'fr'
+          ? 'Impossible de charger les demandes. Réessayez plus tard.'
+          : 'Could not load requests. Please try again later.';
+        emptyEl.style.display = '';
+      }
+    }
+  }
+
+  function renderAllRequests(all) {
+    const emptyEl = document.getElementById('requested-empty');
+    // Clear previously rendered cards (keep empty state el)
+    Array.from(requestedList.children).forEach(c => {
+      if (c.id !== 'requested-empty') c.remove();
+    });
+    if (!all.length) {
+      emptyEl.innerHTML = currentLang === 'fr'
+        ? 'Aucune demande pour le moment.<br><br>Faites une demande en appuyant sur le bouton Demander en haut.'
+        : 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
+      emptyEl.style.display = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    all.forEach(r => {
+      const isPlayed = r.status === 'played';
+      const icon    = isPlayed ? 'images/request-played-icon.png' : 'images/request-sent-icon.png';
+      const iconAlt = isPlayed ? 'Played' : 'Requested';
+      const card = document.createElement('div');
+      card.className = 'song-card';
+      card.innerHTML = `
+        <img class="song-art" src="${r.image || ''}" alt="${safeHtml(r.title)}"
+             onerror="this.style.background='var(--brand-90)'">
+        <div class="song-info">
+          <div class="song-text-group">
+            <p class="song-title">${safeHtml(r.title)}</p>
+            ${r.artist ? `<p class="song-artist">${safeHtml(r.artist)}</p>` : ''}
+          </div>
+          ${r.url ? `<a class="song-link" href="${safeHtml(r.url)}" target="_blank" rel="noopener">Spotify</a>` : ''}
+        </div>
+        <div class="song-request-col">
+          <img class="song-request-icon" src="${icon}" alt="${iconAlt}">
+        </div>`;
+      requestedList.appendChild(card);
+    });
+  }
+
+  // Initial load + polling
+  if (EVENT_SLUG) {
+    fetchAndRenderAllRequests();
+    setInterval(() => { if (!document.hidden) fetchAndRenderAllRequests(); }, 10_000);
+  } else {
+    // General live page: poll only the user's own request statuses
+    setInterval(() => { if (!document.hidden) syncStatuses(); }, 10_000);
+    syncStatuses();
+    renderRequestedList();
+  }
 
   // Submit
   sendBtn.addEventListener('click', async () => {
@@ -1235,14 +1311,20 @@
       })
     }).catch(() => {});
 
-    // Close overlay and switch to Requested tab
+    // Close overlay and refresh list
     closeOverlay();
-    tabRequested.className = 'tab-btn active';
-    tabPlayed.className    = 'tab-btn inactive';
-    requestedList.classList.remove('hidden');
-    playedList.classList.add('hidden');
-    renderRequestedList();
-    syncStatuses();
+    if (EVENT_SLUG) {
+      // Event page: refresh full list from API
+      fetchAndRenderAllRequests();
+    } else {
+      // General live page: show user's own requests
+      tabRequested.className = 'tab-btn active';
+      tabPlayed.className    = 'tab-btn inactive';
+      requestedList.classList.remove('hidden');
+      playedList.classList.add('hidden');
+      renderRequestedList();
+      syncStatuses();
+    }
   });
 
   // ─────────────────────────────────────────────
