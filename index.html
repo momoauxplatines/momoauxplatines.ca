@@ -249,6 +249,23 @@
       color: #007AFF; text-transform: uppercase;
     }
 
+    /* Détails toggle button — home cards */
+    .ev-details-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: none; border: none; cursor: pointer;
+      color: var(--brand-50); font-size: 16px; font-weight: 300;
+      font-family: inherit; flex-shrink: 0; padding: 0;
+    }
+    .ev-details-caret {
+      width: 8px; height: auto; flex-shrink: 0;
+    }
+    /* Expanded details — hidden by default */
+    .ev-expanded {
+      display: none; flex-direction: column; gap: 16px;
+    }
+    .ev-expanded.visible { display: flex; }
+    /* Extra bottom padding when expanded */
+    .event-card-home:has(.ev-expanded.visible) { padding-bottom: 20px; }
 
     /* Next Events section — below intro */
     .next-events-section {
@@ -258,7 +275,7 @@
     .next-events-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 44px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-30); text-transform: uppercase;
       width: 100%;
     }
     .next-events-list {
@@ -279,7 +296,7 @@
     .section-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 48px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-30); text-transform: uppercase;
     }
 
     /* ─── Intro ─── */
@@ -290,7 +307,7 @@
     .intro-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 48px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-00); text-transform: uppercase;
     }
     .tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .tag {
@@ -337,7 +354,7 @@
     .review-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
-    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
+    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-50); text-transform: uppercase; }
     .review-subtitle { font-weight: 300; font-size: 16px; line-height: 17px; color: var(--brand-50); }
     .review-text { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-00); width: 278px; flex: 1; }
 
@@ -1432,6 +1449,25 @@
     return ev.hours || '';
   }
 
+  function getLinkLabel(url) {
+    if (!url) return 'Link';
+    try {
+      const host = new URL(url).hostname.replace(/^www\./, '');
+      if (host.includes('instagram.com'))       return 'Instagram';
+      if (host.includes('facebook.com') || host.includes('fb.com')) return 'Facebook';
+      if (host.includes('youtube.com') || host.includes('youtu.be')) return 'YouTube';
+      if (host.includes('tiktok.com'))          return 'TikTok';
+      if (host.includes('twitter.com') || host.includes('x.com')) return 'X';
+      if (host.includes('soundcloud.com'))      return 'SoundCloud';
+      if (host.includes('spotify.com'))         return 'Spotify';
+      if (host.includes('twitch.tv'))           return 'Twitch';
+      if (host.includes('residentadvisor.net') || host.includes('ra.co')) return 'Resident Advisor';
+      if (host.includes('ticketmaster.com'))    return 'Ticketmaster';
+      if (host.includes('eventbrite.com'))      return 'Eventbrite';
+      return 'Link';
+    } catch { return 'Link'; }
+  }
+
   function setHeaderLive(isLive) {
     const hdr  = document.getElementById('site-header');
     const link = document.getElementById('header-live-link');
@@ -1464,11 +1500,11 @@
                 <span class="ev-live-label" data-key="next-events.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
               </div>
             </div>
+            <p class="ev-venue-name">${ev.venue}</p>
             <div class="ev-content">
-              <p class="ev-venue-name">${ev.venue}</p>
               ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
               ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-              ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
+              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
             </div>
             <a class="ev-go-btn" href="/requests${ev.slug ? '?event=' + encodeURIComponent(ev.slug) : ''}"
                data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
@@ -1496,11 +1532,11 @@
                    onerror="this.style.background='var(--brand-90)'">
               <span class="ev-next-label">${formatShortDate(ev.date)}</span>
             </div>
+            <p class="ev-venue-name">${ev.venue}</p>
             <div class="ev-content">
-              <p class="ev-venue-name">${ev.venue}</p>
               ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
               ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-              ${ev.instagram ? `<a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
+              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
             </div>`;
           nextList.appendChild(card);
         });
@@ -1512,6 +1548,19 @@
 
   // Re-check visibility every minute (card auto-hides when window closes)
   setInterval(renderEvents, 60_000);
+
+  // ── Toggle expand/collapse for home event cards ──
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.ev-details-btn');
+    if (!btn) return;
+    const card     = btn.closest('.event-card-home');
+    if (!card) return;
+    const expanded = card.querySelector('.ev-expanded');
+    const caret    = btn.querySelector('.ev-details-caret');
+    if (!expanded) return;
+    const isOpen = expanded.classList.toggle('visible');
+    if (caret) caret.src = isOpen ? 'images/caret-up.png' : 'images/caret-down.png';
+  });
 
   // ── Language toggle ──
   let currentLang = 'en';

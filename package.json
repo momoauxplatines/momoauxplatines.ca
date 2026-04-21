@@ -2,6 +2,9 @@
   "name": "momoauxplatines",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "preview": "node preview-server.js"
+  },
   "dependencies": {
     "@netlify/blobs": "^8.1.0"
   }
