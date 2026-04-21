@@ -63,7 +63,7 @@
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
     .section-title-row { display: flex; align-items: center; justify-content: space-between; }
-    .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-50); text-transform: uppercase; line-height: 31px; }
+    .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-30); text-transform: uppercase; line-height: 31px; }
     .decade-title-row { display: flex; align-items: center; justify-content: space-between; }
     .decade-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; line-height: 26px; }
 
@@ -192,6 +192,10 @@
     .req-switch.on::after { transform: translateX(16px); }
     .req-delete-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--red, #d34242); padding: 0; flex-shrink: 0; transition: opacity 0.15s; }
     .req-delete-btn:hover { opacity: 0.65; }
+    .req-restore-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--brand-50); padding: 4px 8px; flex-shrink: 0; font-size: 12px; font-weight: 300; transition: opacity 0.15s; white-space: nowrap; }
+    .req-restore-btn:hover { opacity: 0.75; }
+    .req-card.deleted { opacity: 0.45; }
+    .req-url-link { font-size: 12px; font-weight: 300; color: var(--brand-60); word-break: break-all; line-height: 1.4; }
     .req-empty-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 6px; }
     .req-empty-body p { font-size: 16px; font-weight: 300; color: var(--brand-60, #888); line-height: 22px; }
 
@@ -347,13 +351,16 @@
 <!-- Requests overlay -->
 <div class="edit-overlay" id="req-overlay">
   <div class="edit-panel">
-    <div class="edit-header" style="padding:24px;flex-direction:row;align-items:center;justify-content:space-between;">
-      <button class="req-back-btn" id="req-close-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M15 19l-7-7 7-7" stroke="var(--brand-50)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Back
-      </button>
+    <div class="edit-header" style="padding:24px;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;">
+        <button class="req-back-btn" id="req-close-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 19l-7-7 7-7" stroke="var(--brand-50)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back
+        </button>
+        <a class="req-url-link" id="req-url-display" href="#" target="_blank" rel="noopener"></a>
+      </div>
       <div class="req-event-avatar" id="req-event-avatar">
         <img id="req-event-avatar-img" src="" alt="" onerror="this.style.opacity='0'">
       </div>
@@ -1596,6 +1603,15 @@
       avatarEl.src = src;
       avatarEl.style.opacity = '';
     }
+    // Show the public request page URL for this event
+    const urlDisplay = document.getElementById('req-url-display');
+    if (urlDisplay) {
+      const slug = ev?.slug || '';
+      const url  = slug ? requestUrl(slug) : '';
+      urlDisplay.textContent = url || 'No slug — requests stored in global pool';
+      urlDisplay.href        = url || '#';
+      urlDisplay.style.color = url ? '' : 'var(--red)';
+    }
     reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     loadRequests();
@@ -1644,9 +1660,10 @@
     }
 
     reqList.forEach(r => {
-      const isPlayed = r.status === 'played';
+      const isPlayed  = r.status === 'played';
+      const isDeleted = r.status === 'deleted';
       const card = document.createElement('div');
-      card.className = 'req-card';
+      card.className = 'req-card' + (isDeleted ? ' deleted' : '');
       card.dataset.id = r.id;
       // Format timestamp using r.ts (milliseconds)
       let timeStr = '';
@@ -1654,21 +1671,30 @@
         const d = new Date(r.ts);
         timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
-      // Right control: toggle switch when live, red ✕ delete when not live
-      const controlHtml = reqEventIsLive
-        ? `<button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>`
-        : `<button class="req-delete-btn" aria-label="Delete request" data-req-action="delete" data-id="${r.id}">
+      // Right control:
+      //   • live event  → toggle switch (played/not played)
+      //   • deleted item → restore button
+      //   • normal item  → red ✕ delete button
+      let controlHtml;
+      if (isDeleted) {
+        controlHtml = `<button class="req-restore-btn" aria-label="Restore request" data-req-action="restore" data-id="${r.id}">Restore</button>`;
+      } else if (reqEventIsLive) {
+        controlHtml = `<button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>`;
+      } else {
+        controlHtml = `<button class="req-delete-btn" aria-label="Delete request" data-req-action="delete" data-id="${r.id}">
              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
              </svg>
            </button>`;
+      }
       card.innerHTML = `
         <img class="req-art" src="${r.image || ''}" alt="" onerror="this.style.background='var(--brand-90)'">
         <div class="req-info">
           <p class="req-title">${escReq(r.title)}</p>
-          ${r.artist ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
-          ${timeStr   ? `<p class="req-time">${escReq(timeStr)}</p>`   : ''}
+          ${r.artist   ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
+          ${timeStr    ? `<p class="req-time">${escReq(timeStr)}</p>`    : ''}
+          ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">Supprimée — invisible sur la page publique</p>` : ''}
         </div>
         <div class="req-controls">${controlHtml}</div>`;
       reqBody.appendChild(card);
@@ -1686,15 +1712,23 @@
     btn.disabled = true;
     const patchSlug = currentEvents[reqEventIdx]?.slug || '';
     const patchQs   = patchSlug ? `?event=${encodeURIComponent(patchSlug)}` : '';
+
+    // Determine which status to send
+    let newStatus;
+    if (reqAction === 'delete')   newStatus = 'deleted';
+    else if (reqAction === 'restore') newStatus = 'sent';
+    else newStatus = status; // toggle sends 'played' or 'sent' via data-status
+
     try {
       const res = await fetch(`/api/requests${patchQs}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ id, status: reqAction === 'delete' ? 'deleted' : status })
+        body: JSON.stringify({ id, status: newStatus })
       });
       if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
-      if (reqAction === 'delete') reqList = reqList.filter(r => r.id !== id);
-      else { const i = reqList.findIndex(r => r.id === id); if (i >= 0) reqList[i].status = status; }
+      // Update local list
+      const i = reqList.findIndex(r => r.id === id);
+      if (i >= 0) reqList[i].status = newStatus;
       renderRequests();
     } catch (err) {
       showToast('Failed: ' + err.message, 'error');
