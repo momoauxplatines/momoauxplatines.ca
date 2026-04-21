@@ -60,12 +60,12 @@ Card gap within a section: `16px` (cards), `24px` (admin list items).
 | Brand/80  | `#51534e` | `--brand-80`  — borders, muted |
 | Brand/70  | `#797f73` | `--brand-70`  — border hover |
 | Brand/60  | `#a2a89b` | `--brand-60`  — placeholder text |
-| Brand/50  | `#c9d3c0` | `--brand-50`  — secondary text / section headings |
+| Brand/50  | `#c9d3c0` | `--brand-50`  — H3 (card & modal titles), placeholder text, small body, inactive tabs |
 | Brand/40  | `#d5dccc` | `--brand-40` |
-| Brand/30  | `#dee4da` | `--brand-30`  — primary body text on dark |
+| Brand/30  | `#dee4da` | `--brand-30`  — H2 section headings, primary body text, H4 venue names |
 | Brand/20  | `#eaede5` | `--brand-20`  — primary button bg |
 | Brand/10  | `#f4f6f3` | `--brand-10`  — primary button default |
-| Brand/00  | `#fafbf9` | `--brand-00`  — primary button hover / button text |
+| Brand/00  | `#fafbf9` | `--brand-00`  — H1 hero name, primary button hover, button text, active tab text |
 
 ### Event / Semantic
 
@@ -82,20 +82,30 @@ Card gap within a section: `16px` (cards), `24px` (admin list items).
 
 All headings use **Kanit Black (900)**. Body and UI text use **SF Pro** (system-ui as fallback). No italic.
 
-| Token | Family | Weight | Size | Line-height |
-|-------|--------|--------|------|-------------|
-| H1 | Kanit Black | 900 | 52px | 52px |
-| H2 | Kanit Black | 900 | 44px | 48px |
-| H3 | Kanit Black | 900 | 32px | 34px |
-| H4 | Kanit Black | 900 | 28px | 31px |
-| H5 | Kanit Black | 900 | 20px | 26px |
-| Body | SF Pro Light | 274 | 18px | 26px |
-| Small Body | SF Pro Light | 274 | 16px | 20px |
-| Bold | SF Pro Bold | 700 | 18px | 100% |
-| Button | SF Pro Black | 1000 | 18px | 26px |
-| Tab | SF Pro Black | 1000 | 18px | 24px |
-| Skill | SF Pro Black | 1000 | 16px | 30px |
-| Link | SF Pro Light | 274 | 18px | 26px |
+| Token | Family | Weight | Size | Line-height | Default color |
+|-------|--------|--------|------|-------------|---------------|
+| H1 | Kanit Black | 900 | 52px | 52px | `Brand/00` |
+| H2 | Kanit Black | 900 | 44px | 48px | `Brand/30` |
+| H3 | Kanit Black | 900 | 32px | 34px | `Brand/50` |
+| H4 | Kanit Black | 900 | 28px | 31px | `Brand/30` (venue names) |
+| H5 | Kanit Black | 900 | 20px | 26px | `Brand/50` |
+| Body | SF Pro Light | 274 | 18px | 26px | `Brand/30` |
+| Small Body | SF Pro Light | 274 | 16px | 20px | `Brand/50` |
+| Bold | SF Pro Bold | 700 | 18px | 100% | `Brand/30` |
+| Button | SF Pro Black | 1000 | 18px | 26px | — per variant |
+| Tab | SF Pro Black | 1000 | 18px | 24px | `Brand/00` active, `Brand/50` inactive |
+| Skill | SF Pro Black | 1000 | 16px | 30px | `Brand/00` |
+| Link | SF Pro Light | 274 | 18px | 26px | `Brand/30` |
+
+### Heading color hierarchy
+
+The color stack descends with importance, reinforcing the size stepdown so hierarchy is legible on both cold (Figma) and warm (running site) readings:
+
+- **H1 → `Brand/00`** (#fafbf9) — reserved for the hero identity (artist name). Maximum brightness, maximum focus.
+- **H2 → `Brand/30`** (#dee4da) — section headings (NEXT GIGS, REVIEWS, DEMOS, TIMELINE). Strong but descends visibly from H1 when both are on screen.
+- **H3 → `Brand/50`** (#c9d3c0) — card titles (review names, demo titles) and overlay/modal titles (CONTACT MOMO, SEND A REQUEST). Muted: the card/modal context is framing them, so they recede to let the body content lead.
+
+H4/H5 keep their existing contextual colors (venue names `Brand/30` on cards; small labels `Brand/50`).
 
 Google Fonts import: `Kanit` weights `300, 600, 700, 900`.
 
@@ -139,6 +149,11 @@ Composante Figma : `Button` · Page `_System`
 - Height: `40px` · Border-radius: `8px` · Padding: `4px 16px`
 - bg: `Brand/90` · text: `Brand/00` · font: Skill (SF Pro Black 16px)
 - Usage: skill tags sur la page Intro
+
+### Type=Request
+- State unique : `State=All`
+- Variante de bouton pour la page Requests (live event)
+- Composante Figma : `Button` Type=Request · Page `_System`
 
 ---
 
@@ -199,18 +214,18 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 ### Card / Web / Content — Type=Review
 - bg: `Brand/95` · border-radius: `16px` · padding: `16px`
 - 80×80px avatar (rounded-8px)
-- Name: H3 uppercase · Role: Body Light `Brand/50`
+- Name: H3 uppercase `Brand/50` · Role: Body Light `Brand/50`
 - Review text: Body Light `Brand/10`
 - Instagram link: Body Light `Brand/00` underlined
 
 ### Card / Web / Content — Type=Demo
 - bg: `Brand/95` · border-radius: `16px` · padding: `16px`
 - Full-bleed thumbnail at top (rounded-16px) with play button overlay
-- Title: H3 uppercase · Description: Body Light · Link: Body Light `Event/Blue`
+- Title: H3 uppercase `Brand/50` · Description: Body Light · Link: Body Light `Event/Blue`
 
 ### Card / Web / Content — Type=Timeline
 - Same as Review card structure
-- Name: H3 · Dates: Body Light `Brand/50` · Role description: Body Light
+- Name: H3 `Brand/50` · Dates: Body Light `Brand/50` · Role description: Body Light
 
 ### Card / Web / Song
 
@@ -254,14 +269,14 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 
 Composante Figma : `Header` · Page `_System`
 
-| Variante | Live |
-|----------|------|
-| Type=Main | No |
-| Type=Main | Yes |
-| Type=Requests | Yes |
-| Type=Admin | No |
-| Type=Event | No |
-| Type=Modal | Yes |
+| Viewport | Type | Live |
+|----------|------|------|
+| All | Main | No |
+| All | Main | Yes |
+| Mobile | Requests | Yes |
+| Mobile | Admin | No |
+| Mobile | Event | No |
+| All | Modal | Yes |
 
 - `position: fixed` · `max-width` matches breakpoint · `z-index: 100`
 - Padding: `24px`
@@ -341,27 +356,27 @@ Composante Figma : `Logo/DJ`, `Logo/School` · Page `_System`
 
 ### 3. Intro
 - Avatar: `112px` circle
-- Name: H1 Kanit Black `Brand/50` uppercase
+- Name: H1 Kanit Black `Brand/00` uppercase
 - Skill tags: Type=Tag button · `Brand/90` bg · `Brand/00` text · rounded-8px · padding `4px 16px` · Skill font
 - Bio: Body Light `Brand/00`
 - CTA: Type=Primary button ("CONTACT" → opens booking modal)
 
 ### 4. Next Gigs *(conditional — shown when upcoming events with `show: true` exist)*
-- Heading: H2 Kanit Black `Brand/50`
+- Heading: H2 Kanit Black `Brand/30`
 - List of Event Cards (Home, Next variant) — `gap: 16px`
 
 ### 5. Reviews
-- Heading: H2 Kanit Black `Brand/50`
+- Heading: H2 Kanit Black `Brand/30`
 - Horizontal scroll row of Review Cards — `margin: 0 -32px; padding: 0 32px`
 - Card width: `310px`
 
 ### 6. Demos
-- Heading: H2 Kanit Black `Brand/50`
+- Heading: H2 Kanit Black `Brand/30`
 - Genre filter tabs (Kanit Black, `Brand/50` inactive / `Brand/00` active)
 - Horizontal scroll row of Demo Cards
 
 ### 7. Timeline
-- Heading: H2 Kanit Black `Brand/50`
+- Heading: H2 Kanit Black `Brand/30`
 - Decade tabs: 1990s / 2000s / 2010s / 2020s
 - Horizontal scroll row of Timeline Cards per decade
 
@@ -401,7 +416,7 @@ Separate page, active when an event is live.
 
 ### Request Form
 - Accessible via "REQUEST" button in header
-- Heading: "SEND A REQUEST" — H3 Kanit Black uppercase
+- Heading: "SEND A REQUEST" — H3 Kanit Black `Brand/50` uppercase
 - `Field / Search` (Spotify link, pill shape)
 - Type=Primary button: "SEND YOUR REQUEST"
 
@@ -413,14 +428,14 @@ Overlay, `position: fixed; inset: 0`.
 Composante Figma : `Header` Type=Modal, Live=Yes
 
 ### Form
-- Title: "CONTACT MOMO" — H3 Kanit Black
+- Title: "CONTACT MOMO" — H3 Kanit Black `Brand/50`
 - Subtitle: Body Light `Brand/50`
 - Fields: Name*, Phone*, Email*, Company*, Description* (textarea), Date — tous `Field / Text`
 - CTA: Type=Primary button "SEND"
 
 ### Confirmation
 - Green checkmark circle (80px, `Event/Green`)
-- Title: "BOOKING REQUEST JUST SENT!" — H3 Kanit Black centred
+- Title: "BOOKING REQUEST JUST SENT!" — H3 Kanit Black `Brand/50` centred
 - Body text: Body Light centred
 - CTA: Type=Primary button "CLOSE"
 
@@ -496,4 +511,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-04-11 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-04-20 — tokens ✓ · pages ✓ · composantes ✓_
+
+_Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
