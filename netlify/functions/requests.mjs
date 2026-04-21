@@ -90,7 +90,10 @@ export default async (req) => {
     const raw  = await store.get(storeKey).catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
     const idx  = list.findIndex(r => r.id === body.id);
-    if (idx >= 0) list[idx].status = body.status === 'played' ? 'played' : 'sent';
+    if (idx >= 0) {
+      const allowed = ['played', 'sent', 'deleted'];
+      list[idx].status = allowed.includes(body.status) ? body.status : 'sent';
+    }
     await store.set(storeKey, JSON.stringify(list));
 
     return new Response(JSON.stringify({ ok: true }), { headers: CORS });

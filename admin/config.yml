@@ -50,10 +50,10 @@ collections:
                 widget: string
                 hint: "e.g. 01:00 — card disappears after this time (can be past midnight)"
 
-              - name: instagram
-                label: "Instagram URL"
+              - name: link
+                label: "Link"
                 widget: string
-                hint: "Full URL, e.g. https://www.instagram.com/labuvettechezsimone"
+                hint: "Full URL — e.g. https://www.instagram.com/labuvettechezsimone or any other link (Facebook, YouTube, Eventbrite…)"
 
               - name: image
                 label: "Venue Image"
