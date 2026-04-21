@@ -747,7 +747,7 @@
           </div>
           <div class="preview-delete-col">
             <button class="song-delete-btn" id="preview-delete" aria-label="Remove">
-              <img class="song-delete-icon" src="images/delete.png" alt="">
+              <img class="song-delete-icon" src="images/icon-x.svg" alt="">
             </button>
           </div>
         </div>
@@ -1240,7 +1240,7 @@
     emptyEl.style.display = 'none';
     all.forEach(r => {
       const isPlayed = r.status === 'played';
-      const icon    = isPlayed ? 'images/request-played-icon.png' : 'images/request-sent-icon.png';
+      const icon    = isPlayed ? 'images/request-played-icon.svg' : 'images/request-sent-icon.svg';
       const iconAlt = isPlayed ? 'Played' : 'Requested';
       const card = document.createElement('div');
       card.className = 'song-card';
@@ -1356,7 +1356,7 @@
 
     mine.forEach(r => {
       const isPlayed = r.id && requestStatuses[r.id] === 'played';
-      const icon     = isPlayed ? 'images/request-played-icon.png' : 'images/request-sent-icon.png';
+      const icon     = isPlayed ? 'images/request-played-icon.svg' : 'images/request-sent-icon.svg';
       const iconAlt  = isPlayed ? 'Played' : 'Requested';
       const card = document.createElement('div');
       card.className = 'song-card';
@@ -1426,7 +1426,7 @@
         ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
       </div>
       <div class="song-request-col">
-        <img class="song-request-icon" src="images/request-played-icon.png" alt="Played">
+        <img class="song-request-icon" src="images/request-played-icon.svg" alt="Played">
       </div>`;
     return card;
   }
