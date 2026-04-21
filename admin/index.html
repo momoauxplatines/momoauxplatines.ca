@@ -15,7 +15,7 @@
       --brand-20: #EAEDE5; --brand-30: #DEE4DA; --brand-40: #D5DCCC;
       --brand-50: #C9D3C0; --brand-60: #A2A99A; --brand-80: #51534E;
       --brand-90: #2B2D2A; --brand-100: #141513; --brand-105: #111210;
-      --red: #D34242; --blue: #007AFF; --green: #34C759;
+      --red: #F06A6A; --blue: #3B9DFF; --green: #34C759;
     }
     html, body { background: var(--bg); color: var(--brand-30); font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; min-height: 100dvh; }
 
@@ -115,9 +115,9 @@
     .btn-dark { background: var(--brand-90, #282a27); border: 1px solid var(--brand-80, #51534e); border-radius: 8px; color: var(--brand-00, #fafbf9); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
     .btn-dark:hover { opacity: 0.8; }
     .gig-live-status { display: flex; align-items: center; gap: 8px; }
-    .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red, #d34242); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
+    .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red, #F06A6A); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
     @keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .gig-live-label { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--red, #d34242); text-transform: uppercase; line-height: 26px; }
+    .gig-live-label { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--red, #F06A6A); text-transform: uppercase; line-height: 26px; }
 
     /* ── Form fields (in edit overlay) ── */
     .edit-field { display: flex; flex-direction: column; gap: 8px; }
@@ -148,8 +148,8 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .show-toggle-row { display: flex; align-items: center; gap: 8px; height: 40px; }
     .show-toggle-label { flex: 1; font-size: 18px; font-weight: 300; color: var(--brand-50); line-height: 26px; }
-    .btn-delete-gig { background: var(--brand-90, #282a27); border: 1px solid var(--red, #d34242); border-radius: 8px; color: var(--red, #d34242); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; min-height: 56px; flex-shrink: 0; width: 100%; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
-    .btn-delete-gig:hover { background: var(--red, #d34242); border-color: var(--red, #d34242); color: var(--brand-00, #fafbf9); }
+    .btn-delete-gig { background: var(--brand-90, #282a27); border: 1px solid var(--red, #F06A6A); border-radius: 8px; color: var(--red, #F06A6A); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; min-height: 56px; flex-shrink: 0; width: 100%; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .btn-delete-gig:hover { background: var(--red, #F06A6A); border-color: var(--red, #F06A6A); color: var(--brand-00, #fafbf9); }
     .ig-preview-wrap { display: none; flex-direction: column; gap: 10px; }
     .ig-preview-wrap.visible { display: flex; }
     .ig-preview-row { display: flex; align-items: center; gap: 12px; }
@@ -190,7 +190,7 @@
     .req-switch.on { background: var(--green); }
     .req-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 100px; background: #fff; box-shadow: 0 2px 4px rgba(39,39,39,0.1); transition: transform 0.2s; }
     .req-switch.on::after { transform: translateX(16px); }
-    .req-delete-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--red, #d34242); padding: 0; flex-shrink: 0; transition: opacity 0.15s; }
+    .req-delete-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--red, #F06A6A); padding: 0; flex-shrink: 0; transition: opacity 0.15s; }
     .req-delete-btn:hover { opacity: 0.65; }
     .req-restore-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--brand-50); padding: 4px 8px; flex-shrink: 0; font-size: 12px; font-weight: 300; transition: opacity 0.15s; white-space: nowrap; }
     .req-restore-btn:hover { opacity: 0.75; }

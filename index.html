@@ -42,8 +42,8 @@
       --brand-100: #141513;
       --brand-105: #111210;
       --bg: #111210;
-      --red: #D34242;
-      --blue: #007AFF;
+      --red: #F06A6A;
+      --blue: #3B9DFF;
     }
 
     html { background: var(--bg); overflow-x: clip; }
@@ -201,13 +201,13 @@
     .ev-live-status { display: flex; align-items: center; gap: 8px; }
     .ev-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
-      background: #D34242; flex-shrink: 0;
+      background: var(--red); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .ev-live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 22px; line-height: 26px;
-      color: #D34242; text-transform: uppercase;
+      color: var(--red); text-transform: uppercase;
     }
 
     /* "Go to event page" button — black bg */
@@ -246,7 +246,7 @@
     .ev-next-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 20px; line-height: 26px;
-      color: #007AFF; text-transform: uppercase;
+      color: var(--blue); text-transform: uppercase;
     }
 
     /* Détails toggle button — home cards */
