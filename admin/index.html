@@ -125,6 +125,9 @@
     .edit-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 12px; padding: 12px 16px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; resize: none; }
     .edit-input::placeholder { color: var(--brand-80); }
     .edit-input:focus { border-color: var(--brand-50); }
+    .edit-select { background: var(--bg); border: 1px solid var(--brand-50); border-radius: 12px; padding: 16px 48px 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; appearance: none; cursor: pointer; transition: border-color 0.2s; background-image: url("data:image/svg+xml,%3Csvg width='16' height='10' viewBox='0 0 16 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L8 9L15 1' stroke='%23C9D3C0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 20px center; }
+    .edit-select:focus { border-color: var(--brand-30); }
+    .edit-select option { background: var(--brand-100); }
 
     /* ── Card list gaps ── */
     #gigs-list, #reviews-list, #demos-list, .decade-cards { display: flex; flex-direction: column; gap: 24px; }
@@ -777,7 +780,7 @@
       const rName  = copy(`reviews.${r.id}.name`)  || r.name;
       const rVenue = copy(`reviews.${r.id}.venue`) || r.venue;
       card.innerHTML = `
-        <div class="card-avatar round"><img src="${r.avatar}" alt="${esc(rName)}"></div>
+        <div class="card-avatar round"><img src="${copy('reviews.' + r.id + '.avatar') || r.avatar}" alt="${esc(rName)}"></div>
         <p class="card-name">${esc(rName)}</p>
         ${rVenue ? `<p class="card-sub">${esc(rVenue)}</p>` : ''}
         <p class="card-text">${esc(copy(r.textKey))}</p>
@@ -788,13 +791,23 @@
   }
 
   // ── DEMOS section ─────────────────────────────────────────────────────────────
+  function getDemoDisplayOrder() {
+    const orderStr = copy('demos.order');
+    if (orderStr) return orderStr.split('|').filter(Boolean);
+    // Legacy fallback: available (reversed) then coming-soon
+    const avail = DEMOS.filter(d => !(copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
+    const soon  = DEMOS.filter(d =>   copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false'));
+    return [...avail.reverse(), ...soon].map(d => d.id);
+  }
+
   function renderDemos() {
     const el = document.getElementById('demos-list');
     el.innerHTML = '';
-    // Sort: available demos newest-first, coming-soon demos at the end
-    const _dAvail  = DEMOS.filter(d => !(copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
-    const _dSoonGrp = DEMOS.filter(d =>   copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false'));
-    [..._dAvail.reverse(), ..._dSoonGrp].forEach(d => {
+    const orderedIds = getDemoDisplayOrder();
+    const ordered = orderedIds.map(id => DEMOS.find(d => d.id === id)).filter(Boolean);
+    // Append any demos not yet in the order (safety net for newly added items)
+    DEMOS.forEach(d => { if (!orderedIds.includes(d.id)) ordered.push(d); });
+    ordered.forEach(d => {
       const card = document.createElement('div');
       card.className = 'admin-card';
       const dTitle = copy(`demos.${d.id}.title`) || d.title;
@@ -802,7 +815,7 @@
       const dSoon  = copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false');
       card.innerHTML = `
         <div class="card-thumb">
-          <img class="card-thumb-img" src="${d.thumb}" alt="${esc(dTitle)}">
+          <img class="card-thumb-img" src="${copy('demos.' + d.id + '.avatar') || d.thumb}" alt="${esc(dTitle)}">
         </div>
         <p class="card-name">${esc(dTitle)}</p>
         <p class="card-text">${esc(copy(d.descKey))}</p>
@@ -831,7 +844,7 @@
         card.className = 'admin-card';
         card.innerHTML = `
           <div style="display:flex;flex-direction:column;gap:16px;">
-            <div class="card-avatar" style="border-radius:8px;"><img src="${item.avatar}" alt="${esc(iName)}"></div>
+            <div class="card-avatar" style="border-radius:8px;"><img src="${copy('timeline.' + item.id + '.avatar') || item.avatar}" alt="${esc(iName)}"></div>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <p class="card-name">${esc(iName)}</p>
               ${role ? `<p class="card-sub">${esc(role)}</p>` : ''}
@@ -970,7 +983,7 @@
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview round">
-            <img id="ef-img-preview" src="${isNew ? '' : meta.avatar}" alt="" style="${isNew ? 'display:none' : ''}">
+            <img id="ef-img-preview" src="${isNew ? '' : (copy('reviews.' + meta.id + '.avatar') || meta.avatar)}" alt="" style="${isNew ? 'display:none' : ''}">
           </div>
           <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
         </div>
@@ -1006,7 +1019,7 @@
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview rect">
-            <img id="ef-img-preview" src="${isNew ? '' : meta.thumb}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
+            <img id="ef-img-preview" src="${isNew ? '' : (copy('demos.' + meta.id + '.avatar') || meta.thumb)}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
           </div>
           <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
         </div>
@@ -1026,11 +1039,27 @@
           <input type="checkbox" id="ef-coming-soon" ${comingSoon ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--brand-80);flex-shrink:0;">
           <span class="edit-label" style="margin:0;">Coming soon</span>
         </label>
+        <div class="edit-field">
+          <label class="edit-label">Position*</label>
+          <select class="edit-select" id="ef-position"></select>
+        </div>
         ${!isNew ? `<button class="btn-delete-gig" data-action="delete-demo" data-id="${meta.id}">Delete demo</button>` : ''}`;
       const imgInput = document.getElementById('ef-img-input');
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
       imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+      // Populate position dropdown
+      const posSelect = document.getElementById('ef-position');
+      const currentOrder = getDemoDisplayOrder();
+      const maxPos = isNew ? currentOrder.length + 1 : currentOrder.length;
+      const currentPos = isNew ? 1 : (currentOrder.indexOf(meta.id) + 1 || 1);
+      for (let i = 1; i <= maxPos; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i;
+        if (i === currentPos) opt.selected = true;
+        posSelect.appendChild(opt);
+      }
     }
 
     if (type === 'timeline' && meta) {
@@ -1042,7 +1071,7 @@
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview square">
-            <img id="ef-img-preview" src="${isNew ? '' : item.avatar}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
+            <img id="ef-img-preview" src="${isNew ? '' : (copy('timeline.' + item.id + '.avatar') || item.avatar)}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
           </div>
           <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
         </div>
@@ -1264,32 +1293,51 @@
         const name  = document.getElementById('ef-name')?.value.trim();
         if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
         const id = isNew ? slugify(name) : editFormMeta.id;
-        const avatarRepoPath = isNew ? `images/reviews/${id}.jpg` : editFormMeta.avatar.replace(/^\.\.\//, '').replace(/^\//, '');
+
+        // Upload image → Netlify Blob (no deploy needed)
         const imgInput = document.getElementById('ef-img-input');
-        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], avatarRepoPath, `${isNew ? 'Add' : 'Update'} review photo: ${id}`);
-        const textVal     = document.getElementById('ef-text')?.value ?? '';
-        const venueVal    = document.getElementById('ef-venue')?.value ?? '';
-        const igVal       = document.getElementById('ef-instagram')?.value ?? '';
-        const avatarVal   = isNew ? `/${avatarRepoPath}` : (editFormMeta.avatar.startsWith('../') ? editFormMeta.avatar.slice(2) : editFormMeta.avatar);
+        let blobUrl = null;
+        if (imgInput?.files[0]) {
+          const blobKey = `reviews/${id}.jpg`;
+          blobUrl = await uploadImageToBlob(imgInput.files[0], blobKey);
+        }
+
+        const textVal  = document.getElementById('ef-text')?.value ?? '';
+        const venueVal = document.getElementById('ef-venue')?.value ?? '';
+        const igVal    = document.getElementById('ef-instagram')?.value ?? '';
+
+        // Auto-translate description for new entries
+        let translatedText = textVal;
+        if (isNew && textVal) {
+          saveBtn.textContent = 'Translating…';
+          const otherLang = currentLang === 'en' ? 'fr' : 'en';
+          translatedText = await autoTranslate(textVal, currentLang, otherLang);
+          saveBtn.textContent = 'Saving…';
+        }
+
+        const existingAvatar = isNew ? (blobUrl || '') : (copy(`reviews.${id}.avatar`) || editFormMeta.avatar || '');
         const langs = isNew ? ['en', 'fr'] : [currentLang];
         for (const lang of langs) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang]['reviews.registry'] || '').split('|').filter(Boolean);
             if (!reg.includes(id)) copyData[lang]['reviews.registry'] = [...reg, id].join('|');
-            copyData[lang][`reviews.${id}.avatar`] = avatarVal;
+            copyData[lang][`reviews.${id}.avatar`] = existingAvatar;
+          } else if (blobUrl) {
+            copyData[lang][`reviews.${id}.avatar`] = blobUrl;
           }
           copyData[lang][`reviews.${id}.name`]      = name;
           copyData[lang][`reviews.${id}.venue`]     = venueVal;
-          copyData[lang][`reviews.${id}.text`]      = textVal;
+          copyData[lang][`reviews.${id}.text`]      = (isNew && lang !== currentLang) ? translatedText : textVal;
           copyData[lang][`reviews.${id}.instagram`] = igVal;
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} review: ${name} (${lang})`);
         }
+        const finalAvatar = blobUrl || existingAvatar;
         if (isNew) {
-          REVIEWS.push({ id, name, venue: venueVal, instagram: igVal, avatar: '/' + avatarRepoPath, textKey: `reviews.${id}.text` });
+          REVIEWS.push({ id, name, venue: venueVal, instagram: igVal, avatar: finalAvatar, textKey: `reviews.${id}.text` });
         } else {
           const r = REVIEWS.find(x => x.id === id);
-          if (r) { r.name = name; r.venue = venueVal; r.instagram = igVal; }
+          if (r) { r.name = name; r.venue = venueVal; r.instagram = igVal; if (blobUrl) r.avatar = blobUrl; }
         }
         renderReviews();
         showToast(isNew ? 'Review added' : 'Review saved', 'success');
@@ -1300,32 +1348,63 @@
         const title = document.getElementById('ef-title')?.value.trim();
         if (!title) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
         const id = isNew ? slugify(title) : editFormMeta.id;
-        const thumbRepoPath = isNew ? `images/demos/${id}.jpg` : editFormMeta.thumb.replace(/^\.\.\//, '').replace(/^\//, '');
+
+        // Upload thumbnail → Netlify Blob (no deploy needed)
         const imgInput = document.getElementById('ef-img-input');
-        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], thumbRepoPath, `${isNew ? 'Add' : 'Update'} demo thumb: ${id}`);
-        const descVal    = document.getElementById('ef-desc')?.value ?? '';
-        const ytVal      = document.getElementById('ef-ytlink')?.value ?? '';
-        const soonVal    = document.getElementById('ef-coming-soon')?.checked ? 'true' : 'false';
-        const thumbVal   = isNew ? `/${thumbRepoPath}` : (editFormMeta.thumb.startsWith('../') ? editFormMeta.thumb.slice(2) : editFormMeta.thumb);
+        let blobUrl = null;
+        if (imgInput?.files[0]) {
+          const blobKey = `demos/${id}.jpg`;
+          blobUrl = await uploadImageToBlob(imgInput.files[0], blobKey);
+        }
+
+        const descVal = document.getElementById('ef-desc')?.value ?? '';
+        const ytVal   = document.getElementById('ef-ytlink')?.value ?? '';
+        const soonVal = document.getElementById('ef-coming-soon')?.checked ? 'true' : 'false';
+
+        // Auto-translate description for new entries
+        let translatedDesc = descVal;
+        if (isNew && descVal) {
+          saveBtn.textContent = 'Translating…';
+          const otherLang = currentLang === 'en' ? 'fr' : 'en';
+          translatedDesc = await autoTranslate(descVal, currentLang, otherLang);
+          saveBtn.textContent = 'Saving…';
+        }
+
+        const existingThumb = isNew ? (blobUrl || '') : (copy(`demos.${id}.avatar`) || editFormMeta.thumb || '');
+        // Compute new display order with the chosen position
+        const newPos = parseInt(document.getElementById('ef-position')?.value) || 1;
+        let newOrder = getDemoDisplayOrder();
+        if (isNew) {
+          newOrder.splice(newPos - 1, 0, id);
+        } else {
+          const oldIdx = newOrder.indexOf(id);
+          if (oldIdx >= 0) newOrder.splice(oldIdx, 1);
+          newOrder.splice(newPos - 1, 0, id);
+        }
+        const orderStr = newOrder.join('|');
         const langs = isNew ? ['en', 'fr'] : [currentLang];
         for (const lang of langs) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang]['demos.registry'] || '').split('|').filter(Boolean);
             if (!reg.includes(id)) copyData[lang]['demos.registry'] = [...reg, id].join('|');
-            copyData[lang][`demos.${id}.avatar`] = thumbVal;
+            copyData[lang][`demos.${id}.avatar`] = existingThumb;
+          } else if (blobUrl) {
+            copyData[lang][`demos.${id}.avatar`] = blobUrl;
           }
           copyData[lang][`demos.${id}.title`]       = title;
-          copyData[lang][`demos.${id}.desc`]        = descVal;
+          copyData[lang][`demos.${id}.desc`]        = (isNew && lang !== currentLang) ? translatedDesc : descVal;
           copyData[lang][`demos.${id}.link`]        = ytVal;
           copyData[lang][`demos.${id}.coming-soon`] = soonVal;
+          copyData[lang]['demos.order']             = orderStr;
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} demo: ${title} (${lang})`);
         }
+        const finalThumb = blobUrl || existingThumb;
         if (isNew) {
-          DEMOS.push({ id, title, thumb: '/' + thumbRepoPath, ytId: '', descKey: `demos.${id}.desc` });
+          DEMOS.push({ id, title, thumb: finalThumb, ytId: '', descKey: `demos.${id}.desc` });
         } else {
           const d = DEMOS.find(x => x.id === id);
-          if (d) d.title = title;
+          if (d) { d.title = title; if (blobUrl) d.thumb = blobUrl; }
         }
         renderDemos();
         showToast(isNew ? 'Demo added' : 'Demo saved', 'success');
@@ -1338,32 +1417,51 @@
         const name  = document.getElementById('ef-name')?.value.trim();
         if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
         const id = isNew ? slugify(name) : item.id;
-        const avatarRepoPath = isNew ? `images/timeline/${id}.jpg` : item.avatar.replace(/^\.\.\//, '');
+
+        // Upload avatar → Netlify Blob (no deploy needed)
         const imgInput = document.getElementById('ef-img-input');
-        if (imgInput?.files[0]) await uploadImageToGitHub(imgInput.files[0], avatarRepoPath, `${isNew ? 'Add' : 'Update'} timeline photo: ${id}`);
+        let blobUrl = null;
+        if (imgInput?.files[0]) {
+          const blobKey = `timeline/${id}.jpg`;
+          blobUrl = await uploadImageToBlob(imgInput.files[0], blobKey);
+        }
+
         const roleVal  = document.getElementById('ef-role')?.value ?? '';
         const datesVal = document.getElementById('ef-dates')?.value ?? '';
         const linkVal  = document.getElementById('ef-link')?.value ?? '';
-        const avatarVal = isNew ? `/${avatarRepoPath}` : (item.avatar.startsWith('../') ? item.avatar.slice(2) : item.avatar);
+
+        // Auto-translate description for new entries
+        let translatedRole = roleVal;
+        if (isNew && roleVal) {
+          saveBtn.textContent = 'Translating…';
+          const otherLang = currentLang === 'en' ? 'fr' : 'en';
+          translatedRole = await autoTranslate(roleVal, currentLang, otherLang);
+          saveBtn.textContent = 'Saving…';
+        }
+
+        const existingAvatar = isNew ? (blobUrl || '') : (copy(`timeline.${id}.avatar`) || item.avatar || '');
         const langs = isNew ? ['en', 'fr'] : [currentLang];
         for (const lang of langs) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang][`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
             if (!reg.includes(id)) copyData[lang][`timeline.${decade}.registry`] = [...reg, id].join('|');
-            copyData[lang][`timeline.${id}.avatar`] = avatarVal;
+            copyData[lang][`timeline.${id}.avatar`] = existingAvatar;
+          } else if (blobUrl) {
+            copyData[lang][`timeline.${id}.avatar`] = blobUrl;
           }
           copyData[lang][`timeline.${id}.name`]      = name;
-          copyData[lang][`timeline.${id}.desc`]      = roleVal;
+          copyData[lang][`timeline.${id}.desc`]      = (isNew && lang !== currentLang) ? translatedRole : roleVal;
           copyData[lang][`timeline.${id}.dates`]     = datesVal;
           copyData[lang][`timeline.${id}.instagram`] = linkVal;
           if (!isNew && item.roleKey) copyData[lang][item.roleKey] = roleVal;
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} timeline: ${name} (${lang})`);
         }
+        const finalAvatar = blobUrl || existingAvatar;
         if (isNew) {
-          TIMELINE[decade].push({ id, name, dates: datesVal, instagram: linkVal, avatar: '../' + avatarRepoPath, roleKey: `timeline.${id}.desc` });
+          TIMELINE[decade].push({ id, name, dates: datesVal, instagram: linkVal, avatar: finalAvatar, roleKey: `timeline.${id}.desc` });
         } else {
-          item.name = name; item.dates = datesVal; item.instagram = linkVal;
+          item.name = name; item.dates = datesVal; item.instagram = linkVal; if (blobUrl) item.avatar = blobUrl;
         }
         renderTimeline();
         showToast(isNew ? 'Entry added' : 'Entry saved', 'success');
@@ -1440,6 +1538,8 @@
       for (const lang of ['en', 'fr']) {
         if (!copyData[lang]) continue;
         copyData[lang]['demos.registry'] = (copyData[lang]['demos.registry'] || '')
+          .split('|').filter(Boolean).filter(x => x !== id).join('|');
+        copyData[lang]['demos.order'] = (copyData[lang]['demos.order'] || '')
           .split('|').filter(Boolean).filter(x => x !== id).join('|');
         Object.keys(copyData[lang]).forEach(k => {
           if (k.startsWith(`demos.${id}.`)) delete copyData[lang][k];
@@ -1543,6 +1643,22 @@
     const ext = blob.type.includes('png') ? 'png' : 'jpg';
     const key = `events/${username}.${ext}`;
     return uploadImageToBlob(blob, key);
+  }
+
+  // ── Auto-translate (MyMemory — free, no key needed) ───────────────────────
+  async function autoTranslate(text, fromLang, toLang) {
+    if (!text || !text.trim()) return text;
+    try {
+      const langPair = `${fromLang}|${toLang}`;
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langPair}&de=cue.city@gmail.com`;
+      const res = await fetch(url);
+      if (!res.ok) return text;
+      const data = await res.json();
+      if (data.responseStatus === 200 && data.responseData?.translatedText) {
+        return data.responseData.translatedText;
+      }
+    } catch (_) {}
+    return text; // fallback silencieux si l'API est indisponible
   }
 
   function showAvatarPreview(username, existingImagePath) {

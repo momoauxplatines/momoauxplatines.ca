@@ -10,7 +10,9 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 |------------|---------|
 | Cover | Couverture du fichier |
 | _DJ | Portfolio DJ principal (toutes les screens) |
+| _Event | Screens et cards d'événement (live & next) |
 | _School | Section École |
+| _Forms | Formulaires (edit de gig, contact, request) |
 | _Admin | Panel d'administration |
 | _System | Design system — composantes, tokens, couleurs |
 
@@ -151,9 +153,29 @@ Composante Figma : `Button` · Page `_System`
 - Usage: skill tags sur la page Intro
 
 ### Type=Request
-- State unique : `State=All`
-- Variante de bouton pour la page Requests (live event)
-- Composante Figma : `Button` Type=Request · Page `_System`
+- States : Default · Hover
+- Variante de bouton pour la page Requests (live event) — `button.event.request`
+- Composante Figma : `Button` · Page `_System`
+
+### Type=Icon
+- Height: `40px` · Width: `46px` · Border-radius: `8px`
+- States : Default · Hover — `button.icon`
+- Usage: boutons icône seule (sans label), ex. actions rapides admin
+
+### Type=Language
+- Height: `39px` · Width: `57px` · Border-radius: `8px`
+- States : Default · Hover — `button.language`
+- Usage: sélecteur de langue (FR / EN) dans le header
+
+### Type=Details
+- Height: `48px` · Width: `67px` · Border-radius: `8px`
+- States : Closed · Open — `button.details`
+- Usage: bouton d'expansion des détails d'un événement (Event Page)
+
+### Type=Back
+- Height: `48px` · Width: `53px`
+- State unique — `button.back`
+- Usage: retour arrière dans les overlays admin / event
 
 ---
 
@@ -511,6 +533,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-04-21 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-04-29 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
