@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  ignore = "exit 1"
+  ignore = "exit 0"
 
 # Branch deploys (preview, staging, etc.) — always deploy
 [context.branch-deploy]

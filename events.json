@@ -1,13 +1,26 @@
 {
   "events": [
     {
-      "venue": "Set chez ti jo",
-      "address": "5630 rue de la roche",
-      "date": "2026-03-28",
-      "start_time": "12:31",
-      "end_time": "12:34",
-      "instagram": "https://www.instagram.com/djmomoauxplatines/",
-      "image": "/images/events/djmomoauxplatines.jpg"
+      "slug": "testing-the-thingy-thing",
+      "venue": "Testing the thingy thing",
+      "address": "2242 rue de la roche, montrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©al",
+      "date": "",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "link": "https://www.instagram.com/djmomoauxplatines/",
+      "image": "/images/events/testing-the-thingy-thing-mnm4ojni.jpg",
+      "show": true
+    },
+    {
+      "slug": "testing-one-two-2026-06-24",
+      "venue": "Testing one two",
+      "address": "2242 rue de la roche, montréal",
+      "date": "2026-06-24",
+      "start_time": "16:00",
+      "end_time": "20:00",
+      "link": "",
+      "image": "/images/events/testing-one-two-mnunulj8.jpg",
+      "show": false
     }
   ]
 }

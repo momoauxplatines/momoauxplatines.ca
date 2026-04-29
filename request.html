@@ -25,11 +25,11 @@
       --brand-40: #D5DCCC;
       --brand-50: #C9D3C0;
       --brand-80: #51534E;
-      --brand-90: #2B2D2A;
+      --brand-90: #282a27;
       --brand-100: #141513;
       --green: #34C759;
-      --red: #D34242;
-      --blue: #007AFF;
+      --red: #F06A6A;
+      --blue: #3B9DFF;
     }
 
     html, body {
@@ -60,25 +60,42 @@
       position: sticky; top: 0; z-index: 50;
       background: var(--bg);
       display: flex; flex-direction: column;
+      padding-bottom: 16px;
     }
 
     /* ── Header ── */
     .req-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px;
+      padding: 24px 16px;
+    }
+    .req-header > a { flex-shrink: 0; }
+    .req-header-actions {
+      display: flex; align-items: center; gap: 16px;
     }
 
     .req-btn {
-      background: none;
+      background: var(--brand-90);
       border: none;
       border-radius: 8px;
       color: var(--blue);
-      font-family: 'Kanit', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
       font-weight: 900; font-size: 18px; line-height: 26px;
-      padding: 4px 16px; cursor: pointer; letter-spacing: 0.02em;
+      height: 39px; padding: 4px 16px; cursor: pointer;
+      text-transform: uppercase; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .req-btn:hover { background: #20221f; }
+
+    .lang-btn {
+      background: var(--brand-90); border: none;
+      border-radius: 8px; color: var(--brand-00);
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 18px; letter-spacing: 0.02em;
+      height: 39px; padding: 0 16px; cursor: pointer;
+      white-space: nowrap;
       transition: opacity 0.15s;
     }
-    .req-btn:hover { opacity: 0.7; }
+    .lang-btn:hover { opacity: 0.85; }
 
     /* ── Event Card ── */
     .event-card {
@@ -89,7 +106,7 @@
     }
     .event-card:has(.event-expanded.visible) { padding-bottom: 20px; }
     .event-card-top {
-      display: flex; align-items: center; gap: 16px;
+      display: flex; align-items: center; gap: 16px; justify-content: space-between;
     }
     .event-venue-img {
       width: 48px; height: 48px; border-radius: 8px;
@@ -110,6 +127,11 @@
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 20px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
+    }
+    .event-next-date {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 20px; line-height: 26px;
+      color: var(--blue);
     }
     .event-details-btn {
       display: flex; align-items: center; gap: 8px;
@@ -135,7 +157,8 @@
     .event-address {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-30);
     }
-    .event-hours {
+    .event-datetime-row { display: flex; gap: 12px; align-items: center; }
+    .event-date, .event-hours {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
     .event-ig-link {
@@ -146,7 +169,7 @@
 
     /* ── Tabs ── */
     .tabs-row {
-      display: flex; gap: 0; padding: 16px;
+      display: flex; gap: 0; padding: 16px 16px 0;
     }
     .tab-btn {
       flex: 1; height: 48px; border: 1px solid var(--brand-100);
@@ -162,14 +185,19 @@
 
     /* ── Song List ── */
     .song-list {
-      padding: 0 16px 16px;
+      padding: 16px 16px 16px;
       display: flex; flex-direction: column; gap: 8px;
     }
     .song-list.hidden { display: none; }
 
     .empty-state {
-      padding: 48px 0; text-align: center;
-      color: var(--brand-80); font-size: 16px; font-weight: 300;
+      min-height: 240px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 48px 32px;
+      color: #A2A99A;
+      font-size: 18px; font-weight: 300; line-height: 26px;
     }
 
     /* ── Song Card ── */
@@ -223,7 +251,7 @@
       display: flex; align-items: center; justify-content: center;
     }
     .song-request-icon {
-      width: 20px; height: 20px; object-fit: contain; flex-shrink: 0;
+      width: 20px; height: auto; object-fit: contain; flex-shrink: 0;
     }
 
     /* ── Preview Song Card (Request Form) ── */
@@ -300,7 +328,7 @@
 
     .request-panel {
       width: 100%; height: 100dvh;
-      background: var(--bg);
+      background: var(--brand-100);
       display: flex; flex-direction: column; overflow: hidden;
     }
 
@@ -315,10 +343,10 @@
     .request-header-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 36px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-50); text-transform: uppercase;
     }
     .request-header-sub {
-      font-weight: 300; font-size: 16px; line-height: 22px; color: var(--brand-50);
+      font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50);
     }
     .request-close {
       position: absolute; top: 28px; right: 24px;
@@ -338,19 +366,26 @@
     /* Form fields — identical to booking */
     .form-field { display: flex; flex-direction: column; gap: 8px; }
     .form-label {
-      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px;
-      color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em;
+      font-family: inherit; font-weight: 300; font-size: 18px;
+      color: var(--brand-30);
     }
+    /* Pill-shaped search input wrapper */
+    .spotify-input-wrapper {
+      display: flex; align-items: center; gap: 16px;
+      background: #282A27; border: 1px solid var(--brand-80);
+      border-radius: 56px; padding: 14px 20px;
+      transition: border-color 0.2s;
+    }
+    .spotify-input-wrapper:focus-within { border-color: var(--brand-50); }
+    .spotify-input-wrapper.invalid { border-color: var(--red); }
+    .spotify-input-icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--brand-60,#a2a89b); }
     .form-input {
-      background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 12px; padding: 12px 16px;
+      flex: 1; background: transparent; border: none;
       font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
-      color: var(--brand-00); outline: none; width: 100%;
-      transition: border-color 0.2s; -webkit-appearance: none;
+      color: var(--brand-00); outline: none; min-width: 0;
+      -webkit-appearance: none;
     }
-    .form-input::placeholder { color: var(--brand-80); }
-    .form-input:focus { border-color: var(--brand-50); }
-    .form-input.invalid { border-color: var(--red); }
+    .form-input::placeholder { color: var(--brand-60,#a2a89b); }
 
     /* Song preview card inside form body */
     .song-preview { display: none; }
@@ -369,7 +404,7 @@
       box-shadow: 0 -12px 24px rgba(17,18,16,0.9);
     }
     .request-send {
-      background: var(--brand-20); border: none; border-radius: 16px;
+      background: var(--brand-20); border: none; border-radius: 8px;
       color: var(--brand-100); font-family: 'Kanit', sans-serif;
       font-weight: 700; font-size: 18px; line-height: 56px; height: 56px;
       width: 100%; cursor: pointer; transition: opacity 0.2s;
@@ -400,7 +435,7 @@
       .request-overlay { align-items: center; }
       .request-panel {
         width: 400px; height: auto; max-height: 90dvh;
-        border-radius: 20px;
+        border-radius: 16px;
         box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
       }
     }
@@ -413,42 +448,48 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-      <button class="req-btn" id="open-request" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+      <div class="req-header-actions">
+        <button class="req-btn" id="open-request" data-key="req.btn" data-en="REQUEST" data-fr="DEMANDER">REQUEST</button>
+        <button class="lang-btn" id="lang-btn" aria-label="Switch language">FR</button>
+      </div>
     </header>
 
     <!-- Event Card -->
     <div class="event-card" id="event-card">
       <div class="event-card-top">
         <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
-        <div class="event-live-row">
-          <div class="live-dot"></div>
-          <span class="live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+        <div class="event-live-row" id="event-live-row">
+          <div class="live-dot" id="live-dot"></div>
+          <span class="live-label" id="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
         </div>
         <button class="event-details-btn" id="event-details-btn">
-          <span data-en="Details" data-fr="Détails">Details</span>
+          <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
           <img class="event-details-caret" id="event-details-caret" src="images/caret-down.png" alt="">
         </button>
       </div>
+      <p class="event-name">Buvette chez Simone</p>
       <div class="event-expanded" id="event-expanded">
         <div class="event-copy">
-          <p class="event-name">Buvette chez Simone</p>
           <p class="event-address">4869 Rue Villeneuve O, Montréal, QC</p>
-          <p class="event-hours">19:00 – 01:00</p>
+          <div class="event-datetime-row">
+            <span class="event-date" id="event-date"></span>
+            <span class="event-hours" id="event-hours"></span>
+          </div>
           <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
         </div>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs-row">
-      <button class="tab-btn inactive" id="tab-requested" data-en="REQUESTED" data-fr="DEMANDÉES">REQUESTED</button>
-      <button class="tab-btn active"   id="tab-played"    data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+    <!-- Tabs — hidden for non-live events, shown only when live -->
+    <div class="tabs-row" id="tabs-row" style="display:none;">
+      <button class="tab-btn active"   id="tab-requested" data-key="req.tab.requested" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
+      <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
     </div>
 
   </div><!-- /sticky-top -->
 
   <!-- Played List -->
-  <div class="song-list" id="played-list">
+  <div class="song-list hidden" id="played-list">
 
     <div class="song-card">
       <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/99/96/a6/9996a65d-c79d-2d70-46f0-32468f4f6e21/195497550296.jpg/100x100bb.jpg" alt="Dream Machines" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -628,12 +669,12 @@
   </div>
 
   <!-- Requested List -->
-  <div class="song-list hidden" id="requested-list">
-    <div class="empty-state" id="requested-empty" data-en="No requests yet. Be the first!" data-fr="Pas encore de demandes. Soyez le premier !">No requests yet. Be the first!</div>
+  <div class="song-list" id="requested-list">
+    <div class="empty-state" id="requested-empty"></div>
   </div>
 
   <!-- Now Playing Footer -->
-  <div class="now-playing-bar">
+  <div class="now-playing-bar" id="now-playing-bar">
     <div class="now-playing-card">
       <img class="now-playing-art" src="https://i.scdn.co/image/ab67616d0000b2732e8ed79e177ff6011076f5f0" alt="Get Busy"
            onerror="this.style.background='var(--brand-90)'">
@@ -644,7 +685,7 @@
           <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
             <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
           </svg>
-          <span data-en="Playing" data-fr="En lecture">Playing</span>
+          <span data-key="req.playing" data-en="Playing" data-fr="En lecture">Playing</span>
         </div>
       </div>
     </div>
@@ -663,10 +704,10 @@
       <div class="request-header">
         <div class="request-header-titles">
           <h2 class="request-header-title" id="request-title"
-              data-en="REQUEST A SONG" data-fr="DEMANDER UNE CHANSON">REQUEST A SONG</h2>
+              data-key="req.overlay.title" data-en="Request a song" data-fr="DEMANDER UNE CHANSON">Request a song</h2>
           <p class="request-header-sub"
-             data-en="Paste a Spotify link and Momo will do their best to play it."
-             data-fr="Collez un lien Spotify et Momo fera de son mieux pour la jouer.">Paste a Spotify link and Momo will do their best to play it.</p>
+             data-key="req.overlay.subtitle" data-en="Copy the Spotify sharing link from the mobile app."
+             data-fr="Copiez le lien de partage Spotify depuis l'application mobile.">Copy the Spotify sharing link from the mobile app.</p>
         </div>
         <button class="request-close" id="close-request" aria-label="Close">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -679,10 +720,20 @@
       <div class="request-body">
         <div class="form-field">
           <label class="form-label" for="spotify-url"
-                 data-en="Spotify Link *" data-fr="Lien Spotify *">Spotify Link *</label>
-          <input class="form-input" type="url" id="spotify-url"
-                 placeholder="https://open.spotify.com/track/..."
-                 autocomplete="off" autocorrect="off" spellcheck="false">
+                 data-key="req.overlay.field.spotify"
+                 data-en="Link your desired song *"
+                 data-fr="Lien vers la chanson désirée *">Link your desired song *</label>
+          <div class="spotify-input-wrapper" id="spotify-input-wrapper">
+            <svg class="spotify-input-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input class="form-input" type="url" id="spotify-url"
+                   data-placeholder-en="Copy Spotify app song link"
+                   data-placeholder-fr="Copiez le lien de la chanson depuis Spotify"
+                   placeholder="Copy Spotify app song link"
+                   autocomplete="off" autocorrect="off" spellcheck="false">
+          </div>
           <p class="fetch-status" id="fetch-status"></p>
         </div>
 
@@ -696,7 +747,7 @@
           </div>
           <div class="preview-delete-col">
             <button class="song-delete-btn" id="preview-delete" aria-label="Remove">
-              <img class="song-delete-icon" src="images/delete.png" alt="">
+              <img class="song-delete-icon" src="images/icon-x.svg" alt="">
             </button>
           </div>
         </div>
@@ -705,7 +756,7 @@
       <!-- Sticky footer -->
       <div class="request-footer">
         <button class="btn request-send" id="send-request-btn" disabled
-                data-en="SEND REQUEST" data-fr="ENVOYER LA DEMANDE">SEND REQUEST</button>
+                data-key="req.overlay.btn.send" data-en="SEND" data-fr="ENVOYER">SEND</button>
       </div>
     </div>
 
@@ -717,14 +768,14 @@
           <path d="M12 20.5L17.5 26L28 15" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <p class="request-confirm-title"
-           data-en="REQUEST SENT!" data-fr="DEMANDE ENVOYÉE !">REQUEST SENT!</p>
+           data-key="req.confirm.title" data-en="REQUEST SENT!" data-fr="DEMANDE ENVOYÉE !">REQUEST SENT!</p>
         <p class="request-confirm-copy"
-           data-en="Momo received your request and will do their best to play it tonight."
+           data-key="req.confirm.copy" data-en="Momo received your request and will do their best to play it tonight."
            data-fr="Momo a reçu votre demande et fera de son mieux pour la jouer ce soir.">Momo received your request and will do their best to play it tonight.</p>
       </div>
       <div class="request-confirm-close">
         <button class="btn" id="success-close-btn"
-                data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+                data-key="req.confirm.btn.close" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
       </div>
     </div>
 
@@ -745,10 +796,31 @@
   // ─────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+  const EVENT_SLUG = (params.get('event') || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
+  const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
+  const COPY = { en: {}, fr: {} };
+
+  // Load both copy files in parallel; re-apply once loaded
+  Promise.all([
+    fetch('/api/copy?lang=en').then(r => r.json()).catch(() => ({})),
+    fetch('/api/copy?lang=fr').then(r => r.json()).catch(() => ({}))
+  ]).then(([en, fr]) => {
+    COPY.en = en; COPY.fr = fr;
+    applyLang(currentLang);
+  });
 
   function applyLang(lang) {
     currentLang = lang;
-    document.querySelectorAll('[data-en]').forEach(el => {
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val
+        : lang === 'fr' ? (el.dataset.fr || el.textContent)
+        : (el.dataset.en || el.textContent);
+    });
+    // Fallback for elements without data-key
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       const val = lang === 'fr' ? el.dataset.fr : el.dataset.en;
       if (val !== undefined) el.textContent = val;
     });
@@ -760,6 +832,118 @@
 
   // Apply on load
   applyLang(currentLang);
+
+  // ─────────────────────────────────────────────
+  // Language toggle
+  // ─────────────────────────────────────────────
+  const langBtn = document.getElementById('lang-btn');
+  if (langBtn) {
+    langBtn.textContent = currentLang === 'fr' ? 'EN' : 'FR';
+    langBtn.addEventListener('click', () => {
+      const newLang = currentLang === 'fr' ? 'en' : 'fr';
+      applyLang(newLang);
+      if (EVENT_SLUG) renderAllRequests(allRequestsCache);
+      else renderRequestedList();
+      langBtn.textContent = newLang === 'fr' ? 'EN' : 'FR';
+      const url = new URL(window.location.href);
+      if (newLang === 'fr') url.searchParams.set('lang', 'fr');
+      else url.searchParams.delete('lang');
+      history.replaceState(null, '', url.toString());
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // Liveness check helper
+  // ─────────────────────────────────────────────
+  function parseMins(t) { if (!t) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+
+  function checkEventLive(ev) {
+    if (!ev.date || !ev.start_time) return false;
+    const now     = new Date();
+    const today   = now.toISOString().slice(0, 10);
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const start   = parseMins(ev.start_time);
+    const end     = parseMins(ev.end_time);
+    if (end === null) return ev.date === today && nowMins >= start;
+    const overnight = start > end;
+    if (overnight) {
+      const nextDay = new Date(ev.date + 'T00:00:00');
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().slice(0, 10);
+      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
+    }
+    return ev.date === today && nowMins >= start && nowMins < end;
+  }
+
+  // ─────────────────────────────────────────────
+  // Populate event card from events.json when slug is provided
+  // ─────────────────────────────────────────────
+  if (EVENT_SLUG) {
+    // Hide live indicators by default — shown only if event is confirmed live
+    document.getElementById('event-live-row').style.display = 'none';
+    document.getElementById('now-playing-bar').style.display = 'none';
+
+    // Clear all hardcoded placeholder event card data immediately
+    const _venueImg = document.querySelector('.event-venue-img');
+    if (_venueImg) _venueImg.src = '';
+    const _eventName = document.querySelector('.event-name');
+    if (_eventName) _eventName.textContent = '';
+    const _eventAddress = document.querySelector('.event-address');
+    if (_eventAddress) _eventAddress.textContent = '';
+    const _eventDate = document.getElementById('event-date');
+    if (_eventDate) _eventDate.textContent = '';
+    const _eventHours = document.getElementById('event-hours');
+    if (_eventHours) _eventHours.textContent = '';
+    const _igLink = document.querySelector('.event-ig-link');
+    if (_igLink) _igLink.style.display = 'none';
+
+    // Clear hardcoded placeholder songs from played list
+    const playedList = document.getElementById('played-list');
+    if (playedList) playedList.innerHTML = '<div class="empty-state">Nothing has been played yet.<br><br>Open the event details card to know when this event will be live and where.</div>';
+
+    fetch('/api/events')
+      .then(r => r.json())
+      .then(data => {
+        const events = Array.isArray(data) ? data : (data.events || []);
+        const ev = events.find(e => e.slug === EVENT_SLUG);
+        if (!ev) return;
+
+        // Populate event card details
+        const venueImg = document.querySelector('.event-venue-img');
+        if (venueImg) {
+          if (ev.image) {
+            venueImg.src = ev.image;
+          } else if (ev.instagram) {
+            const igUser = (ev.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1]?.replace(/\/$/, '');
+            if (igUser) venueImg.src = `https://unavatar.io/instagram/${igUser}`;
+          }
+        }
+        const eventName = document.querySelector('.event-name');
+        if (eventName) eventName.textContent = ev.venue || '';
+        const eventAddress = document.querySelector('.event-address');
+        if (eventAddress) eventAddress.textContent = ev.address || '';
+        const eventDateEl = document.getElementById('event-date');
+        if (eventDateEl) eventDateEl.textContent = ev.date || '';
+        const eventHoursEl = document.getElementById('event-hours');
+        if (eventHoursEl) eventHoursEl.textContent = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
+        const igLink = document.querySelector('.event-ig-link');
+        if (igLink) {
+          if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
+          else igLink.style.display = 'none';
+        }
+
+        // Show LIVE indicator + tabs only when event is actually live
+        if (checkEventLive(ev)) {
+          document.getElementById('event-live-row').style.display = '';
+          document.getElementById('now-playing-bar').style.display = '';
+          document.getElementById('tabs-row').style.display = '';
+          pollLivePlaylist();
+          setInterval(pollLivePlaylist, 30_000);
+        }
+        // For upcoming events: card-top stays as avatar + Détails only (no badge)
+      })
+      .catch(() => {});
+  }
 
   // ─────────────────────────────────────────────
   // Event Card expand / collapse
@@ -781,6 +965,18 @@
   const playedList   = document.getElementById('played-list');
   const requestedList= document.getElementById('requested-list');
 
+  // General live page (no slug) — show tabs immediately, default to PLAYED
+  if (!EVENT_SLUG) {
+    document.getElementById('tabs-row').style.display = '';
+    tabPlayed.className    = 'tab-btn active';
+    tabRequested.className = 'tab-btn inactive';
+    playedList.classList.remove('hidden');
+    requestedList.classList.add('hidden');
+  } else {
+    // Event-specific page — show requested list directly, no tabs until confirmed live
+    requestedList.classList.remove('hidden');
+  }
+
   tabPlayed.addEventListener('click', () => {
     tabPlayed.className    = 'tab-btn active';
     tabRequested.className = 'tab-btn inactive';
@@ -792,7 +988,8 @@
     tabPlayed.className    = 'tab-btn inactive';
     requestedList.classList.remove('hidden');
     playedList.classList.add('hidden');
-    renderRequestedList();
+    // Always sync before rendering so icons reflect the latest played status
+    syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
   });
 
   // ─────────────────────────────────────────────
@@ -933,7 +1130,8 @@
     if (!parseSpotifyTrackId(val)) {
       preview.classList.remove('visible');
       fetchStatus.textContent = currentLang === 'fr'
-        ? 'Lien Spotify invalide.' : 'Not a valid Spotify track link.';
+        ? 'Assurez-vous que le lien provient de l\'application Spotify mobile.'
+        : 'Please make sure the link is from the Spotify mobile app.';
       fetchStatus.className = 'fetch-status error';
       sendBtn.disabled = true;
       currentTrack = null;
@@ -963,75 +1161,217 @@
     }, 600);
   });
 
+  // ─────────────────────────────────────────────
+  // Shared request store (API + localStorage backup)
+  // ─────────────────────────────────────────────
+  // localStorage key: 'momo_my_requests' → [{id, title, artist, image, url, ts}]
+  // API is polled every 10s to sync played status
+
+  function myRequests() {
+    return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  }
+  function saveMyRequests(list) {
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+  }
+
+  // Map of requestId → status (synced from API)
+  let requestStatuses = {};
+
+  async function syncStatuses() {
+    const mine = myRequests();
+    if (!mine.length) return;
+    try {
+      const res  = await fetch(API_BASE);
+      if (!res.ok) return;
+      const all  = await res.json();
+      const map  = {};
+      all.forEach(r => { map[r.id] = r.status; });
+      requestStatuses = map;
+      renderRequestedList();
+    } catch { /* non-blocking */ }
+  }
+
+  // ─────────────────────────────────────────────
+  // Event pages: fetch ALL requests from API and render them
+  // ─────────────────────────────────────────────
+  let allRequestsCache = [];
+
+  async function fetchAndRenderAllRequests() {
+    try {
+      const res = await fetch(API_BASE);
+      if (!res.ok) {
+        // Show error in empty state if the API call fails
+        const emptyEl = document.getElementById('requested-empty');
+        if (emptyEl) {
+          emptyEl.textContent = currentLang === 'fr'
+            ? 'Impossible de charger les demandes. Réessayez plus tard.'
+            : 'Could not load requests. Please try again later.';
+          emptyEl.style.display = '';
+        }
+        return;
+      }
+      const all = await res.json();
+      allRequestsCache = all;
+      renderAllRequests(all);
+    } catch (err) {
+      const emptyEl = document.getElementById('requested-empty');
+      if (emptyEl) {
+        emptyEl.textContent = currentLang === 'fr'
+          ? 'Impossible de charger les demandes. Réessayez plus tard.'
+          : 'Could not load requests. Please try again later.';
+        emptyEl.style.display = '';
+      }
+    }
+  }
+
+  function renderAllRequests(all) {
+    const emptyEl = document.getElementById('requested-empty');
+    // Clear previously rendered cards (keep empty state el)
+    Array.from(requestedList.children).forEach(c => {
+      if (c.id !== 'requested-empty') c.remove();
+    });
+    if (!all.length) {
+      emptyEl.innerHTML = currentLang === 'fr'
+        ? 'Aucune demande pour le moment.<br><br>Faites une demande en appuyant sur le bouton Demander en haut.'
+        : 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
+      emptyEl.style.display = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    all.forEach(r => {
+      const isPlayed = r.status === 'played';
+      const icon    = isPlayed ? 'images/request-played-icon.svg' : 'images/request-sent-icon.svg';
+      const iconAlt = isPlayed ? 'Played' : 'Requested';
+      const card = document.createElement('div');
+      card.className = 'song-card';
+      card.innerHTML = `
+        <img class="song-art" src="${r.image || ''}" alt="${safeHtml(r.title)}"
+             onerror="this.style.background='var(--brand-90)'">
+        <div class="song-info">
+          <div class="song-text-group">
+            <p class="song-title">${safeHtml(r.title)}</p>
+            ${r.artist ? `<p class="song-artist">${safeHtml(r.artist)}</p>` : ''}
+          </div>
+          ${r.url ? `<a class="song-link" href="${safeHtml(r.url)}" target="_blank" rel="noopener">Spotify</a>` : ''}
+        </div>
+        <div class="song-request-col">
+          <img class="song-request-icon" src="${icon}" alt="${iconAlt}">
+        </div>`;
+      requestedList.appendChild(card);
+    });
+  }
+
+  // Initial load + polling
+  if (EVENT_SLUG) {
+    fetchAndRenderAllRequests();
+    setInterval(() => { if (!document.hidden) fetchAndRenderAllRequests(); }, 10_000);
+  } else {
+    // General live page: poll only the user's own request statuses
+    setInterval(() => { if (!document.hidden) syncStatuses(); }, 10_000);
+    syncStatuses();
+    renderRequestedList();
+  }
+
   // Submit
   sendBtn.addEventListener('click', async () => {
     if (!currentTrack) return;
     sendBtn.disabled = true;
     sendBtn.textContent = currentLang === 'fr' ? 'ENVOI…' : 'SENDING…';
 
-    // Save to localStorage
-    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
-    requests.unshift({ ...currentTrack, ts: Date.now() });
-    localStorage.setItem('momo_requests', JSON.stringify(requests));
+    let requestId = null;
 
-    // Email via Formspree
+    // POST to per-event API
     try {
-      await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const res = await fetch(API_BASE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `Song request: ${currentTrack.title}`,
-          song:    currentTrack.title,
-          artist:  currentTrack.artist,
-          spotify: currentTrack.url,
-          from:    'Anonymous'
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentTrack)
       });
+      if (res.ok) {
+        const data = await res.json();
+        requestId = data.id;
+      }
     } catch { /* non-blocking */ }
 
-    // Close overlay and switch to Requested tab
+    // Save to localStorage (backup + owns-this-request tracking)
+    const mine = myRequests();
+    mine.unshift({ ...currentTrack, id: requestId, ts: Date.now() });
+    saveMyRequests(mine);
+
+    // Email via Formspree (non-blocking)
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Song request: ${currentTrack.title}`,
+        song:    currentTrack.title,
+        artist:  currentTrack.artist,
+        spotify: currentTrack.url,
+        from:    'Anonymous'
+      })
+    }).catch(() => {});
+
+    // Close overlay and refresh list
     closeOverlay();
-    tabRequested.className = 'tab-btn active';
-    tabPlayed.className    = 'tab-btn inactive';
-    requestedList.classList.remove('hidden');
-    playedList.classList.add('hidden');
-    renderRequestedList();
+    if (EVENT_SLUG) {
+      // Event page: refresh full list from API
+      fetchAndRenderAllRequests();
+    } else {
+      // General live page: show user's own requests
+      tabRequested.className = 'tab-btn active';
+      tabPlayed.className    = 'tab-btn inactive';
+      requestedList.classList.remove('hidden');
+      playedList.classList.add('hidden');
+      renderRequestedList();
+      syncStatuses();
+    }
   });
 
   // ─────────────────────────────────────────────
-  // Render requested list from localStorage
+  // Render requested list
   // ─────────────────────────────────────────────
   function renderRequestedList() {
-    const requests = JSON.parse(localStorage.getItem('momo_requests') || '[]');
-    const emptyEl  = document.getElementById('requested-empty');
+    const mine    = myRequests();
+    const emptyEl = document.getElementById('requested-empty');
 
     // Remove previously rendered cards (keep empty state el)
     Array.from(requestedList.children).forEach(c => {
       if (c.id !== 'requested-empty') c.remove();
     });
 
-    if (!requests.length) {
+    if (!mine.length) {
+      if (EVENT_SLUG) {
+        emptyEl.innerHTML = currentLang === 'fr'
+          ? 'Aucune demande pour le moment.<br><br>Faites une demande en appuyant sur le bouton Demander en haut.'
+          : 'No requests have been made yet.<br><br>Make a request by tapping the Request button in the top header.';
+      } else {
+        emptyEl.textContent = currentLang === 'fr'
+          ? 'Pas encore de demandes. Soyez le premier !'
+          : 'No requests yet. Be the first!';
+      }
       emptyEl.style.display = '';
-      applyLang(currentLang);
       return;
     }
     emptyEl.style.display = 'none';
 
-    requests.forEach(r => {
+    mine.forEach(r => {
+      const isPlayed = r.id && requestStatuses[r.id] === 'played';
+      const icon     = isPlayed ? 'images/request-played-icon.svg' : 'images/request-sent-icon.svg';
+      const iconAlt  = isPlayed ? 'Played' : 'Requested';
       const card = document.createElement('div');
       card.className = 'song-card';
       card.innerHTML = `
-        <img class="song-art" src="${r.image || ''}" alt="${r.title}"
+        <img class="song-art" src="${r.image || ''}" alt="${safeHtml(r.title)}"
              onerror="this.style.background='var(--brand-90)'">
         <div class="song-info">
           <div class="song-text-group">
-            <p class="song-title">${r.title}</p>
-            ${r.artist ? `<p class="song-artist">${r.artist}</p>` : ''}
+            <p class="song-title">${safeHtml(r.title)}</p>
+            ${r.artist ? `<p class="song-artist">${safeHtml(r.artist)}</p>` : ''}
           </div>
           <a class="song-link" href="${r.url}" target="_blank" rel="noopener">Spotify</a>
         </div>
         <div class="song-request-col">
-          <img class="song-request-icon" src="images/request-sent-icon.png" alt="Requested">
+          <img class="song-request-icon" src="${icon}" alt="${iconAlt}">
         </div>`;
       requestedList.appendChild(card);
     });
@@ -1086,7 +1426,7 @@
         ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
       </div>
       <div class="song-request-col">
-        <img class="song-request-icon" src="images/request-played-icon.png" alt="Played">
+        <img class="song-request-icon" src="images/request-played-icon.svg" alt="Played">
       </div>`;
     return card;
   }
@@ -1137,9 +1477,12 @@
     } catch { /* network error — keep existing content */ }
   }
 
-  // Start polling: immediately on load, then every 30 s
-  pollLivePlaylist();
-  setInterval(pollLivePlaylist, 30_000);
+  // Start polling only when no event slug (legacy/demo mode)
+  // When EVENT_SLUG is set, polling is started conditionally above after liveness check
+  if (!EVENT_SLUG) {
+    pollLivePlaylist();
+    setInterval(pollLivePlaylist, 30_000);
+  }
 </script>
 </body>
 </html>

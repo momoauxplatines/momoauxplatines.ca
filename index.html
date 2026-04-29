@@ -37,12 +37,13 @@
       --brand-40: #D5DCCC;
       --brand-50: #C9D3C0;
       --brand-80: #51534E;
-      --brand-90: #2B2D2A;
+      --brand-90: #282a27;
       --brand-95: #20221F;
       --brand-100: #141513;
+      --brand-105: #111210;
       --bg: #111210;
-      --red: #D34242;
-      --blue: #007AFF;
+      --red: #F06A6A;
+      --blue: #3B9DFF;
     }
 
     html { background: var(--bg); overflow-x: clip; }
@@ -125,8 +126,10 @@
     .stamp-container {
       width: 330px; height: 331px; position: relative;
       flex-shrink: 0; z-index: 1;
-      pointer-events: none; touch-action: pan-y;
+      pointer-events: auto; touch-action: none;
+      cursor: grab; user-select: none; -webkit-user-select: none;
     }
+    .stamp-container:active { cursor: grabbing; }
 
     @keyframes spin-cw-mobile {
       from { transform: translate(-50%,-50%) scale(0.4893) rotate(0deg); }
@@ -170,6 +173,11 @@
       display: flex; flex-direction: column;
       align-items: flex-start; gap: 16px;
     }
+    .live-section-heading {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 28px; line-height: 31px;
+      color: var(--brand-50); text-transform: uppercase; width: 100%;
+    }
 
     /* Card — full width on mobile */
     .event-card-home {
@@ -190,37 +198,34 @@
       border: 1px solid var(--brand-100);
       background: var(--brand-90);
     }
-    .event-card-home-live {
-      display: flex; align-items: center; gap: 8px;
-    }
+    .ev-live-status { display: flex; align-items: center; gap: 8px; }
     .ev-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
-      background: #D34242; flex-shrink: 0;
+      background: var(--red); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .ev-live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 22px; line-height: 26px;
-      color: #D34242; text-transform: uppercase;
+      color: var(--red); text-transform: uppercase;
     }
 
-    /* Button — dark (brand-90 bg, brand-00 text) */
+    /* "Go to event page" button — black bg */
     .ev-go-btn {
-      background: var(--brand-90); border: none; border-radius: 8px;
-      color: var(--brand-00); font-family: 'Kanit', sans-serif;
-      font-weight: 700; font-size: 20px; text-transform: uppercase;
+      background: #000; border: none; border-radius: 8px;
+      color: var(--brand-00); font-family: inherit;
+      font-weight: 1000; font-size: 18px; text-transform: uppercase;
       height: 56px; width: 100%; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       text-decoration: none; transition: opacity 0.15s;
     }
     .ev-go-btn:hover { opacity: 0.85; }
 
-    /* Content — always visible */
-    .ev-content { display: flex; flex-direction: column; gap: 8px; }
-    .ev-content-copy { display: flex; flex-direction: column; gap: 4px; }
+    /* Content */
+    .ev-content { display: flex; flex-direction: column; gap: 4px; }
     .ev-venue-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
+      font-size: 28px; line-height: 31px;
       color: var(--brand-30); text-transform: uppercase;
     }
     .ev-address {
@@ -233,23 +238,34 @@
     }
     .ev-ig {
       font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-50); text-decoration: underline;
-      text-decoration-color: var(--brand-50);
+      color: var(--brand-30); text-decoration: underline;
+      text-decoration-color: var(--brand-30);
     }
 
-    /* "NEXT" badge — blue Kanit Black */
+    /* Date badge — blue Kanit Black */
     .ev-next-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
-      color: #007AFF; text-transform: uppercase;
+      font-size: 20px; line-height: 26px;
+      color: var(--blue); text-transform: uppercase;
     }
 
-    /* Date + time row inside next event card */
-    .ev-date-row {
+    /* Détails toggle button — home cards */
+    .ev-details-btn {
       display: flex; align-items: center; gap: 8px;
-      font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-50);
+      background: none; border: none; cursor: pointer;
+      color: var(--brand-50); font-size: 16px; font-weight: 300;
+      font-family: inherit; flex-shrink: 0; padding: 0;
     }
+    .ev-details-caret {
+      width: 8px; height: auto; flex-shrink: 0;
+    }
+    /* Expanded details — hidden by default */
+    .ev-expanded {
+      display: none; flex-direction: column; gap: 16px;
+    }
+    .ev-expanded.visible { display: flex; }
+    /* Extra bottom padding when expanded */
+    .event-card-home:has(.ev-expanded.visible) { padding-bottom: 20px; }
 
     /* Next Events section — below intro */
     .next-events-section {
@@ -259,7 +275,7 @@
     .next-events-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 44px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-30); text-transform: uppercase;
       width: 100%;
     }
     .next-events-list {
@@ -280,7 +296,7 @@
     .section-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 48px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-30); text-transform: uppercase;
     }
 
     /* ─── Intro ─── */
@@ -291,7 +307,7 @@
     .intro-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 48px; line-height: 48px;
-      color: var(--brand-50); text-transform: uppercase;
+      color: var(--brand-00); text-transform: uppercase;
     }
     .tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .tag {
@@ -335,10 +351,10 @@
       display: flex; flex-direction: column; gap: 16px;
     }
     .review-card-header { display: flex; align-items: center; justify-content: space-between; width: 278px; }
-    .review-avatar { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .review-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
-    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
+    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-50); text-transform: uppercase; }
     .review-subtitle { font-weight: 300; font-size: 16px; line-height: 17px; color: var(--brand-50); }
     .review-text { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-00); width: 278px; flex: 1; }
 
@@ -347,18 +363,21 @@
 
     /* Video card */
     .video-card {
-      flex-shrink: 0; width: 310px;
+      flex-shrink: 0; width: 310px; height: 400px;
       background: var(--brand-95);
       border-radius: 16px; display: flex; flex-direction: column;
       gap: 24px; padding: 16px;
     }
-    .video-thumb-wrapper { position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; }
-    .video-thumb { width: 100%; height: 100%; object-fit: contain; }
-    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; }
-    .video-content { display: flex; flex-direction: column; gap: 16px; }
+    .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; text-decoration: none; }
+    .video-thumb-wrapper[data-ytid] { cursor: pointer; }
+    .video-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; transition: opacity 0.15s; }
+    .video-thumb-wrapper:hover .play-btn { opacity: 0.8; }
+    .video-thumb-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .video-content { display: flex; flex-direction: column; flex: 1; gap: 16px; }
     .video-info { display: flex; flex-direction: column; gap: 16px; color: var(--brand-30); }
-    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; }
-    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; }
+    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; color: var(--brand-30); }
+    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
 
     /* ─── Timeline Mobile ─── */
     .timeline-section { display: flex; flex-direction: column; gap: 40px; }
@@ -421,7 +440,7 @@
     /* ─── Footer ─── */
     .site-footer {
       display: flex;
-      background: var(--brand-100);
+      background: var(--brand-105);
       margin: 0 -32px -80px; padding: 80px 32px;
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px;
@@ -458,7 +477,7 @@
 
     .booking-panel {
       width: 100%; height: 100dvh;
-      background: var(--bg);
+      background: var(--brand-100);
       display: flex; flex-direction: column; overflow: hidden;
     }
 
@@ -481,10 +500,10 @@
     .booking-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 36px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-50); text-transform: uppercase;
     }
     .booking-subtitle {
-      font-weight: 300; font-size: 16px; line-height: 22px;
+      font-weight: 300; font-size: 18px; line-height: 22px;
       color: var(--brand-50);
     }
 
@@ -496,12 +515,12 @@
 
     .form-field { display: flex; flex-direction: column; gap: 8px; }
     .form-label {
-      font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px;
-      color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em;
+      font-family: inherit; font-weight: 300; font-size: 18px;
+      color: var(--brand-50);
     }
     .form-input {
       background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 12px; padding: 12px 16px;
+      border-radius: 12px; padding: 16px 20px;
       font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
       color: var(--brand-00); outline: none; width: 100%;
       transition: border-color 0.2s; -webkit-appearance: none;
@@ -589,7 +608,7 @@
       .booking-overlay { align-items: center; }
       .booking-panel {
         width: 400px; height: auto; max-height: 90dvh;
-        border-radius: 20px;
+        border-radius: 16px;
         box-shadow: 0 0 40px 20px rgba(0,0,0,0.7);
       }
 
@@ -613,7 +632,7 @@
     <a class="header-live-link" id="header-live-link" href="#events-section"
        aria-label="Live event — scroll to card">
       <div class="header-live-dot"></div>
-      <span class="header-live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+      <span class="header-live-label" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
     </a>
     <div class="lang-toggle" id="lang-btn">FR</div>
   </header>
@@ -657,22 +676,22 @@
         <img src="images/profile.png" alt="Momo">
       </div>
       <div class="intro-info">
-        <h1 class="intro-name">Momo Aux Platines</h1>
+        <h1 class="intro-name" data-key="intro.title">Momo Aux Platines</h1>
       </div>
 
       <!-- Tags (all viewports) -->
-      <div class="tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
+      <div class="tags" id="intro-tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
         <span class="tag">DJ</span>
         <span class="tag">TURNTABLIST</span>
-        <span class="tag" data-en="RADIO HOST" data-fr="ANIMATEUR RADIO">RADIO HOST</span>
+        <span class="tag">RADIO HOST</span>
       </div>
 
       <!-- Bio -->
-      <p class="bio" data-en="Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec." data-fr="Plusieurs décennies derrière les platines. Scratch avec des groupes de rap et des DJ tout azimuts, mixant toutes sortes de styles dans des bars branchés, des clubs à mode et dans lors d'événements spéciaux à travers le Québec.">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
+      <p class="bio" data-key="intro.bio" data-en="Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec." data-fr="Plusieurs décennies derrière les platines. Scratch avec des groupes de rap et des DJ tout azimuts, mixant toutes sortes de styles dans des bars branchés, des clubs à mode et dans lors d'événements spéciaux à travers le Québec.">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
 
       <!-- CTA -->
       <div class="ctas intro-ctas" style="flex-direction:column; gap:16px;">
-        <button class="btn" id="book-btn" data-en="BOOK" data-fr="BOOK">BOOK</button>
+        <button class="btn" id="book-btn" data-key="intro.btn.book" data-en="BOOK" data-fr="BOOK">BOOK</button>
       </div>
     </section>
 
@@ -680,7 +699,7 @@
          NEXT EVENTS  (rendered from events.json via JS)
     ══════════════════════════════════════════════ -->
     <div id="next-events-section" class="next-events-section" style="display:none">
-      <h2 class="next-events-heading" data-en="Next Events" data-fr="Prochains Événements">Next Events</h2>
+      <h2 class="next-events-heading" data-key="next-events.heading" data-en="Next Events" data-fr="Prochains Événements">Next Events</h2>
       <div class="next-events-list" id="next-events-list"></div>
     </div>
 
@@ -688,7 +707,7 @@
          REVIEWS
     ══════════════════════════════════════════════ -->
     <section class="reviews">
-      <h2 class="section-heading" data-en="Reviews" data-fr="Avis">Reviews</h2>
+      <h2 class="section-heading" data-key="reviews.heading" data-en="Reviews" data-fr="Avis">Reviews</h2>
       <div class="scroll-row reviews-row">
 
         <div class="review-card">
@@ -701,21 +720,21 @@
               <div class="review-subtitle"><p>La Buvette</p><p>chez Simone</p></div>
             </div>
           </div>
-          <p class="review-text" data-en="Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us." data-fr="Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
+          <p class="review-text" data-key="reviews.simone.text" data-en="Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us." data-fr="Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
           <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
         </div>
 
         <div class="review-card">
           <div class="review-card-header">
             <div class="review-avatar">
-              <img src="images/review-tmo.jpg" alt="TMO">
+              <img src="images/review-tmo.png" alt="TMO">
             </div>
             <div class="review-info">
               <p class="review-name">TMO</p>
               <p class="review-subtitle">Taktika</p>
             </div>
           </div>
-          <p class="review-text" data-en="A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices." data-fr="Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
+          <p class="review-text" data-key="reviews.tmo.text" data-en="A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices." data-fr="Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
           <a class="card-link" href="https://www.instagram.com/taktika_officiel">Instagram</a>
         </div>
 
@@ -729,9 +748,11 @@
               <p class="review-subtitle">Le Birdie</p>
             </div>
           </div>
-          <p class="review-text" data-en="We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!" data-fr="On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
+          <p class="review-text" data-key="reviews.jessie.text" data-en="We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!" data-fr="On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
           <a class="card-link" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
         </div>
+
+        <div id="reviews-dynamic"></div>
 
       </div>
     </section>
@@ -741,64 +762,7 @@
     ══════════════════════════════════════════════ -->
     <section class="demos">
       <h2 class="section-heading">Demos</h2>
-      <div class="scroll-row">
-
-        <div class="video-card">
-          <a href="https://drive.google.com/file/d/1YFO9x3-ie7uVtRg_keZ_XHwTe_Icum3D/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
-            <img class="video-thumb" src="images/video-le-bon-groove.png" alt="Le Bon Groove">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </a>
-          <div class="video-content">
-            <div class="video-info">
-              <p class="video-title">Le Bon Groove</p>
-              <p class="video-desc" data-en="Head nodding on the couch and dancing a bit when getting up to go to the fridge." data-fr="Hocher la tête, danser un peu en allant au frigo.">Head nodding on the couch and dancing a bit when getting up to go to the fridge.</p>
-            </div>
-            <a class="card-link" href="https://drive.google.com/file/d/1YFO9x3-ie7uVtRg_keZ_XHwTe_Icum3D/view?usp=drive_link" target="_blank" rel="noopener" data-en="Play" data-fr="Jouer">Play</a>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <a href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
-            <img class="video-thumb" src="images/video-jazzy-house.png" alt="Jazzy House">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </a>
-          <div class="video-content">
-            <div class="video-info">
-              <p class="video-title">Jazzy House</p>
-              <p class="video-desc" data-en="Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023." data-fr="Extrait d'un stream Twitch 5@7 de deux heures tenus tous les vendredis.">Snippet from a two-hour Twitch 5@7 stream held every Friday. March 15th 2023.</p>
-            </div>
-            <a class="card-link" href="https://drive.google.com/file/d/1q6w9uDzWrJJap6lCZVSTjpv0eH2nQqN3/view?usp=drive_link" target="_blank" rel="noopener" data-en="Play" data-fr="Jouer">Play</a>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <a href="https://drive.google.com/file/d/18mEL6BPIDrNysV6Exuhx7iCnwVg_rc1_/view?usp=drive_link" target="_blank" rel="noopener" class="video-thumb-wrapper">
-            <img class="video-thumb" src="images/video-chill.png" alt="Chill">
-            <img class="play-btn" src="images/video-play-btn.png" alt="Play">
-          </a>
-          <div class="video-content">
-            <div class="video-info">
-              <p class="video-title">Chill</p>
-              <p class="video-desc" data-en="3 songs just to chill out. Great fit for the lounge, the buvette or even the bath." data-fr="Parfait pour le lounge, la buvette ou même le bain.">3 songs just to chill out. Great fit for the lounge, the buvette or even the bath.</p>
-            </div>
-            <a class="card-link" href="https://drive.google.com/file/d/18mEL6BPIDrNysV6Exuhx7iCnwVg_rc1_/view?usp=drive_link" target="_blank" rel="noopener" data-en="Play" data-fr="Jouer">Play</a>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <div class="video-thumb-wrapper">
-            <img class="video-thumb" src="images/video-dancehall.png" alt="Dancehall">
-          </div>
-          <div class="video-content">
-            <div class="video-info">
-              <p class="video-title">Dancehall</p>
-              <p class="video-desc" data-en="Shake your bum bum a bit. Stay classy but move around like you want the right person to see you." data-fr="Restez classy mais bougez votre popotin comme si vous vouliez quelqu'un vous voit.">Shake your bum bum a bit. Stay classy but move around like you want the right person to see you.</p>
-            </div>
-            <span class="card-link-soon" data-en="Coming soon" data-fr="À venir">Coming soon</span>
-          </div>
-        </div>
-
-      </div>
+      <div class="scroll-row" id="demos-scroll-row"></div>
     </section>
 
     <!-- ══════════════════════════════════════════════
@@ -808,7 +772,7 @@
       <h2 class="section-heading">Timeline</h2>
 
       <div class="decade">
-        <p class="decade-title" data-en="1990s" data-fr="Années 1990">1990s</p>
+        <p class="decade-title" data-key="timeline.1990s" data-en="1990s" data-fr="Années 1990">1990s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
@@ -817,7 +781,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
+                <p class="timeline-card-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
                 <p class="timeline-card-dates">1998–1999</p>
               </div>
               <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
@@ -830,7 +794,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
+                <p class="timeline-card-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                 <p class="timeline-card-dates">1998–2002</p>
               </div>
               <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
@@ -840,7 +804,7 @@
       </div>
 
       <div class="decade">
-        <p class="decade-title" data-en="2000s" data-fr="Années 2000">2000s</p>
+        <p class="decade-title" data-key="timeline.2000s" data-en="2000s" data-fr="Années 2000">2000s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
@@ -849,7 +813,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
+                <p class="timeline-card-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                 <p class="timeline-card-dates">2000–2012</p>
               </div>
               <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
@@ -862,7 +826,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                <p class="timeline-card-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                 <p class="timeline-card-dates">2002–2009</p>
               </div>
               <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
@@ -884,7 +848,7 @@
       </div>
 
       <div class="decade">
-        <p class="decade-title" data-en="2010s" data-fr="Années 2010">2010s</p>
+        <p class="decade-title" data-key="timeline.2010s" data-en="2010s" data-fr="Années 2010">2010s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
@@ -893,7 +857,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
+                <p class="timeline-card-desc" data-key="timeline.focus.desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
                 <p class="timeline-card-dates">2010–2020</p>
               </div>
             </div>
@@ -902,7 +866,7 @@
       </div>
 
       <div class="decade">
-        <p class="decade-title" data-en="2020s" data-fr="Années 2020">2020s</p>
+        <p class="decade-title" data-key="timeline.2020s" data-en="2020s" data-fr="Années 2020">2020s</p>
         <div class="scroll-row">
           <div class="timeline-card">
             <div class="timeline-card-header">
@@ -911,7 +875,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
+                <p class="timeline-card-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
                 <p class="timeline-card-dates">2023–2025</p>
               </div>
               <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
@@ -924,7 +888,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
+                <p class="timeline-card-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
                 <p class="timeline-card-dates">2021–2023</p>
               </div>
               <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
@@ -937,7 +901,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
+                <p class="timeline-card-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                 <p class="timeline-card-dates">2021–2023</p>
               </div>
               <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
@@ -950,7 +914,7 @@
             </div>
             <div class="timeline-card-body">
               <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
+                <p class="timeline-card-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
                 <p class="timeline-card-dates">2022–2023</p>
               </div>
               <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
@@ -970,14 +934,14 @@
 
         <!-- 2020s -->
         <div class="timeline-decade-col" data-decade="2020">
-          <p class="decade-title" data-en="2020s" data-fr="Années 2020">2020s</p>
+          <p class="decade-title" data-key="timeline.2020s" data-en="2020s" data-fr="Années 2020">2020s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
               <div class="timeline-thumb-lg"><img src="images/timeline-buvette-simone.jpg" alt="La buvette chez Simone"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">La buvette chez Simone</p>
-                  <p class="timeline-card-lg-desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
                   <p class="timeline-card-lg-dates">2023–2025</p>
                 </div>
                 <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
@@ -988,7 +952,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Twitch</p>
-                  <p class="timeline-card-lg-desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
                 <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
@@ -999,7 +963,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Demain c'est loin</p>
-                  <p class="timeline-card-lg-desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
                 <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
@@ -1010,7 +974,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Les Yeux Bleus</p>
-                  <p class="timeline-card-lg-desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
                   <p class="timeline-card-lg-dates">2022–2023</p>
                 </div>
                 <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
@@ -1021,14 +985,14 @@
 
         <!-- 2010s -->
         <div class="timeline-decade-col" data-decade="2010">
-          <p class="decade-title" data-en="2010s" data-fr="Années 2010">2010s</p>
+          <p class="decade-title" data-key="timeline.2010s" data-en="2010s" data-fr="Années 2010">2010s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
               <div class="timeline-thumb-lg"><img src="images/timeline-focus.png" alt="Focus on the two monsters"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Focus on the two monsters</p>
-                  <p class="timeline-card-lg-desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.focus.desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
                   <p class="timeline-card-lg-dates">2010–2020</p>
                 </div>
               </div>
@@ -1038,14 +1002,14 @@
 
         <!-- 2000s -->
         <div class="timeline-decade-col" data-decade="2000">
-          <p class="decade-title" data-en="2000s" data-fr="Années 2000">2000s</p>
+          <p class="decade-title" data-key="timeline.2000s" data-en="2000s" data-fr="Années 2000">2000s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
               <div class="timeline-thumb-lg"><img src="images/timeline-taktika.jpg" alt="Taktika"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Taktika</p>
-                  <p class="timeline-card-lg-desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                   <p class="timeline-card-lg-dates">2000–2012</p>
                 </div>
                 <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
@@ -1066,7 +1030,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Quebec Kebs</p>
-                  <p class="timeline-card-lg-desc" data-en="DJ for the ABA professional basketball team." data-fr="DJ pour l'équipe de basketball professionnelle de la ABA.">DJ for the ABA professional basketball team.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.quebec-kebs.desc" data-en="DJ for the ABA professional basketball team." data-fr="DJ pour l'équipe de basketball professionnelle de la ABA.">DJ for the ABA professional basketball team.</p>
                   <p class="timeline-card-lg-dates">2006–2009</p>
                 </div>
               </div>
@@ -1076,7 +1040,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">83</p>
-                  <p class="timeline-card-lg-desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                   <p class="timeline-card-lg-dates">2002–2009</p>
                 </div>
                 <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
@@ -1087,7 +1051,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Source @ CHYZ 94.3 FM</p>
-                  <p class="timeline-card-lg-desc" data-en="Host and DJ of a mixed weekly hip-hop radio show." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a mixed weekly hip-hop radio show.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.source.desc" data-en="Host and DJ of a mixed weekly hip-hop radio show." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a mixed weekly hip-hop radio show.</p>
                   <p class="timeline-card-lg-dates">2002–2009</p>
                 </div>
               </div>
@@ -1097,7 +1061,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Red Bull</p>
-                  <p class="timeline-card-lg-desc" data-en="Event DJ for extreme sports activities sponsored by the company." data-fr="DJ événementiel pour les activités de sports extrêmes commanditées par la compagnie.">Event DJ for extreme sports activities sponsored by the company.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.red-bull.desc" data-en="Event DJ for extreme sports activities sponsored by the company." data-fr="DJ événementiel pour les activités de sports extrêmes commanditées par la compagnie.">Event DJ for extreme sports activities sponsored by the company.</p>
                   <p class="timeline-card-lg-dates">2003–2007</p>
                 </div>
               </div>
@@ -1107,7 +1071,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">Pagail</p>
-                  <p class="timeline-card-lg-desc" data-en='Studio recorded scratches on the one and only album "C\'est pour les miens".' data-fr='Scratches sur le seul et unique album "C\'est pour les miens".'>Studio recorded scratches on the one and only album "C'est pour les miens".</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.pagail.desc" data-en='Studio recorded scratches on the one and only album "C\'est pour les miens".' data-fr='Scratches sur le seul et unique album "C\'est pour les miens".'>Studio recorded scratches on the one and only album "C'est pour les miens".</p>
                   <p class="timeline-card-lg-dates">2002</p>
                 </div>
                 <a class="card-link" href="https://tidal.com/album/189830926/u">Tidal</a>
@@ -1118,14 +1082,14 @@
 
         <!-- 1990s -->
         <div class="timeline-decade-col" data-decade="1990">
-          <p class="decade-title" data-en="1990s" data-fr="Années 1990">1990s</p>
+          <p class="decade-title" data-key="timeline.1990s" data-en="1990s" data-fr="Années 1990">1990s</p>
           <div class="timeline-cards-row">
             <div class="timeline-card-lg">
               <div class="timeline-thumb-lg"><img src="images/timeline-la-constellation.jpg" alt="La Constellation"></div>
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">La Constellation</p>
-                  <p class="timeline-card-lg-desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
                   <p class="timeline-card-lg-dates">1998–1999</p>
                 </div>
                 <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
@@ -1136,7 +1100,7 @@
               <div class="timeline-card-lg-body">
                 <div class="timeline-card-lg-copy">
                   <p class="timeline-card-lg-title">AST du Son</p>
-                  <p class="timeline-card-lg-desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
+                  <p class="timeline-card-lg-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                   <p class="timeline-card-lg-dates">1998–2002</p>
                 </div>
                 <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
@@ -1166,7 +1130,7 @@
         <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
         <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
       </div>
-      <p class="footer-copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
+      <p class="footer-copy" data-key="footer.copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
     </footer>
 
   </div><!-- /page-content -->
@@ -1176,8 +1140,8 @@
     <div class="booking-panel">
       <div class="booking-header">
         <div class="booking-titles">
-          <h2 class="booking-title" id="booking-title" data-en="Book Momo" data-fr="Réserver Momo">Book Momo</h2>
-          <p class="booking-subtitle" data-en="Let me know what musical experience you would like to add to your event." data-fr="Dites-moi quelle expérience musicale vous souhaitez ajouter à votre événement.">Let me know what musical experience you would like to add to your event.</p>
+          <h2 class="booking-title" id="booking-title" data-key="booking.title" data-en="Book Momo" data-fr="Réserver Momo">Book Momo</h2>
+          <p class="booking-subtitle" data-key="booking.subtitle" data-en="Let me know what musical experience you would like to add to your event." data-fr="Dites-moi quelle expérience musicale vous souhaitez ajouter à votre événement.">Let me know what musical experience you would like to add to your event.</p>
         </div>
         <button class="booking-close" id="booking-close" aria-label="Close">✕</button>
       </div>
@@ -1188,42 +1152,42 @@
             <circle cx="20" cy="20" r="20" fill="#22C55E"/>
             <polyline points="11,21 17,27 29,14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <p class="booking-confirm-title" data-en="Booking request just sent!" data-fr="Demande de réservation envoyée !">Booking request just sent!</p>
-          <p class="booking-confirm-copy" data-en="Thank you for contacting Momo. I'm excited about this already and will kindly get back to you shortly." data-fr="Merci d'avoir contacté Momo. Je suis déjà enthousiaste à l'idée et je vous reviendrai sous peu.">Thank you for contacting Momo. I'm excited about this already and will kindly get back to you shortly.</p>
+          <p class="booking-confirm-title" data-key="booking.confirm.title" data-en="Booking request just sent!" data-fr="Demande de réservation envoyée !">Booking request just sent!</p>
+          <p class="booking-confirm-copy" data-key="booking.confirm.copy" data-en="Thank you for contacting Momo. I'm excited about this already and will kindly get back to you shortly." data-fr="Merci d'avoir contacté Momo. Je suis déjà enthousiaste à l'idée et je vous reviendrai sous peu.">Thank you for contacting Momo. I'm excited about this already and will kindly get back to you shortly.</p>
         </div>
-        <button class="btn booking-confirm-close" id="booking-confirm-close" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
+        <button class="btn booking-confirm-close" id="booking-confirm-close" data-key="booking.btn.close" data-en="CLOSE" data-fr="FERMER">CLOSE</button>
       </div>
 
       <div class="booking-body" id="booking-body">
         <form class="booking-form" id="booking-form" novalidate>
           <div class="form-field">
-            <label class="form-label" for="field-name" data-en="Name *" data-fr="Nom *">Name *</label>
+            <label class="form-label" for="field-name" data-key="booking.field.name" data-en="Name *" data-fr="Nom *">Name *</label>
             <input class="form-input" id="field-name" type="text" placeholder="Your full name" autocomplete="name" required>
           </div>
           <div class="form-field">
-            <label class="form-label" for="field-phone" data-en="Phone Number *" data-fr="Numéro de téléphone *">Phone Number *</label>
+            <label class="form-label" for="field-phone" data-key="booking.field.phone" data-en="Phone Number *" data-fr="Numéro de téléphone *">Phone Number *</label>
             <input class="form-input" id="field-phone" type="tel" placeholder="+1 (514) 000-0000" autocomplete="tel" required>
           </div>
           <div class="form-field">
-            <label class="form-label" for="field-email" data-en="Email *" data-fr="Courriel *">Email *</label>
+            <label class="form-label" for="field-email" data-key="booking.field.email" data-en="Email *" data-fr="Courriel *">Email *</label>
             <input class="form-input" id="field-email" type="email" placeholder="you@example.com" autocomplete="email" required>
           </div>
           <div class="form-field">
-            <label class="form-label" for="field-company" data-en="Company *" data-fr="Compagnie *">Company *</label>
+            <label class="form-label" for="field-company" data-key="booking.field.company" data-en="Company *" data-fr="Compagnie *">Company *</label>
             <input class="form-input" id="field-company" type="text" placeholder="Your company or venue" autocomplete="organization" required>
           </div>
           <div class="form-field">
-            <label class="form-label" for="field-desc" data-en="Description *" data-fr="Description *">Description *</label>
+            <label class="form-label" for="field-desc" data-key="booking.field.desc" data-en="Description *" data-fr="Description *">Description *</label>
             <textarea class="form-input form-textarea" id="field-desc" placeholder="Describe your event and musical vibe" required></textarea>
           </div>
           <div class="form-field">
-            <label class="form-label" for="field-date" data-en="Date" data-fr="Date">Date</label>
+            <label class="form-label" for="field-date" data-key="booking.field.date" data-en="Date" data-fr="Date">Date</label>
             <input class="form-input" id="field-date" type="date">
           </div>
         </form>
       </div><!-- /booking-body -->
       <div class="booking-footer" id="booking-footer">
-        <button class="btn booking-send" id="booking-send" disabled data-en="SEND" data-fr="ENVOYER">SEND</button>
+        <button class="btn booking-send" id="booking-send" disabled data-key="booking.btn.send" data-en="SEND" data-fr="ENVOYER">SEND</button>
       </div>
     </div>
   </div>
@@ -1435,6 +1399,7 @@
 
   // Is the event happening RIGHT NOW?
   function eventIsLive(ev) {
+    if (ev.show === false) return false;
     if (!ev.date || !ev.start_time) return false;
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
@@ -1455,6 +1420,7 @@
 
   // Is the event upcoming (not yet live, not yet past)?
   function eventIsNext(ev) {
+    if (ev.show === false) return false;
     if (!ev.date) return false;
     const today = todayStr();
     if (ev.date > today) return true;
@@ -1483,6 +1449,25 @@
     return ev.hours || '';
   }
 
+  function getLinkLabel(url) {
+    if (!url) return 'Link';
+    try {
+      const host = new URL(url).hostname.replace(/^www\./, '');
+      if (host.includes('instagram.com'))       return 'Instagram';
+      if (host.includes('facebook.com') || host.includes('fb.com')) return 'Facebook';
+      if (host.includes('youtube.com') || host.includes('youtu.be')) return 'YouTube';
+      if (host.includes('tiktok.com'))          return 'TikTok';
+      if (host.includes('twitter.com') || host.includes('x.com')) return 'X';
+      if (host.includes('soundcloud.com'))      return 'SoundCloud';
+      if (host.includes('spotify.com'))         return 'Spotify';
+      if (host.includes('twitch.tv'))           return 'Twitch';
+      if (host.includes('residentadvisor.net') || host.includes('ra.co')) return 'Resident Advisor';
+      if (host.includes('ticketmaster.com'))    return 'Ticketmaster';
+      if (host.includes('eventbrite.com'))      return 'Eventbrite';
+      return 'Link';
+    } catch { return 'Link'; }
+  }
+
   function setHeaderLive(isLive) {
     const hdr  = document.getElementById('site-header');
     const link = document.getElementById('header-live-link');
@@ -1502,7 +1487,7 @@
         liveSection.style.display = 'none';
       } else {
         liveSection.style.display = 'flex';
-        liveSection.innerHTML = '';
+        liveSection.innerHTML = '<p class="live-section-heading" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</p>';
         live.forEach(ev => {
           const card = document.createElement('div');
           card.className = 'event-card-home';
@@ -1510,21 +1495,19 @@
             <div class="event-card-home-top">
               <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
                    onerror="this.style.background='var(--brand-90)'">
-              <div class="event-card-home-live">
+              <div class="ev-live-status">
                 <div class="ev-live-dot"></div>
-                <span class="ev-live-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+                <span class="ev-live-label" data-key="next-events.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
               </div>
             </div>
-            <a class="ev-go-btn" href="request.html"
-               data-en="GO TO EVENT PAGE" data-fr="ALLER À LA PAGE DE L'ÉVÉNEMENT">GO TO EVENT PAGE</a>
+            <p class="ev-venue-name">${ev.venue}</p>
             <div class="ev-content">
-              <div class="ev-content-copy">
-                <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${stripPostalCode(ev.address)}</p>
-                <p class="ev-hours">${formatHours(ev)}</p>
-              </div>
-              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
-            </div>`;
+              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
+            </div>
+            <a class="ev-go-btn" href="/requests${ev.slug ? '?event=' + encodeURIComponent(ev.slug) : ''}"
+               data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
           liveSection.appendChild(card);
         });
       }
@@ -1549,13 +1532,11 @@
                    onerror="this.style.background='var(--brand-90)'">
               <span class="ev-next-label">${formatShortDate(ev.date)}</span>
             </div>
+            <p class="ev-venue-name">${ev.venue}</p>
             <div class="ev-content">
-              <div class="ev-content-copy">
-                <p class="ev-venue-name">${ev.venue}</p>
-                <p class="ev-address">${stripPostalCode(ev.address)}</p>
-                <p class="ev-hours">${formatHours(ev)}</p>
-              </div>
-              <a class="ev-ig" href="${ev.instagram}" target="_blank" rel="noopener">Instagram</a>
+              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
             </div>`;
           nextList.appendChild(card);
         });
@@ -1568,21 +1549,181 @@
   // Re-check visibility every minute (card auto-hides when window closes)
   setInterval(renderEvents, 60_000);
 
+  // ── Toggle expand/collapse for home event cards ──
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.ev-details-btn');
+    if (!btn) return;
+    const card     = btn.closest('.event-card-home');
+    if (!card) return;
+    const expanded = card.querySelector('.ev-expanded');
+    const caret    = btn.querySelector('.ev-details-caret');
+    if (!expanded) return;
+    const isOpen = expanded.classList.toggle('visible');
+    if (caret) caret.src = isOpen ? 'images/caret-up.png' : 'images/caret-down.png';
+  });
+
   // ── Language toggle ──
   let currentLang = 'en';
   const langBtn = document.getElementById('lang-btn');
+  const COPY = { en: {}, fr: {} };
+
+  // Load copy: try the API first, fall back to the static JSON file
+  async function fetchCopy(lang) {
+    try {
+      const r = await fetch(`/api/copy?lang=${lang}`);
+      if (r.ok) { const d = await r.json(); if (d && d['demos.registry']) return d; }
+    } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+
+  // Load both copy files in parallel; re-apply once loaded
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
+    COPY.en = en; COPY.fr = fr;
+    applyLang(currentLang);
+  });
+
+  // Live-sync: admin broadcasts copy changes to open tabs instantly
+  try {
+    new BroadcastChannel('momo-copy').onmessage = ({ data: msg }) => {
+      if (msg.lang && msg.data) {
+        COPY[msg.lang] = msg.data;
+        renderDynamicDemos(currentLang);
+        renderDynamicReviews(currentLang);
+      }
+    };
+  } catch (_) {}
+
+  // Re-fetch copy when tab becomes visible (always fresh from Blob store)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    Promise.all([
+      fetch('/api/copy?lang=en').then(r => r.json()).catch(() => null),
+      fetch('/api/copy?lang=fr').then(r => r.json()).catch(() => null)
+    ]).then(([en, fr]) => {
+      if (en) COPY.en = en;
+      if (fr) COPY.fr = fr;
+      renderDynamicDemos(currentLang);
+      renderDynamicReviews(currentLang);
+    });
+  });
 
   function applyLang(lang) {
-    document.querySelectorAll('[data-en]').forEach(el => {
-      el.textContent = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val
+        : lang === 'fr' ? (el.dataset.fr || el.textContent)
+        : (el.dataset.en || el.textContent);
     });
+    // Fallback for any elements without data-key
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
+      el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
+    });
+    // Render intro tags from pipe-separated copy key
+    const tagsContainer = document.getElementById('intro-tags');
+    if (tagsContainer && copy['intro.tags']) {
+      tagsContainer.innerHTML = copy['intro.tags'].split('|')
+        .map(t => `<span class="tag">${t.trim()}</span>`).join('');
+    }
     langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
     currentLang = lang;
+    renderDynamicReviews(lang);
+    renderDynamicDemos(lang);
+  }
+
+  function renderDynamicReviews(lang) {
+    const container = document.getElementById('reviews-dynamic');
+    if (!container) return;
+    const copy = COPY[lang] || COPY.en || {};
+    const registry = (copy['reviews.registry'] || '').split('|').filter(Boolean);
+    // Newest first
+    const sorted = [...registry].reverse();
+    container.innerHTML = '';
+    sorted.forEach(id => {
+      const name      = copy[`reviews.${id}.name`]      || id;
+      const venue     = copy[`reviews.${id}.venue`]     || '';
+      const instagram = copy[`reviews.${id}.instagram`] || '';
+      const avatar    = copy[`reviews.${id}.avatar`]    || '';
+      const text      = copy[`reviews.${id}.text`]      || '';
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="review-card-header">
+          <div class="review-avatar">
+            <img src="${avatar}" alt="${name}" onerror="this.style.background='var(--brand-90)'">
+          </div>
+          <div class="review-info">
+            <p class="review-name">${name}</p>
+            ${venue ? `<p class="review-subtitle">${venue}</p>` : ''}
+          </div>
+        </div>
+        <p class="review-text">${text}</p>
+        ${instagram ? `<a class="card-link" href="${instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}`;
+      container.appendChild(card);
+    });
+  }
+
+  function renderDynamicDemos(lang) {
+    const container = document.getElementById('demos-scroll-row');
+    if (!container) return;
+    // Don't re-render while a video is playing — it would destroy the iframe
+    if (container.querySelector('iframe')) return;
+    const copy = COPY[lang] || COPY.en || {};
+    const enCopy = COPY.en || {};
+    const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
+    // Sort: newest demos on the left, coming-soon at the end
+    const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
+    const comingSoon = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
+    const sorted = [...available.slice().reverse(), ...comingSoon];
+    container.innerHTML = '';
+    sorted.forEach(id => {
+      const title  = copy[`demos.${id}.title`]  || id;
+      const desc   = copy[`demos.${id}.desc`]   || enCopy[`demos.${id}.desc`] || '';
+      const avatar = copy[`demos.${id}.avatar`] || '';
+      const link   = copy[`demos.${id}.link`]   || '';
+      const soon   = copy[`demos.${id}.coming-soon`] === 'true';
+      // Extract YouTube ID from full URL or short URL
+      let ytId = '';
+      const ytMatch = link.match(/[?&]v=([^&]+)/) || link.match(/youtu\.be\/([^?&/]+)/);
+      if (ytMatch) ytId = ytMatch[1];
+      const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '';
+      const thumbSrc = ytThumb || avatar;
+      const thumbHtml = thumbSrc
+        ? `<img class="video-thumb" src="${thumbSrc}" alt="${title}">`
+        : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
+      const playHtml  = (!soon && ytId) ? `<img class="play-btn" src="images/video-play-btn.png" alt="">` : '';
+      const ytAttr    = (!soon && ytId) ? ` data-ytid="${ytId}"` : '';
+      const linkHtml  = soon
+        ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
+        : '';
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <div class="video-thumb-wrapper"${ytAttr}>${thumbHtml}${playHtml}</div>
+        <div class="video-content">
+          <div class="video-info">
+            <p class="video-title">${title}</p>
+            ${desc ? `<p class="video-desc">${desc}</p>` : ''}
+          </div>
+          ${linkHtml}
+        </div>`;
+      // Click-to-embed: swap thumbnail for inline YouTube iframe
+      const wrapper = card.querySelector('.video-thumb-wrapper[data-ytid]');
+      if (wrapper) {
+        wrapper.addEventListener('click', () => {
+          const id = wrapper.dataset.ytid;
+          wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+        }, { once: true });
+      }
+      container.appendChild(card);
+    });
   }
 
   langBtn.addEventListener('click', () => {
     applyLang(currentLang === 'en' ? 'fr' : 'en');
   });
+
 
   // Netlify Identity — redirect to admin after login via invite link
   if (window.netlifyIdentity) {
@@ -1595,8 +1736,137 @@
     });
   }
 
-  // Load events.json and render cards
-  fetch('events.json')
+  // ─────────────────────────────────────────────
+  // Stamp drag-to-rotate interaction
+  // Drag down → clockwise + scratch-forth sound
+  // Drag up   → counter-clockwise + scratch-back sound
+  // ─────────────────────────────────────────────
+  (function () {
+    const container = document.querySelector('.stamp-section .stamp-container');
+    const stamp     = document.querySelector('.stamp-section .stamp-component');
+    if (!container || !stamp) return;
+
+    const PX_PER_DEG = 0.7; // sensitivity
+
+    let dragging      = false;
+    let startY        = 0;
+    let baseAngle     = 0;
+    let lastY         = 0;
+    let lastDirection = 0; // 1 = down, -1 = up
+
+    // ── Audio (Web Audio API — pre-decoded PCM for zero-latency playback) ──
+    const audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
+    let buffers       = { forth: null, back: null };
+    let activeSource  = null;
+    let audioReady    = false;
+
+    // Decode both files eagerly in the background
+    async function decodeBuffer(url) {
+      const res = await fetch(url);
+      const ab  = await res.arrayBuffer();
+      return audioCtx.decodeAudioData(ab);
+    }
+    Promise.all([decodeBuffer('/audio/scratch-forth.mp3'), decodeBuffer('/audio/scratch-back.mp3')])
+      .then(([forth, back]) => { buffers.forth = forth; buffers.back = back; })
+      .catch(() => {});
+
+    // Resume AudioContext inside the first user gesture (required by iOS/Android)
+    function primeAudio() {
+      if (audioReady) return;
+      audioReady = true;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(key) {
+      const buf = buffers[key];
+      if (!buf) return;
+      stopSound();
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(audioCtx.destination);
+      src.start(0);
+      activeSource = src;
+    }
+
+    function stopSound() {
+      if (!activeSource) return;
+      try { activeSource.stop(); } catch (_) {}
+      activeSource = null;
+    }
+
+    function getCurrentAngle() {
+      const m = new DOMMatrix(window.getComputedStyle(stamp).transform);
+      const a = Math.atan2(m.b, m.a) * (180 / Math.PI);
+      return ((a % 360) + 360) % 360;
+    }
+
+    function getScale() {
+      return window.matchMedia('(min-width: 640px)').matches ? 0.7865 : 0.4893;
+    }
+
+    function setAngle(angle) {
+      stamp.style.transform = `translate(-50%,-50%) scale(${getScale()}) rotate(${angle}deg)`;
+    }
+
+    function startDrag(y) {
+      primeAudio(); // must run synchronously inside touchstart to unlock audio on mobile
+      baseAngle     = getCurrentAngle();
+      stamp.style.animation = 'none';
+      setAngle(baseAngle);
+      dragging      = true;
+      startY        = y;
+      lastY         = y;
+      lastDirection = 0;
+    }
+
+    function moveDrag(y) {
+      if (!dragging) return;
+      setAngle(baseAngle + (y - startY) * PX_PER_DEG);
+
+      const delta = y - lastY;
+      if (delta !== 0) {
+        const dir = delta > 0 ? 1 : -1;
+        if (dir !== lastDirection) {
+          lastDirection = dir;
+          playSound(dir > 0 ? 'forth' : 'back');
+        }
+      }
+      lastY = y;
+    }
+
+    function endDrag(y) {
+      if (!dragging) return;
+      dragging = false;
+      stopSound();
+      const finalAngle = ((baseAngle + (y - startY) * PX_PER_DEG) % 360 + 360) % 360;
+      // Resume auto-spin from the current angle
+      const animName = window.matchMedia('(min-width: 640px)').matches
+        ? 'spin-cw-tablet' : 'spin-cw-mobile';
+      const delay = -(finalAngle / 360 * 60);
+      stamp.style.transform  = '';
+      stamp.style.animation  = `${animName} 60s ${delay}s linear infinite`;
+    }
+
+    // Mouse
+    container.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientY); });
+    window.addEventListener('mousemove',    e => { moveDrag(e.clientY); });
+    window.addEventListener('mouseup',      e => { endDrag(e.clientY); });
+
+    // Touch
+    container.addEventListener('touchstart', e => {
+      e.preventDefault();
+      startDrag(e.touches[0].clientY);
+    }, { passive: false });
+    window.addEventListener('touchmove', e => {
+      if (dragging) { e.preventDefault(); moveDrag(e.touches[0].clientY); }
+    }, { passive: false });
+    window.addEventListener('touchend', e => {
+      if (dragging) endDrag(e.changedTouches[0].clientY);
+    });
+  })();
+
+  // Load events from Blob store (always fresh, no deploy needed)
+  fetch('/api/events')
     .then(r => r.json())
     .then(data => {
       window.MOMO_EVENTS = Array.isArray(data) ? data : (data.events || []);
