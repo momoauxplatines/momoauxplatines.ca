@@ -673,7 +673,7 @@
 
     <section class="intro">
       <div class="avatar">
-        <img src="images/profile.png" alt="Momo">
+        <img id="intro-avatar" src="images/profile.png" alt="Momo">
       </div>
       <div class="intro-info">
         <h1 class="intro-name" data-key="intro.title">Momo Aux Platines</h1>
@@ -1620,6 +1620,9 @@
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
     });
+    // Update profile photo if overridden via Blob store
+    const introAvatar = document.getElementById('intro-avatar');
+    if (introAvatar && copy['intro.avatar']) introAvatar.src = copy['intro.avatar'];
     // Render intro tags from pipe-separated copy key
     const tagsContainer = document.getElementById('intro-tags');
     if (tagsContainer && copy['intro.tags']) {

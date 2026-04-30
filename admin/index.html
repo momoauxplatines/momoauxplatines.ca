@@ -720,7 +720,7 @@
     const card = document.getElementById('intro-card');
     card.innerHTML = `
       <div class="card-avatar" style="border-radius:8px;">
-        <img src="../images/profile.png" alt="Momo">
+        <img src="${copy('intro.avatar') || '../images/profile.png'}" alt="Momo">
       </div>
       <p class="card-name">${esc(copy('intro.title') || 'MOMO AUX PLATINES')}</p>
       <p class="card-sub">${esc((copy('intro.tags') || '').replace(/\|/g, ' · '))}</p>
@@ -914,7 +914,7 @@
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview">
-            <img id="ef-img-preview" src="../images/profile.png" alt="Profile">
+            <img id="ef-img-preview" src="${copy('intro.avatar') || '../images/profile.png'}" alt="Profile">
           </div>
           <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
         </div>
@@ -1265,18 +1265,11 @@
     saveBtn.textContent = 'Saving…';
     try {
       if (editFormType === 'intro') {
-        // Upload new profile image if selected
         const imgInput = document.getElementById('ef-img-input');
         if (imgInput && imgInput.files[0]) {
-          const file = imgInput.files[0];
-          const base64 = (await blobToBase64(file)).split(',')[1];
-          const check = await ghFetch(`/repos/${REPO}/contents/images/profile.png`);
-          const body = { message: 'Update profile photo via admin', content: base64, branch: BRANCH };
-          if (check.ok) body.sha = (await check.json()).sha;
-          const up = await ghFetch(`/repos/${REPO}/contents/images/profile.png`, {
-            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-          });
-          if (!up.ok) throw new Error(`Image upload failed: ${up.status}`);
+          const blobUrl = await uploadImageToBlob(imgInput.files[0], 'intro/profile.jpg');
+          copyData['en']['intro.avatar'] = blobUrl;
+          if (copyData['fr']) copyData['fr']['intro.avatar'] = blobUrl;
         }
         copyData[currentLang]['intro.title']    = document.getElementById('ef-title').value;
         copyData[currentLang]['intro.bio']      = document.getElementById('ef-bio').value;
