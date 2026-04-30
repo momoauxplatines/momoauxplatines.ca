@@ -1790,6 +1790,7 @@
         <div class="req-info">
           <p class="req-title">${escReq(r.title)}</p>
           ${r.artist   ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
+          ${r.url      ? `<a class="req-artist" href="${escReq(r.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Spotify</a>` : ''}
           ${timeStr    ? `<p class="req-time">${escReq(timeStr)}</p>`    : ''}
           ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">Supprimée — invisible sur la page publique</p>` : ''}
         </div>

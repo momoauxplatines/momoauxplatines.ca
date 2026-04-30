@@ -315,6 +315,13 @@
       color: var(--green); font-size: 16px; font-weight: 300;
     }
     .now-playing-state svg { flex-shrink: 0; }
+    .now-playing-link {
+      font-weight: 300; font-size: 14px; line-height: 18px;
+      color: var(--brand-50); text-decoration: underline;
+      text-decoration-color: var(--brand-80);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-link:hover { color: var(--brand-30); }
 
     /* ── Request Overlay — same structure as Booking overlay ── */
     .request-overlay {
@@ -676,11 +683,12 @@
   <!-- Now Playing Footer -->
   <div class="now-playing-bar" id="now-playing-bar">
     <div class="now-playing-card">
-      <img class="now-playing-art" src="https://i.scdn.co/image/ab67616d0000b2732e8ed79e177ff6011076f5f0" alt="Get Busy"
+      <img class="now-playing-art" id="now-playing-art" src="" alt=""
            onerror="this.style.background='var(--brand-90)'">
       <div class="now-playing-info">
-        <p class="now-playing-title">Get Busy</p>
-        <p class="now-playing-artist">Sean Paul</p>
+        <p class="now-playing-title" id="now-playing-title"></p>
+        <p class="now-playing-artist" id="now-playing-artist"></p>
+        <a class="now-playing-link" id="now-playing-link" href="" target="_blank" rel="noopener" style="display:none">Spotify</a>
         <div class="now-playing-state">
           <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
             <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
@@ -1459,6 +1467,23 @@
           }
           localStorage.setItem('momo_artwork_cache', JSON.stringify(artworkCache));
         } catch { /* no credentials or token failure */ }
+      }
+
+      // Update now-playing bar with the most recent track
+      const nowTrack = tracks[0];
+      if (nowTrack) {
+        const c = artworkCache[nowTrack.id];
+        const npArt    = document.getElementById('now-playing-art');
+        const npTitle  = document.getElementById('now-playing-title');
+        const npArtist = document.getElementById('now-playing-artist');
+        const npLink   = document.getElementById('now-playing-link');
+        if (npArt)    { npArt.src = c?.image || ''; npArt.alt = c?.title || nowTrack.title; }
+        if (npTitle)  npTitle.textContent  = c?.title  || nowTrack.title;
+        if (npArtist) npArtist.textContent = c?.artist || nowTrack.artist;
+        if (npLink) {
+          if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
+          else npLink.style.display = 'none';
+        }
       }
 
       // Render into Played list
