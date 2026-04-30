@@ -1424,12 +1424,12 @@
     const card = document.createElement('div');
     card.className = 'song-card';
     card.innerHTML = `
-      <img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(artist)}"
+      <img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(title)}"
            onerror="this.style.background='var(--brand-90)'">
       <div class="song-info">
         <div class="song-text-group">
-          <p class="song-artist">${safeHtml(artist)}</p>
           <p class="song-title">${safeHtml(title)}</p>
+          ${artist ? `<p class="song-artist">${safeHtml(artist)}</p>` : ''}
         </div>
         ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
       </div>
