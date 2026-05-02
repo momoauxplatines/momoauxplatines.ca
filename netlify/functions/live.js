@@ -113,13 +113,36 @@ exports.handler = async (event) => {
     let session = null;
 
     if (targetDate) {
-      // 1a. Try the date as a direct slug — live sessions are usually named YYYY-MM-DD
-      const directUrl = `https://serato.com/playlists/${SERATO_USER}/${targetDate}`;
-      const directHtml = await get(directUrl);
-      if (directHtml.includes('playlist-trackname')) {
-        session = targetDate;
-      } else {
-        // 1b. Scan the public listings page for a playlist whose date matches
+      // 1. Fetch the /live URL first — Serato publishes the actively-streaming session
+      //    there before it appears in listings or at its permanent date slug.
+      const liveHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
+
+      // 1a. If the /live page itself already has tracks (redirected to session page),
+      //     check that its slug matches our target date before using it.
+      if (liveHtml.includes('playlist-trackname')) {
+        const liveSlug = (liveHtml.match(
+          new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
+        ) || [])[1];
+        if (liveSlug === targetDate) {
+          session = liveSlug; // tracks will be parsed from sessionHtml below
+        }
+      }
+
+      // 1b. Look for a listing entry in the /live page whose date matches targetDate.
+      //     This handles sessions that Serato names with the date slug.
+      if (!session) {
+        const slugFromLive = findSlugByDate(liveHtml, targetDate);
+        if (slugFromLive) session = slugFromLive;
+      }
+
+      // 1c. Try the permanent date slug URL directly (completed sessions).
+      if (!session) {
+        const directHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${targetDate}`);
+        if (directHtml.includes('playlist-trackname')) session = targetDate;
+      }
+
+      // 1d. Scan the full public listings page as a last resort.
+      if (!session) {
         const listingsHtml = await get(`https://serato.com/playlists/${SERATO_USER}`);
         session = findSlugByDate(listingsHtml, targetDate);
       }

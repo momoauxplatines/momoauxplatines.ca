@@ -869,17 +869,21 @@
 
   function checkEventLive(ev) {
     if (!ev.date || !ev.start_time) return false;
-    const now     = new Date();
-    const today   = now.toISOString().slice(0, 10);
+    const now = new Date();
+    // Use local clock throughout — event times are entered in local time
+    const y = now.getFullYear(), mo = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0');
+    const today   = `${y}-${mo}-${d}`;
     const nowMins = now.getHours() * 60 + now.getMinutes();
     const start   = parseMins(ev.start_time);
     const end     = parseMins(ev.end_time);
     if (end === null) return ev.date === today && nowMins >= start;
-    const overnight = start > end;
+    const overnight = start > end; // e.g. 23:00 → 02:00
     if (overnight) {
-      const nextDay = new Date(ev.date + 'T00:00:00');
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayStr = nextDay.toISOString().slice(0, 10);
+      // nextDay relative to ev.date, in local time
+      const evMidnight = new Date(ev.date + 'T00:00:00');
+      evMidnight.setDate(evMidnight.getDate() + 1);
+      const ny = evMidnight.getFullYear(), nm = String(evMidnight.getMonth() + 1).padStart(2, '0'), nd = String(evMidnight.getDate()).padStart(2, '0');
+      const nextDayStr = `${ny}-${nm}-${nd}`;
       return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
     }
     return ev.date === today && nowMins >= start && nowMins < end;
