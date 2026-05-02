@@ -944,6 +944,7 @@
 
         // Show LIVE indicator + tabs only when event is actually live
         if (checkEventLive(ev)) {
+          gigDate = ev.date || null; // pass gig date to Serato playlist matcher
           document.getElementById('event-live-row').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           document.getElementById('tabs-row').style.display = '';
@@ -1422,6 +1423,7 @@
   let liveSessionSlug  = null;
   let renderedTrackIds = new Set(); // tracks already shown in Played list
   let baselineTrackIds = null;      // IDs present at first poll — excluded from Played list
+  let gigDate          = null;      // YYYY-MM-DD of the current gig — set when event goes live
 
   function safeHtml(str) {
     return String(str || '')
@@ -1465,7 +1467,8 @@
 
   async function pollLivePlaylist() {
     try {
-      const res = await fetch('/api/live');
+      const liveUrl = gigDate ? `/api/live?date=${encodeURIComponent(gigDate)}` : '/api/live';
+      const res = await fetch(liveUrl);
       if (!res.ok) return;
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];

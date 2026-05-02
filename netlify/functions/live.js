@@ -1,13 +1,34 @@
 /**
  * Netlify Function: /api/live
  * Proxies Serato playlist data to avoid CORS.
- * Returns the most recent session's tracks as JSON.
- * Spotify artwork is looked up client-side using the credentials in request.html.
+ *
+ * Query params:
+ *   date  – YYYY-MM-DD of the gig. When provided the function finds the
+ *            Serato playlist whose date matches and returns its tracks.
+ *            Omit for legacy/demo mode (returns the most recent live session).
+ *
+ * Spotify artwork is looked up client-side.
  */
 
 const https = require('https');
 
 const SERATO_USER = 'DJ_Muhammad_Alias';
+
+// Month abbreviation → zero-padded number
+const MONTHS = {
+  Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+  Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+};
+
+// "16 Apr 2026" → "2026-04-16"
+function seratoDateToISO(str) {
+  const parts = str.trim().split(/\s+/);
+  if (parts.length !== 3) return null;
+  const [day, mon, year] = parts;
+  const m = MONTHS[mon];
+  if (!m) return null;
+  return `${year}-${m}-${day.padStart(2, '0')}`;
+}
 
 // Simple HTTPS GET with redirect support
 function get(url, redirects = 0) {
@@ -35,12 +56,10 @@ function get(url, redirects = 0) {
 }
 
 function parseTrackName(raw) {
-  // Strip (Explicit), (feat. ...) from track names
   const clean = raw
     .replace(/\s*\(Explicit\)/gi, '')
     .replace(/\s*\(feat\.[^)]+\)/gi, '')
     .trim();
-
   const sep = clean.indexOf(' - ');
   if (sep === -1) return { artist: '', title: clean };
   return {
@@ -49,58 +68,93 @@ function parseTrackName(raw) {
   };
 }
 
-exports.handler = async () => {
+function parseTracks(html) {
+  const tracks = [];
+  const re = /id="(track_\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/div>/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const raw = m[2].replace(/<[^>]+>/g, '').trim();
+    if (!raw) continue;
+    const { artist, title } = parseTrackName(raw);
+    tracks.push({ id: m[1], artist, title });
+  }
+  tracks.reverse(); // most recent first
+  return tracks;
+}
+
+// Find a session slug matching a target ISO date by scanning the listings page.
+// Split on playlist-card boundaries so slug+date are always paired correctly.
+function findSlugByDate(listingsHtml, targetDate) {
+  const cards = listingsHtml.split(/<div\s+id="pl-\d+"/);
+  for (const card of cards.slice(1)) {
+    const slugMatch = card.match(
+      new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
+    );
+    const dateMatch = card.match(/<span class="playlist-start-time">([^<]+)<\/span>/);
+    if (!slugMatch || !dateMatch) continue;
+    const iso = seratoDateToISO(dateMatch[1]);
+    if (iso === targetDate) return slugMatch[1];
+  }
+  return null;
+}
+
+exports.handler = async (event) => {
   const CORS = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
   };
 
-  try {
-    // 1. Fetch the profile page to find the most recent session slug
-    const indexHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
+  // YYYY-MM-DD of the current gig, or null for legacy demo mode
+  const qs = event.queryStringParameters || {};
+  const targetDate = qs.date || null;
 
-    // First playlist link in the index (most recent session)
-    const slugMatch = indexHtml.match(
-      new RegExp(`href="\/playlists\/${SERATO_USER}\/([^"/?#]+)"`)
-    );
-    if (!slugMatch) {
+  try {
+    let session = null;
+
+    if (targetDate) {
+      // 1a. Try the date as a direct slug — live sessions are usually named YYYY-MM-DD
+      const directUrl = `https://serato.com/playlists/${SERATO_USER}/${targetDate}`;
+      const directHtml = await get(directUrl);
+      if (directHtml.includes('playlist-trackname')) {
+        session = targetDate;
+      } else {
+        // 1b. Scan the public listings page for a playlist whose date matches
+        const listingsHtml = await get(`https://serato.com/playlists/${SERATO_USER}`);
+        session = findSlugByDate(listingsHtml, targetDate);
+      }
+    } else {
+      // Legacy / demo mode: use the most recent live session
+      const indexHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
+      const slugMatch = indexHtml.match(
+        new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
+      );
+      if (slugMatch) session = slugMatch[1];
+    }
+
+    if (!session) {
       return {
         statusCode: 200,
         headers: CORS,
-        body: JSON.stringify({ tracks: [], session: null })
+        body: JSON.stringify({ tracks: [], session: null }),
       };
     }
-    const session = slugMatch[1];
 
-    // 2. Fetch the session page
+    // 2. Fetch the session page and parse tracks
     const sessionHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${session}`);
-
-    // 3. Parse .playlist-track elements
-    const tracks = [];
-    const re = /id="(track_\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/div>/g;
-    let m;
-    while ((m = re.exec(sessionHtml)) !== null) {
-      const raw = m[2].replace(/<[^>]+>/g, '').trim(); // strip any inner tags
-      if (!raw) continue;
-      const { artist, title } = parseTrackName(raw);
-      tracks.push({ id: m[1], artist, title });
-    }
-
-    // Most recent track first
-    tracks.reverse();
+    const tracks = parseTracks(sessionHtml);
 
     return {
       statusCode: 200,
       headers: CORS,
-      body: JSON.stringify({ tracks, session })
+      body: JSON.stringify({ tracks, session }),
     };
 
   } catch (err) {
     return {
       statusCode: 500,
       headers: CORS,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
