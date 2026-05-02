@@ -1420,7 +1420,8 @@
   // ─────────────────────────────────────────────
   let artworkCache     = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
   let liveSessionSlug  = null;
-  let liveTrackIds     = new Set();
+  let renderedTrackIds = new Set(); // tracks already shown in Played list
+  let baselineTrackIds = null;      // IDs present at first poll — excluded from Played list
 
   function safeHtml(str) {
     return String(str || '')
@@ -1447,25 +1448,54 @@
     return card;
   }
 
+  function updateNowPlayingBar(track) {
+    const c        = artworkCache[track.id];
+    const npArt    = document.getElementById('now-playing-art');
+    const npTitle  = document.getElementById('now-playing-title');
+    const npArtist = document.getElementById('now-playing-artist');
+    const npLink   = document.getElementById('now-playing-link');
+    if (npArt)    { npArt.src = c?.image || ''; npArt.alt = c?.title || track.title; }
+    if (npTitle)  npTitle.textContent  = c?.title  || track.title;
+    if (npArtist) npArtist.textContent = c?.artist || track.artist;
+    if (npLink) {
+      if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
+      else npLink.style.display = 'none';
+    }
+  }
+
   async function pollLivePlaylist() {
     try {
       const res = await fetch('/api/live');
       if (!res.ok) return;
       const { tracks, session } = await res.json();
-      if (!tracks?.length) return;
+      const allTracks = tracks || [];
 
-      // Skip render if nothing changed
-      const newIds = new Set(tracks.map(t => t.id));
-      const hasNew = [...newIds].some(id => !liveTrackIds.has(id));
-      if (!hasNew && session === liveSessionSlug) return;
-      liveSessionSlug = session;
-      liveTrackIds    = newIds;
+      // First successful poll: capture the pre-existing tracks as baseline.
+      // The Played section always starts empty — only new additions are shown.
+      if (baselineTrackIds === null) {
+        baselineTrackIds = new Set(allTracks.map(t => t.id));
+        liveSessionSlug  = session;
+        if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
+        return;
+      }
 
-      // Spotify artwork for uncached tracks
+      // Only tracks added to Serato after page load belong in the Played list
+      const freshTracks = allTracks.filter(t => !baselineTrackIds.has(t.id));
+
+      // Skip re-render if nothing changed
+      const hasNew = freshTracks.some(t => !renderedTrackIds.has(t.id));
+      if (!hasNew && session === liveSessionSlug) {
+        if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
+        return;
+      }
+      liveSessionSlug  = session;
+      renderedTrackIds = new Set(freshTracks.map(t => t.id));
+
+      // Spotify artwork for uncached fresh tracks
       if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
         try {
           const token = await getSpotifyToken();
-          for (const t of tracks) {
+          for (const t of freshTracks) {
             if (!artworkCache[t.id] && t.artist && t.title) {
               try {
                 const info = await searchSpotifyTrack(token, t.artist, t.title);
@@ -1477,27 +1507,13 @@
         } catch { /* no credentials or token failure */ }
       }
 
-      // Update now-playing bar with the most recent track
-      const nowTrack = tracks[0];
-      if (nowTrack) {
-        const c = artworkCache[nowTrack.id];
-        const npArt    = document.getElementById('now-playing-art');
-        const npTitle  = document.getElementById('now-playing-title');
-        const npArtist = document.getElementById('now-playing-artist');
-        const npLink   = document.getElementById('now-playing-link');
-        if (npArt)    { npArt.src = c?.image || ''; npArt.alt = c?.title || nowTrack.title; }
-        if (npTitle)  npTitle.textContent  = c?.title  || nowTrack.title;
-        if (npArtist) npArtist.textContent = c?.artist || nowTrack.artist;
-        if (npLink) {
-          if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
-          else npLink.style.display = 'none';
-        }
-      }
+      // Now-playing bar always shows the most recent track overall
+      if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
 
-      // Render into Played list
+      // Played list shows only freshTracks (new since page load)
       const list = document.getElementById('played-list');
       list.innerHTML = '';
-      for (const t of tracks) {
+      for (const t of freshTracks) {
         const cached = artworkCache[t.id];
         list.appendChild(buildPlayedCard(
           cached?.artist     || t.artist,
