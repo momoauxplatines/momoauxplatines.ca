@@ -996,8 +996,14 @@
     tabPlayed.className    = 'tab-btn inactive';
     requestedList.classList.remove('hidden');
     playedList.classList.add('hidden');
-    // Always sync before rendering so icons reflect the latest played status
-    syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
+    if (EVENT_SLUG) {
+      // Event-specific page: show cached data instantly, then refresh from API in background
+      if (allRequestsCache.length) renderAllRequests(allRequestsCache);
+      fetchAndRenderAllRequests();
+    } else {
+      // General live page: sync before rendering user's own requests
+      syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
+    }
   });
 
   // ─────────────────────────────────────────────
