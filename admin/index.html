@@ -13,7 +13,7 @@
     :root {
       --bg: #111210; --brand-00: #FAFBF9; --brand-10: #F4F6F3;
       --brand-20: #EAEDE5; --brand-30: #DEE4DA; --brand-40: #D5DCCC;
-      --brand-50: #C9D3C0; --brand-60: #A2A99A; --brand-80: #51534E;
+      --brand-50: #C9D3C0; --brand-60: #A2A99A; --brand-70: #797f73; --brand-80: #51534E;
       --brand-90: #2B2D2A; --brand-100: #141513; --brand-105: #111210;
       --red: #F06A6A; --blue: #3B9DFF; --green: #34C759;
     }
@@ -55,10 +55,11 @@
 
     /* ── Language tabs ── */
     .lang-tabs { display: flex; padding: 16px; }
-    .lang-tab { flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 18px; color: var(--brand-40); text-transform: uppercase; cursor: pointer; border: none; background: var(--brand-100); transition: background 0.15s, color 0.15s; }
-    .lang-tab:first-child { border-radius: 8px 0 0 8px; margin-right: -1px; }
+    .lang-tab { flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 18px; color: var(--brand-70); text-transform: uppercase; cursor: pointer; border: none; background: none; transition: color 0.15s; }
+    .lang-tab:first-child { border-radius: 8px 0 0 8px; }
     .lang-tab:last-child  { border-radius: 0 8px 8px 0; }
-    .lang-tab.active { background: #000; color: var(--brand-00); }
+    .lang-tab:not(.active):hover { color: var(--brand-60); }
+    .lang-tab.active { color: var(--brand-00); }
 
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
