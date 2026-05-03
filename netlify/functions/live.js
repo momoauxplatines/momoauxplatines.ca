@@ -112,47 +112,57 @@ exports.handler = async (event) => {
   try {
     let session = null;
 
-    if (targetDate) {
-      // 1. Fetch the /live URL first — Serato publishes the actively-streaming session
-      //    there before it appears in listings or at its permanent date slug.
-      const liveHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
+    // 1. Always check /live first — Serato publishes the actively-streaming session
+    //    there before it appears in listings or at its permanent date slug.
+    const liveHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
 
-      // 1a. If the /live page itself already has tracks (redirected to session page),
-      //     check that its slug matches our target date before using it.
-      if (liveHtml.includes('playlist-trackname')) {
-        const liveSlug = (liveHtml.match(
-          new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
-        ) || [])[1];
-        if (liveSlug === targetDate) {
-          session = liveSlug; // tracks will be parsed from sessionHtml below
+    let tracks = [];
+
+    if (liveHtml.includes('playlist-trackname')) {
+      // Active session in progress — parse tracks directly from the /live page.
+      // No slug matching needed: the DJ is streaming right now.
+      tracks = parseTracks(liveHtml);
+      session = 'live';
+    } else if (targetDate) {
+      // No active session — look up a completed session by date.
+
+      // 2a. Try the permanent date slug URL directly.
+      const directHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${targetDate}`);
+      if (directHtml.includes('playlist-trackname')) {
+        tracks = parseTracks(directHtml);
+        session = targetDate;
+      }
+
+      // 2b. Look for a listing entry in the /live page whose date matches targetDate.
+      if (!session) {
+        const slugFromLive = findSlugByDate(liveHtml, targetDate);
+        if (slugFromLive) {
+          const sessionHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${slugFromLive}`);
+          tracks  = parseTracks(sessionHtml);
+          session = slugFromLive;
         }
       }
 
-      // 1b. Look for a listing entry in the /live page whose date matches targetDate.
-      //     This handles sessions that Serato names with the date slug.
-      if (!session) {
-        const slugFromLive = findSlugByDate(liveHtml, targetDate);
-        if (slugFromLive) session = slugFromLive;
-      }
-
-      // 1c. Try the permanent date slug URL directly (completed sessions).
-      if (!session) {
-        const directHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${targetDate}`);
-        if (directHtml.includes('playlist-trackname')) session = targetDate;
-      }
-
-      // 1d. Scan the full public listings page as a last resort.
+      // 2c. Scan the full public listings page as a last resort.
       if (!session) {
         const listingsHtml = await get(`https://serato.com/playlists/${SERATO_USER}`);
-        session = findSlugByDate(listingsHtml, targetDate);
+        const slug = findSlugByDate(listingsHtml, targetDate);
+        if (slug) {
+          const sessionHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${slug}`);
+          tracks  = parseTracks(sessionHtml);
+          session = slug;
+        }
       }
     } else {
-      // Legacy / demo mode: use the most recent live session
-      const indexHtml = await get(`https://serato.com/playlists/${SERATO_USER}/live`);
-      const slugMatch = indexHtml.match(
+      // Legacy / demo mode and no active session — use the most recent listed session.
+      const slugMatch = liveHtml.match(
         new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
       );
-      if (slugMatch) session = slugMatch[1];
+      if (slugMatch) {
+        session = slugMatch[1];
+        const sessionHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${session}`);
+        tracks = parseTracks(sessionHtml);
+      }
     }
 
     if (!session) {
@@ -162,10 +172,6 @@ exports.handler = async (event) => {
         body: JSON.stringify({ tracks: [], session: null }),
       };
     }
-
-    // 2. Fetch the session page and parse tracks
-    const sessionHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${session}`);
-    const tracks = parseTracks(sessionHtml);
 
     // 3. Push the current (most recent) track to Supabase so Realtime can
     //    broadcast it instantly to all connected gig pages.

@@ -1427,11 +1427,10 @@
   // ─────────────────────────────────────────────
   // Live playlist polling  (/api/live → Netlify Function → Serato)
   // ─────────────────────────────────────────────
-  let artworkCache     = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
-  let liveSessionSlug  = null;
-  let renderedTrackIds = new Set(); // tracks already shown in Played list
-  let baselineTrackIds = null;      // IDs present at first poll — excluded from Played list
-  let gigDate          = null;      // YYYY-MM-DD of the current gig — set when event goes live
+  let artworkCache    = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
+  let liveSessionSlug = null;
+  let lastTrackSig    = '';   // comma-joined IDs of last rendered list — used for change detection
+  let gigDate         = null; // YYYY-MM-DD of the current gig — set when event goes live
 
   function safeHtml(str) {
     return String(str || '')
@@ -1519,32 +1518,20 @@
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];
 
-      // First successful poll: capture the pre-existing tracks as baseline.
-      // The Played section always starts empty — only new additions are shown.
-      if (baselineTrackIds === null) {
-        baselineTrackIds = new Set(allTracks.map(t => t.id));
-        liveSessionSlug  = session;
+      // Skip re-render if the track list hasn't changed
+      const sig = allTracks.map(t => t.id).join(',');
+      if (sig === lastTrackSig && session === liveSessionSlug) {
         if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
         return;
       }
+      lastTrackSig    = sig;
+      liveSessionSlug = session;
 
-      // Only tracks added to Serato after page load belong in the Played list
-      const freshTracks = allTracks.filter(t => !baselineTrackIds.has(t.id));
-
-      // Skip re-render if nothing changed
-      const hasNew = freshTracks.some(t => !renderedTrackIds.has(t.id));
-      if (!hasNew && session === liveSessionSlug) {
-        if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
-        return;
-      }
-      liveSessionSlug  = session;
-      renderedTrackIds = new Set(freshTracks.map(t => t.id));
-
-      // Spotify artwork for uncached fresh tracks
-      if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
+      // Spotify artwork for any uncached tracks
+      if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET && allTracks.length) {
         try {
           const token = await getSpotifyToken();
-          for (const t of freshTracks) {
+          for (const t of allTracks) {
             if (!artworkCache[t.id] && t.artist && t.title) {
               try {
                 const info = await searchSpotifyTrack(token, t.artist, t.title);
@@ -1556,20 +1543,24 @@
         } catch { /* no credentials or token failure */ }
       }
 
-      // Now-playing bar always shows the most recent track overall
+      // Now-playing bar: most recent track
       if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
 
-      // Played list shows only freshTracks (new since page load)
+      // Played list: ALL tracks from the Serato session (most recent first)
       const list = document.getElementById('played-list');
-      list.innerHTML = '';
-      for (const t of freshTracks) {
-        const cached = artworkCache[t.id];
-        list.appendChild(buildPlayedCard(
-          cached?.artist     || t.artist,
-          cached?.title      || t.title,
-          cached?.image      || '',
-          cached?.spotifyUrl || ''
-        ));
+      if (allTracks.length === 0) {
+        list.innerHTML = '<div class="empty-state">Nothing has been played yet.<br><br>Songs will appear here as they are added to the Serato Live Playlist.</div>';
+      } else {
+        list.innerHTML = '';
+        for (const t of allTracks) {
+          const cached = artworkCache[t.id];
+          list.appendChild(buildPlayedCard(
+            cached?.artist     || t.artist,
+            cached?.title      || t.title,
+            cached?.image      || '',
+            cached?.spotifyUrl || ''
+          ));
+        }
       }
 
     } catch { /* network error — keep existing content */ }
