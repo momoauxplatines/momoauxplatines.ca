@@ -449,6 +449,7 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div class="page">
@@ -800,6 +801,8 @@
   const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
   const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
   const FORMSPREE_ID = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+  const SUPABASE_URL  = 'https://rxypcvyvgzdercoxvqsk.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_C4thzUmbJsmXg8seY2_dDw_li70Zx0z';
 
   // ─────────────────────────────────────────────
   // Language
@@ -954,6 +957,7 @@
           document.getElementById('tabs-row').style.display = '';
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
+          startNowPlayingRealtime(ev.date);
         }
         // For upcoming events: card-top stays as avatar + Détails only (no badge)
       })
@@ -1467,6 +1471,44 @@
       if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
       else npLink.style.display = 'none';
     }
+  }
+
+  // ─────────────────────────────────────────────
+  // Supabase Realtime — instant now-playing updates
+  // ─────────────────────────────────────────────
+  // The Netlify /api/live function writes the current track to Supabase after
+  // every Serato poll. Realtime broadcasts it here instantly to all open tabs.
+  let _supabaseChannel = null;
+
+  function startNowPlayingRealtime(eventDate) {
+    if (_supabaseChannel) return; // already subscribed
+    if (typeof window.supabase === 'undefined') return; // CDN not loaded
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    _supabaseChannel = sb
+      .channel('now-playing-broadcast')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'now_playing' },
+        (payload) => {
+          const row = payload.new;
+          // Only update if the row is for this gig's date
+          if (eventDate && row.gig_date !== eventDate) return;
+          const npArt    = document.getElementById('now-playing-art');
+          const npTitle  = document.getElementById('now-playing-title');
+          const npArtist = document.getElementById('now-playing-artist');
+          const npLink   = document.getElementById('now-playing-link');
+          if (npArt)    { npArt.src = row.image_url || ''; npArt.alt = row.title || ''; }
+          if (npTitle)  npTitle.textContent  = row.title  || '';
+          if (npArtist) npArtist.textContent = row.artist || '';
+          if (npLink) {
+            if (row.spotify_url) { npLink.href = row.spotify_url; npLink.style.display = ''; }
+            else npLink.style.display = 'none';
+          }
+        }
+      )
+      .subscribe();
   }
 
   async function pollLivePlaylist() {
