@@ -10,3 +10,11 @@ videos/
 
 # Local env
 .env
+
+# Figma source files (trop lourds pour git)
+*.fig
+
+# Claude / Cowork config local
+.claude/
+.agents/
+skills-lock.json

@@ -205,7 +205,7 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 
 ### Field / Drop Down
 - Même gabarit + état ouvert avec liste de choix
-- States : Default · Active · Filled · Error · Disabled · Choice Middle · Choice Last
+- States : Default · Active · Filled · Error · Disabled · Choice Middle · Choice Bottom
 
 ### Checkbox
 - 24×24px · States : Default · Checked · Error
@@ -352,7 +352,7 @@ Composante Figma : `Request Icon` · Page `_System`
 |----------|-------|
 | Type=Played | Checkmark vert `Event/Green` |
 | Type=Requested | Icône demande en attente |
-| Type=X | Suppression / rejet |
+| Type=Delete | Suppression / rejet |
 
 ---
 
@@ -533,6 +533,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-02 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-05-03 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
