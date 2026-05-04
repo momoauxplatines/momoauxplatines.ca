@@ -162,7 +162,10 @@
     .event-date, .event-hours {
       font-size: 16px; font-weight: 300; line-height: 20px; color: var(--brand-50);
     }
-    .event-ig-link {
+    .event-links {
+      display: flex; gap: 16px; align-items: center;
+    }
+    .event-ig-link, .event-twitch-link {
       font-size: 16px; font-weight: 300; line-height: 20px;
       color: var(--brand-30); text-decoration: underline;
       text-decoration-color: var(--brand-30);
@@ -485,7 +488,10 @@
             <span class="event-date" id="event-date"></span>
             <span class="event-hours" id="event-hours"></span>
           </div>
-          <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener">Instagram</a>
+          <div class="event-links">
+            <a class="event-ig-link" href="https://www.instagram.com/labuvettechezsimone" target="_blank" rel="noopener" style="display:none">Instagram</a>
+            <a class="event-twitch-link" href="" target="_blank" rel="noopener" style="display:none">Twitch</a>
+          </div>
         </div>
       </div>
     </div>
@@ -913,6 +919,8 @@
     if (_eventHours) _eventHours.textContent = '';
     const _igLink = document.querySelector('.event-ig-link');
     if (_igLink) _igLink.style.display = 'none';
+    const _twitchLink = document.querySelector('.event-twitch-link');
+    if (_twitchLink) _twitchLink.style.display = 'none';
 
     // Clear hardcoded placeholder songs from played list
     const playedList = document.getElementById('played-list');
@@ -947,6 +955,11 @@
         if (igLink) {
           if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
           else igLink.style.display = 'none';
+        }
+        const twitchLink = document.querySelector('.event-twitch-link');
+        if (twitchLink) {
+          if (ev.twitch) { twitchLink.href = ev.twitch; twitchLink.style.display = ''; }
+          else twitchLink.style.display = 'none';
         }
 
         // Show LIVE indicator + tabs only when event is actually live
@@ -1438,9 +1451,10 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function buildPlayedCard(artist, title, image, spotifyUrl) {
+  function buildPlayedCard(artist, title, image, spotifyUrl, trackId) {
     const card = document.createElement('div');
     card.className = 'song-card';
+    if (trackId) card.dataset.trackId = trackId;
     card.innerHTML = `
       <img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(title)}"
            onerror="this.style.background='var(--brand-90)'">
@@ -1449,7 +1463,8 @@
           <p class="song-title">${safeHtml(title)}</p>
           ${artist ? `<p class="song-artist">${safeHtml(artist)}</p>` : ''}
         </div>
-        ${spotifyUrl ? `<a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}
+        <a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener"
+           style="${spotifyUrl ? '' : 'display:none'}">Spotify</a>
       </div>
       <div class="song-request-col">
         <img class="song-request-icon" src="images/request-played-icon.svg" alt="Played">
@@ -1518,49 +1533,79 @@
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];
 
+      // Identify the most recent track by highest numeric Serato ID (robust regardless of API ordering)
+      const mostRecentTrack = allTracks.length
+        ? allTracks.reduce((best, t) => {
+            const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
+            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
+            return nt > nb ? t : best;
+          })
+        : null;
+
       // Skip re-render if the track list hasn't changed
-      const sig = allTracks.map(t => t.id).join(',');
+      const sig = allTracks.map(t => t.id).sort().join(',');
       if (sig === lastTrackSig && session === liveSessionSlug) {
-        if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
+        if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
         return;
       }
       lastTrackSig    = sig;
       liveSessionSlug = session;
 
-      // Spotify artwork for any uncached tracks
-      if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET && allTracks.length) {
-        try {
-          const token = await getSpotifyToken();
-          for (const t of allTracks) {
-            if (!artworkCache[t.id] && t.artist && t.title) {
-              try {
-                const info = await searchSpotifyTrack(token, t.artist, t.title);
-                if (info) artworkCache[t.id] = info;
-              } catch { /* non-blocking */ }
-            }
-          }
-          localStorage.setItem('momo_artwork_cache', JSON.stringify(artworkCache));
-        } catch { /* no credentials or token failure */ }
-      }
+      // Now-playing bar: most recent track (render immediately, no need to wait for artwork)
+      if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
 
-      // Now-playing bar: most recent track
-      if (allTracks[0]) updateNowPlayingBar(allTracks[0]);
-
-      // Played list: ALL tracks from the Serato session (most recent first)
+      // Played list: render immediately with whatever is in cache
       const list = document.getElementById('played-list');
       if (allTracks.length === 0) {
         list.innerHTML = '<div class="empty-state">Nothing has been played yet.<br><br>Songs will appear here as they are added to the Serato Live Playlist.</div>';
       } else {
         list.innerHTML = '';
-        for (const t of allTracks) {
+        // Sort by Serato track ID descending: higher ID = more recently played = top of list
+        const displayTracks = [...allTracks].sort((a, b) => {
+          const numA = parseInt((a.id || '').replace(/\D/g, '')) || 0;
+          const numB = parseInt((b.id || '').replace(/\D/g, '')) || 0;
+          return numB - numA;
+        });
+        for (const t of displayTracks) {
           const cached = artworkCache[t.id];
           list.appendChild(buildPlayedCard(
             cached?.artist     || t.artist,
             cached?.title      || t.title,
             cached?.image      || '',
-            cached?.spotifyUrl || ''
+            cached?.spotifyUrl || '',
+            t.id
           ));
         }
+      }
+
+      // Spotify artwork — fetch in the background and patch cards in-place as results arrive
+      if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET && allTracks.length) {
+        (async () => {
+          try {
+            const token = await getSpotifyToken();
+            for (const t of allTracks) {
+              if (!artworkCache[t.id] && t.artist && t.title) {
+                try {
+                  const info = await searchSpotifyTrack(token, t.artist, t.title);
+                  if (info) {
+                    artworkCache[t.id] = info;
+                    // Patch the card already in the DOM (if visible)
+                    const card = list.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
+                    if (card) {
+                      const img  = card.querySelector('.song-art');
+                      const link = card.querySelector('.song-link');
+                      if (img  && info.image)      { img.src = info.image; img.style.background = ''; }
+                      if (link && info.spotifyUrl) { link.href = info.spotifyUrl; link.style.display = ''; }
+                    }
+                    // Also refresh the now-playing bar if this is the current track
+                    if (mostRecentTrack?.id === t.id) updateNowPlayingBar(mostRecentTrack);
+                  }
+                } catch { /* non-blocking */ }
+              }
+            }
+            localStorage.setItem('momo_artwork_cache', JSON.stringify(artworkCache));
+          } catch { /* no credentials or token failure */ }
+        })();
       }
 
     } catch { /* network error — keep existing content */ }

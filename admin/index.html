@@ -1128,8 +1128,12 @@
           </div>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Instagram URL</label>
+          <label class="edit-label">Instagram</label>
           <input class="edit-input ${ev?.instagram ? '' : 'empty'}" type="url" id="ef-instagram" value="${esc(ev?.instagram || '')}" placeholder="https://www.instagram.com/venue">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Twitch</label>
+          <input class="edit-input ${ev?.twitch ? '' : 'empty'}" type="url" id="ef-twitch" value="${esc(ev?.twitch || '')}" placeholder="https://www.twitch.tv/channel">
         </div>
         <input type="file" id="ef-gig-img-input" accept="image/*" style="display:none">
         <div class="edit-field">
@@ -1466,8 +1470,9 @@
         if (!venue) { showToast('Venue is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
 
         let imagePath = document.getElementById('ef-image')?.value.trim() || '';
-        const igInput = document.getElementById('ef-instagram');
-        const igVal   = igInput?.value.trim() || '';
+        const igInput     = document.getElementById('ef-instagram');
+        const igVal       = igInput?.value.trim() || '';
+        const twitchVal   = document.getElementById('ef-twitch')?.value.trim() || '';
         if (pendingCustomFile) {
           try {
             const key = `events/${slugify(venue)}.jpg`;
@@ -1492,6 +1497,7 @@
           start_time: document.getElementById('ef-start')?.value || '',
           end_time:   document.getElementById('ef-end')?.value || '',
           instagram:  igVal,
+          twitch:     twitchVal,
           image:      imagePath,
           show:       document.getElementById('ef-show-toggle')?.classList.contains('on') ?? true,
         };
