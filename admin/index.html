@@ -682,7 +682,7 @@
         endDateStr = d.toISOString().slice(0, 10);
       }
       const endMs = new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
-      return now <= endMs + 24 * 60 * 60 * 1000;
+      return now <= endMs;
     });
 
     if (!liveEvent) {
@@ -1128,12 +1128,8 @@
           </div>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Instagram</label>
-          <input class="edit-input ${ev?.instagram ? '' : 'empty'}" type="url" id="ef-instagram" value="${esc(ev?.instagram || '')}" placeholder="https://www.instagram.com/venue">
-        </div>
-        <div class="edit-field">
-          <label class="edit-label">Twitch</label>
-          <input class="edit-input ${ev?.twitch ? '' : 'empty'}" type="url" id="ef-twitch" value="${esc(ev?.twitch || '')}" placeholder="https://www.twitch.tv/channel">
+          <label class="edit-label">Link*</label>
+          <input class="edit-input ${ev?.link ? '' : 'empty'}" type="url" id="ef-link" value="${esc(ev?.link || '')}" placeholder="https://www.instagram.com/venue">
         </div>
         <input type="file" id="ef-gig-img-input" accept="image/*" style="display:none">
         <div class="edit-field">
@@ -1156,9 +1152,9 @@
         <input type="hidden" id="ef-image" value="${esc(ev?.image || '')}">
         ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">Delete event</button>` : ''}`;
 
-      // Wire Instagram debounce + image overwrite/revert buttons
+      // Wire Link debounce + image overwrite/revert buttons
       setTimeout(() => {
-        const igInput      = document.getElementById('ef-instagram');
+        const igInput      = document.getElementById('ef-link');
         const gigImgInput  = document.getElementById('ef-gig-img-input');
         const gigPreview   = document.getElementById('ef-gig-img-preview');
         const gigStatus    = document.getElementById('ef-gig-img-status');
@@ -1185,8 +1181,8 @@
           const previewSrc = ev.image.startsWith('/api/') ? ev.image : '../' + ev.image.replace(/^\//, '');
           showGigPreview(previewSrc, 'Current photo');
           pendingAvatarUrl = null; pendingAvatarUser = null;
-        } else if (ev?.instagram) {
-          const u = extractIgUsername(ev.instagram);
+        } else if (ev?.link) {
+          const u = extractIgUsername(ev.link);
           if (u) {
             const src = `https://unavatar.io/instagram/${u}`;
             pendingAvatarUrl = src; pendingAvatarUser = u;
@@ -1470,9 +1466,8 @@
         if (!venue) { showToast('Venue is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
 
         let imagePath = document.getElementById('ef-image')?.value.trim() || '';
-        const igInput     = document.getElementById('ef-instagram');
+        const igInput     = document.getElementById('ef-link');
         const igVal       = igInput?.value.trim() || '';
-        const twitchVal   = document.getElementById('ef-twitch')?.value.trim() || '';
         if (pendingCustomFile) {
           try {
             const key = `events/${slugify(venue)}.jpg`;
@@ -1496,8 +1491,7 @@
           date:       dateVal,
           start_time: document.getElementById('ef-start')?.value || '',
           end_time:   document.getElementById('ef-end')?.value || '',
-          instagram:  igVal,
-          twitch:     twitchVal,
+          link:       igVal,
           image:      imagePath,
           show:       document.getElementById('ef-show-toggle')?.classList.contains('on') ?? true,
         };

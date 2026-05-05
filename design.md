@@ -298,7 +298,7 @@ Composante Figma : `Header` · Page `_System`
 | Mobile | Requests | Yes |
 | Mobile | Admin | No |
 | Mobile | Event | No |
-| All | Modal | Yes |
+| All | Form | — |
 
 - `position: fixed` · `max-width` matches breakpoint · `z-index: 100`
 - Padding: `24px`
@@ -447,7 +447,7 @@ Separate page, active when an event is live.
 ## Contact / Booking Modal
 
 Overlay, `position: fixed; inset: 0`.
-Composante Figma : `Header` Type=Modal, Live=Yes
+Composante Figma : `Header` Type=Form
 
 ### Form
 - Title: "CONTACT MOMO" — H3 Kanit Black `Brand/50`
@@ -533,6 +533,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-04 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-05-05 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
