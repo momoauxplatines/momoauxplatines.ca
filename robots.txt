@@ -1,0 +1,21 @@
+# robots.txt pour momoauxplatines.ca
+
+# Autoriser tous les robots
+User-agent: *
+Allow: /
+
+# Bloquer l'indexation de fichiers admin (si applicable)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /cgi-bin/
+
+# Bloquer les fichiers sensibles
+Disallow: /*.php$
+Disallow: /*.inc$
+
+# Sitemap
+Sitemap: https://momoauxplatines.ca/sitemap.xml
+
+# Crawl-delay (optionnel, pour éviter surcharge serveur)
+# User-agent: *
+# Crawl-delay: 10
