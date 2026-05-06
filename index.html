@@ -311,9 +311,9 @@
     }
     .tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .tag {
-      background: var(--brand-90); padding: 4px 16px; border-radius: 8px;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
-      color: var(--brand-00); line-height: 31px; white-space: nowrap;
+      background: var(--brand-105); border: 1px solid var(--brand-95); padding: 8px 16px; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
+      color: var(--brand-00); line-height: 26px; white-space: nowrap; text-transform: uppercase;
     }
     .bio { font-weight: 300; font-size: 24px; line-height: 32px; color: white; }
     .bio p + p { margin-top: 24px; }
@@ -761,7 +761,7 @@
          DEMOS
     ══════════════════════════════════════════════ -->
     <section class="demos">
-      <h2 class="section-heading">Demos</h2>
+      <h2 class="section-heading" data-key="section.mixes" data-en="Mixes" data-fr="Mixes">Mixes</h2>
       <div class="scroll-row" id="demos-scroll-row"></div>
     </section>
 
@@ -1766,30 +1766,49 @@
     let lastY         = 0;
     let lastDirection = 0; // 1 = down, -1 = up
 
-    // ── Audio (Web Audio API — pre-decoded PCM for zero-latency playback) ──
-    const audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
-    let buffers       = { forth: null, back: null };
-    let activeSource  = null;
-    let audioReady    = false;
+    // ── Audio (Web Audio API — mobile-compatible lazy init) ──
+    // Pre-fetch raw ArrayBuffers eagerly so decoding is instant on first touch,
+    // but create AudioContext only inside a user gesture (required by iOS/Android).
+    let audioCtx     = null;
+    let buffers      = { forth: null, back: null };
+    let activeSource = null;
+    let audioReady   = false;
+    let audioPriming = false;
 
-    // Decode both files eagerly in the background
-    async function decodeBuffer(url) {
-      const res = await fetch(url);
-      const ab  = await res.arrayBuffer();
-      return audioCtx.decodeAudioData(ab);
-    }
-    Promise.all([decodeBuffer('/audio/scratch-forth.mp3'), decodeBuffer('/audio/scratch-back.mp3')])
-      .then(([forth, back]) => { buffers.forth = forth; buffers.back = back; })
-      .catch(() => {});
+    const rawAudio = { forth: null, back: null };
+    (async () => {
+      try {
+        const [f, b] = await Promise.all([
+          fetch('/audio/scratch-forth.mp3').then(r => r.arrayBuffer()),
+          fetch('/audio/scratch-back.mp3').then(r => r.arrayBuffer()),
+        ]);
+        rawAudio.forth = f;
+        rawAudio.back  = b;
+      } catch (_) {}
+    })();
 
-    // Resume AudioContext inside the first user gesture (required by iOS/Android)
+    // Must be called synchronously inside touchstart/mousedown so the AudioContext
+    // is created within a user-gesture context — the only way iOS/Android allow audio.
     function primeAudio() {
-      if (audioReady) return;
-      audioReady = true;
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioReady || audioPriming) return;
+      audioPriming = true;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const resume = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
+      resume.then(() => {
+        const decode = key =>
+          rawAudio[key]
+            ? audioCtx.decodeAudioData(rawAudio[key].slice(0))
+            : Promise.resolve(null);
+        return Promise.all([decode('forth'), decode('back')]);
+      }).then(([forth, back]) => {
+        buffers.forth = forth;
+        buffers.back  = back;
+        audioReady    = true;
+      }).catch(() => {});
     }
 
     function playSound(key) {
+      if (!audioReady) return;
       const buf = buffers[key];
       if (!buf) return;
       stopSound();

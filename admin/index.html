@@ -793,11 +793,13 @@
 
   // ── DEMOS section ─────────────────────────────────────────────────────────────
   function getDemoDisplayOrder() {
+    // Always cross-check against the registry so deleted demos never resurface
+    const reg = new Set((copy('demos.registry') || '').split('|').filter(Boolean));
     const orderStr = copy('demos.order');
-    if (orderStr) return orderStr.split('|').filter(Boolean);
-    // Legacy fallback: available (reversed) then coming-soon
-    const avail = DEMOS.filter(d => !(copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
-    const soon  = DEMOS.filter(d =>   copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false'));
+    if (orderStr) return orderStr.split('|').filter(id => reg.has(id));
+    // Legacy fallback: available (reversed) then coming-soon — registry-gated
+    const avail = DEMOS.filter(d => reg.has(d.id) && !(copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
+    const soon  = DEMOS.filter(d => reg.has(d.id) &&  (copy(`demos.${d.id}.coming-soon`) === 'true' || (!d.ytId && copy(`demos.${d.id}.coming-soon`) !== 'false')));
     return [...avail.reverse(), ...soon].map(d => d.id);
   }
 
@@ -1310,8 +1312,7 @@
         }
 
         const existingAvatar = isNew ? (blobUrl || '') : (copy(`reviews.${id}.avatar`) || editFormMeta.avatar || '');
-        const langs = isNew ? ['en', 'fr'] : [currentLang];
-        for (const lang of langs) {
+        for (const lang of ['en', 'fr']) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang]['reviews.registry'] || '').split('|').filter(Boolean);
@@ -1320,10 +1321,16 @@
           } else if (blobUrl) {
             copyData[lang][`reviews.${id}.avatar`] = blobUrl;
           }
+          // Non-text: always both languages
           copyData[lang][`reviews.${id}.name`]      = name;
           copyData[lang][`reviews.${id}.venue`]     = venueVal;
-          copyData[lang][`reviews.${id}.text`]      = (isNew && lang !== currentLang) ? translatedText : textVal;
           copyData[lang][`reviews.${id}.instagram`] = igVal;
+          // Text: translate on creation, only update active language on edit
+          if (isNew) {
+            copyData[lang][`reviews.${id}.text`] = (lang !== currentLang) ? translatedText : textVal;
+          } else if (lang === currentLang) {
+            copyData[lang][`reviews.${id}.text`] = textVal;
+          }
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} review: ${name} (${lang})`);
         }
         const finalAvatar = blobUrl || existingAvatar;
@@ -1376,8 +1383,7 @@
           newOrder.splice(newPos - 1, 0, id);
         }
         const orderStr = newOrder.join('|');
-        const langs = isNew ? ['en', 'fr'] : [currentLang];
-        for (const lang of langs) {
+        for (const lang of ['en', 'fr']) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang]['demos.registry'] || '').split('|').filter(Boolean);
@@ -1386,11 +1392,18 @@
           } else if (blobUrl) {
             copyData[lang][`demos.${id}.avatar`] = blobUrl;
           }
-          copyData[lang][`demos.${id}.title`]       = title;
-          copyData[lang][`demos.${id}.desc`]        = (isNew && lang !== currentLang) ? translatedDesc : descVal;
+          // Non-text: always both languages
           copyData[lang][`demos.${id}.link`]        = ytVal;
           copyData[lang][`demos.${id}.coming-soon`] = soonVal;
           copyData[lang]['demos.order']             = orderStr;
+          // Text: translate on creation, only update active language on edit
+          if (isNew) {
+            copyData[lang][`demos.${id}.title`] = title;
+            copyData[lang][`demos.${id}.desc`]  = (lang !== currentLang) ? translatedDesc : descVal;
+          } else if (lang === currentLang) {
+            copyData[lang][`demos.${id}.title`] = title;
+            copyData[lang][`demos.${id}.desc`]  = descVal;
+          }
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} demo: ${title} (${lang})`);
         }
         const finalThumb = blobUrl || existingThumb;
@@ -1434,8 +1447,7 @@
         }
 
         const existingAvatar = isNew ? (blobUrl || '') : (copy(`timeline.${id}.avatar`) || item.avatar || '');
-        const langs = isNew ? ['en', 'fr'] : [currentLang];
-        for (const lang of langs) {
+        for (const lang of ['en', 'fr']) {
           if (!copyData[lang]) continue;
           if (isNew) {
             const reg = (copyData[lang][`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
@@ -1444,11 +1456,17 @@
           } else if (blobUrl) {
             copyData[lang][`timeline.${id}.avatar`] = blobUrl;
           }
+          // Non-text: always both languages
           copyData[lang][`timeline.${id}.name`]      = name;
-          copyData[lang][`timeline.${id}.desc`]      = (isNew && lang !== currentLang) ? translatedRole : roleVal;
           copyData[lang][`timeline.${id}.dates`]     = datesVal;
           copyData[lang][`timeline.${id}.instagram`] = linkVal;
-          if (!isNew && item.roleKey) copyData[lang][item.roleKey] = roleVal;
+          // Text: translate on creation, only update active language on edit
+          if (isNew) {
+            copyData[lang][`timeline.${id}.desc`] = (lang !== currentLang) ? translatedRole : roleVal;
+          } else if (lang === currentLang) {
+            copyData[lang][`timeline.${id}.desc`] = roleVal;
+            if (item.roleKey) copyData[lang][item.roleKey] = roleVal;
+          }
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} timeline: ${name} (${lang})`);
         }
         const finalAvatar = blobUrl || existingAvatar;

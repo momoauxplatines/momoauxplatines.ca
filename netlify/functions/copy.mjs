@@ -63,10 +63,18 @@ export default async (req) => {
     const blobIds    = (blobData['demos.registry']   || '').split('|').filter(Boolean);
     const blobOnlyIds = blobIds.filter(id => !staticIds.includes(id));
     const tombstoned  = staticIds.filter(id => blobData[`demos.${id}.deleted`] === 'true');
-    merged['demos.registry'] = [
+    const finalRegistry = [
       ...staticIds.filter(id => !tombstoned.includes(id)),
       ...blobOnlyIds,
-    ].join('|');
+    ];
+    merged['demos.registry'] = finalRegistry.join('|');
+
+    // Also strip deleted IDs from demos.order so it stays in sync
+    const finalRegSet = new Set(finalRegistry);
+    const rawOrder = merged['demos.order'] || '';
+    if (rawOrder) {
+      merged['demos.order'] = rawOrder.split('|').filter(id => finalRegSet.has(id)).join('|');
+    }
 
     // Translation guard: if a demos.*.desc in the blob is identical to the English
     // original, it was never translated. Prefer the static translation if one exists.
