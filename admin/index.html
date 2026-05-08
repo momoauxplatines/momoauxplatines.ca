@@ -218,11 +218,11 @@
     .track-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-time   { font-size: 14px; font-weight: 300; color: var(--brand-60); line-height: 18px; }
-    .track-play-btn { width: 40px; height: 48px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
+    .track-play-btn { width: 48px; height: 40px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
     .track-play-btn:active { transform: scale(0.93); }
-    .track-play-btn.state-unplayed { background: var(--brand-90); }
+    .track-play-btn.state-unplayed { background: #20221f; }
     .track-play-btn.state-playing  { background: #007aff; }
-    .track-play-btn.state-played   { background: var(--brand-90); }
+    .track-play-btn.state-played   { background: #20221f; }
     .track-play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   </style>
@@ -1956,7 +1956,7 @@
         <path d="M3 8L6.5 11.5L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
 
-      const iconColor = state === 'playing' ? '#fff' : 'var(--brand-50)';
+      const iconColor = state === 'playing' ? '#fff' : state === 'played' ? 'var(--green)' : 'var(--brand-50)';
       const btnIcon   = state === 'played' ? checkIcon : playIcon;
       const btnTitle  = state === 'playing' ? 'En cours' : 'Marquer comme en cours';
       const btnDisabled = !reqEventIsLive ? 'disabled' : '';
