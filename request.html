@@ -114,25 +114,29 @@
       object-fit: cover; flex-shrink: 0;
       border: 1px solid var(--brand-100);
     }
-    .event-live-row { display: flex; align-items: center; gap: 6px; flex: 1; }
-    .live-dot {
+    /* Status badge area — grows to push the Details button to the right */
+    .event-badge-area {
+      flex: 1; display: flex; align-items: center;
+    }
+    /* Pill badge shared styles */
+    .event-status-badge {
+      display: flex; align-items: center; gap: 4px;
+      padding: 0 12px; border-radius: 24px;
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 18px; line-height: 26px; color: var(--brand-00);
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .event-status-badge.status-live { background: #D34242; }
+    .event-status-badge.status-next { background: #007AFF; }
+    /* Pulsing white dot inside the LIVE badge */
+    .status-dot {
       width: 12px; height: 12px; border-radius: 50%;
-      background: var(--red); flex-shrink: 0;
+      background: var(--brand-00); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
-    }
-    .live-label {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
-      color: var(--red); text-transform: uppercase;
-    }
-    .event-next-date {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
-      color: var(--blue);
     }
     .event-details-btn {
       display: flex; align-items: center; gap: 8px;
@@ -471,9 +475,14 @@
     <div class="event-card" id="event-card">
       <div class="event-card-top">
         <img class="event-venue-img" src="images/timeline-buvette-simone.jpg" alt="Venue">
-        <div class="event-live-row" id="event-live-row">
-          <div class="live-dot" id="live-dot"></div>
-          <span class="live-label" id="live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+        <div class="event-badge-area">
+          <div class="event-status-badge status-live" id="event-status-live" style="display:none">
+            <div class="status-dot"></div>
+            <span data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+          </div>
+          <div class="event-status-badge status-next" id="event-status-next" style="display:none">
+            <span data-key="req.next" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
+          </div>
         </div>
         <button class="event-details-btn" id="event-details-btn">
           <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
@@ -902,8 +911,9 @@
   // Populate event card from events.json when slug is provided
   // ─────────────────────────────────────────────
   if (EVENT_SLUG) {
-    // Hide live indicators by default — shown only if event is confirmed live
-    document.getElementById('event-live-row').style.display = 'none';
+    // Hide status badges by default — shown after event data loads
+    document.getElementById('event-status-live').style.display = 'none';
+    document.getElementById('event-status-next').style.display = 'none';
     document.getElementById('now-playing-bar').style.display = 'none';
 
     // Clear all hardcoded placeholder event card data immediately
@@ -962,17 +972,20 @@
           else twitchLink.style.display = 'none';
         }
 
-        // Show LIVE indicator + tabs only when event is actually live
+        // Show the right status badge
         if (checkEventLive(ev)) {
-          gigDate = ev.date || null; // pass gig date to Serato playlist matcher
-          document.getElementById('event-live-row').style.display = '';
+          // LIVE — show live badge, now-playing bar, and playlist tabs
+          gigDate = ev.date || null;
+          document.getElementById('event-status-live').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           document.getElementById('tabs-row').style.display = '';
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
           startNowPlayingRealtime(ev.date);
+        } else if (ev.date) {
+          // NEXT — upcoming event
+          document.getElementById('event-status-next').style.display = '';
         }
-        // For upcoming events: card-top stays as avatar + Détails only (no badge)
       })
       .catch(() => {});
   }
