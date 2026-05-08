@@ -2050,12 +2050,6 @@
   function renderRequests() {
     reqBody.innerHTML = '';
 
-    // "REQUESTS" heading always visible (Figma: both empty and filled states)
-    const heading = document.createElement('p');
-    heading.className = 'req-section-title';
-    heading.textContent = 'Requests';
-    reqBody.appendChild(heading);
-
     if (!reqList.length) {
       const emptyWrap = document.createElement('div');
       emptyWrap.className = 'req-empty-body';
