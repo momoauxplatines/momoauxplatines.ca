@@ -218,11 +218,11 @@
     .track-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-time   { font-size: 14px; font-weight: 300; color: var(--brand-60); line-height: 18px; }
-    .track-play-btn { width: 48px; height: 40px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
+    .track-play-btn { width: 40px; height: 48px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
     .track-play-btn:active { transform: scale(0.93); }
-    .track-play-btn.state-unplayed { background: #20221f; }
+    .track-play-btn.state-unplayed { background: var(--brand-90); }
     .track-play-btn.state-playing  { background: #007aff; }
-    .track-play-btn.state-played   { background: #20221f; }
+    .track-play-btn.state-played   { background: var(--brand-90); }
     .track-play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   </style>
@@ -1811,8 +1811,6 @@
   let liveActiveTab = 'played'; // 'played' | 'requests'
   let nowPlayingTrackId = null; // Serato track ID currently marked as now-playing
   let liveTracksCache = []; // Serato tracks fetched for the live view
-  let liveTrackSig = ''; // signature to detect new tracks
-  let _livePollingTimer = null; // auto-refresh interval for JOUÉES tab
 
   function isEventLive(ev) {
     if (!ev || !ev.date) return false;
@@ -1840,32 +1838,24 @@
     reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Always show JOUÉES/DEMANDES tabs — default to JOUÉES
-    liveTabsRow.style.display = '';
-    liveActiveTab = 'played';
-    document.getElementById('live-tab-played').className   = 'live-tab-btn active';
-    document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
-    loadPlayedTracks();
-  }
-
-  function stopLivePolling() {
-    clearInterval(_livePollingTimer);
-    _livePollingTimer = null;
-  }
-
-  function startLivePolling() {
-    stopLivePolling();
-    if (!reqEventIsLive) return; // only poll during live events
-    _livePollingTimer = setInterval(pollPlayedTracks, 15_000);
+    if (reqEventIsLive) {
+      // Show tabs, default to JOUÉES
+      liveTabsRow.style.display = '';
+      liveActiveTab = 'played';
+      document.getElementById('live-tab-played').className   = 'live-tab-btn active';
+      document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
+      loadPlayedTracks();
+    } else {
+      liveTabsRow.style.display = 'none';
+      loadRequests();
+    }
   }
 
   function closeRequests() {
-    stopLivePolling();
     reqOverlay.classList.remove('open');
     document.body.style.overflow = '';
     reqList = [];
     liveTracksCache = [];
-    liveTrackSig = '';
     nowPlayingTrackId = null;
   }
 
@@ -1896,28 +1886,8 @@
     ]);
 
     liveTracksCache = tracksResult?.tracks || [];
-    liveTrackSig = liveTracksCache.map(t => t.id).sort().join(',');
-    // Supabase is authoritative; fall back to localStorage if Supabase returns nothing
-    nowPlayingTrackId = npId || localStorage.getItem(`momo_np_${gigDate}`) || null;
+    nowPlayingTrackId = npId;
     renderTrackCards();
-    startLivePolling(); // auto-refresh every 15s while live
-  }
-
-  // Silent background poll — only re-renders if tracks changed
-  async function pollPlayedTracks() {
-    if (liveActiveTab !== 'played') return; // don't fetch if tab not visible
-    const ev = currentEvents[reqEventIdx];
-    const gigDate = ev?.date || '';
-    try {
-      const res = await fetch(gigDate ? `/api/live?date=${encodeURIComponent(gigDate)}` : '/api/live');
-      if (!res.ok) return;
-      const { tracks } = await res.json();
-      const newSig = (tracks || []).map(t => t.id).sort().join(',');
-      if (newSig === liveTrackSig) return; // nothing new
-      liveTracksCache = tracks || [];
-      liveTrackSig = newSig;
-      renderTrackCards(); // re-render with updated list
-    } catch { /* silent — don't disrupt the UI on network hiccup */ }
   }
 
   function renderTrackCards() {
@@ -1957,10 +1927,9 @@
         <path d="M3 8L6.5 11.5L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
 
-      const iconColor = state === 'playing' ? '#fff' : state === 'played' ? 'var(--green)' : 'var(--brand-50)';
+      const iconColor = state === 'playing' ? '#fff' : 'var(--brand-50)';
       const btnIcon   = state === 'played' ? checkIcon : playIcon;
       const btnTitle  = state === 'playing' ? 'En cours' : 'Marquer comme en cours';
-      const btnDisabled = !reqEventIsLive ? 'disabled' : '';
 
       card.innerHTML = `
         <div class="track-art"></div>
@@ -1970,7 +1939,7 @@
         </div>
         <button class="track-play-btn state-${state}" title="${btnTitle}"
                 data-track-action="set-now-playing" data-track-id="${escReq(t.id)}"
-                style="color:${iconColor}" ${btnDisabled}>
+                style="color:${iconColor}">
           ${btnIcon}
         </button>`;
 
@@ -1998,9 +1967,6 @@
       });
       if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
       nowPlayingTrackId = trackId;
-      // Persist locally so the state survives page reloads
-      const gigDate = currentEvents[reqEventIdx]?.date || '';
-      if (gigDate) localStorage.setItem(`momo_np_${gigDate}`, trackId);
       renderTrackCards();
       showToast('En cours mis à jour', 'success');
     } catch (err) {
@@ -2015,12 +1981,10 @@
     document.getElementById('live-tab-played').className   = 'live-tab-btn active';
     document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
     renderTrackCards();
-    startLivePolling(); // resume polling when returning to JOUÉES
   });
 
   document.getElementById('live-tab-requests').addEventListener('click', () => {
     if (liveActiveTab === 'requests') return;
-    stopLivePolling(); // pause polling while on DEMANDES
     liveActiveTab = 'requests';
     document.getElementById('live-tab-played').className   = 'live-tab-btn inactive';
     document.getElementById('live-tab-requests').className = 'live-tab-btn active';
@@ -2029,7 +1993,7 @@
 
   // ── Refresh button ─────────────────────────────────────────────────────────────
   document.getElementById('req-refresh-btn').addEventListener('click', () => {
-    if (liveActiveTab === 'played') loadPlayedTracks();
+    if (reqEventIsLive && liveActiveTab === 'played') loadPlayedTracks();
     else loadRequests();
   });
 
@@ -2053,6 +2017,12 @@
 
   function renderRequests() {
     reqBody.innerHTML = '';
+
+    // "REQUESTS" heading always visible (Figma: both empty and filled states)
+    const heading = document.createElement('p');
+    heading.className = 'req-section-title';
+    heading.textContent = 'Requests';
+    reqBody.appendChild(heading);
 
     if (!reqList.length) {
       const emptyWrap = document.createElement('div');
