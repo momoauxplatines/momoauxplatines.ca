@@ -62,11 +62,13 @@
     }
     .site-header.header-hidden { transform: translateX(-50%) translateY(-100%); opacity: 0; }
 
-    /* Live header centre badge — absolutely centred, FR stays right via flex-end */
+    /* Live header pill — left-aligned when live, space-between layout */
+    .site-header.has-live { justify-content: space-between; }
     .header-live-link {
-      display: none; align-items: center; gap: 8px;
+      display: none; align-items: center; gap: 4px;
       text-decoration: none; pointer-events: auto;
-      position: absolute; left: 50%; transform: translateX(-50%);
+      background: #d34242; border-radius: 24px;
+      padding: 0 12px; height: 39px; flex-shrink: 0;
     }
     .site-header.has-live .header-live-link { display: flex; }
     @keyframes pulse {
@@ -75,13 +77,13 @@
     }
     .header-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
-      background: var(--red); flex-shrink: 0;
+      background: var(--brand-00); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .header-live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
-      color: var(--red) !important; text-transform: uppercase;
+      font-size: 18px; line-height: 26px;
+      color: var(--brand-00); text-transform: uppercase;
       white-space: nowrap;
     }
 
