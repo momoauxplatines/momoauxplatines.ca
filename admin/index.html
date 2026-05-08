@@ -1897,7 +1897,8 @@
 
     liveTracksCache = tracksResult?.tracks || [];
     liveTrackSig = liveTracksCache.map(t => t.id).sort().join(',');
-    nowPlayingTrackId = npId;
+    // Supabase is authoritative; fall back to localStorage if Supabase returns nothing
+    nowPlayingTrackId = npId || localStorage.getItem(`momo_np_${gigDate}`) || null;
     renderTrackCards();
     startLivePolling(); // auto-refresh every 15s while live
   }
@@ -1997,6 +1998,9 @@
       });
       if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
       nowPlayingTrackId = trackId;
+      // Persist locally so the state survives page reloads
+      const gigDate = currentEvents[reqEventIdx]?.date || '';
+      if (gigDate) localStorage.setItem(`momo_np_${gigDate}`, trackId);
       renderTrackCards();
       showToast('En cours mis à jour', 'success');
     } catch (err) {
