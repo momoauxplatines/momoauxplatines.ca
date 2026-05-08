@@ -515,14 +515,14 @@
 
     <!-- Tabs — hidden for non-live events, shown only when live -->
     <div class="tabs-row" id="tabs-row" style="display:none;">
-      <button class="tab-btn active"   id="tab-requested" data-key="req.tab.requested" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
-      <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">JOUÉES</button>
+      <button class="tab-btn active"   id="tab-played"    data-key="req.tab.played"     data-en="PLAYED"   data-fr="JOUÉES">JOUÉES</button>
+      <button class="tab-btn inactive" id="tab-requested" data-key="req.tab.requested"  data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
     </div>
 
   </div><!-- /sticky-top -->
 
   <!-- Played List -->
-  <div class="song-list hidden" id="played-list">
+  <div class="song-list" id="played-list">
 
     <div class="song-card">
       <img class="song-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/99/96/a6/9996a65d-c79d-2d70-46f0-32468f4f6e21/195497550296.jpg/100x100bb.jpg" alt="Dream Machines" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -702,7 +702,7 @@
   </div>
 
   <!-- Requested List -->
-  <div class="song-list" id="requested-list">
+  <div class="song-list hidden" id="requested-list">
     <div class="empty-state" id="requested-empty"></div>
   </div>
 
@@ -1003,6 +1003,7 @@
           document.getElementById('event-status-live').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           document.getElementById('tabs-row').style.display = '';
+          showTab(savedTab);
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
           startNowPlayingRealtime(ev.date);
@@ -1011,15 +1012,7 @@
           gigDate = ev.date || null;
           document.getElementById('event-status-past').style.display = '';
           document.getElementById('tabs-row').style.display = '';
-          // Default to "Joués" tab since that's the most relevant content post-event
-          const tabRequested = document.getElementById('tab-requested');
-          const tabPlayed    = document.getElementById('tab-played');
-          const requestedList = document.getElementById('requested-list');
-          const playedListEl  = document.getElementById('played-list');
-          if (tabRequested) tabRequested.className = 'tab-btn inactive';
-          if (tabPlayed)    tabPlayed.className    = 'tab-btn active';
-          if (requestedList) requestedList.classList.add('hidden');
-          if (playedListEl)  playedListEl.classList.remove('hidden');
+          showTab(savedTab);
           // Load archived Serato playlist once (no polling — event is over)
           pollLivePlaylist();
           // Load all requests for this event
@@ -1047,43 +1040,55 @@
   // ─────────────────────────────────────────────
   // Tabs
   // ─────────────────────────────────────────────
-  const tabRequested = document.getElementById('tab-requested');
-  const tabPlayed    = document.getElementById('tab-played');
-  const playedList   = document.getElementById('played-list');
-  const requestedList= document.getElementById('requested-list');
+  const tabRequested  = document.getElementById('tab-requested');
+  const tabPlayed     = document.getElementById('tab-played');
+  const playedList    = document.getElementById('played-list');
+  const requestedList = document.getElementById('requested-list');
 
-  // General live page (no slug) — show tabs immediately, default to PLAYED
-  if (!EVENT_SLUG) {
-    document.getElementById('tabs-row').style.display = '';
-    tabPlayed.className    = 'tab-btn active';
-    tabRequested.className = 'tab-btn inactive';
-    playedList.classList.remove('hidden');
-    requestedList.classList.add('hidden');
-  } else {
-    // Event-specific page — show requested list directly, no tabs until confirmed live
-    requestedList.classList.remove('hidden');
+  // Per-page tab persistence key
+  const TAB_KEY = `momo_active_tab_${EVENT_SLUG || 'global'}`;
+
+  function showTab(tab) {
+    if (tab === 'requested') {
+      tabRequested.className = 'tab-btn active';
+      tabPlayed.className    = 'tab-btn inactive';
+      requestedList.classList.remove('hidden');
+      playedList.classList.add('hidden');
+      localStorage.setItem(TAB_KEY, 'requested');
+      if (EVENT_SLUG) {
+        if (allRequestsCache.length) renderAllRequests(allRequestsCache);
+        fetchAndRenderAllRequests();
+      } else {
+        syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
+      }
+    } else {
+      tabPlayed.className    = 'tab-btn active';
+      tabRequested.className = 'tab-btn inactive';
+      playedList.classList.remove('hidden');
+      requestedList.classList.add('hidden');
+      localStorage.setItem(TAB_KEY, 'played');
+    }
   }
 
-  tabPlayed.addEventListener('click', () => {
-    tabPlayed.className    = 'tab-btn active';
-    tabRequested.className = 'tab-btn inactive';
-    playedList.classList.remove('hidden');
-    requestedList.classList.add('hidden');
-  });
-  tabRequested.addEventListener('click', () => {
-    tabRequested.className = 'tab-btn active';
-    tabPlayed.className    = 'tab-btn inactive';
-    requestedList.classList.remove('hidden');
-    playedList.classList.add('hidden');
-    if (EVENT_SLUG) {
-      // Event-specific page: show cached data instantly, then refresh from API in background
-      if (allRequestsCache.length) renderAllRequests(allRequestsCache);
-      fetchAndRenderAllRequests();
-    } else {
-      // General live page: sync before rendering user's own requests
-      syncStatuses().then(() => renderRequestedList()).catch(() => renderRequestedList());
+  // Restore last active tab, defaulting to 'played'
+  const savedTab = localStorage.getItem(TAB_KEY) || 'played';
+
+  if (!EVENT_SLUG) {
+    // General live page — show tabs immediately
+    document.getElementById('tabs-row').style.display = '';
+    showTab(savedTab);
+  } else {
+    // Event-specific page — restore tab if tabs are already visible, otherwise defer
+    // (tabs become visible once event state is known — showTab called again there if needed)
+    if (savedTab === 'requested') {
+      requestedList.classList.remove('hidden');
+      playedList.classList.add('hidden');
     }
-  });
+    // tabs-row visibility controlled by event state logic below
+  }
+
+  tabPlayed.addEventListener('click',     () => showTab('played'));
+  tabRequested.addEventListener('click',  () => showTab('requested'));
 
   // ─────────────────────────────────────────────
   // Spotify helpers
@@ -1474,22 +1479,43 @@
   // Spotify — search by artist + title (for live tracks)
   // ─────────────────────────────────────────────
   async function searchSpotifyTrack(token, artist, title) {
-    // Use just the first listed artist to improve match rate
-    const primaryArtist = artist.split(',')[0].trim();
-    const q = encodeURIComponent(`track:"${title}" artist:"${primaryArtist}"`);
-    const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const track = data.tracks?.items?.[0];
-    if (!track) return null;
-    return {
-      image:      track.album.images[1]?.url || track.album.images[0]?.url || '',
-      spotifyUrl: track.external_urls.spotify,
-      artist:     track.artists.map(a => a.name).join(', '),
-      title:      track.name
-    };
+    const primaryArtist = (artist || '').split(',')[0].trim();
+
+    async function query(q) {
+      const res = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=1`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      const track = data.tracks?.items?.[0];
+      if (!track) return null;
+      return {
+        image:      track.album.images[1]?.url || track.album.images[0]?.url || '',
+        spotifyUrl: track.external_urls.spotify,
+        artist:     track.artists.map(a => a.name).join(', '),
+        title:      track.name
+      };
+    }
+
+    // 1. Strict match: artist + title (best accuracy when both are available)
+    if (primaryArtist && title) {
+      const result = await query(`track:"${title}" artist:"${primaryArtist}"`);
+      if (result) return result;
+    }
+
+    // 2. Looser match: artist + title without quotes (handles remixes, alternate titles)
+    if (primaryArtist && title) {
+      const result = await query(`${title} ${primaryArtist}`);
+      if (result) return result;
+    }
+
+    // 3. Title only — fallback when artist is unknown or above queries fail
+    if (title) {
+      return await query(`track:"${title}"`);
+    }
+
+    return null;
   }
 
   // ─────────────────────────────────────────────
@@ -1639,7 +1665,7 @@
           try {
             const token = await getSpotifyToken();
             for (const t of allTracks) {
-              if (!artworkCache[t.id] && t.artist && t.title) {
+              if (!artworkCache[t.id] && t.title) {
                 try {
                   const info = await searchSpotifyTrack(token, t.artist, t.title);
                   if (info) {

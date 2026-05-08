@@ -204,6 +204,27 @@
     .req-empty-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 6px; }
     .req-empty-body p { font-size: 16px; font-weight: 300; color: var(--brand-60, #888); line-height: 22px; }
 
+    /* ── Live gig tabs (JOUÉES / DEMANDES) ── */
+    .live-tabs-row { display: flex; border-bottom: 1px solid var(--brand-90); flex-shrink: 0; }
+    .live-tab-btn { flex: 1; height: 48px; background: none; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 900; font-size: 18px; text-transform: uppercase; transition: color 0.15s; }
+    .live-tab-btn.active   { color: var(--brand-00); }
+    .live-tab-btn.inactive { color: var(--brand-70); }
+    .live-tab-btn.inactive:hover { color: var(--brand-60); }
+
+    /* ── Played track cards ── */
+    .track-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: center; }
+    .track-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-90); }
+    .track-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
+    .track-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-time   { font-size: 14px; font-weight: 300; color: var(--brand-60); line-height: 18px; }
+    .track-play-btn { width: 40px; height: 48px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
+    .track-play-btn:active { transform: scale(0.93); }
+    .track-play-btn.state-unplayed { background: var(--brand-90); }
+    .track-play-btn.state-playing  { background: #007aff; }
+    .track-play-btn.state-played   { background: var(--brand-90); }
+    .track-play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
   </style>
 </head>
 <body>
@@ -375,6 +396,11 @@
         <img id="req-event-avatar-img" src="" alt="" onerror="this.style.opacity='0'">
       </div>
     </div>
+    <!-- Tab row — only visible for live events -->
+    <div class="live-tabs-row" id="live-tabs-row" style="display:none;">
+      <button class="live-tab-btn active" id="live-tab-played">JOUÉES</button>
+      <button class="live-tab-btn inactive" id="live-tab-requests">DEMANDES</button>
+    </div>
     <div class="edit-body req-list" id="req-body">
       <div class="empty-state">Loading…</div>
     </div>
@@ -391,6 +417,10 @@
   const REPO    = 'momoauxplatines/momoauxplatines.ca';
   const BRANCH  = 'main';
   const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+  // Supabase (read-only anon key for fetching current now-playing state)
+  const SUPABASE_URL  = 'https://rxypcvyvgzdercoxvqsk.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_C4thzUmbJsmXg8seY2_dDw_li70Zx0z';
 
   // ── Static content metadata ─────────────────────────────────────────────────
 
@@ -1196,8 +1226,12 @@
           </div>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Link*</label>
-          <input class="edit-input ${ev?.link ? '' : 'empty'}" type="url" id="ef-link" value="${esc(ev?.link || '')}" placeholder="https://www.instagram.com/venue">
+          <label class="edit-label">Instagram</label>
+          <input class="edit-input ${ev?.instagram ? '' : 'empty'}" type="url" id="ef-instagram" value="${esc(ev?.instagram || '')}" placeholder="https://www.instagram.com/venue">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Twitch</label>
+          <input class="edit-input ${ev?.twitch ? '' : 'empty'}" type="url" id="ef-twitch" value="${esc(ev?.twitch || '')}" placeholder="https://www.twitch.tv/channel">
         </div>
         <input type="file" id="ef-gig-img-input" accept="image/*" style="display:none">
         <div class="edit-field">
@@ -1220,9 +1254,9 @@
         <input type="hidden" id="ef-image" value="${esc(ev?.image || '')}">
         ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">Delete event</button>` : ''}`;
 
-      // Wire Link debounce + image overwrite/revert buttons
+      // Wire Instagram debounce + image overwrite/revert buttons
       setTimeout(() => {
-        const igInput      = document.getElementById('ef-link');
+        const igInput      = document.getElementById('ef-instagram');
         const gigImgInput  = document.getElementById('ef-gig-img-input');
         const gigPreview   = document.getElementById('ef-gig-img-preview');
         const gigStatus    = document.getElementById('ef-gig-img-status');
@@ -1249,8 +1283,8 @@
           const previewSrc = ev.image.startsWith('/api/') ? ev.image : '../' + ev.image.replace(/^\//, '');
           showGigPreview(previewSrc, 'Current photo');
           pendingAvatarUrl = null; pendingAvatarUser = null;
-        } else if (ev?.link) {
-          const u = extractIgUsername(ev.link);
+        } else if (ev?.instagram) {
+          const u = extractIgUsername(ev.instagram);
           if (u) {
             const src = `https://unavatar.io/instagram/${u}`;
             pendingAvatarUrl = src; pendingAvatarUser = u;
@@ -1550,8 +1584,9 @@
         if (!venue) { showToast('Venue is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
 
         let imagePath = document.getElementById('ef-image')?.value.trim() || '';
-        const igInput     = document.getElementById('ef-link');
+        const igInput     = document.getElementById('ef-instagram');
         const igVal       = igInput?.value.trim() || '';
+        const twitchVal   = document.getElementById('ef-twitch')?.value.trim() || '';
         if (pendingCustomFile) {
           try {
             const key = `events/${slugify(venue)}.jpg`;
@@ -1575,7 +1610,8 @@
           date:       dateVal,
           start_time: document.getElementById('ef-start')?.value || '',
           end_time:   document.getElementById('ef-end')?.value || '',
-          link:       igVal,
+          instagram:  igVal,
+          twitch:     twitchVal,
           image:      imagePath,
           show:       document.getElementById('ef-show-toggle')?.classList.contains('on') ?? true,
         };
@@ -1768,9 +1804,13 @@
   // ── Requests ──────────────────────────────────────────────────────────────────
   const reqOverlay  = document.getElementById('req-overlay');
   const reqBody     = document.getElementById('req-body');
+  const liveTabsRow = document.getElementById('live-tabs-row');
   let reqList = [];
   let reqEventIdx = -1;
   let reqEventIsLive = false;
+  let liveActiveTab = 'played'; // 'played' | 'requests'
+  let nowPlayingTrackId = null; // Serato track ID currently marked as now-playing
+  let liveTracksCache = []; // Serato tracks fetched for the live view
 
   function isEventLive(ev) {
     if (!ev || !ev.date) return false;
@@ -1797,15 +1837,167 @@
     }
     reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    loadRequests();
+
+    if (reqEventIsLive) {
+      // Show tabs, default to JOUÉES
+      liveTabsRow.style.display = '';
+      liveActiveTab = 'played';
+      document.getElementById('live-tab-played').className   = 'live-tab-btn active';
+      document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
+      loadPlayedTracks();
+    } else {
+      liveTabsRow.style.display = 'none';
+      loadRequests();
+    }
   }
 
   function closeRequests() {
     reqOverlay.classList.remove('open');
     document.body.style.overflow = '';
     reqList = [];
+    liveTracksCache = [];
+    nowPlayingTrackId = null;
   }
 
+  // ── JOUÉES tab: Serato track cards ────────────────────────────────────────────
+  async function fetchNowPlayingId(gigDate) {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/now_playing?select=track_id,gig_date&limit=1`,
+        { headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` } }
+      );
+      if (!res.ok) return null;
+      const rows = await res.json();
+      const row  = rows.find(r => r.gig_date === gigDate) || rows[0];
+      return row?.track_id || null;
+    } catch { return null; }
+  }
+
+  async function loadPlayedTracks() {
+    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+    const ev = currentEvents[reqEventIdx];
+    const gigDate = ev?.date || '';
+
+    // Fetch Serato tracks and current now-playing in parallel
+    const [tracksResult, npId] = await Promise.all([
+      fetch(gigDate ? `/api/live?date=${encodeURIComponent(gigDate)}` : '/api/live')
+        .then(r => r.ok ? r.json() : null).catch(() => null),
+      fetchNowPlayingId(gigDate),
+    ]);
+
+    liveTracksCache = tracksResult?.tracks || [];
+    nowPlayingTrackId = npId;
+    renderTrackCards();
+  }
+
+  function renderTrackCards() {
+    reqBody.innerHTML = '';
+
+    if (!liveTracksCache.length) {
+      reqBody.innerHTML = `
+        <div class="req-empty-body">
+          <p>Aucune chanson jouée pour l'instant.</p>
+          <p style="margin-top:8px;color:var(--brand-80)">Les chansons apparaîtront ici dès qu'elles seront ajoutées à la Serato Live Playlist.</p>
+        </div>`;
+      return;
+    }
+
+    // Sort: most recent (highest numeric Serato ID) first
+    const sorted = [...liveTracksCache].sort((a, b) => {
+      const na = parseInt((a.id || '').replace(/\D/g, '')) || 0;
+      const nb = parseInt((b.id || '').replace(/\D/g, '')) || 0;
+      return nb - na;
+    });
+
+    sorted.forEach(t => {
+      const state = t.id === nowPlayingTrackId ? 'playing'
+                  : (nowPlayingTrackId && sorted.findIndex(x => x.id === nowPlayingTrackId) !== -1
+                     && sorted.indexOf(t) > sorted.findIndex(x => x.id === nowPlayingTrackId))
+                    ? 'played' : 'unplayed';
+
+      const card = document.createElement('div');
+      card.className = 'track-card';
+
+      // Play icon SVG
+      const playIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 2.5L13 8L3 13.5V2.5Z" fill="currentColor"/>
+      </svg>`;
+      // Checkmark SVG
+      const checkIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8L6.5 11.5L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+
+      const iconColor = state === 'playing' ? '#fff' : 'var(--brand-50)';
+      const btnIcon   = state === 'played' ? checkIcon : playIcon;
+      const btnTitle  = state === 'playing' ? 'En cours' : 'Marquer comme en cours';
+
+      card.innerHTML = `
+        <div class="track-art"></div>
+        <div class="track-info">
+          <p class="track-title">${escReq(t.title || '—')}</p>
+          ${t.artist ? `<p class="track-artist">${escReq(t.artist)}</p>` : ''}
+        </div>
+        <button class="track-play-btn state-${state}" title="${btnTitle}"
+                data-track-action="set-now-playing" data-track-id="${escReq(t.id)}"
+                style="color:${iconColor}">
+          ${btnIcon}
+        </button>`;
+
+      reqBody.appendChild(card);
+    });
+  }
+
+  async function setNowPlayingTrack(trackId) {
+    const ev = currentEvents[reqEventIdx];
+    const track = liveTracksCache.find(t => t.id === trackId);
+    if (!track || !ev) return;
+
+    try {
+      const res = await fetch('/api/now-playing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          gig_date:   ev.date     || '',
+          track_id:   track.id   || '',
+          artist:     track.artist || '',
+          title:      track.title  || '',
+          image_url:  track.artwork || null,
+          spotify_url: null,
+        }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
+      nowPlayingTrackId = trackId;
+      renderTrackCards();
+      showToast('En cours mis à jour', 'success');
+    } catch (err) {
+      showToast('Échec: ' + err.message, 'error');
+    }
+  }
+
+  // Tab switching
+  document.getElementById('live-tab-played').addEventListener('click', () => {
+    if (liveActiveTab === 'played') return;
+    liveActiveTab = 'played';
+    document.getElementById('live-tab-played').className   = 'live-tab-btn active';
+    document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
+    renderTrackCards();
+  });
+
+  document.getElementById('live-tab-requests').addEventListener('click', () => {
+    if (liveActiveTab === 'requests') return;
+    liveActiveTab = 'requests';
+    document.getElementById('live-tab-played').className   = 'live-tab-btn inactive';
+    document.getElementById('live-tab-requests').className = 'live-tab-btn active';
+    loadRequests();
+  });
+
+  // ── Refresh button ─────────────────────────────────────────────────────────────
+  document.getElementById('req-refresh-btn').addEventListener('click', () => {
+    if (reqEventIsLive && liveActiveTab === 'played') loadPlayedTracks();
+    else loadRequests();
+  });
+
+  // ── DEMANDES tab: song requests ───────────────────────────────────────────────
   async function loadRequests() {
     reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
     const slug = currentEvents[reqEventIdx]?.slug || '';
@@ -1887,9 +2079,17 @@
 
   document.getElementById('req-close-btn').addEventListener('click', closeRequests);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && reqOverlay.classList.contains('open')) closeRequests(); });
-  document.getElementById('req-refresh-btn').addEventListener('click', loadRequests);
 
   reqBody.addEventListener('click', async e => {
+    // Handle track now-playing buttons
+    const trackBtn = e.target.closest('[data-track-action="set-now-playing"]');
+    if (trackBtn) {
+      trackBtn.disabled = true;
+      await setNowPlayingTrack(trackBtn.dataset.trackId);
+      trackBtn.disabled = false;
+      return;
+    }
+
     const btn = e.target.closest('[data-req-action]');
     if (!btn) return;
     const { reqAction, id, status } = btn.dataset;
