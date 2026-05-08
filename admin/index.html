@@ -271,6 +271,14 @@
       <div id="gigs-list"><div class="empty-state">Loading…</div></div>
     </section>
 
+    <!-- ── PAST GIGS ── -->
+    <section class="admin-section" id="past-gigs-section" style="display:none;">
+      <div class="section-title-row">
+        <h2 class="section-heading">Past Gigs</h2>
+      </div>
+      <div id="past-gigs-list"></div>
+    </section>
+
     <!-- ── REVIEWS ── -->
     <section class="admin-section">
       <div class="section-title-row">
@@ -667,6 +675,31 @@
     renderReviews();
     renderDemos();
     renderTimeline();
+    scheduleGigRefresh();
+  }
+
+  // Schedule a one-shot re-render at the next significant event boundary
+  // (live event end, or next upcoming event start) — no polling needed
+  let _gigTimer = null;
+  function scheduleGigRefresh() {
+    clearTimeout(_gigTimer);
+    const now = Date.now();
+    const boundaries = [];
+    for (const ev of currentEvents) {
+      if (!ev.date || !ev.start_time || !ev.end_time) continue;
+      const startMs = new Date(`${ev.date}T${ev.start_time}:00`).getTime();
+      let endDateStr = ev.date;
+      if (ev.end_time <= ev.start_time) {
+        const d = new Date(ev.date); d.setDate(d.getDate() + 1);
+        endDateStr = d.toISOString().slice(0, 10);
+      }
+      const endMs = new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
+      if (startMs > now) boundaries.push(startMs); // upcoming → becomes live
+      if (endMs   > now) boundaries.push(endMs);   // live → disappears
+    }
+    if (!boundaries.length) return;
+    const next = Math.min(...boundaries);
+    _gigTimer = setTimeout(() => { renderLive(); renderGigs(); scheduleGigRefresh(); }, next - now + 1000);
   }
 
   // ── LIVE section ──────────────────────────────────────────────────────────────
@@ -730,45 +763,77 @@
       <button class="btn-card-edit" data-action="edit-intro">Edit</button>`;
   }
 
-  // ── NEXT GIGS section ─────────────────────────────────────────────────────────
-  function renderGigs() {
-    const el = document.getElementById('gigs-list');
-    const now = Date.now();
-    const upcoming = currentEvents.filter(ev => {
-      const startMs = new Date(`${ev.date}T${ev.start_time}:00`).getTime();
-      return startMs > now;
-    }).sort((a, b) => new Date(`${a.date}T${a.start_time}:00`) - new Date(`${b.date}T${b.start_time}:00`));
+  // ── NEXT GIGS + PAST GIGS sections ───────────────────────────────────────────
+  function isGigPast(ev) {
+    if (!ev.date || !ev.end_time) return false;
+    let endDateStr = ev.date;
+    if (ev.start_time && ev.end_time <= ev.start_time) {
+      const d = new Date(ev.date); d.setDate(d.getDate() + 1);
+      endDateStr = d.toISOString().slice(0, 10);
+    }
+    return Date.now() > new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
+  }
 
+  function buildGigCard(ev, idx) {
+    const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
+    const card = document.createElement('div');
+    card.className = 'gig-card gig-card--link';
+    card.dataset.action = 'open-requests';
+    card.dataset.index = String(idx);
+    card.innerHTML = `
+      <div class="gig-card-top" style="pointer-events:none;">
+        <div class="gig-card-avatar">
+          <img src="${imgSrc}" alt="${esc(ev.venue)}" onerror="this.style.opacity='0'">
+        </div>
+        <div class="gig-card-copy">
+          <p class="gig-card-name">${esc(ev.venue || '—')}</p>
+          <p class="gig-card-meta">${esc(ev.date || '')}</p>
+          <p class="gig-card-meta">${esc(ev.start_time || '')}–${esc(ev.end_time || '')}</p>
+        </div>
+      </div>
+      <div class="gig-card-actions" style="pointer-events:none;">
+        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>` : '<div></div>'}
+        <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
+      </div>`;
+    return card;
+  }
+
+  function renderGigs() {
+    const el          = document.getElementById('gigs-list');
+    const pastEl      = document.getElementById('past-gigs-list');
+    const pastSection = document.getElementById('past-gigs-section');
+    const now         = Date.now();
+
+    const upcoming = [];
+    const past     = [];
+    for (const ev of currentEvents) {
+      if (!ev.date) continue; // dateless test entries — skip
+      if (isGigPast(ev)) {
+        past.push(ev);
+      } else {
+        const startMs = new Date(`${ev.date}T${ev.start_time}:00`).getTime();
+        if (startMs > now) upcoming.push(ev); // currently-live handled by renderLive()
+      }
+    }
+    upcoming.sort((a, b) => new Date(`${a.date}T${a.start_time}:00`) - new Date(`${b.date}T${b.start_time}:00`));
+    past.sort((a, b) => new Date(`${b.date}T${b.start_time}:00`) - new Date(`${a.date}T${a.start_time}:00`)); // most recent first
+
+    // Upcoming
+    el.innerHTML = '';
     if (!upcoming.length) {
       el.innerHTML = `<div class="empty-state">No gigs planned</div>`;
-      return;
+    } else {
+      upcoming.forEach(ev => el.appendChild(buildGigCard(ev, currentEvents.indexOf(ev))));
     }
 
-    el.innerHTML = '';
-    upcoming.forEach(ev => {
-      const idx = currentEvents.indexOf(ev);
-      const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
-      const card = document.createElement('div');
-      card.className = 'gig-card gig-card--link';
-      card.dataset.action = 'open-requests';
-      card.dataset.index = String(idx);
-      card.innerHTML = `
-        <div class="gig-card-top" style="pointer-events:none;">
-          <div class="gig-card-avatar">
-            <img src="${imgSrc}" alt="${esc(ev.venue)}" onerror="this.style.opacity='0'">
-          </div>
-          <div class="gig-card-copy">
-            <p class="gig-card-name">${esc(ev.venue || '—')}</p>
-            <p class="gig-card-meta">${esc(ev.date || '')}</p>
-            <p class="gig-card-meta">${esc(ev.start_time || '')}–${esc(ev.end_time || '')}</p>
-          </div>
-        </div>
-        <div class="gig-card-actions" style="pointer-events:none;">
-          ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>` : '<div></div>'}
-          <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
-        </div>`;
-      el.appendChild(card);
-    });
+    // Past
+    if (!past.length) {
+      pastSection.style.display = 'none';
+    } else {
+      pastSection.style.display = '';
+      pastEl.innerHTML = '';
+      past.forEach(ev => pastEl.appendChild(buildGigCard(ev, currentEvents.indexOf(ev))));
+    }
   }
 
   // ── REVIEWS section ───────────────────────────────────────────────────────────
@@ -1522,6 +1587,7 @@
         await saveEvents(isNew ? `Add gig: ${venue}` : `Update gig: ${venue}`);
         renderLive();
         renderGigs();
+        scheduleGigRefresh();
         showToast(isNew ? `"${venue}" added` : `"${venue}" updated`, 'success');
       }
 

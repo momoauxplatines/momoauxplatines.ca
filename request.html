@@ -128,6 +128,11 @@
     }
     .event-status-badge.status-live { background: #D34242; }
     .event-status-badge.status-next { background: #007AFF; }
+    .event-status-badge.status-past {
+      background: #111210;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 1000;
+    }
     /* Pulsing white dot inside the LIVE badge */
     .status-dot {
       width: 12px; height: 12px; border-radius: 50%;
@@ -483,6 +488,9 @@
           <div class="event-status-badge status-next" id="event-status-next" style="display:none">
             <span data-key="req.next" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
           </div>
+          <div class="event-status-badge status-past" id="event-status-past" style="display:none">
+            <span data-key="req.past" data-en="PAST" data-fr="PASSÉ">PAST</span>
+          </div>
         </div>
         <button class="event-details-btn" id="event-details-btn">
           <span data-key="req.details" data-en="Details" data-fr="Détails">Details</span>
@@ -508,7 +516,7 @@
     <!-- Tabs — hidden for non-live events, shown only when live -->
     <div class="tabs-row" id="tabs-row" style="display:none;">
       <button class="tab-btn active"   id="tab-requested" data-key="req.tab.requested" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
-      <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">PLAYED</button>
+      <button class="tab-btn inactive" id="tab-played"    data-key="req.tab.played" data-en="PLAYED"    data-fr="JOUÉES">JOUÉES</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -907,6 +915,21 @@
     return ev.date === today && nowMins >= start && nowMins < end;
   }
 
+  function checkEventPast(ev) {
+    if (!ev.date || !ev.start_time || !ev.end_time) return false;
+    const start    = parseMins(ev.start_time);
+    const end      = parseMins(ev.end_time);
+    const overnight = end !== null && start > end;
+    let endDateStr = ev.date;
+    if (overnight) {
+      const d = new Date(ev.date + 'T00:00:00');
+      d.setDate(d.getDate() + 1);
+      const ny = d.getFullYear(), nm = String(d.getMonth() + 1).padStart(2, '0'), nd = String(d.getDate()).padStart(2, '0');
+      endDateStr = `${ny}-${nm}-${nd}`;
+    }
+    return Date.now() > new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
+  }
+
   // ─────────────────────────────────────────────
   // Populate event card from events.json when slug is provided
   // ─────────────────────────────────────────────
@@ -914,6 +937,7 @@
     // Hide status badges by default — shown after event data loads
     document.getElementById('event-status-live').style.display = 'none';
     document.getElementById('event-status-next').style.display = 'none';
+    document.getElementById('event-status-past').style.display = 'none';
     document.getElementById('now-playing-bar').style.display = 'none';
 
     // Clear all hardcoded placeholder event card data immediately
@@ -982,6 +1006,24 @@
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
           startNowPlayingRealtime(ev.date);
+        } else if (checkEventPast(ev)) {
+          // PAST — show archived playlist and all requests; no now-playing bar
+          gigDate = ev.date || null;
+          document.getElementById('event-status-past').style.display = '';
+          document.getElementById('tabs-row').style.display = '';
+          // Default to "Joués" tab since that's the most relevant content post-event
+          const tabRequested = document.getElementById('tab-requested');
+          const tabPlayed    = document.getElementById('tab-played');
+          const requestedList = document.getElementById('requested-list');
+          const playedListEl  = document.getElementById('played-list');
+          if (tabRequested) tabRequested.className = 'tab-btn inactive';
+          if (tabPlayed)    tabPlayed.className    = 'tab-btn active';
+          if (requestedList) requestedList.classList.add('hidden');
+          if (playedListEl)  playedListEl.classList.remove('hidden');
+          // Load archived Serato playlist once (no polling — event is over)
+          pollLivePlaylist();
+          // Load all requests for this event
+          fetchAndRenderAllRequests();
         } else if (ev.date) {
           // NEXT — upcoming event
           document.getElementById('event-status-next').style.display = '';
