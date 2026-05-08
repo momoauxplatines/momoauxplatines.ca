@@ -336,6 +336,12 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .now-playing-link:hover { color: var(--brand-30); }
+    .now-playing-request-col {
+      width: 52px; flex-shrink: 0; align-self: stretch;
+      display: none; align-items: center; justify-content: center;
+    }
+    .now-playing-request-col.visible { display: flex; }
+    .now-playing-request-icon { width: 20px; height: auto; object-fit: contain; }
 
     /* ── Request Overlay — same structure as Booking overlay ── */
     .request-overlay {
@@ -721,6 +727,9 @@
           </svg>
           <span data-key="req.playing" data-en="Playing" data-fr="En lecture">Playing</span>
         </div>
+      </div>
+      <div class="now-playing-request-col" id="now-playing-request-col">
+        <img class="now-playing-request-icon" src="images/request-sent-icon.svg" alt="Requested">
       </div>
     </div>
   </div>
@@ -1532,7 +1541,35 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function buildPlayedCard(artist, title, image, spotifyUrl, trackId) {
+  // ─── Fuzzy request matching ───────────────────────────────────────────────
+  function normalizeForMatch(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')   // strip diacritics
+      .replace(/[^a-z0-9\s]/g, '')                        // strip punctuation
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function findMatchingRequest(title, artist) {
+    const nTitle  = normalizeForMatch(title);
+    const nArtist = normalizeForMatch(artist);
+    return allRequestsCache.find(r => {
+      const rTitle  = normalizeForMatch(r.title);
+      const rArtist = normalizeForMatch(r.artist);
+      if (!rTitle) return false;
+      // Title must contain or be contained by the played title (fuzzy substring match)
+      const titleMatch = rTitle.includes(nTitle) || nTitle.includes(rTitle);
+      if (!titleMatch) return false;
+      // If both have artist info, check artist too (substring match)
+      if (nArtist && rArtist) {
+        return rArtist.includes(nArtist) || nArtist.includes(rArtist);
+      }
+      return true; // title match alone is enough when one side has no artist
+    }) || null;
+  }
+
+  function buildPlayedCard(artist, title, image, spotifyUrl, trackId, isRequested) {
     const card = document.createElement('div');
     card.className = 'song-card';
     if (trackId) card.dataset.trackId = trackId;
@@ -1546,7 +1583,8 @@
         </div>
         <a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener"
            style="${spotifyUrl ? '' : 'display:none'}">Spotify</a>
-      </div>`;
+      </div>
+      ${isRequested ? `<div class="song-request-col"><img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested"></div>` : ''}`;
     return card;
   }
 
@@ -1556,12 +1594,20 @@
     const npTitle  = document.getElementById('now-playing-title');
     const npArtist = document.getElementById('now-playing-artist');
     const npLink   = document.getElementById('now-playing-link');
-    if (npArt)    { npArt.src = c?.image || ''; npArt.alt = c?.title || track.title; }
-    if (npTitle)  npTitle.textContent  = c?.title  || track.title;
-    if (npArtist) npArtist.textContent = c?.artist || track.artist;
+    const npReqCol = document.getElementById('now-playing-request-col');
+    const resolvedTitle  = c?.title  || track.title;
+    const resolvedArtist = c?.artist || track.artist;
+    if (npArt)    { npArt.src = c?.image || ''; npArt.alt = resolvedTitle; }
+    if (npTitle)  npTitle.textContent  = resolvedTitle;
+    if (npArtist) npArtist.textContent = resolvedArtist;
     if (npLink) {
       if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
       else npLink.style.display = 'none';
+    }
+    // Show request icon if this track matches a pending/sent request
+    if (npReqCol) {
+      const match = findMatchingRequest(resolvedTitle, resolvedArtist);
+      npReqCol.classList.toggle('visible', !!match);
     }
   }
 
@@ -1597,6 +1643,12 @@
           if (npLink) {
             if (row.spotify_url) { npLink.href = row.spotify_url; npLink.style.display = ''; }
             else npLink.style.display = 'none';
+          }
+          // Update request icon in now-playing bar
+          const npReqCol = document.getElementById('now-playing-request-col');
+          if (npReqCol) {
+            const match = findMatchingRequest(row.title, row.artist);
+            npReqCol.classList.toggle('visible', !!match);
           }
         }
       )
@@ -1645,13 +1697,17 @@
           return numB - numA;
         });
         for (const t of displayTracks) {
-          const cached = artworkCache[t.id];
+          const cached      = artworkCache[t.id];
+          const resolvedTitle  = cached?.title  || t.title;
+          const resolvedArtist = cached?.artist || t.artist;
+          const isRequested = !!findMatchingRequest(resolvedTitle, resolvedArtist);
           list.appendChild(buildPlayedCard(
-            cached?.artist     || t.artist,
-            cached?.title      || t.title,
+            resolvedArtist,
+            resolvedTitle,
             cached?.image      || '',
             cached?.spotifyUrl || '',
-            t.id
+            t.id,
+            isRequested
           ));
         }
       }
@@ -1670,10 +1726,21 @@
                     // Patch the card already in the DOM (if visible)
                     const card = list.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
                     if (card) {
-                      const img  = card.querySelector('.song-art');
-                      const link = card.querySelector('.song-link');
+                      const img     = card.querySelector('.song-art');
+                      const link    = card.querySelector('.song-link');
                       if (img  && info.image)      { img.src = info.image; img.style.background = ''; }
                       if (link && info.spotifyUrl) { link.href = info.spotifyUrl; link.style.display = ''; }
+                      // Re-evaluate request match now that we have real title/artist from Spotify
+                      const nowMatched = !!findMatchingRequest(info.title, info.artist);
+                      let reqCol = card.querySelector('.song-request-col');
+                      if (nowMatched && !reqCol) {
+                        reqCol = document.createElement('div');
+                        reqCol.className = 'song-request-col';
+                        reqCol.innerHTML = '<img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested">';
+                        card.appendChild(reqCol);
+                      } else if (!nowMatched && reqCol) {
+                        reqCol.remove();
+                      }
                     }
                     // Also refresh the now-playing bar if this is the current track
                     if (mostRecentTrack?.id === t.id) updateNowPlayingBar(mostRecentTrack);
