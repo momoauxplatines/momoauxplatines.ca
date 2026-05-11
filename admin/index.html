@@ -225,6 +225,42 @@
     .track-play-btn.state-played   { background: #20221f; }
     .track-play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* ── Battle tab ── */
+    .battle-form { display: flex; flex-direction: column; gap: 24px; padding: 16px; }
+    .battle-field { display: flex; flex-direction: column; gap: 8px; }
+    .battle-label { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em; }
+    .battle-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 12px; padding: 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; }
+    .battle-input::placeholder { color: var(--brand-80); }
+    .battle-input:focus { border-color: var(--brand-50); }
+    .battle-input.active { background: var(--brand-100); border-color: var(--brand-50); }
+    .battle-spotify-wrap { position: relative; display: flex; align-items: center; gap: 16px; background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 56px; padding: 14px 20px; transition: border-color 0.2s; }
+    .battle-spotify-wrap:focus-within { border-color: var(--brand-50); }
+    .battle-spotify-wrap svg { flex-shrink: 0; color: var(--brand-60); }
+    .battle-spotify-input { flex: 1; background: none; border: none; outline: none; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); min-width: 0; }
+    .battle-spotify-input::placeholder { color: var(--brand-80); }
+    .battle-spotify-status { font-size: 13px; font-weight: 300; color: var(--brand-60); min-height: 18px; padding-left: 4px; }
+    .battle-spotify-status.err { color: var(--red); }
+    .battle-songs-list { display: flex; flex-direction: column; gap: 8px; }
+    .battle-song-card { background: #000; border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: center; }
+    .battle-song-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-90); }
+    .battle-song-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
+    .battle-song-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .battle-song-artist { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .battle-song-remove { width: 40px; height: 40px; border-radius: 8px; border: none; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--red); transition: opacity 0.15s; }
+    .battle-song-remove:hover { opacity: 0.7; }
+    .battle-count-hint { font-size: 13px; font-weight: 300; color: var(--brand-60); }
+    .battle-start-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+    .battle-start-btn:not(:disabled):hover { background: var(--brand-80); }
+    .battle-start-btn:disabled { color: var(--brand-80); border-color: var(--brand-90); cursor: not-allowed; }
+    .battle-start-btn.ready { background: var(--brand-20); border-color: var(--brand-20); color: var(--brand-100); font-weight: 900; text-transform: uppercase; }
+    .battle-start-btn.ready:hover { background: var(--brand-00); border-color: var(--brand-00); }
+    .battle-active-card { background: #000; border: 1px solid var(--green); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .battle-active-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px; color: var(--green); text-transform: uppercase; }
+    .battle-active-meta { font-size: 16px; font-weight: 300; color: var(--brand-50); line-height: 20px; }
+    .battle-active-songs { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .battle-end-btn { background: var(--brand-90); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: inherit; font-size: 18px; font-weight: 300; height: 48px; width: 100%; cursor: pointer; transition: background 0.15s; }
+    .battle-end-btn:hover { background: var(--red); color: var(--brand-00); }
+
   </style>
 </head>
 <body>
@@ -400,6 +436,7 @@
     <div class="live-tabs-row" id="live-tabs-row" style="display:none;">
       <button class="live-tab-btn active" id="live-tab-played">JOUÉES</button>
       <button class="live-tab-btn inactive" id="live-tab-requests">DEMANDES</button>
+      <button class="live-tab-btn inactive" id="live-tab-battle">BATTLE</button>
     </div>
     <div class="edit-body req-list" id="req-body">
       <div class="empty-state">Loading…</div>
@@ -1840,11 +1877,14 @@
     reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Always show JOUÉES/DEMANDES tabs — default to JOUÉES
+    // Always show JOUÉES/DEMANDES/BATTLE tabs — default to JOUÉES
     liveTabsRow.style.display = '';
+    battleSongs    = [];
+    battleDuration = 300;
     liveActiveTab = 'played';
     document.getElementById('live-tab-played').className   = 'live-tab-btn active';
     document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
+    document.getElementById('live-tab-battle').className   = 'live-tab-btn inactive';
     loadPlayedTracks();
   }
 
@@ -2009,27 +2049,340 @@
   }
 
   // Tab switching
+  function setLiveTab(name) {
+    liveActiveTab = name;
+    document.getElementById('live-tab-played').className   = name === 'played'   ? 'live-tab-btn active' : 'live-tab-btn inactive';
+    document.getElementById('live-tab-requests').className = name === 'requests' ? 'live-tab-btn active' : 'live-tab-btn inactive';
+    document.getElementById('live-tab-battle').className   = name === 'battle'   ? 'live-tab-btn active' : 'live-tab-btn inactive';
+  }
+
   document.getElementById('live-tab-played').addEventListener('click', () => {
     if (liveActiveTab === 'played') return;
-    liveActiveTab = 'played';
-    document.getElementById('live-tab-played').className   = 'live-tab-btn active';
-    document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
+    setLiveTab('played');
     renderTrackCards();
-    startLivePolling(); // resume polling when returning to JOUÉES
+    startLivePolling();
   });
 
   document.getElementById('live-tab-requests').addEventListener('click', () => {
     if (liveActiveTab === 'requests') return;
-    stopLivePolling(); // pause polling while on DEMANDES
-    liveActiveTab = 'requests';
-    document.getElementById('live-tab-played').className   = 'live-tab-btn inactive';
-    document.getElementById('live-tab-requests').className = 'live-tab-btn active';
+    stopLivePolling();
+    setLiveTab('requests');
     loadRequests();
   });
 
+  document.getElementById('live-tab-battle').addEventListener('click', () => {
+    if (liveActiveTab === 'battle') return;
+    stopLivePolling();
+    setLiveTab('battle');
+    loadBattle();
+  });
+
+  // ── BATTLE tab ────────────────────────────────────────────────────────────────
+  const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
+  const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
+
+  let battleSongs    = [];   // [{title, artist, image, url}]
+  let battleDuration = 300;  // seconds, default 5 min
+  let battleSpotifyTimer = null;
+
+  function parseBattleSpotifyId(url) {
+    const m = (url || '').match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    return m ? m[1] : null;
+  }
+
+  async function getBattleSpotifyToken() {
+    const cached = sessionStorage.getItem('sp_token');
+    const expiry = parseInt(sessionStorage.getItem('sp_expiry') || '0');
+    if (cached && Date.now() < expiry) return cached;
+    const resp = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET)
+      },
+      body: 'grant_type=client_credentials'
+    });
+    const data = await resp.json();
+    if (!data.access_token) throw new Error('Token error');
+    sessionStorage.setItem('sp_token', data.access_token);
+    sessionStorage.setItem('sp_expiry', String(Date.now() + (data.expires_in - 60) * 1000));
+    return data.access_token;
+  }
+
+  async function fetchBattleTrackInfo(spotifyUrl) {
+    const trackId = parseBattleSpotifyId(spotifyUrl);
+    if (!trackId) throw new Error('invalid');
+    try {
+      const spTok = await getBattleSpotifyToken();
+      const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: { Authorization: `Bearer ${spTok}` }
+      });
+      if (!resp.ok) throw new Error(`API ${resp.status}`);
+      const d = await resp.json();
+      return {
+        title:  d.name,
+        artist: d.artists.map(a => a.name).join(', '),
+        image:  d.album.images[0]?.url || '',
+        url:    d.external_urls.spotify
+      };
+    } catch {
+      // oEmbed fallback
+      const oe = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`);
+      if (!oe.ok) throw new Error('Could not fetch track info');
+      const d = await oe.json();
+      return { title: d.title || '', artist: '', image: d.thumbnail_url || '', url: spotifyUrl };
+    }
+  }
+
+  function secondsToHMS(s) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return [
+      h   ? String(h).padStart(2,'0')   : '00',
+      String(m).padStart(2,'0'),
+      String(sec).padStart(2,'0')
+    ].join(':');
+  }
+
+  function hmsToSeconds(str) {
+    const parts = (str || '').split(':').map(Number);
+    if (parts.length === 3) return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+    if (parts.length === 2) return (parts[0] * 60) + parts[1];
+    return parseInt(str) || 0;
+  }
+
+  async function loadBattle() {
+    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+    const slug = currentEvents[reqEventIdx]?.slug || '';
+    const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
+    try {
+      const res = await fetch(`/api/battles${qs}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const battles = await res.json();
+      // Find an active battle (if any)
+      const activeBattle = battles.find(b => b.status === 'active');
+      if (activeBattle) {
+        renderActiveBattle(activeBattle);
+      } else {
+        renderBattleForm();
+      }
+    } catch (e) {
+      reqBody.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed: ${e.message}</div>`;
+    }
+  }
+
+  function renderActiveBattle(battle) {
+    reqBody.innerHTML = '';
+    const elapsed = battle.started_at ? Math.floor((Date.now() - battle.started_at) / 1000) : 0;
+    const remaining = Math.max(0, battle.duration - elapsed);
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:16px;display:flex;flex-direction:column;gap:16px;';
+    const songsHtml = battle.songs.map(s => `
+      <div class="battle-song-card">
+        <img class="battle-song-art" src="${escReq(s.image)}" alt="" onerror="this.style.background='var(--brand-90)'">
+        <div class="battle-song-info">
+          <p class="battle-song-title">${escReq(s.title)}</p>
+          ${s.artist ? `<p class="battle-song-artist">${escReq(s.artist)}</p>` : ''}
+        </div>
+      </div>`).join('');
+    wrap.innerHTML = `
+      <div class="battle-active-card">
+        <p class="battle-active-title">⚔ Battle en cours</p>
+        <p class="battle-active-meta">Durée: ${secondsToHMS(battle.duration)} · Temps restant: ${secondsToHMS(remaining)}</p>
+        <div class="battle-active-songs">${songsHtml}</div>
+        <button class="battle-end-btn" id="battle-end-btn">Terminer le battle</button>
+      </div>`;
+    reqBody.appendChild(wrap);
+    document.getElementById('battle-end-btn').addEventListener('click', async () => {
+      const slug = currentEvents[reqEventIdx]?.slug || '';
+      const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
+      try {
+        const res = await fetch(`/api/battles${qs}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ id: battle.id, status: 'ended' })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        showToast('Battle terminé', 'success');
+        battleSongs = [];
+        battleDuration = 300;
+        renderBattleForm();
+      } catch (err) { showToast('Échec: ' + err.message, 'error'); }
+    });
+  }
+
+  function renderBattleForm() {
+    reqBody.innerHTML = '';
+    const form = document.createElement('div');
+    form.className = 'battle-form';
+
+    // Duration field
+    form.innerHTML = `
+      <div class="battle-field">
+        <label class="battle-label">Temps*</label>
+        <input class="battle-input${battleDuration !== 300 ? ' active' : ''}" id="battle-duration-input"
+               type="text" placeholder="00:00:00" value="${battleDuration ? secondsToHMS(battleDuration) : ''}">
+      </div>
+      <div class="battle-field">
+        <label class="battle-label">Songs <span class="battle-count-hint" id="battle-count-hint">(${battleSongs.length}/5)</span></label>
+        <div class="battle-spotify-wrap">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M14.5 14.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input class="battle-spotify-input" id="battle-spotify-input"
+                 type="text" placeholder="Copy Spotify link here"
+                 ${battleSongs.length >= 5 ? 'disabled' : ''}>
+        </div>
+        <p class="battle-spotify-status" id="battle-spotify-status"></p>
+      </div>
+      <div class="battle-songs-list" id="battle-songs-list"></div>
+      <button class="battle-start-btn" id="battle-start-btn" disabled>Start The Battle</button>`;
+
+    reqBody.appendChild(form);
+
+    // Render existing songs
+    renderBattleSongsList();
+
+    // Duration input handler
+    const durInput = document.getElementById('battle-duration-input');
+    durInput.addEventListener('change', () => {
+      const secs = hmsToSeconds(durInput.value.trim());
+      battleDuration = secs;
+      durInput.classList.toggle('active', secs > 0);
+      updateBattleStartBtn();
+    });
+    durInput.addEventListener('blur', () => {
+      if (battleDuration > 0) durInput.value = secondsToHMS(battleDuration);
+    });
+
+    // Spotify input: debounce 600ms then lookup
+    const spInput  = document.getElementById('battle-spotify-input');
+    const spStatus = document.getElementById('battle-spotify-status');
+    spInput.addEventListener('input', () => {
+      clearTimeout(battleSpotifyTimer);
+      const val = spInput.value.trim();
+      if (!val) { spStatus.textContent = ''; spStatus.className = 'battle-spotify-status'; return; }
+      if (!parseBattleSpotifyId(val)) {
+        spStatus.textContent = 'Assure-toi que le lien provient de Spotify.';
+        spStatus.className = 'battle-spotify-status err';
+        return;
+      }
+      spStatus.textContent = 'Recherche…';
+      spStatus.className = 'battle-spotify-status';
+      battleSpotifyTimer = setTimeout(async () => {
+        try {
+          const info = await fetchBattleTrackInfo(val);
+          // Check for duplicate
+          if (battleSongs.find(s => parseBattleSpotifyId(s.url) === parseBattleSpotifyId(val))) {
+            spStatus.textContent = 'Cette chanson est déjà dans la liste.';
+            spStatus.className = 'battle-spotify-status err';
+            return;
+          }
+          battleSongs.push(info);
+          spInput.value = '';
+          spStatus.textContent = '';
+          spStatus.className = 'battle-spotify-status';
+          renderBattleSongsList();
+          updateBattleStartBtn();
+          // Disable input if at max
+          spInput.disabled = battleSongs.length >= 5;
+        } catch {
+          spStatus.textContent = 'Impossible de trouver la chanson.';
+          spStatus.className = 'battle-spotify-status err';
+        }
+      }, 600);
+    });
+
+    updateBattleStartBtn();
+
+    // Start button
+    document.getElementById('battle-start-btn').addEventListener('click', createBattle);
+  }
+
+  function renderBattleSongsList() {
+    const list = document.getElementById('battle-songs-list');
+    if (!list) return;
+    list.innerHTML = '';
+    battleSongs.forEach((s, i) => {
+      const card = document.createElement('div');
+      card.className = 'battle-song-card';
+      card.innerHTML = `
+        <img class="battle-song-art" src="${escReq(s.image)}" alt="" onerror="this.style.background='var(--brand-90)'">
+        <div class="battle-song-info">
+          <p class="battle-song-title">${escReq(s.title)}</p>
+          ${s.artist ? `<p class="battle-song-artist">${escReq(s.artist)}</p>` : ''}
+        </div>
+        <button class="battle-song-remove" data-battle-remove="${i}" aria-label="Retirer">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>`;
+      list.appendChild(card);
+    });
+    // Update count hint
+    const hint = document.getElementById('battle-count-hint');
+    if (hint) hint.textContent = `(${battleSongs.length}/5)`;
+    // Re-enable input if under limit
+    const spInput = document.getElementById('battle-spotify-input');
+    if (spInput) spInput.disabled = battleSongs.length >= 5;
+    // Click handler for remove buttons
+    list.addEventListener('click', e => {
+      const btn = e.target.closest('[data-battle-remove]');
+      if (!btn) return;
+      const idx = parseInt(btn.dataset.battleRemove);
+      battleSongs.splice(idx, 1);
+      renderBattleSongsList();
+      updateBattleStartBtn();
+    });
+  }
+
+  function updateBattleStartBtn() {
+    const btn = document.getElementById('battle-start-btn');
+    if (!btn) return;
+    const ready = battleSongs.length >= 2 && battleDuration > 0;
+    btn.disabled = !ready;
+    btn.classList.toggle('ready', ready);
+  }
+
+  async function createBattle() {
+    const btn = document.getElementById('battle-start-btn');
+    if (btn) btn.disabled = true;
+    const slug = currentEvents[reqEventIdx]?.slug || '';
+    const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
+    try {
+      const res = await fetch(`/api/battles${qs}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ duration: battleDuration, songs: battleSongs })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
+      const { battle } = await res.json();
+      // Immediately activate it
+      const resActivate = await fetch(`/api/battles${qs}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: battle.id, status: 'active' })
+      });
+      if (!resActivate.ok) throw new Error('Activation failed');
+      showToast('Battle lancé! ⚔', 'success');
+      battleSongs    = [];
+      battleDuration = 300;
+      loadBattle();
+    } catch (err) {
+      showToast('Échec: ' + err.message, 'error');
+      if (btn) btn.disabled = false;
+    }
+  }
+
   // ── Refresh button ─────────────────────────────────────────────────────────────
   document.getElementById('req-refresh-btn').addEventListener('click', () => {
-    if (liveActiveTab === 'played') loadPlayedTracks();
+    if (liveActiveTab === 'played')   loadPlayedTracks();
+    else if (liveActiveTab === 'battle') loadBattle();
     else loadRequests();
   });
 
