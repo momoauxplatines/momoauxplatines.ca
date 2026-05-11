@@ -1886,6 +1886,17 @@
     if (_battlePoll) { clearInterval(_battlePoll); _battlePoll = null; }
   }
 
+  // An ended battle is visible for 15 min after it ended, or until a new active battle starts.
+  // If ended_at is missing, estimate from started_at + duration.
+  const BATTLE_ENDED_WINDOW_MS = 15 * 60 * 1000;
+  function isEndedBattleVisible(battle) {
+    if (battle.status !== 'ended') return true;
+    const endedAt = battle.ended_at
+      || (battle.started_at ? battle.started_at + battle.duration * 1000 : null);
+    if (!endedAt) return false;
+    return (Date.now() - endedAt) < BATTLE_ENDED_WINDOW_MS;
+  }
+
   // Check if a battle exists and reveal the BATTLE tab if so
   async function checkForBattle() {
     if (!EVENT_SLUG) return;
@@ -1893,7 +1904,9 @@
       const res = await fetch(BATTLES_API);
       if (!res.ok) return;
       const battles = await res.json();
-      const hasBattle = battles.some(b => b.status === 'active' || b.status === 'ended');
+      const hasBattle = battles.some(b =>
+        b.status === 'active' || (b.status === 'ended' && isEndedBattleVisible(b))
+      );
       if (hasBattle) {
         tabBattle.style.display = '';
         // If savedTab was 'battle' and we just revealed the tab, switch to it
@@ -1911,9 +1924,9 @@
       if (!res.ok) throw new Error('API error');
       const battles = await res.json();
 
-      // Most recent active battle wins; fall back to most recent ended
+      // Active battle always wins; fall back to a recently-ended battle (≤15 min ago)
       const active = battles.find(b => b.status === 'active');
-      const ended  = battles.find(b => b.status === 'ended');
+      const ended  = battles.find(b => b.status === 'ended' && isEndedBattleVisible(b));
       const battle = active || ended;
 
       if (!battle) {
