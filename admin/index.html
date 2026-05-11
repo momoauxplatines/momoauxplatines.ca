@@ -260,6 +260,27 @@
     .battle-active-songs { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .battle-end-btn { background: var(--brand-90); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: inherit; font-size: 18px; font-weight: 300; height: 48px; width: 100%; cursor: pointer; transition: background 0.15s; }
     .battle-end-btn:hover { background: var(--red); color: var(--brand-00); }
+    /* Battle live / ended views */
+    .battle-status-label { font-size: 18px; font-weight: 300; line-height: 26px; text-align: center; }
+    .battle-status-label.active { color: var(--green); }
+    .battle-status-label.ended  { color: #d34242; }
+    .battle-live-songs { display: flex; flex-direction: column; gap: 8px; }
+    .battle-live-card { background: #000; border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: flex-start; }
+    .battle-live-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-100); }
+    .battle-live-body { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; }
+    .battle-live-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1.2; }
+    .battle-live-artist { font-size: 18px; font-weight: 300; color: var(--brand-30); line-height: 26px; }
+    .battle-vote-row { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: auto; padding-top: 4px; }
+    .battle-vote-bar  { flex: 1; display: flex; height: 12px; }
+    .battle-vote-fill  { height: 100%; border-radius: 2px 0 0 2px; flex-shrink: 0; min-width: 2px; transition: width 0.4s ease; }
+    .battle-vote-fill.leading  { background: var(--green); }
+    .battle-vote-fill.behind   { background: var(--brand-70); }
+    .battle-vote-empty { height: 100%; flex: 1; border-radius: 0 2px 2px 2px; background: var(--brand-105); min-width: 1px; }
+    .battle-vote-pct   { font-size: 16px; font-weight: 300; color: var(--brand-70); white-space: nowrap; min-width: 38px; text-align: right; }
+    .battle-new-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: background 0.15s; }
+    .battle-new-btn:hover { background: var(--brand-80); }
+    .battle-new-btn:disabled { background: var(--brand-100); border-color: var(--brand-90); color: var(--brand-80); cursor: not-allowed; }
+    .battle-footer { flex-shrink: 0; padding: 16px; }
 
   </style>
 </head>
@@ -441,7 +462,7 @@
     <div class="edit-body req-list" id="req-body">
       <div class="empty-state">Loading…</div>
     </div>
-    <div class="edit-footer">
+    <div class="edit-footer" id="req-footer">
       <button class="btn-dark" id="req-refresh-btn">Refresh</button>
     </div>
   </div>
@@ -1901,12 +1922,19 @@
 
   function closeRequests() {
     stopLivePolling();
+    stopBattleTimers();
     reqOverlay.classList.remove('open');
     document.body.style.overflow = '';
     reqList = [];
     liveTracksCache = [];
     liveTrackSig = '';
     nowPlayingTrackId = null;
+    _activeBattle = null;
+    // Restore default footer in case battle tab had replaced it
+    const footer = document.getElementById('req-footer');
+    if (footer && !footer.querySelector('#req-refresh-btn')) {
+      footer.innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+    }
   }
 
   // ── JOUÉES tab: Serato track cards ────────────────────────────────────────────
@@ -2174,44 +2202,136 @@
     }
   }
 
-  function renderActiveBattle(battle) {
-    reqBody.innerHTML = '';
-    const elapsed = battle.started_at ? Math.floor((Date.now() - battle.started_at) / 1000) : 0;
-    const remaining = Math.max(0, battle.duration - elapsed);
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'padding:16px;display:flex;flex-direction:column;gap:16px;';
-    const songsHtml = battle.songs.map(s => `
-      <div class="battle-song-card">
-        <img class="battle-song-art" src="${escReq(s.image)}" alt="" onerror="this.style.background='var(--brand-90)'">
-        <div class="battle-song-info">
-          <p class="battle-song-title">${escReq(s.title)}</p>
-          ${s.artist ? `<p class="battle-song-artist">${escReq(s.artist)}</p>` : ''}
+  let _battleCountdown = null;
+  let _battlePoll      = null;
+  let _activeBattle    = null; // the battle object currently displayed
+
+  function stopBattleTimers() {
+    clearInterval(_battleCountdown);
+    clearInterval(_battlePoll);
+    _battleCountdown = null;
+    _battlePoll      = null;
+  }
+
+  // Compute per-song vote percentages from battle.votes object
+  function computeVotePcts(battle) {
+    const votes  = battle.votes || {};
+    const totals = battle.songs.map(s => votes[s.id] || 0);
+    const total  = totals.reduce((a, b) => a + b, 0);
+    const maxVotes = Math.max(...totals, 0);
+    return battle.songs.map((s, i) => ({
+      song:    s,
+      count:   totals[i],
+      pct:     total > 0 ? Math.round((totals[i] / total) * 100) : 0,
+      leading: totals[i] === maxVotes && maxVotes > 0,
+    }));
+  }
+
+  function buildBattleLiveCard(entry) {
+    const colorClass = entry.leading ? 'leading' : 'behind';
+    const fillPct    = entry.pct;
+    return `
+      <div class="battle-live-card">
+        <img class="battle-live-art" src="${escReq(entry.song.image)}" alt="" onerror="this.style.background='var(--brand-90)'">
+        <div class="battle-live-body">
+          <p class="battle-live-title">${escReq(entry.song.title)}</p>
+          ${entry.song.artist ? `<p class="battle-live-artist">${escReq(entry.song.artist)}</p>` : ''}
+          <div class="battle-vote-row">
+            <div class="battle-vote-bar">
+              <div class="battle-vote-fill ${colorClass}" style="width:${fillPct}%"></div>
+              <div class="battle-vote-empty"></div>
+            </div>
+            <p class="battle-vote-pct">${fillPct}%</p>
+          </div>
         </div>
-      </div>`).join('');
-    wrap.innerHTML = `
-      <div class="battle-active-card">
-        <p class="battle-active-title">⚔ Battle en cours</p>
-        <p class="battle-active-meta">Durée: ${secondsToHMS(battle.duration)} · Temps restant: ${secondsToHMS(remaining)}</p>
-        <div class="battle-active-songs">${songsHtml}</div>
-        <button class="battle-end-btn" id="battle-end-btn">Terminer le battle</button>
       </div>`;
-    reqBody.appendChild(wrap);
-    document.getElementById('battle-end-btn').addEventListener('click', async () => {
+  }
+
+  function renderActiveBattle(battle) {
+    stopBattleTimers();
+    _activeBattle = battle;
+
+    const isEnded = battle.status === 'ended' ||
+                    (battle.started_at && (Date.now() - battle.started_at) / 1000 >= battle.duration);
+
+    reqBody.innerHTML = '';
+    const footer = document.getElementById('req-footer');
+
+    // ── Footer: "Create New Battle" ──────────────────────────────────────────
+    footer.innerHTML = `<button class="battle-new-btn" id="battle-new-btn" ${isEnded ? '' : 'disabled'}>Create New Battle</button>`;
+    document.getElementById('battle-new-btn').addEventListener('click', () => {
+      stopBattleTimers();
+      battleSongs    = [];
+      battleDuration = 300;
+      // Restore normal footer
+      document.getElementById('req-footer').innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+      renderBattleForm();
+    });
+
+    // ── Status label ─────────────────────────────────────────────────────────
+    const statusEl = document.createElement('p');
+    statusEl.className = 'battle-status-label ' + (isEnded ? 'ended' : 'active');
+    statusEl.id = 'battle-status-label';
+    statusEl.textContent = isEnded ? 'Ended' : 'Time remaining: ' + secondsToHMS(
+      Math.max(0, battle.duration - Math.floor((Date.now() - battle.started_at) / 1000))
+    );
+    reqBody.appendChild(statusEl);
+
+    // ── Song list ────────────────────────────────────────────────────────────
+    const songsWrap = document.createElement('div');
+    songsWrap.className = 'battle-live-songs';
+    songsWrap.id = 'battle-live-songs';
+    const entries = computeVotePcts(battle);
+    songsWrap.innerHTML = entries.map(buildBattleLiveCard).join('');
+    reqBody.appendChild(songsWrap);
+
+    if (isEnded) return; // no timers needed
+
+    // ── Countdown (1s tick) ──────────────────────────────────────────────────
+    _battleCountdown = setInterval(() => {
+      const label = document.getElementById('battle-status-label');
+      if (!label || !_activeBattle) return;
+      const elapsed   = Math.floor((Date.now() - _activeBattle.started_at) / 1000);
+      const remaining = Math.max(0, _activeBattle.duration - elapsed);
+      if (remaining === 0) {
+        // Time's up — flip to ended locally, then let next poll confirm
+        label.textContent = 'Ended';
+        label.className   = 'battle-status-label ended';
+        const newBtn = document.getElementById('battle-new-btn');
+        if (newBtn) newBtn.disabled = false;
+        stopBattleTimers();
+      } else {
+        label.textContent = 'Time remaining: ' + secondsToHMS(remaining);
+      }
+    }, 1000);
+
+    // ── Vote poll (5s) ───────────────────────────────────────────────────────
+    _battlePoll = setInterval(async () => {
+      if (liveActiveTab !== 'battle') return;
       const slug = currentEvents[reqEventIdx]?.slug || '';
       const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
       try {
-        const res = await fetch(`/api/battles${qs}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ id: battle.id, status: 'ended' })
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        showToast('Battle terminé', 'success');
-        battleSongs = [];
-        battleDuration = 300;
-        renderBattleForm();
-      } catch (err) { showToast('Échec: ' + err.message, 'error'); }
-    });
+        const res     = await fetch(`/api/battles${qs}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) return;
+        const battles = await res.json();
+        const updated = battles.find(b => b.id === _activeBattle.id);
+        if (!updated) return;
+        _activeBattle = updated;
+
+        // Re-render vote bars in-place
+        const songsDiv = document.getElementById('battle-live-songs');
+        if (songsDiv) songsDiv.innerHTML = computeVotePcts(updated).map(buildBattleLiveCard).join('');
+
+        // If server says ended, flip the UI
+        if (updated.status === 'ended') {
+          const label = document.getElementById('battle-status-label');
+          if (label) { label.textContent = 'Ended'; label.className = 'battle-status-label ended'; }
+          const newBtn = document.getElementById('battle-new-btn');
+          if (newBtn) newBtn.disabled = false;
+          stopBattleTimers();
+        }
+      } catch { /* silent */ }
+    }, 5000);
   }
 
   function renderBattleForm() {
@@ -2379,9 +2499,10 @@
     }
   }
 
-  // ── Refresh button ─────────────────────────────────────────────────────────────
-  document.getElementById('req-refresh-btn').addEventListener('click', () => {
-    if (liveActiveTab === 'played')   loadPlayedTracks();
+  // ── Refresh button (delegated — footer HTML can be replaced by battle view) ───
+  document.getElementById('req-footer').addEventListener('click', e => {
+    if (!e.target.closest('#req-refresh-btn')) return;
+    if (liveActiveTab === 'played')      loadPlayedTracks();
     else if (liveActiveTab === 'battle') loadBattle();
     else loadRequests();
   });

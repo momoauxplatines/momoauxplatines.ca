@@ -104,11 +104,38 @@ export default async (req) => {
 
   // ── PATCH ─────────────────────────────────────────────────────────────────────
   if (req.method === 'PATCH') {
+    let body;
+    try { body = await req.json(); } catch { return new Response('Bad JSON', { status: 400, headers: CORS }); }
+
+    // Vote submission is public (no auth required)
+    if (body.vote) {
+      const raw  = await store.get(storeKey).catch(() => null);
+      const list = raw ? JSON.parse(raw) : [];
+      const battle = list.find(b => b.id === body.id && b.status === 'active');
+      if (!battle) {
+        return new Response(JSON.stringify({ error: 'Active battle not found' }), { status: 404, headers: CORS });
+      }
+      // Validate song id belongs to this battle
+      if (!battle.songs.find(s => s.id === body.vote)) {
+        return new Response(JSON.stringify({ error: 'Invalid song' }), { status: 400, headers: CORS });
+      }
+      // Auto-end if time is up
+      if (battle.started_at && (Date.now() - battle.started_at) / 1000 >= battle.duration) {
+        battle.status     = 'ended';
+        battle.ended_at   = battle.ended_at || Date.now();
+        await store.set(storeKey, JSON.stringify(list));
+        return new Response(JSON.stringify({ error: 'Battle has ended' }), { status: 410, headers: CORS });
+      }
+      battle.votes = battle.votes || {};
+      battle.votes[body.vote] = (battle.votes[body.vote] || 0) + 1;
+      await store.set(storeKey, JSON.stringify(list));
+      return new Response(JSON.stringify({ ok: true }), { headers: CORS });
+    }
+
+    // Status change requires admin
     if (!(await isAdmin(req))) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: CORS });
     }
-    let body;
-    try { body = await req.json(); } catch { return new Response('Bad JSON', { status: 400, headers: CORS }); }
 
     const raw  = await store.get(storeKey).catch(() => null);
     const list = raw ? JSON.parse(raw) : [];
@@ -123,6 +150,7 @@ export default async (req) => {
       battle.status = body.status;
       if (body.status === 'active' && !battle.started_at) {
         battle.started_at = Date.now();
+        battle.votes = battle.votes || {};
       }
       if (body.status === 'ended' && !battle.ended_at) {
         battle.ended_at = Date.now();
