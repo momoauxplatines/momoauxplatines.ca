@@ -201,6 +201,15 @@
     .req-restore-btn:hover { opacity: 0.75; }
     .req-card.deleted { opacity: 0.45; }
 
+    /* Request card: battle selection mode (live events) */
+    .req-card.battle-selectable { cursor: pointer; transition: background 0.12s, border-color 0.12s; }
+    .req-card.battle-selected   { background: var(--brand-105) !important; border-color: var(--green) !important; }
+    .req-card.battle-selectable:not(.battle-selected) { background: var(--brand-100) !important; border-color: var(--brand-90) !important; }
+
+    /* "Create a Battle" footer button */
+    .battle-create-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: background 0.15s; }
+    .battle-create-btn:hover { background: var(--brand-80); }
+
     .req-empty-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 6px; }
     .req-empty-body p { font-size: 16px; font-weight: 300; color: var(--brand-60, #888); line-height: 22px; }
 
@@ -241,7 +250,7 @@
     .battle-spotify-status { font-size: 13px; font-weight: 300; color: var(--brand-60); min-height: 18px; padding-left: 4px; }
     .battle-spotify-status.err { color: var(--red); }
     .battle-songs-list { display: flex; flex-direction: column; gap: 8px; }
-    .battle-song-card { background: #000; border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: center; }
+    .battle-song-card { background: var(--brand-105); border: 1px solid var(--brand-70); border-radius: 16px; padding: 8px; display: flex; gap: 8px; align-items: center; }
     .battle-song-art { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--brand-90); border: 1px solid var(--brand-90); }
     .battle-song-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
     .battle-song-title  { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -490,9 +499,6 @@
 
   const DEMOS = [
     { id: 'le-bon-groove', title: 'Le Bon Groove', thumb: '../images/video-le-bon-groove.png', ytId: 'eqyngbFuLcU', descKey: 'demos.le-bon-groove.desc' },
-    { id: 'jazzy-house',   title: 'Jazzy House',   thumb: '../images/video-jazzy-house.png',   ytId: 'cQRz7w4A7pc', descKey: 'demos.jazzy-house.desc'   },
-    { id: 'chill',         title: 'Chill',         thumb: '../images/video-chill.png',          ytId: 'Bu2YCXoDMe4', descKey: 'demos.chill.desc'          },
-    { id: 'dancehall',     title: 'Dancehall',     thumb: '../images/video-dancehall.png',      ytId: '',            descKey: 'demos.dancehall.desc'      },
   ];
 
   const TIMELINE = {
@@ -1900,8 +1906,10 @@
 
     // Always show JOUÉES/DEMANDES/BATTLE tabs — default to JOUÉES
     liveTabsRow.style.display = '';
-    battleSongs    = [];
-    battleDuration = 300;
+    battleSongs       = [];
+    battleDuration    = 300;
+    battleSelectedIds = new Set();
+    _battleFromRequests = false;
     liveActiveTab = 'played';
     document.getElementById('live-tab-played').className   = 'live-tab-btn active';
     document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
@@ -1930,6 +1938,10 @@
     liveTrackSig = '';
     nowPlayingTrackId = null;
     _activeBattle = null;
+    battleSelectedIds  = new Set();
+    _battleFromRequests = false;
+    battleSongs    = [];
+    battleDuration = 300;
     // Restore default footer in case battle tab had replaced it
     const footer = document.getElementById('req-footer');
     if (footer && !footer.querySelector('#req-refresh-btn')) {
@@ -2112,6 +2124,8 @@
   let battleSongs    = [];   // [{title, artist, image, url}]
   let battleDuration = 300;  // seconds, default 5 min
   let battleSpotifyTimer = null;
+  let battleSelectedIds  = new Set(); // request IDs selected for battle from requests tab
+  let _battleFromRequests = false;    // true when battle form was launched from requests tab
 
   function parseBattleSpotifyId(url) {
     const m = (url || '').match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
@@ -2499,8 +2513,27 @@
     }
   }
 
-  // ── Refresh button (delegated — footer HTML can be replaced by battle view) ───
+  // Launch the battle form pre-populated with the selected requests
+  function launchBattleFromRequests() {
+    const selected = reqList.filter(r => battleSelectedIds.has(r.id));
+    battleSongs = selected.map(r => ({
+      title:  r.title  || '',
+      artist: r.artist || '',
+      image:  r.image  || '',
+      url:    r.url    || '',
+    }));
+    battleDuration    = 300; // default 5 min
+    _battleFromRequests = true;
+    setLiveTab('battle');
+    renderBattleForm();
+  }
+
+  // ── Refresh / Create a Battle button (delegated — footer HTML can be replaced) ───
   document.getElementById('req-footer').addEventListener('click', e => {
+    if (e.target.closest('#battle-create-btn')) {
+      launchBattleFromRequests();
+      return;
+    }
     if (!e.target.closest('#req-refresh-btn')) return;
     if (liveActiveTab === 'played')      loadPlayedTracks();
     else if (liveActiveTab === 'battle') loadBattle();
@@ -2525,6 +2558,20 @@
     renderRequests();
   }
 
+  function updateRequestFooter() {
+    const footer = document.getElementById('req-footer');
+    if (!footer) return;
+    if (reqEventIsLive && battleSelectedIds.size >= 2) {
+      if (!footer.querySelector('#battle-create-btn')) {
+        footer.innerHTML = `<button class="battle-create-btn" id="battle-create-btn">Create a Battle</button>`;
+      }
+    } else {
+      if (!footer.querySelector('#req-refresh-btn')) {
+        footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">Refresh</button>`;
+      }
+    }
+  }
+
   function renderRequests() {
     reqBody.innerHTML = '';
 
@@ -2542,8 +2589,14 @@
       const isPlayed  = r.status === 'played';
       const isDeleted = r.status === 'deleted';
       const card = document.createElement('div');
-      card.className = 'req-card' + (isDeleted ? ' deleted' : '');
+      const isSelected = battleSelectedIds.has(r.id);
+      let cls = 'req-card';
+      if (isDeleted)               cls += ' deleted';
+      if (reqEventIsLive && !isDeleted) cls += ' battle-selectable';
+      if (isSelected)              cls += ' battle-selected';
+      card.className = cls;
       card.dataset.id = r.id;
+
       // Format timestamp using r.ts (milliseconds)
       let timeStr = '';
       if (r.ts) {
@@ -2577,11 +2630,42 @@
           ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">Supprimée — invisible sur la page publique</p>` : ''}
         </div>
         <div class="req-controls">${controlHtml}</div>`;
+
+      // Tap-to-select for battle (live event, non-deleted cards only)
+      if (reqEventIsLive && !isDeleted) {
+        card.addEventListener('click', e => {
+          // Don't toggle if the tap was on the switch or a button
+          if (e.target.closest('[data-req-action]')) return;
+          if (battleSelectedIds.has(r.id)) battleSelectedIds.delete(r.id);
+          else if (battleSelectedIds.size < 5)  battleSelectedIds.add(r.id);
+          // Re-render just this card's selection state
+          card.classList.toggle('battle-selected', battleSelectedIds.has(r.id));
+          updateRequestFooter();
+        });
+      }
+
       reqBody.appendChild(card);
     });
+
+    updateRequestFooter();
   }
 
-  document.getElementById('req-close-btn').addEventListener('click', closeRequests);
+  document.getElementById('req-close-btn').addEventListener('click', () => {
+    if (_battleFromRequests && liveActiveTab === 'battle') {
+      // Back from battle form → return to requests tab
+      _battleFromRequests = false;
+      battleSongs    = [];
+      battleDuration = 300;
+      battleSelectedIds = new Set();
+      // Restore footer to default Refresh button before switching
+      const footer = document.getElementById('req-footer');
+      if (footer) footer.innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+      setLiveTab('requests');
+      loadRequests();
+    } else {
+      closeRequests();
+    }
+  });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && reqOverlay.classList.contains('open')) closeRequests(); });
 
   reqBody.addEventListener('click', async e => {
