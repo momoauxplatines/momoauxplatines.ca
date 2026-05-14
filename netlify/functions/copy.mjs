@@ -58,14 +58,17 @@ export default async (req) => {
     // Shallow merge: static values are the defaults, blob values win
     const merged = { ...staticData, ...blobData };
 
-    // Smart registry merge: union(staticIds, blobOnlyIds) minus tombstoned IDs
-    const staticIds  = (staticData['demos.registry'] || '').split('|').filter(Boolean);
-    const blobIds    = (blobData['demos.registry']   || '').split('|').filter(Boolean);
+    // Smart registry merge: union(staticIds, blobOnlyIds) minus tombstoned IDs.
+    // Tombstone check uses the merged data so that a .deleted flag set in either
+    // the static JSON or the blob kills the entry — regardless of which side
+    // the ID originally came from.
+    const staticIds   = (staticData['demos.registry'] || '').split('|').filter(Boolean);
+    const blobIds     = (blobData['demos.registry']   || '').split('|').filter(Boolean);
     const blobOnlyIds = blobIds.filter(id => !staticIds.includes(id));
-    const tombstoned  = staticIds.filter(id => blobData[`demos.${id}.deleted`] === 'true');
+    const isTombstoned = (id) => merged[`demos.${id}.deleted`] === 'true';
     const finalRegistry = [
-      ...staticIds.filter(id => !tombstoned.includes(id)),
-      ...blobOnlyIds,
+      ...staticIds.filter(id => !isTombstoned(id)),
+      ...blobOnlyIds.filter(id => !isTombstoned(id)),
     ];
     merged['demos.registry'] = finalRegistry.join('|');
 
