@@ -11,6 +11,7 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 | Cover | Couverture du fichier |
 | _DJ | Portfolio DJ principal (toutes les screens) |
 | _Event | Screens et cards d'événement (live & next) |
+| _Event - New | Nouvelle version de la page événement (en cours) |
 | _School | Section École |
 | _Forms | Formulaires (edit de gig, contact, request) |
 | _Admin | Panel d'administration |
@@ -177,6 +178,11 @@ Composante Figma : `Button` · Page `_System`
 - State unique — `button.back`
 - Usage: retour arrière dans les overlays admin / event
 
+### Type=Battle
+- Dimensions : `48×40px` · Border-radius: `8px`
+- States : Default · Selected — `button.battle`
+- Usage: bouton de vote/sélection pour le mode Battle
+
 ---
 
 ## Form Fields
@@ -201,7 +207,7 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 
 ### Field / Selector
 - Même gabarit que Field / Text
-- States : Default · Filled · Error · Disabled
+- States : Default · Active · Filled · Error · Disabled
 
 ### Field / Drop Down
 - Même gabarit + état ouvert avec liste de choix
@@ -266,6 +272,21 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 - Status icon (`Request Icon`): Played (green ✓) · Requested · X
 - Currently playing: "Playing" label in `Event/Green`, Kanit Black 20px
 
+### Card / Web / Song — Battle
+
+Composante Figma : `battle.song` · Page `_System`
+
+| Variante | Description |
+|----------|-------------|
+| Song | Battle – Default |
+| Song | Battle – Selected |
+| Song | Battle – Unselected |
+| Song | Battle – Result Lead |
+| Song | Battle – Result Not-Leading |
+
+- Mêmes specs visuelles que Card / Web / Song (64×64px art, `Brand/95` bg, border-radius `16px`)
+- Usage: mode Battle — les visiteurs votent pour un morceau contre un autre
+
 ### Card / Admin — Type=admin-card & admin-card live
 - bg: `#000` · border: `Brand/50` · border-radius: `16px` · padding: `16px`
 - 72×72px avatar (rounded-8px) + venue name (Bold 18px) / date / time (Small Body)
@@ -298,6 +319,7 @@ Composante Figma : `Header` · Page `_System`
 | Mobile | Requests | Yes |
 | Mobile | Admin | No |
 | Mobile | Event | No |
+| Mobile | Event 2 | No |
 | All | Form | — |
 
 - `position: fixed` · `max-width` matches breakpoint · `z-index: 100`
@@ -317,6 +339,7 @@ Composante Figma : `Event Status` · Page `_System`
 |----------|-------|
 | Type=Live | Red dot (12px pulsing) + "LIVE" Kanit Black 20px `Event/Red` |
 | Type=Next | Date string Kanit Black 20px `Event/Blue` |
+| Type=Past | "Past" SF Pro Black 18px `Brand/00` · bg `Brand/105` |
 
 ---
 
@@ -353,6 +376,47 @@ Composante Figma : `Request Icon` · Page `_System`
 | Type=Played | Checkmark vert `Event/Green` |
 | Type=Requested | Icône demande en attente |
 | Type=Delete | Suppression / rejet |
+
+---
+
+## Utility Icons
+
+Composantes Figma : `icon.radio`, `icon.caret`, `icon.check` · Page `_System`
+
+### icon.radio
+| Variante | Description |
+|----------|-------------|
+| Name=icon.radio.default | Radio non coché — état par défaut |
+| Name=icon.radio.checked | Radio coché |
+| Name=icon.radio.error | Radio en état d'erreur |
+
+### icon.caret
+| Variante | Description |
+|----------|-------------|
+| Name=icon.caret.up | Flèche vers le haut |
+| Name=icon.caret.down | Flèche vers le bas |
+| Name=icon.caret.left | Flèche vers la gauche |
+| Name=icon.caret.right | Flèche vers la droite |
+
+Usage: navigation, accordéons, sélecteurs ouverts/fermés.
+
+### icon.check
+- 80×80px · Checkmark de confirmation (usage : overlay de confirmation, état `input.field.selector.radio.filled`)
+
+---
+
+## Song Control Button
+
+Composante Figma : `button.song` · Page `_System`
+
+| Variante | Style |
+|----------|-------|
+| Property 1=now-playing.on | bg `Event/Blue` · icône blanche — lecture en cours |
+| Property 1=now-playing.off | bg `Brand/95` · icône blanche — non actif |
+| Property 1=now-playing.played | bg `Brand/95` · icône `Event/Green` — déjà joué |
+
+- Dimensions : `48×40px` · Border-radius: `8px`
+- Usage: bouton de contrôle de lecture pour la playlist admin (`Card / Admin` Type=playlist-song)
 
 ---
 
@@ -533,6 +597,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-07 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-05-15 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._

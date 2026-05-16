@@ -68,12 +68,22 @@ function parseTrackName(raw) {
   };
 }
 
+function decodeHtmlEntities(str) {
+  return str
+    .replace(/&amp;/g,  '&')
+    .replace(/&lt;/g,   '<')
+    .replace(/&gt;/g,   '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g,  "'")
+    .replace(/&#x27;/g, "'");
+}
+
 function parseTracks(html) {
   const tracks = [];
   const re = /id="(track_\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/div>/g;
   let m;
   while ((m = re.exec(html)) !== null) {
-    const raw = m[2].replace(/<[^>]+>/g, '').trim();
+    const raw = decodeHtmlEntities(m[2].replace(/<[^>]+>/g, '').trim());
     if (!raw) continue;
     const { artist, title } = parseTrackName(raw);
     tracks.push({ id: m[1], artist, title });
