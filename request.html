@@ -69,30 +69,13 @@
       padding: 24px 16px 16px;
     }
     .req-header > a { flex-shrink: 0; }
-    .req-header-actions {
-      display: flex; align-items: center; gap: 16px;
-    }
 
-    /* Twitch icon in header */
-    .twitch-header-link {
-      display: none;
-      align-items: center; justify-content: center;
-      width: 40px; height: 40px;
-      color: var(--blue); flex-shrink: 0;
-      text-decoration: none;
+    /* Event image thumbnail in header (right side) */
+    .header-event-img {
+      width: 40px; height: 40px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--brand-90);
     }
-    .twitch-header-link.visible { display: flex; }
-
-    .lang-btn {
-      background: var(--brand-90); border: none;
-      border-radius: 8px; color: var(--brand-00);
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 18px; letter-spacing: 0.02em;
-      height: 39px; padding: 0 16px; cursor: pointer;
-      white-space: nowrap;
-      transition: opacity 0.15s;
-    }
-    .lang-btn:hover { opacity: 0.85; }
 
     /* ── Tabs ── */
     .tabs-row {
@@ -207,11 +190,6 @@
       padding: 16px 16px 0;
       font-size: 16px; font-weight: 300; line-height: 22px;
       color: var(--brand-70); text-align: center;
-    }
-    .played-intro button {
-      background: none; border: none; cursor: pointer;
-      color: var(--brand-50); text-decoration: underline;
-      font-size: inherit; font-weight: inherit; font-family: inherit;
     }
 
     .empty-state {
@@ -428,21 +406,26 @@
       background: #000;
       border: 2px solid #000;
       border-radius: 16px; padding: 8px;
-      display: flex; align-items: center; gap: 8px;
-      min-height: 80px; cursor: pointer;
+      display: flex; flex-direction: column; gap: 0;
+      cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
     }
-    .battle-choice-card.selected  { border-color: var(--green); }
+    .battle-choice-card.selected   { border-color: var(--green); }
     .battle-choice-card.unselected { background: var(--brand-100); border-color: #20221f; }
-    .battle-choice-card.static    { cursor: default; }
+    .battle-choice-card.static     { cursor: default; }
+    /* Top row: artwork + info + optional checkmark */
+    .battle-card-top {
+      display: flex; align-items: center; gap: 8px;
+      min-height: 64px;
+    }
     .battle-check-col {
-      width: 40px; flex-shrink: 0; align-self: stretch;
+      width: 32px; flex-shrink: 0; align-self: center;
       display: flex; align-items: center; justify-content: center;
     }
-
+    /* Progress bar — inside the card, below the top row */
     .battle-vote-bar-row {
       display: flex; align-items: center; gap: 8px;
-      padding: 6px 16px 2px;
+      padding: 6px 4px 2px;
     }
     .battle-vote-bar-track {
       flex: 1; height: 6px; border-radius: 3px;
@@ -511,16 +494,8 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-      <div class="req-header-actions">
-        <!-- Twitch link — revealed when event has a Twitch URL -->
-        <a class="twitch-header-link" id="twitch-header-link" href="" target="_blank" rel="noopener" aria-label="Twitch">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 2L2 6v14h5v2h3l2-2h3l4-4V2H4zm14 13l-3 3h-4l-2 2v-2H5V4h13v11z" fill="currentColor"/>
-            <path d="M15 7h2v5h-2V7zm-4 0h2v5h-2V7z" fill="currentColor"/>
-          </svg>
-        </a>
-        <button class="lang-btn" id="lang-btn" aria-label="Switch language">FR</button>
-      </div>
+      <!-- Event image — populated dynamically from event data -->
+      <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
     </header>
 
     <!-- 4 Tabs — always visible -->
@@ -584,9 +559,10 @@
 
   <!-- ── Played Panel ── -->
   <div class="tab-panel" id="panel-played">
-    <p class="played-intro" id="played-intro">
-      <span data-key="played.intro" data-en="Songs played so far today. You can also " data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi ">Songs played so far today. You can also </span><button id="played-request-link" data-key="played.request-link" data-en="make a request" data-fr="faire une demande">make a request</button><span>.</span>
-    </p>
+    <p class="played-intro" id="played-intro"
+       data-key="played.intro"
+       data-en="Songs played so far today. You can also make a request."
+       data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
     <div class="song-list" id="played-list">
       <div class="empty-state" id="played-empty">
         <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
@@ -725,21 +701,8 @@
     });
     document.documentElement.lang = lang;
   }
+  // Language is set once from the URL param (?lang=fr) passed by the home page
   applyLang(currentLang);
-
-  const langBtn = document.getElementById('lang-btn');
-  if (langBtn) {
-    langBtn.textContent = currentLang === 'fr' ? 'EN' : 'FR';
-    langBtn.addEventListener('click', () => {
-      const newLang = currentLang === 'fr' ? 'en' : 'fr';
-      applyLang(newLang);
-      langBtn.textContent = newLang === 'fr' ? 'EN' : 'FR';
-      const url = new URL(window.location.href);
-      if (newLang === 'fr') url.searchParams.set('lang', 'fr');
-      else url.searchParams.delete('lang');
-      history.replaceState(null, '', url.toString());
-    });
-  }
 
   // ─────────────────────────────────────────────
   // Liveness helpers
@@ -797,15 +760,23 @@
   let gigDate = null;
 
   function populateInfoPanel(ev) {
-    // Cover image
+    // Resolve event image URL (cover + header thumbnail share the same source)
+    let resolvedImage = ev.image || '';
+    if (!resolvedImage && ev.instagram) {
+      const igUser = (ev.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1]?.replace(/\/$/, '');
+      if (igUser) resolvedImage = `https://unavatar.io/instagram/${igUser}`;
+    }
+
+    // Cover image (Info panel)
     const coverImg = document.getElementById('info-cover-img');
-    if (coverImg) {
-      if (ev.image) {
-        coverImg.src = ev.image;
-      } else if (ev.instagram) {
-        const igUser = (ev.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1]?.replace(/\/$/, '');
-        if (igUser) coverImg.src = `https://unavatar.io/instagram/${igUser}`;
-      }
+    if (coverImg && resolvedImage) coverImg.src = resolvedImage;
+
+    // Header event image thumbnail
+    const headerImg = document.getElementById('header-event-img');
+    if (headerImg && resolvedImage) {
+      headerImg.src = resolvedImage;
+      headerImg.alt = ev.venue || '';
+      headerImg.style.display = '';
     }
     // Venue name
     const venueName = document.getElementById('info-venue-name');
@@ -831,15 +802,11 @@
       if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
       else igLink.style.display = 'none';
     }
-    // Twitch — also reveal header icon
-    const twitchLink   = document.getElementById('info-twitch-link');
-    const twitchHeader = document.getElementById('twitch-header-link');
-    if (ev.twitch) {
-      if (twitchLink) { twitchLink.href = ev.twitch; twitchLink.style.display = ''; }
-      if (twitchHeader) { twitchHeader.href = ev.twitch; twitchHeader.classList.add('visible'); }
-    } else {
-      if (twitchLink)   twitchLink.style.display = 'none';
-      if (twitchHeader) twitchHeader.classList.remove('visible');
+    // Twitch — Info tab only
+    const twitchLink = document.getElementById('info-twitch-link');
+    if (twitchLink) {
+      if (ev.twitch) { twitchLink.href = ev.twitch; twitchLink.style.display = ''; }
+      else twitchLink.style.display = 'none';
     }
   }
 
@@ -920,8 +887,6 @@
   document.getElementById('tab-played').addEventListener('click',   () => showTab('played'));
   document.getElementById('tab-requests').addEventListener('click', () => showTab('requests'));
 
-  // "make a request" link in Played tab
-  document.getElementById('played-request-link').addEventListener('click', () => showTab('requests'));
 
   // ─────────────────────────────────────────────
   // Spotify helpers
@@ -1160,6 +1125,14 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  // Decode HTML entities from Serato (e.g. &amp; → &)
+  function decodeHtml(str) {
+    if (!str) return str || '';
+    const el = document.createElement('textarea');
+    el.innerHTML = str;
+    return el.value;
+  }
+
   function normalizeForMatch(str) {
     return String(str || '')
       .toLowerCase()
@@ -1186,6 +1159,19 @@
   // ─────────────────────────────────────────────
   // Artwork cache
   // ─────────────────────────────────────────────
+  // Migrate old cache: drop entries whose keys contain encoded entities (e.g. &amp;)
+  (function migrateArtworkCache() {
+    try {
+      const raw = localStorage.getItem('momo_artwork_cache');
+      if (!raw) return;
+      const old = JSON.parse(raw);
+      const clean = {};
+      for (const [k, v] of Object.entries(old)) {
+        if (!k.includes('&')) clean[k] = v; // keep only already-clean keys
+      }
+      localStorage.setItem('momo_artwork_cache', JSON.stringify(clean));
+    } catch { localStorage.removeItem('momo_artwork_cache'); }
+  })();
   let artworkCache    = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
   let liveSessionSlug = null;
   let lastTrackSig    = '';
@@ -1201,23 +1187,18 @@
     const card = document.createElement('div');
     card.className = 'song-card';
     if (trackId) card.dataset.trackId = trackId;
+    const dispTitle  = decodeHtml(title);
+    const dispArtist = decodeHtml(artist);
+    // No placeholder — if image is unavailable, render nothing; artwork patch inserts <img> later
     const artHtml = image
-      ? `<img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(title)}"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      ? `<img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(dispTitle)}" onerror="this.remove()">`
       : '';
     card.innerHTML = `
       ${artHtml}
-      <div class="song-art-placeholder"${image ? ' style="display:none"' : ''}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M9 18V5l12-2v13" stroke="#51534E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="6" cy="18" r="3" stroke="#51534E" stroke-width="1.5"/>
-          <circle cx="18" cy="16" r="3" stroke="#51534E" stroke-width="1.5"/>
-        </svg>
-      </div>
       <div class="song-info">
         <div class="song-text-group">
-          <p class="song-title">${safeHtml(title)}</p>
-          ${artist ? `<p class="song-artist">${safeHtml(artist)}</p>` : ''}
+          <p class="song-title">${safeHtml(dispTitle)}</p>
+          ${dispArtist ? `<p class="song-artist">${safeHtml(dispArtist)}</p>` : ''}
         </div>
         <a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener"
            style="${spotifyUrl ? '' : 'display:none'}">Spotify</a>
@@ -1230,14 +1211,16 @@
   // Now Playing bar
   // ─────────────────────────────────────────────
   function updateNowPlayingBar(track) {
-    const c          = artworkCache[artworkKey(track.artist, track.title)];
+    const cleanArtist    = decodeHtml(track.artist);
+    const cleanTitle     = decodeHtml(track.title);
+    const c              = artworkCache[artworkKey(cleanArtist, cleanTitle)];
     const npArt      = document.getElementById('now-playing-art');
     const npTitle    = document.getElementById('now-playing-title');
     const npArtist   = document.getElementById('now-playing-artist');
     const npLink     = document.getElementById('now-playing-link');
     const npReqCol   = document.getElementById('now-playing-request-col');
-    const resolvedTitle  = c?.title  || track.title;
-    const resolvedArtist = c?.artist || track.artist;
+    const resolvedTitle  = c?.title  || cleanTitle;
+    const resolvedArtist = c?.artist || cleanArtist;
     if (npArt) {
       npArt.alt = resolvedTitle;
       if (c?.image) { npArt.src = c.image; npArt.style.background = ''; }
@@ -1327,11 +1310,34 @@
   }
 
   // ─────────────────────────────────────────────
+  // iTunes Search (primary — free, no auth)
+  // ─────────────────────────────────────────────
+  async function searchItunesTrack(artist, title) {
+    const term = artist ? `${title} ${artist}` : title;
+    const res = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=song&limit=5`
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const results = data.results || [];
+    // Pick the first result whose title roughly matches
+    const titleLow = title.toLowerCase();
+    const track = results.find(r => r.trackName?.toLowerCase().includes(titleLow)) || results[0];
+    if (!track) return null;
+    return {
+      image:      (track.artworkUrl100 || '').replace('100x100bb', '400x400bb'),
+      spotifyUrl: '',
+      artist:     track.artistName || artist,
+      title:      track.trackName  || title
+    };
+  }
+
   // Deezer fallback (free, no auth)
   // ─────────────────────────────────────────────
   async function searchDeezerTrack(artist, title) {
-    const q = artist ? `artist:"${artist}" track:"${title}"` : `track:"${title}"`;
-    const res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=1`);
+    // Simple unquoted query — quoted syntax is unreliable on Deezer's public API
+    const term = artist ? `${title} ${artist}` : title;
+    const res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(term)}&limit=1`);
     if (!res.ok) return null;
     const data = await res.json();
     const track = data.data?.[0];
@@ -1388,9 +1394,11 @@
           return numB - numA;
         });
         for (const t of displayTracks) {
-          const cached         = artworkCache[artworkKey(t.artist, t.title)];
-          const resolvedTitle  = cached?.title  || t.title;
-          const resolvedArtist = cached?.artist || t.artist;
+          const cleanArtist    = decodeHtml(t.artist);
+          const cleanTitle     = decodeHtml(t.title);
+          const cached         = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+          const resolvedTitle  = cached?.title  || cleanTitle;
+          const resolvedArtist = cached?.artist || cleanArtist;
           const isRequested    = !!findMatchingRequest(resolvedTitle, resolvedArtist);
           list.appendChild(buildPlayedCard(
             resolvedArtist, resolvedTitle,
@@ -1400,7 +1408,7 @@
         }
       }
 
-      // Artwork fetch in background (Spotify → Deezer)
+      // Artwork fetch in background (iTunes → Deezer → Spotify)
       if (allTracks.length) {
         (async () => {
           let spotifyToken = null;
@@ -1410,37 +1418,43 @@
           }
           try {
             for (const t of allTracks) {
-              const cKey = artworkKey(t.artist, t.title);
-              if (!artworkCache[cKey] && t.title) {
+              // Decode HTML entities (e.g. &amp; from Serato) before searching
+              const cleanArtist = decodeHtml(t.artist);
+              const cleanTitle  = decodeHtml(t.title);
+              const cKey = artworkKey(cleanArtist, cleanTitle);
+              if (!artworkCache[cKey] && cleanTitle) {
                 let info = null;
-                if (spotifyToken) {
-                  try { info = await searchSpotifyTrack(spotifyToken, t.artist, t.title); }
-                  catch (e) { console.warn('[Momo] Spotify search failed:', t.title, e); }
-                }
+                // 1. iTunes — free, no auth, most reliable
+                try { info = await searchItunesTrack(cleanArtist, cleanTitle); }
+                catch (e) { console.warn('[Momo] iTunes search failed:', cleanTitle, e); }
+                // 2. Deezer fallback
                 if (!info) {
-                  try { info = await searchDeezerTrack(t.artist, t.title); }
-                  catch (e) { console.warn('[Momo] Deezer search failed:', t.title, e); }
+                  try { info = await searchDeezerTrack(cleanArtist, cleanTitle); }
+                  catch (e) { console.warn('[Momo] Deezer search failed:', cleanTitle, e); }
+                }
+                // 3. Spotify fallback (requires credentials)
+                if (!info && spotifyToken) {
+                  try { info = await searchSpotifyTrack(spotifyToken, cleanArtist, cleanTitle); }
+                  catch (e) { console.warn('[Momo] Spotify search failed:', cleanTitle, e); }
                 }
                 try {
                   if (info) {
                     artworkCache[cKey] = info;
                     const card = list.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
                     if (card) {
-                      const img         = card.querySelector('.song-art');
-                      const placeholder = card.querySelector('.song-art-placeholder');
-                      const link        = card.querySelector('.song-link');
                       if (info.image) {
-                        if (img) { img.src = info.image; img.style.display = ''; }
-                        else {
-                          const newImg = document.createElement('img');
-                          newImg.className = 'song-art';
-                          newImg.src = info.image;
-                          newImg.alt = safeHtml(info.title);
-                          newImg.onerror = () => { newImg.style.display = 'none'; if (placeholder) placeholder.style.display = 'flex'; };
-                          card.insertBefore(newImg, card.firstChild);
+                        // Insert <img> only if not already present
+                        let img = card.querySelector('.song-art');
+                        if (!img) {
+                          img = document.createElement('img');
+                          img.className = 'song-art';
+                          img.alt = decodeHtml(info.title);
+                          img.onerror = () => img.remove();
+                          card.insertBefore(img, card.firstChild);
                         }
-                        if (placeholder) placeholder.style.display = 'none';
+                        img.src = info.image;
                       }
+                      const link = card.querySelector('.song-link');
                       if (link && info.spotifyUrl) { link.href = info.spotifyUrl; link.style.display = ''; }
                       const nowMatched = !!findMatchingRequest(info.title, info.artist);
                       let reqCol = card.querySelector('.song-request-col');
@@ -1640,12 +1654,14 @@
       card.className    = 'battle-choice-card';
       card.dataset.songId = song.id;
       card.innerHTML = `
-        <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
-             onerror="this.style.background='var(--brand-90)'">
-        <div class="song-info">
-          <div class="song-text-group">
-            <p class="song-title">${safeHtml(song.title)}</p>
-            ${song.artist ? `<p class="song-artist">${safeHtml(song.artist)}</p>` : ''}
+        <div class="battle-card-top">
+          <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
+               onerror="this.style.background='var(--brand-90)'">
+          <div class="song-info">
+            <div class="song-text-group">
+              <p class="song-title">${safeHtml(song.title)}</p>
+              ${song.artist ? `<p class="song-artist">${safeHtml(song.artist)}</p>` : ''}
+            </div>
           </div>
         </div>`;
       card.addEventListener('click', () => {
@@ -1732,11 +1748,11 @@
     const cardsDiv = document.createElement('div');
     cardsDiv.className = 'battle-cards';
     entries.forEach(({ song, pct, leading }) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'battle-result-card';
       const isMyVote = song.id === myVoteId;
-      wrap.innerHTML = `
-        <div class="battle-choice-card static${isMyVote ? ' selected' : ''}">
+      const card = document.createElement('div');
+      card.className = `battle-choice-card static${isMyVote ? ' selected' : ''}`;
+      card.innerHTML = `
+        <div class="battle-card-top">
           <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
                onerror="this.style.background='var(--brand-90)'">
           <div class="song-info">
@@ -1754,7 +1770,7 @@
           </div>
           <span class="battle-vote-pct" data-song-id="${safeHtml(song.id)}">${pct}%</span>
         </div>`;
-      cardsDiv.appendChild(wrap);
+      cardsDiv.appendChild(card);
     });
     battleList.appendChild(cardsDiv);
 
@@ -1788,11 +1804,11 @@
     const cardsDiv = document.createElement('div');
     cardsDiv.className = 'battle-cards';
     entries.forEach(({ song, pct, leading }) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'battle-result-card';
       const isMyVote = song.id === myVoteId;
-      wrap.innerHTML = `
-        <div class="battle-choice-card static${isMyVote ? ' selected' : ''}">
+      const card = document.createElement('div');
+      card.className = `battle-choice-card static${isMyVote ? ' selected' : ''}`;
+      card.innerHTML = `
+        <div class="battle-card-top">
           <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
                onerror="this.style.background='var(--brand-90)'">
           <div class="song-info">
@@ -1809,7 +1825,7 @@
           </div>
           <span class="battle-vote-pct" data-song-id="${safeHtml(song.id)}">${pct}%</span>
         </div>`;
-      cardsDiv.appendChild(wrap);
+      cardsDiv.appendChild(card);
     });
     battleList.appendChild(cardsDiv);
 
