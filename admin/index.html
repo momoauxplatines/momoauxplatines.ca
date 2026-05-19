@@ -49,18 +49,21 @@
     .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
+    #logout-btn { background: none; border-color: var(--brand-50); border-radius: 40px; font-size: 16px; font-weight: 900; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #logout-btn:hover { background: var(--brand-90); }
 
     /* ── Language tabs (in header) ── */
     .lang-tabs { display: flex; order: 3; width: 100%; justify-content: flex-start; padding: 10px 0 2px; }
-    .lang-tab { height: 36px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-60); cursor: pointer; border: none; background: none; transition: color 0.15s; padding: 0 12px; white-space: nowrap; }
+    .lang-tab { height: 36px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-60); cursor: pointer; border: 1px solid transparent; background: none; border-radius: 40px; transition: color 0.15s, border-color 0.15s; padding: 0 16px; white-space: nowrap; }
     .lang-tab:not(.active):hover { color: var(--brand-40); }
-    .lang-tab.active { color: var(--brand-00); }
+    .lang-tab.active { color: var(--brand-00); border-color: var(--brand-50); }
 
-    /* ── Tablet+: lang-tabs inline in header, centered ── */
+    /* ── Tablet+: grid 1fr auto 1fr — tabs always truly centred ── */
     @media (min-width: 768px) {
-      .admin-header { flex-wrap: nowrap; padding: 20px 32px; }
-      .lang-tabs { order: 0; width: auto; flex: 1; justify-content: center; padding: 0; }
+      .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex-wrap: nowrap; padding: 20px 32px; }
+      .lang-tabs { order: 0; width: auto; flex: none; justify-content: center; padding: 0; }
       .lang-tab { font-size: 18px; }
+      #logout-btn { justify-self: end; }
     }
 
     /* ── Scrollable content ── */
@@ -364,7 +367,7 @@
   <header class="admin-header">
     <div class="header-left">
       <div class="header-favicon"><img src="../images/og-image.png" alt="Momo"></div>
-      <span class="header-title">DJ Admin</span>
+      <span class="header-title">Admin</span>
     </div>
     <div class="lang-tabs">
       <button class="lang-tab active" data-lang="en">English</button>
@@ -540,11 +543,11 @@
   <!-- Tab bar -->
   <div class="event-tabs-wrap">
     <div class="event-tabs">
-      <button class="event-tab active" data-tab="info">Info</button>
-      <button class="event-tab" data-tab="playing">Playing</button>
-      <button class="event-tab" data-tab="battle">Battle</button>
-      <button class="event-tab" data-tab="requests">Requests</button>
-      <button class="event-tab" data-tab="messages">Messages</button>
+      <button class="event-tab active" data-tab="info" data-i18n="overlay.tab.info">Info</button>
+      <button class="event-tab" data-tab="playing" data-i18n="overlay.tab.playing">Playing</button>
+      <button class="event-tab" data-tab="battle" data-i18n="overlay.tab.battle">Battle</button>
+      <button class="event-tab" data-tab="requests" data-i18n="overlay.tab.requests">Requests</button>
+      <button class="event-tab" data-tab="messages" data-i18n="overlay.tab.messages">Messages</button>
     </div>
   </div>
 
@@ -634,7 +637,7 @@
   <!-- Save footer -->
   <div class="event-footer">
     <div class="event-footer-inner">
-      <button class="btn-save" id="ev-save-btn" data-i18n="btn.save">Save</button>
+      <button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">Save</button>
     </div>
   </div>
 
@@ -683,6 +686,7 @@
       'card.coming.soon': 'Coming soon',
       'card.youtube': 'YouTube',
       'card.link': 'Link',
+      'overlay.tab.info': 'Info',
       'overlay.tab.playing': 'Playing',
       'overlay.tab.requests': 'Requests',
       'overlay.tab.battle': 'Battle',
@@ -806,6 +810,7 @@
       'card.coming.soon': 'Bientôt disponible',
       'card.youtube': 'YouTube',
       'card.link': 'Lien',
+      'overlay.tab.info': 'Info',
       'overlay.tab.playing': 'En cours',
       'overlay.tab.requests': 'Demandes',
       'overlay.tab.battle': 'Bataille',
@@ -3337,19 +3342,56 @@
       tab.classList.toggle('active', tab.dataset.tab === name));
     document.querySelectorAll('.event-pane').forEach(pane =>
       pane.classList.toggle('active', pane.dataset.pane === name));
+
+    // Update sticky footer to match the active tab
+    const footerInner = document.querySelector('.event-footer-inner');
+    if (!footerInner) return;
+    const ev = currentEventDetailIdx >= 0 ? currentEvents[currentEventDetailIdx] : null;
+    const isLive = isEventLive(ev);
+
+    if (name === 'info') {
+      footerInner.innerHTML = `<button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">${t('btn.save')}</button>`;
+    } else if (name === 'playing') {
+      footerInner.innerHTML = ''; // spec: no footer button on Playing tab
+    } else if (name === 'battle') {
+      if (isLive) {
+        // Default live state: "Start new battle" inactive (no songs added yet)
+        footerInner.innerHTML = `<button class="battle-start-btn" disabled>${t('battle.start.btn')}</button>`;
+      } else {
+        footerInner.innerHTML = ''; // spec: only text shown when event is not live
+      }
+    } else if (name === 'requests') {
+      footerInner.innerHTML = `<button class="btn-dark">${t('btn.refresh')}</button>`;
+    } else if (name === 'messages') {
+      footerInner.innerHTML = `<button class="btn-dark">${t('btn.refresh')}</button>`;
+    }
   }
 
   function evFillSupportTabs(ev) {
     const isLive = ev && isEventLive(ev);
     // Playing
     document.getElementById('ev-playing-pane').innerHTML =
-      `<p class="empty-state">${t('playing.empty')}</p><p class="empty-state" style="margin-top:8px;">${t('playing.empty.hint') || ''}</p>`;
-    // Battle
-    document.getElementById('ev-battle-pane').innerHTML =
-      `<p class="empty-state">${t('battle.not.live')}</p>`;
+      `<p class="empty-state">${t('playing.empty')}</p><p class="empty-state" style="margin-top:8px;">${t('playing.empty.hint')}</p>`;
+    // Battle — depends on whether event is live
+    document.getElementById('ev-battle-pane').innerHTML = isLive
+      ? `<div class="battle-form">
+          <div class="battle-field">
+            <label class="edit-label">${t('battle.time.label')}</label>
+            <select class="edit-input" id="ev-battle-duration">
+              <option value="300">5 min</option>
+              <option value="900" selected>15 min</option>
+              <option value="1800">30 min</option>
+            </select>
+          </div>
+          <div class="battle-field">
+            <label class="edit-label">${t('battle.songs.label')}</label>
+            <input class="edit-input" type="url" placeholder="${t('battle.spotify.placeholder')}">
+          </div>
+        </div>`
+      : `<p class="empty-state">${t('battle.not.live')}</p>`;
     // Requests
     document.getElementById('ev-req-pane').innerHTML =
-      `<div class="empty-state">${t('req.empty') || 'No requests yet.'}</div>`;
+      `<div class="empty-state">${t('req.empty')}</div>`;
     // Messages
     document.getElementById('ev-messages-pane').innerHTML =
       `<p class="empty-state">${t('msg.empty')}</p>`;
@@ -3436,8 +3478,9 @@
     }
   });
 
-  // Save from event detail page
-  document.getElementById('ev-save-btn').addEventListener('click', async () => {
+  // Save from event detail page — delegated because button is replaced on tab switch
+  document.getElementById('event-screen').addEventListener('click', async (e) => {
+    if (!e.target.closest('#ev-save-btn')) return;
     if (currentEventDetailIdx < 0) return;
     const saveBtn = document.getElementById('ev-save-btn');
     const venue = document.getElementById('ev-venue').value.trim();
