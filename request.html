@@ -107,8 +107,26 @@
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-    /* Requests panel uses flex column so submit btn can stick to bottom */
-    #panel-requests.active { display: flex; flex-direction: column; flex: 1; }
+    /* Requests + Message panels use flex column so submit btn can stick to bottom */
+    #panel-requests.active,
+    #panel-message.active  { display: flex; flex-direction: column; flex: 1; }
+
+    .msg-tab-body   { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 24px 20px 0; }
+    .msg-tab-intro  { font-size: 14px; line-height: 1.5; color: var(--brand-30); text-align: center; }
+    .msg-textarea-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .msg-textarea   {
+      width: 100%; min-height: 140px; resize: none;
+      background: var(--brand-90); color: var(--brand-00);
+      border: 1.5px solid var(--brand-70); border-radius: 12px;
+      padding: 14px 16px; font-family: 'Kanit', sans-serif; font-size: 15px;
+      line-height: 1.5; outline: none; box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    .msg-textarea:focus          { border-color: var(--brand-00); }
+    .msg-textarea::placeholder   { color: var(--brand-70); }
+    .msg-success { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 32px 0 0; }
+    .msg-success.visible { display: flex; }
+    .msg-success-text { font-size: 14px; color: var(--brand-00); text-align: center; line-height: 1.5; }
 
     /* ── Info Panel ── */
     .info-cover-wrap {
@@ -504,6 +522,7 @@
       <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="BATTLE"   data-fr="BATTLE">BATTLE</button>
       <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="PLAYED"   data-fr="JOUÉES">PLAYED</button>
       <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="MESSAGE"  data-fr="MESSAGE">MESSAGE</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -625,6 +644,46 @@
     <div class="req-tab-footer">
       <button class="req-submit-btn" id="req-submit-btn" disabled
               data-key="req.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
+    </div>
+  </div>
+
+  <!-- ── Message Panel ── -->
+  <div class="tab-panel" id="panel-message">
+    <div class="msg-tab-body">
+      <p class="msg-tab-intro"
+         data-key="msg.tab.intro"
+         data-en="Want to share something with me? Leave a message or visit the booth."
+         data-fr="Tu veux me dire quelque chose ? Laisse un message ou passe au booth.">Want to share something with me? Leave a message or visit the booth.</p>
+
+      <div class="msg-textarea-wrap">
+        <label class="form-label" for="msg-input"
+               data-key="msg.tab.label"
+               data-en="Message"
+               data-fr="Message">Message</label>
+        <textarea class="msg-textarea" id="msg-input"
+                  data-placeholder-en="Type your message here"
+                  data-placeholder-fr="Écris ton message ici"
+                  placeholder="Type your message here"
+                  rows="6" maxlength="1000"></textarea>
+      </div>
+
+      <!-- Success state -->
+      <div class="msg-success" id="msg-success">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="23" fill="#34C759"/>
+          <path d="M14 24.5L21 31.5L34 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="msg-success-text"
+           data-key="msg.tab.thanks"
+           data-en="Your message has been sent. Thank you!"
+           data-fr="Ton message a été envoyé. Merci !">Your message has been sent. Thank you!</p>
+      </div>
+    </div>
+
+    <!-- Sticky submit button -->
+    <div class="req-tab-footer">
+      <button class="req-submit-btn" id="msg-submit-btn" disabled
+              data-key="msg.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
     </div>
   </div>
 
@@ -862,7 +921,7 @@
   // Tab switching
   // ─────────────────────────────────────────────
   const TAB_KEY    = `momo_active_tab_${EVENT_SLUG || 'global'}`;
-  const TAB_IDS    = ['info', 'battle', 'played', 'requests'];
+  const TAB_IDS    = ['info', 'battle', 'played', 'requests', 'message'];
 
   function showTab(tab) {
     if (!TAB_IDS.includes(tab)) tab = 'info';
@@ -886,6 +945,7 @@
   document.getElementById('tab-battle').addEventListener('click',   () => showTab('battle'));
   document.getElementById('tab-played').addEventListener('click',   () => showTab('played'));
   document.getElementById('tab-requests').addEventListener('click', () => showTab('requests'));
+  document.getElementById('tab-message').addEventListener('click',  () => showTab('message'));
 
 
   // ─────────────────────────────────────────────
@@ -1095,6 +1155,48 @@
     // Auto-reset after 5 s
     successTimer = setTimeout(() => {
       successEl.classList.remove('visible');
+    }, 5000);
+  });
+
+  // ─────────────────────────────────────────────
+  // Message tab
+  // ─────────────────────────────────────────────
+  const msgInput     = document.getElementById('msg-input');
+  const msgSubmitBtn = document.getElementById('msg-submit-btn');
+  const msgSuccess   = document.getElementById('msg-success');
+  let msgSuccessTimer = null;
+
+  msgInput.addEventListener('input', () => {
+    const hasText = msgInput.value.trim().length > 0;
+    msgSubmitBtn.disabled = !hasText;
+    msgSubmitBtn.classList.toggle('ready', hasText);
+  });
+
+  msgSubmitBtn.addEventListener('click', async () => {
+    const text = msgInput.value.trim();
+    if (!text || msgSubmitBtn.disabled) return;
+    msgSubmitBtn.disabled = true;
+    msgSubmitBtn.classList.remove('ready');
+
+    // Send via Formspree (non-blocking)
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Message from public page${EVENT_SLUG ? ` — ${EVENT_SLUG}` : ''}`,
+        message:  text,
+        event:    EVENT_SLUG || 'n/a'
+      })
+    }).catch(() => {});
+
+    // Show success
+    msgInput.value = '';
+    msgSuccess.classList.add('visible');
+
+    // Auto-reset after 5 s
+    clearTimeout(msgSuccessTimer);
+    msgSuccessTimer = setTimeout(() => {
+      msgSuccess.classList.remove('visible');
     }, 5000);
   });
 

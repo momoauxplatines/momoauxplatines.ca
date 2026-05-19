@@ -213,11 +213,12 @@
     .req-empty-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 6px; }
     .req-empty-body p { font-size: 16px; font-weight: 300; color: var(--brand-60, #888); line-height: 22px; }
 
-    /* ── Live gig tabs (JOUÉES / DEMANDES) ── */
-    .live-tabs-row { display: flex; border-bottom: 1px solid var(--brand-90); flex-shrink: 0; }
-    .live-tab-btn { flex: 1; height: 48px; background: none; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 900; font-size: 18px; text-transform: uppercase; transition: color 0.15s; }
-    .live-tab-btn.active   { color: var(--brand-00); }
-    .live-tab-btn.inactive { color: var(--brand-70); }
+    /* ── Live gig tabs ── */
+    .live-tabs-row { display: flex; padding: 12px 16px; gap: 8px; flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+    .live-tabs-row::-webkit-scrollbar { display: none; }
+    .live-tab-btn { flex: 0 0 auto; height: 40px; background: none; border: 1px solid transparent; border-radius: 100px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 300; font-size: 18px; transition: color 0.15s, border-color 0.15s; padding: 0 16px; white-space: nowrap; }
+    .live-tab-btn.active   { color: var(--brand-00); border-color: var(--brand-00); }
+    .live-tab-btn.inactive { color: var(--brand-70); border-color: transparent; }
     .live-tab-btn.inactive:hover { color: var(--brand-60); }
 
     /* ── Played track cards ── */
@@ -290,6 +291,15 @@
     .battle-new-btn:hover { background: var(--brand-80); }
     .battle-new-btn:disabled { background: var(--brand-100); border-color: var(--brand-90); color: var(--brand-80); cursor: not-allowed; }
     .battle-footer { flex-shrink: 0; padding: 16px; }
+    /* ── Messages tab ── */
+    .msg-list { display: flex; flex-direction: column; gap: 16px; padding: 16px; }
+    .msg-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .msg-text { font-size: 18px; font-weight: 300; color: var(--brand-30); line-height: 26px; }
+    .msg-time { font-size: 16px; font-weight: 300; color: var(--brand-60); line-height: 20px; }
+    /* ── Battle ongoing error ── */
+    .battle-ongoing-banner { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 16px 0; }
+    .battle-ongoing-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #fff; flex-shrink: 0; }
+    .battle-ongoing-text { font-size: 18px; font-weight: 300; color: var(--brand-30); text-align: center; }
 
   </style>
 </head>
@@ -323,7 +333,7 @@
       <div class="header-favicon"><img src="../images/og-image.png" alt="Momo"></div>
       <span class="header-title">DJ Admin</span>
     </div>
-    <button class="btn-admin" id="logout-btn">Sign out</button>
+    <button class="btn-admin" id="logout-btn" data-i18n="header.signout">Sign out</button>
   </header>
 
   <div class="admin-content">
@@ -337,14 +347,14 @@
     <!-- ── LIVE ── -->
     <section class="admin-section">
       <div class="section-title-row">
-        <h2 class="section-heading">Live</h2>
+        <h2 class="section-heading" data-i18n="section.live">Live</h2>
       </div>
       <div id="live-content"><div class="empty-state">Loading…</div></div>
     </section>
 
     <!-- ── INTRO ── -->
     <section class="admin-section">
-      <h2 class="section-heading">Intro</h2>
+      <h2 class="section-heading" data-i18n="section.intro">Intro</h2>
       <div class="admin-card" id="intro-card">
         <div class="empty-state" style="height:auto">Loading…</div>
       </div>
@@ -353,8 +363,8 @@
     <!-- ── NEXT GIGS ── -->
     <section class="admin-section">
       <div class="section-title-row">
-        <h2 class="section-heading">Next Gigs</h2>
-        <button class="btn-admin" id="add-gig-btn">Add</button>
+        <h2 class="section-heading" data-i18n="section.nextgigs">Next Gigs</h2>
+        <button class="btn-admin" id="add-gig-btn" data-i18n="btn.add">Add</button>
       </div>
       <div id="gigs-list"><div class="empty-state">Loading…</div></div>
     </section>
@@ -362,7 +372,7 @@
     <!-- ── PAST GIGS ── -->
     <section class="admin-section" id="past-gigs-section" style="display:none;">
       <div class="section-title-row">
-        <h2 class="section-heading">Past Gigs</h2>
+        <h2 class="section-heading" data-i18n="section.pastgigs">Past Gigs</h2>
       </div>
       <div id="past-gigs-list"></div>
     </section>
@@ -370,8 +380,8 @@
     <!-- ── REVIEWS ── -->
     <section class="admin-section">
       <div class="section-title-row">
-        <h2 class="section-heading">Reviews</h2>
-        <button class="btn-admin" id="add-review-btn">Add</button>
+        <h2 class="section-heading" data-i18n="section.reviews">Reviews</h2>
+        <button class="btn-admin" id="add-review-btn" data-i18n="btn.add">Add</button>
       </div>
       <div id="reviews-list"><div class="empty-state">Loading…</div></div>
     </section>
@@ -379,20 +389,20 @@
     <!-- ── DEMOS ── -->
     <section class="admin-section">
       <div class="section-title-row">
-        <h2 class="section-heading">Demos</h2>
-        <button class="btn-admin" id="add-demo-btn">Add</button>
+        <h2 class="section-heading" data-i18n="section.demos">Demos</h2>
+        <button class="btn-admin" id="add-demo-btn" data-i18n="btn.add">Add</button>
       </div>
       <div id="demos-list"><div class="empty-state">Loading…</div></div>
     </section>
 
     <!-- ── TIMELINE ── -->
     <section class="admin-section" id="timeline-section">
-      <h2 class="section-heading">Timeline</h2>
+      <h2 class="section-heading" data-i18n="section.timeline">Timeline</h2>
 
       <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2020">
         <div class="decade-title-row">
           <span class="decade-heading">2020</span>
-          <button class="btn-admin" data-decade="2020">Add</button>
+          <button class="btn-admin" data-decade="2020" data-i18n="btn.add">Add</button>
         </div>
         <div class="decade-cards" data-decade-cards="2020"></div>
       </div>
@@ -400,7 +410,7 @@
       <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2010">
         <div class="decade-title-row">
           <span class="decade-heading">2010</span>
-          <button class="btn-admin" data-decade="2010">Add</button>
+          <button class="btn-admin" data-decade="2010" data-i18n="btn.add">Add</button>
         </div>
         <div class="decade-cards" data-decade-cards="2010"></div>
       </div>
@@ -408,7 +418,7 @@
       <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2000">
         <div class="decade-title-row">
           <span class="decade-heading">2000</span>
-          <button class="btn-admin" data-decade="2000">Add</button>
+          <button class="btn-admin" data-decade="2000" data-i18n="btn.add">Add</button>
         </div>
         <div class="decade-cards" data-decade-cards="2000"></div>
       </div>
@@ -416,7 +426,7 @@
       <div style="display:flex;flex-direction:column;gap:24px;" id="decade-1990">
         <div class="decade-title-row">
           <span class="decade-heading">1990</span>
-          <button class="btn-admin" data-decade="1990">Add</button>
+          <button class="btn-admin" data-decade="1990" data-i18n="btn.add">Add</button>
         </div>
         <div class="decade-cards" data-decade-cards="1990"></div>
       </div>
@@ -443,7 +453,7 @@
     </div>
     <div class="edit-body" id="edit-body"></div>
     <div class="edit-footer">
-      <button class="btn-save" id="edit-save-btn">Save</button>
+      <button class="btn-save" id="edit-save-btn" data-i18n="btn.save">Save</button>
     </div>
   </div>
 </div>
@@ -456,7 +466,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M15 19l-7-7 7-7" stroke="var(--brand-50)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Back
+        <span data-i18n="overlay.back">Back</span>
       </button>
       <div class="req-event-avatar" id="req-event-avatar">
         <img id="req-event-avatar-img" src="" alt="" onerror="this.style.opacity='0'">
@@ -464,15 +474,16 @@
     </div>
     <!-- Tab row — only visible for live events -->
     <div class="live-tabs-row" id="live-tabs-row" style="display:none;">
-      <button class="live-tab-btn active" id="live-tab-played">JOUÉES</button>
-      <button class="live-tab-btn inactive" id="live-tab-requests">DEMANDES</button>
-      <button class="live-tab-btn inactive" id="live-tab-battle">BATTLE</button>
+      <button class="live-tab-btn active" id="live-tab-played" data-i18n="overlay.tab.playing">Playing</button>
+      <button class="live-tab-btn inactive" id="live-tab-requests" data-i18n="overlay.tab.requests">Requests</button>
+      <button class="live-tab-btn inactive" id="live-tab-battle" data-i18n="overlay.tab.battle">Battle</button>
+      <button class="live-tab-btn inactive" id="live-tab-messages" data-i18n="overlay.tab.messages">Messages</button>
     </div>
     <div class="edit-body req-list" id="req-body">
       <div class="empty-state">Loading…</div>
     </div>
     <div class="edit-footer" id="req-footer">
-      <button class="btn-dark" id="req-refresh-btn">Refresh</button>
+      <button class="btn-dark" id="req-refresh-btn" data-i18n="btn.refresh">Refresh</button>
     </div>
   </div>
 </div>
@@ -488,6 +499,266 @@
   // Supabase (read-only anon key for fetching current now-playing state)
   const SUPABASE_URL  = 'https://rxypcvyvgzdercoxvqsk.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_C4thzUmbJsmXg8seY2_dDw_li70Zx0z';
+
+  // ── i18n ──────────────────────────────────────────────────────────────────────
+  const STRINGS = {
+    en: {
+      'header.signout': 'Sign out',
+      'section.live': 'Live',
+      'section.intro': 'Intro',
+      'section.nextgigs': 'Next Gigs',
+      'section.pastgigs': 'Past Gigs',
+      'section.reviews': 'Reviews',
+      'section.demos': 'Demos',
+      'section.timeline': 'Timeline',
+      'btn.add': 'Add',
+      'btn.save': 'Save',
+      'btn.saving': 'Saving…',
+      'btn.translating': 'Translating…',
+      'btn.refresh': 'Refresh',
+      'btn.edit': 'Edit',
+      'btn.back': 'Back',
+      'btn.copyurl': 'Copy URL',
+      'btn.copied': 'Copied!',
+      'btn.change.image': 'Change image',
+      'empty.loading': 'Loading…',
+      'live.not.live': 'Not live anywhere now',
+      'live.label': 'Live',
+      'no.gigs': 'No gigs planned',
+      'no.entries': 'No entries',
+      'card.contact': 'CONTACT',
+      'card.instagram': 'Instagram',
+      'card.coming.soon': 'Coming soon',
+      'card.youtube': 'YouTube',
+      'card.link': 'Link',
+      'overlay.tab.playing': 'Playing',
+      'overlay.tab.requests': 'Requests',
+      'overlay.tab.battle': 'Battle',
+      'overlay.tab.messages': 'Messages',
+      'overlay.back': 'Back',
+      'playing.empty': 'Songs used in Serato will be listed here once the event is live.',
+      'playing.empty.hint': 'Make sure to start the Serato Live Playlist to see the songs here.',
+      'playing.now.label': 'Now playing',
+      'playing.mark.label': 'Mark as now playing',
+      'battle.not.live': 'Battles can only be set once the event is live.',
+      'battle.start.btn': 'Start The Battle',
+      'battle.new.btn': 'Create New Battle',
+      'battle.time.label': 'Time*',
+      'battle.songs.label': 'Add 2 to 5 songs*',
+      'battle.spotify.placeholder': 'Copy Spotify link here',
+      'battle.spotify.searching': 'Searching…',
+      'battle.spotify.invalid': 'Make sure the link comes from Spotify.',
+      'battle.spotify.duplicate': 'This song is already in the list.',
+      'battle.spotify.notfound': 'Could not find the song.',
+      'battle.status.ended': 'Battle ended',
+      'battle.status.remaining': 'Time remaining:',
+      'battle.ongoing.error': 'A battle is already ongoing.',
+      'req.empty': 'No requests have been made yet.',
+      'req.empty.hint': 'Make a request by tapping the\nRequest button in the top header.',
+      'req.deleted.label': 'Deleted — not visible on the public page',
+      'req.restore': 'Restore',
+      'req.create.battle': 'Create a Battle',
+      'req.mark.played': 'Mark as played',
+      'req.mark.not.played': 'Mark as not played',
+      'msg.empty': 'No messages have been sent to you yet.',
+      'form.intro.title': 'Edit Intro',
+      'form.intro.sub': "Tell 'em who you are mr DJ.",
+      'form.intro.title.label': 'Title*',
+      'form.intro.tags.label': 'Tags',
+      'form.intro.tags.placeholder': 'Label a new tag',
+      'form.intro.tags.add': 'Add',
+      'form.intro.desc.label': 'Description*',
+      'form.intro.btn.label': 'Button label*',
+      'form.review.add.title': 'Add Review',
+      'form.review.edit.title': 'Edit Review',
+      'form.review.sub': 'Review will be posted live once saved.',
+      'form.review.name.label': 'Title*',
+      'form.review.company.label': 'Company name',
+      'form.review.desc.label': 'Description*',
+      'form.review.desc.placeholder': 'Write the review here…',
+      'form.review.ig.label': 'Instagram link',
+      'form.demo.add.title': 'Add Demo',
+      'form.demo.edit.title': 'Edit Demo',
+      'form.demo.title.label': 'Title*',
+      'form.demo.desc.label': 'Description*',
+      'form.demo.desc.placeholder': 'Describe the vibe…',
+      'form.demo.yt.label': 'YouTube link',
+      'form.demo.soon.label': 'Coming soon',
+      'form.demo.position.label': 'Position*',
+      'form.demo.delete': 'Delete demo',
+      'form.timeline.add.title': 'Add Timeline Entry',
+      'form.timeline.edit.title': 'Edit Timeline',
+      'form.timeline.title.label': 'Title*',
+      'form.timeline.desc.label': 'Description',
+      'form.timeline.desc.placeholder': 'What was the role here?',
+      'form.timeline.dates.label': 'Dates*',
+      'form.timeline.link.label': 'Link',
+      'form.gig.add.title': 'Add Gig',
+      'form.gig.edit.title': 'Edit Gig',
+      'form.gig.venue.label': 'Venue*',
+      'form.gig.address.label': 'Address',
+      'form.gig.date.label': 'Date*',
+      'form.gig.start.label': 'Start*',
+      'form.gig.end.label': 'End*',
+      'form.gig.ig.label': 'Instagram',
+      'form.gig.twitch.label': 'Twitch',
+      'form.gig.photo.label': 'Photo',
+      'form.gig.overwrite': 'Overwrite photo',
+      'form.gig.revert': 'Revert to Instagram',
+      'form.gig.show': 'Show on home page',
+      'form.gig.delete': 'Delete event',
+      'toast.intro.saved': 'Intro saved',
+      'toast.review.added': 'Review added',
+      'toast.review.saved': 'Review saved',
+      'toast.demo.added': 'Demo added',
+      'toast.demo.saved': 'Demo saved',
+      'toast.entry.added': 'Entry added',
+      'toast.entry.saved': 'Entry saved',
+      'toast.title.required': 'Title is required',
+      'toast.venue.required': 'Venue is required',
+      'toast.copy.error': 'Could not copy',
+      'toast.battle.started': 'Battle started! ⚔',
+      'toast.now.playing': 'Now playing updated',
+      'toast.img.failed': 'Image upload failed: ',
+      'toast.save.failed': 'Save failed — ',
+      'toast.delete.failed': 'Delete failed — ',
+      'toast.failed': 'Failed: ',
+      'toast.deleted': 'deleted',
+    },
+    fr: {
+      'header.signout': 'Déconnexion',
+      'section.live': 'En direct',
+      'section.intro': 'Intro',
+      'section.nextgigs': 'Prochains Gigs',
+      'section.pastgigs': 'Gigs passés',
+      'section.reviews': 'Avis',
+      'section.demos': 'Démos',
+      'section.timeline': 'Parcours',
+      'btn.add': 'Ajouter',
+      'btn.save': 'Enregistrer',
+      'btn.saving': 'Enregistrement…',
+      'btn.translating': 'Traduction…',
+      'btn.refresh': 'Actualiser',
+      'btn.edit': 'Modifier',
+      'btn.back': 'Retour',
+      'btn.copyurl': "Copier l'URL",
+      'btn.copied': 'Copié !',
+      'btn.change.image': "Changer l'image",
+      'empty.loading': 'Chargement…',
+      'live.not.live': "Pas en direct pour l'instant",
+      'live.label': 'En direct',
+      'no.gigs': 'Aucun gig prévu',
+      'no.entries': 'Aucune entrée',
+      'card.contact': 'CONTACT',
+      'card.instagram': 'Instagram',
+      'card.coming.soon': 'Bientôt disponible',
+      'card.youtube': 'YouTube',
+      'card.link': 'Lien',
+      'overlay.tab.playing': 'En cours',
+      'overlay.tab.requests': 'Demandes',
+      'overlay.tab.battle': 'Bataille',
+      'overlay.tab.messages': 'Messages',
+      'overlay.back': 'Retour',
+      'playing.empty': "Les chansons utilisées dans Serato s'afficheront ici une fois l'événement en direct.",
+      'playing.empty.hint': 'Assurez-vous de démarrer la liste de lecture en direct Serato pour voir les chansons ici.',
+      'playing.now.label': 'En cours',
+      'playing.mark.label': 'Marquer comme en cours',
+      'battle.not.live': "Les batailles ne peuvent être lancées qu'une fois l'événement en direct.",
+      'battle.start.btn': 'Lancer la bataille',
+      'battle.new.btn': 'Nouvelle bataille',
+      'battle.time.label': 'Durée*',
+      'battle.songs.label': 'Ajouter 2 à 5 chansons*',
+      'battle.spotify.placeholder': 'Coller le lien Spotify ici',
+      'battle.spotify.searching': 'Recherche…',
+      'battle.spotify.invalid': 'Assurez-vous que le lien provient de Spotify.',
+      'battle.spotify.duplicate': 'Cette chanson est déjà dans la liste.',
+      'battle.spotify.notfound': 'Chanson introuvable.',
+      'battle.status.ended': 'Bataille terminée',
+      'battle.status.remaining': 'Temps restant :',
+      'battle.ongoing.error': 'Une bataille est déjà en cours.',
+      'req.empty': "Aucune demande n'a encore été faite.",
+      'req.empty.hint': 'Faites une demande en appuyant sur\nle bouton Demande en haut de la page.',
+      'req.deleted.label': 'Supprimée — invisible sur la page publique',
+      'req.restore': 'Restaurer',
+      'req.create.battle': 'Créer une bataille',
+      'req.mark.played': 'Marquer comme joué',
+      'req.mark.not.played': 'Marquer comme non joué',
+      'msg.empty': "Aucun message ne vous a encore été envoyé.",
+      'form.intro.title': "Modifier l'intro",
+      'form.intro.sub': 'Dis-leur qui tu es, DJ.',
+      'form.intro.title.label': 'Titre*',
+      'form.intro.tags.label': 'Tags',
+      'form.intro.tags.placeholder': 'Nommer un nouveau tag',
+      'form.intro.tags.add': 'Ajouter',
+      'form.intro.desc.label': 'Description*',
+      'form.intro.btn.label': 'Libellé du bouton*',
+      'form.review.add.title': 'Ajouter un avis',
+      'form.review.edit.title': "Modifier l'avis",
+      'form.review.sub': 'L\'avis sera publié en direct une fois enregistré.',
+      'form.review.name.label': 'Titre*',
+      'form.review.company.label': "Nom de l'entreprise",
+      'form.review.desc.label': 'Description*',
+      'form.review.desc.placeholder': "Écrire l'avis ici…",
+      'form.review.ig.label': 'Lien Instagram',
+      'form.demo.add.title': 'Ajouter une démo',
+      'form.demo.edit.title': 'Modifier la démo',
+      'form.demo.title.label': 'Titre*',
+      'form.demo.desc.label': 'Description*',
+      'form.demo.desc.placeholder': "Décrire l'ambiance…",
+      'form.demo.yt.label': 'Lien YouTube',
+      'form.demo.soon.label': 'Bientôt disponible',
+      'form.demo.position.label': 'Position*',
+      'form.demo.delete': 'Supprimer la démo',
+      'form.timeline.add.title': 'Ajouter au parcours',
+      'form.timeline.edit.title': 'Modifier le parcours',
+      'form.timeline.title.label': 'Titre*',
+      'form.timeline.desc.label': 'Description',
+      'form.timeline.desc.placeholder': 'Quel était le rôle ici ?',
+      'form.timeline.dates.label': 'Dates*',
+      'form.timeline.link.label': 'Lien',
+      'form.gig.add.title': 'Ajouter un gig',
+      'form.gig.edit.title': 'Modifier le gig',
+      'form.gig.venue.label': 'Lieu*',
+      'form.gig.address.label': 'Adresse',
+      'form.gig.date.label': 'Date*',
+      'form.gig.start.label': 'Début*',
+      'form.gig.end.label': 'Fin*',
+      'form.gig.ig.label': 'Instagram',
+      'form.gig.twitch.label': 'Twitch',
+      'form.gig.photo.label': 'Photo',
+      'form.gig.overwrite': 'Remplacer la photo',
+      'form.gig.revert': 'Revenir à Instagram',
+      'form.gig.show': "Afficher sur la page d'accueil",
+      'form.gig.delete': "Supprimer l'événement",
+      'toast.intro.saved': 'Intro enregistrée',
+      'toast.review.added': 'Avis ajouté',
+      'toast.review.saved': 'Avis enregistré',
+      'toast.demo.added': 'Démo ajoutée',
+      'toast.demo.saved': 'Démo enregistrée',
+      'toast.entry.added': 'Entrée ajoutée',
+      'toast.entry.saved': 'Entrée enregistrée',
+      'toast.title.required': 'Le titre est requis',
+      'toast.venue.required': 'Le lieu est requis',
+      'toast.copy.error': 'Impossible de copier',
+      'toast.battle.started': 'Bataille lancée ! ⚔',
+      'toast.now.playing': 'En cours mis à jour',
+      'toast.img.failed': 'Échec du téléchargement : ',
+      'toast.save.failed': "Échec de l'enregistrement — ",
+      'toast.delete.failed': 'Échec de la suppression — ',
+      'toast.failed': 'Échec : ',
+      'toast.deleted': 'supprimé(e)',
+    }
+  };
+  function t(key) {
+    return (STRINGS[currentLang] || STRINGS.en)[key] || STRINGS.en[key] || key;
+  }
+  function applyI18n() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      const val = t(key);
+      if (val !== undefined) el.textContent = val;
+    });
+  }
 
   // ── Static content metadata ─────────────────────────────────────────────────
 
@@ -771,6 +1042,7 @@
     renderDemos();
     renderTimeline();
     scheduleGigRefresh();
+    applyI18n();
   }
 
   // Schedule a one-shot re-render at the next significant event boundary
@@ -814,7 +1086,7 @@
     });
 
     if (!liveEvent) {
-      el.innerHTML = `<div class="empty-state">Not live anywhere now</div>`;
+      el.innerHTML = `<div class="empty-state">${t('live.not.live')}</div>`;
       return;
     }
 
@@ -834,11 +1106,11 @@
         <div class="gig-card-actions" style="pointer-events:none;">
           <div class="gig-live-status" style="pointer-events:none;">
             <div class="gig-live-dot"></div>
-            <span class="gig-live-label">Live</span>
+            <span class="gig-live-label">${t('live.label')}</span>
           </div>
           <div style="display:flex;gap:8px;pointer-events:none;">
-            ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">Copy URL</button>` : ''}
-            <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">Edit</button>
+            ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">${t('btn.copyurl')}</button>` : ''}
+            <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">${t('btn.edit')}</button>
           </div>
         </div>
       </div>`;
@@ -854,8 +1126,8 @@
       <p class="card-name">${esc(copy('intro.title') || 'MOMO AUX PLATINES')}</p>
       <p class="card-sub">${esc((copy('intro.tags') || '').replace(/\|/g, ' · '))}</p>
       <p class="card-text">${esc(copy('intro.bio'))}</p>
-      <p class="card-link-text">CONTACT</p>
-      <button class="btn-card-edit" data-action="edit-intro">Edit</button>`;
+      <p class="card-link-text">${t('card.contact')}</p>
+      <button class="btn-card-edit" data-action="edit-intro">${t('btn.edit')}</button>`;
   }
 
   // ── NEXT GIGS + PAST GIGS sections ───────────────────────────────────────────
@@ -887,8 +1159,8 @@
         </div>
       </div>
       <div class="gig-card-actions" style="pointer-events:none;">
-        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">Copy URL</button>` : '<div></div>'}
-        <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">Edit</button>
+        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">${t('btn.copyurl')}</button>` : '<div></div>'}
+        <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">${t('btn.edit')}</button>
       </div>`;
     return card;
   }
@@ -916,7 +1188,7 @@
     // Upcoming
     el.innerHTML = '';
     if (!upcoming.length) {
-      el.innerHTML = `<div class="empty-state">No gigs planned</div>`;
+      el.innerHTML = `<div class="empty-state">${t('no.gigs')}</div>`;
     } else {
       upcoming.forEach(ev => el.appendChild(buildGigCard(ev, currentEvents.indexOf(ev))));
     }
@@ -945,8 +1217,8 @@
         <p class="card-name">${esc(rName)}</p>
         ${rVenue ? `<p class="card-sub">${esc(rVenue)}</p>` : ''}
         <p class="card-text">${esc(copy(r.textKey))}</p>
-        <p class="card-link-text">Instagram</p>
-        <button class="btn-card-edit" data-action="edit-review" data-id="${r.id}">Edit</button>`;
+        <p class="card-link-text">${t('card.instagram')}</p>
+        <button class="btn-card-edit" data-action="edit-review" data-id="${r.id}">${t('btn.edit')}</button>`;
       el.appendChild(card);
     });
   }
@@ -982,8 +1254,8 @@
         </div>
         <p class="card-name">${esc(dTitle)}</p>
         <p class="card-text">${esc(copy(d.descKey))}</p>
-        ${dSoon ? '<p class="card-sub">Coming soon</p>' : dLink ? `<p class="card-link-text">YouTube</p>` : ''}
-        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">Edit</button>`;
+        ${dSoon ? `<p class="card-sub">${t('card.coming.soon')}</p>` : dLink ? `<p class="card-link-text">${t('card.youtube')}</p>` : ''}
+        <button class="btn-card-edit" data-action="edit-demo" data-id="${d.id}">${t('btn.edit')}</button>`;
       el.appendChild(card);
     });
   }
@@ -995,7 +1267,7 @@
       if (!container) return;
       container.innerHTML = '';
       if (!items.length) {
-        container.innerHTML = `<div class="empty-state">No entries</div>`;
+        container.innerHTML = `<div class="empty-state">${t('no.entries')}</div>`;
         return;
       }
       items.forEach(item => {
@@ -1014,8 +1286,8 @@
               <p class="card-sub">${esc(iDates)}</p>
             </div>
           </div>
-          ${iLink ? `<p class="card-link-text">Link</p>` : ''}
-          <button class="btn-card-edit" data-action="edit-timeline" data-decade="${decade}" data-id="${item.id}">Edit</button>`;
+          ${iLink ? `<p class="card-link-text">${t('card.link')}</p>` : ''}
+          <button class="btn-card-edit" data-action="edit-timeline" data-decade="${decade}" data-id="${item.id}">${t('btn.edit')}</button>`;
         container.appendChild(card);
       });
     });
@@ -1038,9 +1310,9 @@
     if (action === 'copy-url') {
       e.stopPropagation();
       navigator.clipboard.writeText(btn.dataset.url).then(() => {
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy URL'; }, 2000);
-      }).catch(() => showToast('Could not copy', 'error'));
+        btn.textContent = t('btn.copied');
+        setTimeout(() => { btn.textContent = t('btn.copyurl'); }, 10000);
+      }).catch(() => showToast(t('toast.copy.error'), 'error'));
     }
   });
 
@@ -1070,43 +1342,43 @@
     editBody.addEventListener('change', enableSave, { once: true });
 
     if (type === 'intro') {
-      editTitle.textContent = 'Edit Intro';
-      editSub.textContent   = "Tell 'em who you are mr DJ.";
-      const existingTags = (copy('intro.tags') || 'DJ|TURNTABLIST|RADIO HOST').split('|').map(t => t.trim()).filter(Boolean);
+      editTitle.textContent = t('form.intro.title');
+      editSub.textContent   = t('form.intro.sub');
+      const existingTags = (copy('intro.tags') || 'DJ|TURNTABLIST|RADIO HOST').split('|').map(tag => tag.trim()).filter(Boolean);
       editBody.innerHTML = `
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview">
             <img id="ef-img-preview" src="${copy('intro.avatar') || '../images/profile.png'}" alt="Profile">
           </div>
-          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Title*</label>
+          <label class="edit-label">${t('form.intro.title.label')}</label>
           <input class="edit-input" type="text" id="ef-title" value="${esc(copy('intro.title') || 'MOMO AUX PLATINES')}">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Tags</label>
+          <label class="edit-label">${t('form.intro.tags.label')}</label>
           <div class="tags-section">
             <div style="display:flex;gap:8px;">
-              <input class="edit-input" type="text" id="ef-tag-input" placeholder="Label a new tag" style="flex:1;">
-              <button type="button" id="ef-tag-add" style="height:52px;padding:0 20px;background:var(--brand-80);border:none;border-radius:12px;color:var(--brand-00);font-size:16px;font-weight:600;cursor:pointer;flex-shrink:0;">Add</button>
+              <input class="edit-input" type="text" id="ef-tag-input" placeholder="${t('form.intro.tags.placeholder')}" style="flex:1;">
+              <button type="button" id="ef-tag-add" style="height:52px;padding:0 20px;background:var(--brand-80);border:none;border-radius:12px;color:var(--brand-00);font-size:16px;font-weight:600;cursor:pointer;flex-shrink:0;">${t('form.intro.tags.add')}</button>
             </div>
             <div class="tags-existing" id="ef-tags-list">
-              ${existingTags.map(t => `
-                <div class="tag-chip" data-tag="${esc(t)}">
-                  <span>${esc(t)}</span>
+              ${existingTags.map(tag => `
+                <div class="tag-chip" data-tag="${esc(tag)}">
+                  <span>${esc(tag)}</span>
                   <button type="button" class="tag-remove" aria-label="Remove tag">✕</button>
                 </div>`).join('')}
             </div>
           </div>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Description*</label>
+          <label class="edit-label">${t('form.intro.desc.label')}</label>
           <textarea class="edit-input" id="ef-bio" rows="6">${esc(copy('intro.bio'))}</textarea>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Button label*</label>
+          <label class="edit-label">${t('form.intro.btn.label')}</label>
           <input class="edit-input" type="text" id="ef-btn" value="${esc(copy('intro.btn.book'))}">
         </div>`;
       // Wire up image picker
@@ -1140,30 +1412,30 @@
 
     if (type === 'review') {
       const isNew = !meta;
-      editTitle.textContent = isNew ? 'Add Review' : 'Edit Review';
-      editSub.textContent   = 'Review will be posted live once saved.';
+      editTitle.textContent = isNew ? t('form.review.add.title') : t('form.review.edit.title');
+      editSub.textContent   = t('form.review.sub');
       editBody.innerHTML = `
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="image-row">
           <div class="image-preview round">
             <img id="ef-img-preview" src="${isNew ? '' : (copy('reviews.' + meta.id + '.avatar') || meta.avatar)}" alt="" style="${isNew ? 'display:none' : ''}">
           </div>
-          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Title*</label>
+          <label class="edit-label">${t('form.review.name.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-name" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.name') || meta.name)}" placeholder="Simone">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Company name</label>
+          <label class="edit-label">${t('form.review.company.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-venue" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.venue') || meta.venue)}" placeholder="La Buvette chez Simone">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Description*</label>
-          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-text" rows="6" placeholder="Write the review here…">${isNew ? '' : esc(copy(meta.textKey))}</textarea>
+          <label class="edit-label">${t('form.review.desc.label')}</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-text" rows="6" placeholder="${t('form.review.desc.placeholder')}">${isNew ? '' : esc(copy(meta.textKey))}</textarea>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Instagram link</label>
+          <label class="edit-label">${t('form.review.ig.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-instagram" value="${isNew ? '' : esc(copy('reviews.' + meta.id + '.instagram') || meta.instagram)}" placeholder="https://www.instagram.com/...">
         </div>`;
       const imgInput = document.getElementById('ef-img-input');
@@ -1174,7 +1446,7 @@
 
     if (type === 'demo') {
       const isNew = !meta;
-      editTitle.textContent = isNew ? 'Add Demo' : 'Edit Demo';
+      editTitle.textContent = isNew ? t('form.demo.add.title') : t('form.demo.edit.title');
       editSub.textContent   = '';
       const ytLink = isNew ? '' : (copy(`demos.${meta.id}.link`) || (meta.ytId ? `https://www.youtube.com/watch?v=${meta.ytId}` : ''));
       const comingSoon = isNew ? true : (copy(`demos.${meta.id}.coming-soon`) === 'true' || (!meta.ytId && copy(`demos.${meta.id}.coming-soon`) !== 'false'));
@@ -1184,29 +1456,29 @@
           <div class="image-preview rect">
             <img id="ef-img-preview" src="${isNew ? '' : (copy('demos.' + meta.id + '.avatar') || meta.thumb)}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
           </div>
-          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Title*</label>
+          <label class="edit-label">${t('form.demo.title.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-title" value="${isNew ? '' : esc(copy('demos.' + meta.id + '.title') || meta.title)}" placeholder="Le Bon Groove">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Description*</label>
-          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-desc" rows="5" placeholder="Describe the vibe…">${isNew ? '' : esc(copy(meta.descKey))}</textarea>
+          <label class="edit-label">${t('form.demo.desc.label')}</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-desc" rows="5" placeholder="${t('form.demo.desc.placeholder')}">${isNew ? '' : esc(copy(meta.descKey))}</textarea>
         </div>
         <div class="edit-field">
-          <label class="edit-label">YouTube link</label>
+          <label class="edit-label">${t('form.demo.yt.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-ytlink" value="${esc(ytLink)}" placeholder="https://www.youtube.com/watch?v=...">
         </div>
         <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;">
           <input type="checkbox" id="ef-coming-soon" ${comingSoon ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--brand-80);flex-shrink:0;">
-          <span class="edit-label" style="margin:0;">Coming soon</span>
+          <span class="edit-label" style="margin:0;">${t('form.demo.soon.label')}</span>
         </label>
         <div class="edit-field">
-          <label class="edit-label">Position*</label>
+          <label class="edit-label">${t('form.demo.position.label')}</label>
           <select class="edit-select" id="ef-position"></select>
         </div>
-        ${!isNew ? `<button class="btn-delete-gig" data-action="delete-demo" data-id="${meta.id}">Delete demo</button>` : ''}`;
+        ${!isNew ? `<button class="btn-delete-gig" data-action="delete-demo" data-id="${meta.id}">${t('form.demo.delete')}</button>` : ''}`;
       const imgInput = document.getElementById('ef-img-input');
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
@@ -1228,7 +1500,7 @@
     if (type === 'timeline' && meta) {
       const item  = meta.item;
       const isNew = !item;
-      editTitle.textContent = isNew ? 'Add Timeline Entry' : 'Edit Timeline';
+      editTitle.textContent = isNew ? t('form.timeline.add.title') : t('form.timeline.edit.title');
       editSub.textContent   = '';
       editBody.innerHTML = `
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
@@ -1236,22 +1508,22 @@
           <div class="image-preview square">
             <img id="ef-img-preview" src="${isNew ? '' : (copy('timeline.' + item.id + '.avatar') || item.avatar)}" alt="" style="${isNew ? 'display:none' : 'border-radius:8px;'}">
           </div>
-          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">Change image</button>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Title*</label>
+          <label class="edit-label">${t('form.timeline.title.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-name" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.name') || item.name)}" placeholder="La Buvette chez Simone">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Description</label>
-          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-role" rows="4" placeholder="What was the role here?">${isNew ? '' : esc(item.roleKey ? copy(item.roleKey) : '')}</textarea>
+          <label class="edit-label">${t('form.timeline.desc.label')}</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-role" rows="4" placeholder="${t('form.timeline.desc.placeholder')}">${isNew ? '' : esc(item.roleKey ? copy(item.roleKey) : '')}</textarea>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Dates*</label>
+          <label class="edit-label">${t('form.timeline.dates.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-dates" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.dates') || item.dates)}" placeholder="2020–2023">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Link</label>
+          <label class="edit-label">${t('form.timeline.link.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-link" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.instagram') || item.instagram)}" placeholder="https://...">
         </div>`;
       const imgInput = document.getElementById('ef-img-input');
@@ -1263,60 +1535,60 @@
     if (type === 'gig') {
       const idx = meta?.index ?? -1;
       const ev  = idx >= 0 ? currentEvents[idx] : null;
-      editTitle.textContent = ev ? 'Edit Gig' : 'Add Gig';
+      editTitle.textContent = ev ? t('form.gig.edit.title') : t('form.gig.add.title');
       editSub.textContent   = '';
       editBody.innerHTML = `
         <input type="hidden" id="ef-gig-index" value="${idx}">
         <div class="edit-field">
-          <label class="edit-label">Venue*</label>
+          <label class="edit-label">${t('form.gig.venue.label')}</label>
           <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-venue" value="${esc(ev?.venue || '')}" placeholder="Buvette Chez Simone">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Address</label>
+          <label class="edit-label">${t('form.gig.address.label')}</label>
           <input class="edit-input ${ev?.address ? '' : 'empty'}" type="text" id="ef-address" value="${esc(ev?.address || '')}" placeholder="4869 Rue Villeneuve O, Montréal">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Date*</label>
+          <label class="edit-label">${t('form.gig.date.label')}</label>
           <input class="edit-input ${ev?.date ? '' : 'empty'}" type="date" id="ef-date" value="${esc(ev?.date || '')}">
         </div>
         <div class="form-row">
           <div class="edit-field">
-            <label class="edit-label">Start*</label>
+            <label class="edit-label">${t('form.gig.start.label')}</label>
             <input class="edit-input ${ev?.start_time ? '' : 'empty'}" type="time" id="ef-start" value="${esc(ev?.start_time || '')}">
           </div>
           <div class="edit-field">
-            <label class="edit-label">End*</label>
+            <label class="edit-label">${t('form.gig.end.label')}</label>
             <input class="edit-input ${ev?.end_time ? '' : 'empty'}" type="time" id="ef-end" value="${esc(ev?.end_time || '')}">
           </div>
         </div>
         <div class="edit-field">
-          <label class="edit-label">Instagram</label>
+          <label class="edit-label">${t('form.gig.ig.label')}</label>
           <input class="edit-input ${ev?.instagram ? '' : 'empty'}" type="url" id="ef-instagram" value="${esc(ev?.instagram || '')}" placeholder="https://www.instagram.com/venue">
         </div>
         <div class="edit-field">
-          <label class="edit-label">Twitch</label>
+          <label class="edit-label">${t('form.gig.twitch.label')}</label>
           <input class="edit-input ${ev?.twitch ? '' : 'empty'}" type="url" id="ef-twitch" value="${esc(ev?.twitch || '')}" placeholder="https://www.twitch.tv/channel">
         </div>
         <input type="file" id="ef-gig-img-input" accept="image/*" style="display:none">
         <div class="edit-field">
-          <label class="edit-label">Photo</label>
+          <label class="edit-label">${t('form.gig.photo.label')}</label>
           <div class="image-row">
             <div class="image-preview rect" style="flex-shrink:0;">
               <img id="ef-gig-img-preview" src="" alt="" style="display:none;opacity:1;">
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
-              <button type="button" class="btn-card-edit" id="ef-gig-overwrite-btn">Overwrite photo</button>
-              <button type="button" class="btn-card-edit" id="ef-gig-revert-btn" style="display:none;">Revert to Instagram</button>
+              <button type="button" class="btn-card-edit" id="ef-gig-overwrite-btn">${t('form.gig.overwrite')}</button>
+              <button type="button" class="btn-card-edit" id="ef-gig-revert-btn" style="display:none;">${t('form.gig.revert')}</button>
             </div>
           </div>
           <p id="ef-gig-img-status" style="font-size:12px;font-weight:300;color:var(--brand-50);margin:0;line-height:18px;"></p>
         </div>
         <div class="show-toggle-row">
-          <span class="show-toggle-label">Show on home page</span>
-          <button type="button" class="req-switch${ev?.show === true ? ' on' : ''}" id="ef-show-toggle" aria-label="Show on home page"></button>
+          <span class="show-toggle-label">${t('form.gig.show')}</span>
+          <button type="button" class="req-switch${ev?.show === true ? ' on' : ''}" id="ef-show-toggle" aria-label="${t('form.gig.show')}"></button>
         </div>
         <input type="hidden" id="ef-image" value="${esc(ev?.image || '')}">
-        ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">Delete event</button>` : ''}`;
+        ${ev ? `<button class="btn-delete-gig" data-action="delete-gig" data-index="${idx}">${t('form.gig.delete')}</button>` : ''}`;
 
       // Wire Instagram debounce + image overwrite/revert buttons
       setTimeout(() => {
@@ -1429,7 +1701,7 @@
   // ── Save ──────────────────────────────────────────────────────────────────────
   saveBtn.addEventListener('click', async () => {
     saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving…';
+    saveBtn.textContent = t('btn.saving');
     try {
       if (editFormType === 'intro') {
         const imgInput = document.getElementById('ef-img-input');
@@ -1445,13 +1717,13 @@
         copyData[currentLang]['intro.tags'] = tagChips.join('|');
         await saveCopy(currentLang, `Update intro copy (${currentLang}) via admin`);
         renderIntro();
-        showToast('Intro saved', 'success');
+        showToast(t('toast.intro.saved'), 'success');
       }
 
       if (editFormType === 'review') {
         const isNew = !editFormMeta;
         const name  = document.getElementById('ef-name')?.value.trim();
-        if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        if (!name) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
         const id = isNew ? slugify(name) : editFormMeta.id;
 
         // Upload image → Netlify Blob (no deploy needed)
@@ -1469,10 +1741,10 @@
         // Auto-translate description for new entries
         let translatedText = textVal;
         if (isNew && textVal) {
-          saveBtn.textContent = 'Translating…';
+          saveBtn.textContent = t('btn.translating');
           const otherLang = currentLang === 'en' ? 'fr' : 'en';
           translatedText = await autoTranslate(textVal, currentLang, otherLang);
-          saveBtn.textContent = 'Saving…';
+          saveBtn.textContent = t('btn.saving');
         }
 
         const existingAvatar = isNew ? (blobUrl || '') : (copy(`reviews.${id}.avatar`) || editFormMeta.avatar || '');
@@ -1505,13 +1777,13 @@
           if (r) { r.name = name; r.venue = venueVal; r.instagram = igVal; if (blobUrl) r.avatar = blobUrl; }
         }
         renderReviews();
-        showToast(isNew ? 'Review added' : 'Review saved', 'success');
+        showToast(isNew ? t('toast.review.added') : t('toast.review.saved'), 'success');
       }
 
       if (editFormType === 'demo') {
         const isNew = !editFormMeta;
         const title = document.getElementById('ef-title')?.value.trim();
-        if (!title) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        if (!title) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
         const id = isNew ? slugify(title) : editFormMeta.id;
 
         // Upload thumbnail → Netlify Blob (no deploy needed)
@@ -1529,10 +1801,10 @@
         // Auto-translate description for new entries
         let translatedDesc = descVal;
         if (isNew && descVal) {
-          saveBtn.textContent = 'Translating…';
+          saveBtn.textContent = t('btn.translating');
           const otherLang = currentLang === 'en' ? 'fr' : 'en';
           translatedDesc = await autoTranslate(descVal, currentLang, otherLang);
-          saveBtn.textContent = 'Saving…';
+          saveBtn.textContent = t('btn.saving');
         }
 
         const existingThumb = isNew ? (blobUrl || '') : (copy(`demos.${id}.avatar`) || editFormMeta.thumb || '');
@@ -1578,7 +1850,7 @@
           if (d) { d.title = title; if (blobUrl) d.thumb = blobUrl; }
         }
         renderDemos();
-        showToast(isNew ? 'Demo added' : 'Demo saved', 'success');
+        showToast(isNew ? t('toast.demo.added') : t('toast.demo.saved'), 'success');
       }
 
       if (editFormType === 'timeline' && editFormMeta) {
@@ -1586,7 +1858,7 @@
         const isNew = !item;
         const decade = editFormMeta.decade;
         const name  = document.getElementById('ef-name')?.value.trim();
-        if (!name) { showToast('Title is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        if (!name) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
         const id = isNew ? slugify(name) : item.id;
 
         // Upload avatar → Netlify Blob (no deploy needed)
@@ -1604,10 +1876,10 @@
         // Auto-translate description for new entries
         let translatedRole = roleVal;
         if (isNew && roleVal) {
-          saveBtn.textContent = 'Translating…';
+          saveBtn.textContent = t('btn.translating');
           const otherLang = currentLang === 'en' ? 'fr' : 'en';
           translatedRole = await autoTranslate(roleVal, currentLang, otherLang);
-          saveBtn.textContent = 'Saving…';
+          saveBtn.textContent = t('btn.saving');
         }
 
         const existingAvatar = isNew ? (blobUrl || '') : (copy(`timeline.${id}.avatar`) || item.avatar || '');
@@ -1640,12 +1912,12 @@
           item.name = name; item.dates = datesVal; item.instagram = linkVal; if (blobUrl) item.avatar = blobUrl;
         }
         renderTimeline();
-        showToast(isNew ? 'Entry added' : 'Entry saved', 'success');
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
       }
 
       if (editFormType === 'gig') {
         const venue = document.getElementById('ef-venue')?.value.trim();
-        if (!venue) { showToast('Venue is required', 'error'); saveBtn.disabled = false; saveBtn.textContent = 'Save'; return; }
+        if (!venue) { showToast(t('toast.venue.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
 
         let imagePath = document.getElementById('ef-image')?.value.trim() || '';
         const igInput     = document.getElementById('ef-instagram');
@@ -1656,7 +1928,7 @@
             const key = `events/${slugify(venue)}.jpg`;
             imagePath = await uploadImageToBlob(pendingCustomFile, key);
             pendingCustomFile = null;
-          } catch (e) { showToast('Image upload failed: ' + e.message, 'error'); }
+          } catch (e) { showToast(t('toast.img.failed') + e.message, 'error'); }
         } else if (pendingAvatarUrl && pendingAvatarUser) {
           try {
             imagePath = await uploadAvatarToBlob(pendingAvatarUrl, pendingAvatarUser);
@@ -1689,15 +1961,15 @@
         renderLive();
         renderGigs();
         scheduleGigRefresh();
-        showToast(isNew ? `"${venue}" added` : `"${venue}" updated`, 'success');
+        showToast(`"${venue}" ${isNew ? t('toast.entry.added').toLowerCase() : t('toast.entry.saved').toLowerCase()}`, 'success');
       }
 
       closeForm();
     } catch (e) {
-      showToast('Save failed — ' + e.message, 'error');
+      showToast(t('toast.save.failed') + e.message, 'error');
     }
     saveBtn.disabled = false;
-    saveBtn.textContent = 'Save';
+    saveBtn.textContent = t('btn.save');
   });
 
   // ── Delete demo ───────────────────────────────────────────────────────────────
@@ -1726,9 +1998,9 @@
         copyData[lang][`demos.${id}.deleted`] = 'true';
         await saveCopy(lang, `Delete demo: ${id} (${lang})`);
       }
-      showToast(`"${d?.title || id}" deleted`, 'success');
+      showToast(`"${d?.title || id}" ${t('toast.deleted')}`, 'success');
     } catch (e) {
-      showToast('Delete failed — ' + e.message, 'error');
+      showToast(t('toast.delete.failed') + e.message, 'error');
       // Restore on failure
       loadAllCopy().then(() => { loadRegistries(); renderDemos(); });
     }
@@ -1744,9 +2016,9 @@
       closeForm();
       renderLive();
       renderGigs();
-      showToast(`"${ev.venue}" deleted`, 'success');
+      showToast(`"${ev.venue}" ${t('toast.deleted')}`, 'success');
     } catch (e) {
-      showToast('Delete failed — ' + e.message, 'error');
+      showToast(t('toast.delete.failed') + e.message, 'error');
       loadEvents().then(() => { renderLive(); renderGigs(); });
     }
   }
@@ -1872,7 +2144,7 @@
   let reqList = [];
   let reqEventIdx = -1;
   let reqEventIsLive = false;
-  let liveActiveTab = 'played'; // 'played' | 'requests'
+  let liveActiveTab = 'played'; // 'played' | 'requests' | 'battle' | 'messages'
   let nowPlayingTrackId = null; // Serato track ID currently marked as now-playing
   let liveTracksCache = []; // Serato tracks fetched for the live view
   let liveTrackSig = ''; // signature to detect new tracks
@@ -1904,16 +2176,17 @@
     reqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Always show JOUÉES/DEMANDES/BATTLE tabs — default to JOUÉES
+    // Always show tabs — default to Playing
     liveTabsRow.style.display = '';
     battleSongs       = [];
-    battleDuration    = 300;
+    battleDuration    = 900;
     battleSelectedIds = new Set();
     _battleFromRequests = false;
     liveActiveTab = 'played';
     document.getElementById('live-tab-played').className   = 'live-tab-btn active';
     document.getElementById('live-tab-requests').className = 'live-tab-btn inactive';
     document.getElementById('live-tab-battle').className   = 'live-tab-btn inactive';
+    document.getElementById('live-tab-messages').className = 'live-tab-btn inactive';
     loadPlayedTracks();
   }
 
@@ -1941,11 +2214,11 @@
     battleSelectedIds  = new Set();
     _battleFromRequests = false;
     battleSongs    = [];
-    battleDuration = 300;
+    battleDuration = 900;
     // Restore default footer in case battle tab had replaced it
     const footer = document.getElementById('req-footer');
     if (footer && !footer.querySelector('#req-refresh-btn')) {
-      footer.innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+      footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">${t('btn.refresh')}</button>`;
     }
   }
 
@@ -2006,8 +2279,8 @@
     if (!liveTracksCache.length) {
       reqBody.innerHTML = `
         <div class="req-empty-body">
-          <p>Aucune chanson jouée pour l'instant.</p>
-          <p style="margin-top:8px;color:var(--brand-80)">Les chansons apparaîtront ici dès qu'elles seront ajoutées à la Serato Live Playlist.</p>
+          <p>${t('playing.empty')}</p>
+          <p style="margin-top:8px;color:var(--brand-80)">${t('playing.empty.hint')}</p>
         </div>`;
       return;
     }
@@ -2039,7 +2312,7 @@
 
       const iconColor = state === 'playing' ? '#fff' : state === 'played' ? 'var(--green)' : 'var(--brand-50)';
       const btnIcon   = state === 'played' ? checkIcon : playIcon;
-      const btnTitle  = state === 'playing' ? 'En cours' : 'Marquer comme en cours';
+      const btnTitle  = state === 'playing' ? t('playing.now.label') : t('playing.mark.label');
       const btnDisabled = !reqEventIsLive ? 'disabled' : '';
 
       card.innerHTML = `
@@ -2082,9 +2355,9 @@
       const gigDate = currentEvents[reqEventIdx]?.date || '';
       if (gigDate) localStorage.setItem(`momo_np_${gigDate}`, trackId);
       renderTrackCards();
-      showToast('En cours mis à jour', 'success');
+      showToast(t('toast.now.playing'), 'success');
     } catch (err) {
-      showToast('Échec: ' + err.message, 'error');
+      showToast(t('toast.failed') + err.message, 'error');
     }
   }
 
@@ -2094,6 +2367,7 @@
     document.getElementById('live-tab-played').className   = name === 'played'   ? 'live-tab-btn active' : 'live-tab-btn inactive';
     document.getElementById('live-tab-requests').className = name === 'requests' ? 'live-tab-btn active' : 'live-tab-btn inactive';
     document.getElementById('live-tab-battle').className   = name === 'battle'   ? 'live-tab-btn active' : 'live-tab-btn inactive';
+    document.getElementById('live-tab-messages').className = name === 'messages' ? 'live-tab-btn active' : 'live-tab-btn inactive';
   }
 
   document.getElementById('live-tab-played').addEventListener('click', () => {
@@ -2117,12 +2391,19 @@
     loadBattle();
   });
 
+  document.getElementById('live-tab-messages').addEventListener('click', () => {
+    if (liveActiveTab === 'messages') return;
+    stopLivePolling();
+    setLiveTab('messages');
+    loadMessages();
+  });
+
   // ── BATTLE tab ────────────────────────────────────────────────────────────────
   const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
   const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
 
   let battleSongs    = [];   // [{title, artist, image, url}]
-  let battleDuration = 300;  // seconds, default 5 min
+  let battleDuration = 900;  // seconds, default 15 min
   let battleSpotifyTimer = null;
   let battleSelectedIds  = new Set(); // request IDs selected for battle from requests tab
   let _battleFromRequests = false;    // true when battle form was launched from requests tab
@@ -2196,6 +2477,18 @@
 
   async function loadBattle() {
     reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+
+    if (!reqEventIsLive) {
+      reqBody.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'req-empty-body';
+      wrap.innerHTML = `<p>${t('battle.not.live')}</p>`;
+      reqBody.appendChild(wrap);
+      const footer = document.getElementById('req-footer');
+      if (footer) footer.innerHTML = `<button class="battle-start-btn" disabled>${t('battle.start.btn')}</button>`;
+      return;
+    }
+
     const slug = currentEvents[reqEventIdx]?.slug || '';
     const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
     try {
@@ -2272,13 +2565,13 @@
     const footer = document.getElementById('req-footer');
 
     // ── Footer: "Create New Battle" ──────────────────────────────────────────
-    footer.innerHTML = `<button class="battle-new-btn" id="battle-new-btn" ${isEnded ? '' : 'disabled'}>Create New Battle</button>`;
+    footer.innerHTML = `<button class="battle-new-btn" id="battle-new-btn" ${isEnded ? '' : 'disabled'}>${t('battle.new.btn')}</button>`;
     document.getElementById('battle-new-btn').addEventListener('click', () => {
       stopBattleTimers();
       battleSongs    = [];
-      battleDuration = 300;
+      battleDuration = 900;
       // Restore normal footer
-      document.getElementById('req-footer').innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+      document.getElementById('req-footer').innerHTML = `<button class="btn-dark" id="req-refresh-btn">${t('btn.refresh')}</button>`;
       renderBattleForm();
     });
 
@@ -2286,7 +2579,7 @@
     const statusEl = document.createElement('p');
     statusEl.className = 'battle-status-label ' + (isEnded ? 'ended' : 'active');
     statusEl.id = 'battle-status-label';
-    statusEl.textContent = isEnded ? 'Ended' : 'Time remaining: ' + secondsToHMS(
+    statusEl.textContent = isEnded ? t('battle.status.ended') : t('battle.status.remaining') + ' ' + secondsToHMS(
       Math.max(0, battle.duration - Math.floor((Date.now() - battle.started_at) / 1000))
     );
     reqBody.appendChild(statusEl);
@@ -2309,13 +2602,13 @@
       const remaining = Math.max(0, _activeBattle.duration - elapsed);
       if (remaining === 0) {
         // Time's up — flip to ended locally, then let next poll confirm
-        label.textContent = 'Ended';
+        label.textContent = t('battle.status.ended');
         label.className   = 'battle-status-label ended';
         const newBtn = document.getElementById('battle-new-btn');
         if (newBtn) newBtn.disabled = false;
         stopBattleTimers();
       } else {
-        label.textContent = 'Time remaining: ' + secondsToHMS(remaining);
+        label.textContent = t('battle.status.remaining') + ' ' + secondsToHMS(remaining);
       }
     }, 1000);
 
@@ -2339,7 +2632,7 @@
         // If server says ended, flip the UI
         if (updated.status === 'ended') {
           const label = document.getElementById('battle-status-label');
-          if (label) { label.textContent = 'Ended'; label.className = 'battle-status-label ended'; }
+          if (label) { label.textContent = t('battle.status.ended'); label.className = 'battle-status-label ended'; }
           const newBtn = document.getElementById('battle-new-btn');
           if (newBtn) newBtn.disabled = false;
           stopBattleTimers();
@@ -2354,27 +2647,34 @@
     form.className = 'battle-form';
 
     // Duration field
+    const durOptions = [
+      { val: 300, label: '5 minutes' },
+      { val: 900, label: '15 minutes' },
+      { val: 1800, label: '30 minutes' },
+    ];
+    const currentDur = [300, 900, 1800].includes(battleDuration) ? battleDuration : 900;
     form.innerHTML = `
       <div class="battle-field">
-        <label class="battle-label">Temps*</label>
-        <input class="battle-input${battleDuration !== 300 ? ' active' : ''}" id="battle-duration-input"
-               type="text" placeholder="00:00:00" value="${battleDuration ? secondsToHMS(battleDuration) : ''}">
+        <label class="battle-label">${t('battle.time.label')}</label>
+        <select class="battle-input" id="battle-duration-input">
+          ${durOptions.map(o => `<option value="${o.val}"${o.val === currentDur ? ' selected' : ''}>${o.label}</option>`).join('')}
+        </select>
       </div>
       <div class="battle-field">
-        <label class="battle-label">Songs <span class="battle-count-hint" id="battle-count-hint">(${battleSongs.length}/5)</span></label>
+        <label class="battle-label">${t('battle.songs.label')} <span class="battle-count-hint" id="battle-count-hint">(${battleSongs.length}/5)</span></label>
         <div class="battle-spotify-wrap">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
             <path d="M14.5 14.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <input class="battle-spotify-input" id="battle-spotify-input"
-                 type="text" placeholder="Copy Spotify link here"
+                 type="text" placeholder="${t('battle.spotify.placeholder')}"
                  ${battleSongs.length >= 5 ? 'disabled' : ''}>
         </div>
         <p class="battle-spotify-status" id="battle-spotify-status"></p>
       </div>
       <div class="battle-songs-list" id="battle-songs-list"></div>
-      <button class="battle-start-btn" id="battle-start-btn" disabled>Start The Battle</button>`;
+      <button class="battle-start-btn" id="battle-start-btn" disabled>${t('battle.start.btn')}</button>`;
 
     reqBody.appendChild(form);
 
@@ -2383,14 +2683,10 @@
 
     // Duration input handler
     const durInput = document.getElementById('battle-duration-input');
+    battleDuration = parseInt(durInput.value);
     durInput.addEventListener('change', () => {
-      const secs = hmsToSeconds(durInput.value.trim());
-      battleDuration = secs;
-      durInput.classList.toggle('active', secs > 0);
+      battleDuration = parseInt(durInput.value);
       updateBattleStartBtn();
-    });
-    durInput.addEventListener('blur', () => {
-      if (battleDuration > 0) durInput.value = secondsToHMS(battleDuration);
     });
 
     // Spotify input: debounce 600ms then lookup
@@ -2401,18 +2697,18 @@
       const val = spInput.value.trim();
       if (!val) { spStatus.textContent = ''; spStatus.className = 'battle-spotify-status'; return; }
       if (!parseBattleSpotifyId(val)) {
-        spStatus.textContent = 'Assure-toi que le lien provient de Spotify.';
+        spStatus.textContent = t('battle.spotify.invalid');
         spStatus.className = 'battle-spotify-status err';
         return;
       }
-      spStatus.textContent = 'Recherche…';
+      spStatus.textContent = t('battle.spotify.searching');
       spStatus.className = 'battle-spotify-status';
       battleSpotifyTimer = setTimeout(async () => {
         try {
           const info = await fetchBattleTrackInfo(val);
           // Check for duplicate
           if (battleSongs.find(s => parseBattleSpotifyId(s.url) === parseBattleSpotifyId(val))) {
-            spStatus.textContent = 'Cette chanson est déjà dans la liste.';
+            spStatus.textContent = t('battle.spotify.duplicate');
             spStatus.className = 'battle-spotify-status err';
             return;
           }
@@ -2425,7 +2721,7 @@
           // Disable input if at max
           spInput.disabled = battleSongs.length >= 5;
         } catch {
-          spStatus.textContent = 'Impossible de trouver la chanson.';
+          spStatus.textContent = t('battle.spotify.notfound');
           spStatus.className = 'battle-spotify-status err';
         }
       }, 600);
@@ -2503,18 +2799,43 @@
         body: JSON.stringify({ id: battle.id, status: 'active' })
       });
       if (!resActivate.ok) throw new Error('Activation failed');
-      showToast('Battle lancé! ⚔', 'success');
+      showToast(t('toast.battle.started'), 'success');
       battleSongs    = [];
-      battleDuration = 300;
+      battleDuration = 900;
       loadBattle();
     } catch (err) {
-      showToast('Échec: ' + err.message, 'error');
+      showToast(t('toast.failed') + err.message, 'error');
       if (btn) btn.disabled = false;
     }
   }
 
   // Launch the battle form pre-populated with the selected requests
-  function launchBattleFromRequests() {
+  async function launchBattleFromRequests() {
+    // Check if a battle is already ongoing
+    const slug = currentEvents[reqEventIdx]?.slug || '';
+    const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
+    try {
+      const res = await fetch(`/api/battles${qs}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) {
+        const battles = await res.json();
+        if (battles.find(b => b.status === 'active')) {
+          // Show error banner in requests tab (don't switch)
+          const existing = document.getElementById('battle-ongoing-banner');
+          if (!existing) {
+            const banner = document.createElement('div');
+            banner.id = 'battle-ongoing-banner';
+            banner.className = 'battle-ongoing-banner';
+            banner.innerHTML = `
+              <div class="battle-ongoing-icon">!</div>
+              <p class="battle-ongoing-text">${t('battle.ongoing.error')}</p>`;
+            reqBody.insertBefore(banner, reqBody.firstChild);
+            setTimeout(() => { banner.remove(); }, 10000);
+          }
+          return;
+        }
+      }
+    } catch { /* proceed even if check fails */ }
+
     const selected = reqList.filter(r => battleSelectedIds.has(r.id));
     battleSongs = selected.map(r => ({
       title:  r.title  || '',
@@ -2522,7 +2843,7 @@
       image:  r.image  || '',
       url:    r.url    || '',
     }));
-    battleDuration    = 300; // default 5 min
+    battleDuration    = 900; // default 15 min
     _battleFromRequests = true;
     setLiveTab('battle');
     renderBattleForm();
@@ -2537,6 +2858,7 @@
     if (!e.target.closest('#req-refresh-btn')) return;
     if (liveActiveTab === 'played')      loadPlayedTracks();
     else if (liveActiveTab === 'battle') loadBattle();
+    else if (liveActiveTab === 'messages') loadMessages();
     else loadRequests();
   });
 
@@ -2563,11 +2885,11 @@
     if (!footer) return;
     if (reqEventIsLive && battleSelectedIds.size >= 2) {
       if (!footer.querySelector('#battle-create-btn')) {
-        footer.innerHTML = `<button class="battle-create-btn" id="battle-create-btn">Create a Battle</button>`;
+        footer.innerHTML = `<button class="battle-create-btn" id="battle-create-btn">${t('req.create.battle')}</button>`;
       }
     } else {
       if (!footer.querySelector('#req-refresh-btn')) {
-        footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">Refresh</button>`;
+        footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">${t('btn.refresh')}</button>`;
       }
     }
   }
@@ -2579,8 +2901,8 @@
       const emptyWrap = document.createElement('div');
       emptyWrap.className = 'req-empty-body';
       emptyWrap.innerHTML = `
-        <p>No requests have been made yet.</p>
-        <p style="margin-top:8px;color:var(--brand-80,#51534E)">Make a request by tapping the<br>Request button in the top header.</p>`;
+        <p>${t('req.empty')}</p>
+        <p style="margin-top:8px;color:var(--brand-80,#51534E)">${t('req.empty.hint').replace('\n', '<br>')}</p>`;
       reqBody.appendChild(emptyWrap);
       return;
     }
@@ -2609,9 +2931,9 @@
       //   • normal item  → red ✕ delete button
       let controlHtml;
       if (isDeleted) {
-        controlHtml = `<button class="req-restore-btn" aria-label="Restore request" data-req-action="restore" data-id="${r.id}">Restore</button>`;
+        controlHtml = `<button class="req-restore-btn" aria-label="${t('req.restore')}" data-req-action="restore" data-id="${r.id}">${t('req.restore')}</button>`;
       } else if (reqEventIsLive) {
-        controlHtml = `<button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? 'Mark as not played' : 'Mark as played'}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>`;
+        controlHtml = `<button class="req-switch${isPlayed ? ' on' : ''}" aria-label="${isPlayed ? t('req.mark.not.played') : t('req.mark.played')}" data-req-action="toggle" data-id="${r.id}" data-status="${isPlayed ? 'sent' : 'played'}"></button>`;
       } else {
         controlHtml = `<button class="req-delete-btn" aria-label="Delete request" data-req-action="delete" data-id="${r.id}">
              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -2627,7 +2949,7 @@
           ${r.artist   ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
           ${r.url      ? `<a class="req-artist" href="${escReq(r.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Spotify</a>` : ''}
           ${timeStr    ? `<p class="req-time">${escReq(timeStr)}</p>`    : ''}
-          ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">Supprimée — invisible sur la page publique</p>` : ''}
+          ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">${t('req.deleted.label')}</p>` : ''}
         </div>
         <div class="req-controls">${controlHtml}</div>`;
 
@@ -2655,11 +2977,11 @@
       // Back from battle form → return to requests tab
       _battleFromRequests = false;
       battleSongs    = [];
-      battleDuration = 300;
+      battleDuration = 900;
       battleSelectedIds = new Set();
       // Restore footer to default Refresh button before switching
       const footer = document.getElementById('req-footer');
-      if (footer) footer.innerHTML = '<button class="btn-dark" id="req-refresh-btn">Refresh</button>';
+      if (footer) footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">${t('btn.refresh')}</button>`;
       setLiveTab('requests');
       loadRequests();
     } else {
@@ -2703,10 +3025,57 @@
       if (i >= 0) reqList[i].status = newStatus;
       renderRequests();
     } catch (err) {
-      showToast('Failed: ' + err.message, 'error');
+      showToast(t('toast.failed') + err.message, 'error');
       btn.disabled = false;
     }
   });
+
+  // ── MESSAGES tab ──────────────────────────────────────────────────────────────
+  async function loadMessages() {
+    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+    const slug = currentEvents[reqEventIdx]?.slug || '';
+    const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
+    const footer = document.getElementById('req-footer');
+    if (footer) footer.innerHTML = `<button class="btn-dark" id="req-refresh-btn">${t('btn.refresh')}</button>`;
+    try {
+      const res = await fetch(`/api/messages${qs}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const messages = await res.json();
+      renderMessages(messages);
+    } catch (e) {
+      reqBody.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed: ${e.message}</div>`;
+    }
+  }
+
+  function renderMessages(messages) {
+    reqBody.innerHTML = '';
+    if (!Array.isArray(messages) || !messages.length) {
+      const wrap = document.createElement('div');
+      wrap.className = 'req-empty-body';
+      wrap.innerHTML = `<p>${t('msg.empty')}</p>`;
+      reqBody.appendChild(wrap);
+      return;
+    }
+    const list = document.createElement('div');
+    list.className = 'msg-list';
+    const sorted = [...messages].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    sorted.forEach(m => {
+      const card = document.createElement('div');
+      card.className = 'msg-card';
+      let timeStr = '';
+      if (m.ts) {
+        const d = new Date(m.ts);
+        timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      card.innerHTML = `
+        <p class="msg-text">${escReq(m.text || m.message || '')}</p>
+        ${timeStr ? `<p class="msg-time">${timeStr}</p>` : ''}`;
+      list.appendChild(card);
+    });
+    reqBody.appendChild(list);
+  }
 
   function escReq(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
 
@@ -2719,7 +3088,7 @@
     t.textContent = msg;
     t.className = 'toast show' + (type ? ' ' + type : '');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { t.className = 'toast'; }, 3000);
+    toastTimer = setTimeout(() => { t.className = 'toast'; }, 10000);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────────
