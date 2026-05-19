@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event — Momo Aux Platines</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <meta name="description" content="Live event page for Momo Aux Platines.">
+  <meta property="og:title" content="Event — Momo Aux Platines">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:url" content="https://momoauxplatines.ca/request">
+  <link rel="canonical" href="https://momoauxplatines.ca/request">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --bg: #111210;
+      --brand-00: #FAFBF9;
+      --brand-10: #F4F6F3;
+      --brand-20: #EAEDE5;
+      --brand-30: #DEE4DA;
+      --brand-40: #D5DCCC;
+      --brand-50: #C9D3C0;
+      --brand-70: #797F73;
+      --brand-80: #51534E;
+      --brand-90: #282a27;
+      --brand-100: #141513;
+      --green: #34C759;
+      --red: #F06A6A;
+      --blue: #3B9DFF;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--brand-30);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100dvh;
+      overflow-x: clip;
+    }
+
+    .page {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 112px;
+    }
+
+    /* ── Header Logo ── */
+    .header-logo {
+      width: 40px; height: 40px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0; display: block;
+    }
+
+    /* ── Sticky top (header + tabs) ── */
+    .sticky-top {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--brand-100);
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .req-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 16px 16px;
+    }
+    .req-header > a { flex-shrink: 0; }
+
+    /* Event image thumbnail in header (right side) */
+    .header-event-img {
+      width: 40px; height: 40px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--brand-90);
+    }
+
+    /* ── Tabs ── */
+    .tabs-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      height: 40px;
+      border: 2px solid transparent;
+      border-radius: 99px;
+      background: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 900; font-size: 18px; line-height: 26px;
+      text-transform: uppercase;
+      padding: 0 16px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn.active   { color: var(--brand-00); border-color: var(--brand-00); }
+    .tab-btn.inactive { color: var(--brand-70); border-color: transparent; }
+
+    /* ── Tab Panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    /* Requests + Message panels use flex column so submit btn can stick to bottom */
+    #panel-requests.active,
+    #panel-message.active  { display: flex; flex-direction: column; flex: 1; }
+
+    .msg-tab-body   { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 24px 20px 0; }
+    .msg-tab-intro  { font-size: 14px; line-height: 1.5; color: var(--brand-30); text-align: center; }
+    .msg-textarea-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .msg-textarea   {
+      width: 100%; min-height: 140px; resize: none;
+      background: var(--brand-90); color: var(--brand-00);
+      border: 1.5px solid var(--brand-70); border-radius: 12px;
+      padding: 14px 16px; font-family: 'Kanit', sans-serif; font-size: 15px;
+      line-height: 1.5; outline: none; box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    .msg-textarea:focus          { border-color: var(--brand-00); }
+    .msg-textarea::placeholder   { color: var(--brand-70); }
+    .msg-success { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 32px 0 0; }
+    .msg-success.visible { display: flex; }
+    .msg-success-text { font-size: 14px; color: var(--brand-00); text-align: center; line-height: 1.5; }
+
+    /* ── Info Panel ── */
+    .info-cover-wrap {
+      width: 100%;
+      aspect-ratio: 390 / 200;
+      background: var(--brand-90);
+      overflow: hidden;
+    }
+    .info-cover-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .info-body {
+      padding: 20px 16px 24px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .info-status-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 4px;
+    }
+    .event-status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 12px; border-radius: 24px;
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 16px; line-height: 24px; color: var(--brand-00);
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .event-status-badge.status-live { background: #D34242; }
+    .event-status-badge.status-next { background: #007AFF; }
+    .event-status-badge.status-past {
+      background: var(--brand-90);
+      font-family: inherit; font-size: 14px;
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--brand-00); flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+    .info-venue-name {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 28px; line-height: 32px;
+      color: var(--brand-20); text-transform: uppercase;
+    }
+    .info-address {
+      font-size: 16px; font-weight: 300; line-height: 20px;
+      color: var(--brand-50);
+    }
+    .info-datetime-row {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    }
+    .info-date, .info-hours {
+      font-size: 16px; font-weight: 300; line-height: 20px;
+      color: var(--brand-50);
+    }
+    .info-links {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .info-link-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 8px;
+      background: var(--brand-90);
+      color: var(--brand-30); font-size: 16px; font-weight: 300;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .info-link-btn:hover { background: var(--brand-80); }
+
+    /* ── Song List ── */
+    .song-list {
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .played-intro {
+      padding: 16px 16px 0;
+      font-size: 16px; font-weight: 300; line-height: 22px;
+      color: var(--brand-70); text-align: center;
+    }
+
+    .empty-state {
+      min-height: 200px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 48px 32px;
+      color: var(--brand-70);
+      font-size: 16px; font-weight: 300; line-height: 24px;
+    }
+
+    /* ── Song Card ── */
+    .song-card {
+      background: #000;
+      border-radius: 16px; padding: 8px;
+      display: flex; align-items: center; gap: 8px;
+      min-height: 80px;
+    }
+    .song-art {
+      width: 64px; height: 64px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      border: 1px solid var(--brand-100);
+      background: var(--brand-90);
+    }
+    .song-art-placeholder {
+      width: 64px; height: 64px; border-radius: 8px;
+      flex-shrink: 0; background: var(--brand-90);
+      border: 1px solid var(--brand-100);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .song-info {
+      flex: 1; display: flex; flex-direction: column; gap: 4px;
+      min-width: 0;
+    }
+    .song-text-group {
+      display: flex; flex-direction: column; gap: 0;
+      min-width: 0;
+    }
+    .song-title {
+      font-weight: 700; font-size: 18px; line-height: normal;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .song-artist {
+      font-weight: 300; font-size: 16px; line-height: 20px;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .song-link {
+      font-weight: 300; font-size: 16px; line-height: 26px;
+      color: var(--brand-00); text-decoration: underline;
+      text-decoration-color: var(--brand-00);
+    }
+    .song-request-col {
+      width: 52px; flex-shrink: 0; align-self: stretch;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .song-request-icon {
+      width: 20px; height: auto; object-fit: contain; flex-shrink: 0;
+    }
+
+    /* ── Preview Song Card ── */
+    .song-card.song-preview { background: #000; }
+    .preview-content {
+      flex: 1 0 0; display: flex; flex-direction: column; gap: 4px;
+      align-items: flex-start; align-self: stretch;
+      justify-content: center; min-width: 0;
+    }
+    .preview-delete-col {
+      flex-shrink: 0; align-self: stretch;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 16px;
+    }
+    .song-delete-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 0; display: flex; align-items: center; justify-content: center;
+      color: var(--red);
+    }
+
+    /* ── Now Playing Footer ── */
+    .now-playing-bar {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: #000;
+      padding: 16px;
+      box-shadow: 0 -16px 8px rgba(0,0,0,0.25);
+      z-index: 40;
+    }
+    .now-playing-card {
+      background: #000;
+      border-radius: 16px; padding: 8px;
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .now-playing-art {
+      width: 64px; height: 64px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0; background: var(--brand-90);
+    }
+    .now-playing-info {
+      flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0;
+    }
+    .now-playing-title {
+      font-weight: 700; font-size: 18px; color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-artist {
+      font-weight: 300; font-size: 18px; line-height: 26px;
+      color: var(--brand-30);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-state {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--green); font-size: 16px; font-weight: 300;
+    }
+    .now-playing-state svg { flex-shrink: 0; }
+    .now-playing-link {
+      font-weight: 300; font-size: 14px; line-height: 18px;
+      color: var(--brand-50); text-decoration: underline;
+      text-decoration-color: var(--brand-80);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .now-playing-link:hover { color: var(--brand-30); }
+    .now-playing-request-col {
+      width: 52px; flex-shrink: 0; align-self: stretch;
+      display: none; align-items: center; justify-content: center;
+    }
+    .now-playing-request-col.visible { display: flex; }
+    .now-playing-request-icon { width: 20px; height: auto; object-fit: contain; }
+
+    /* ── Requests Panel (inline form) ── */
+    .req-tab-body {
+      flex: 1;
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 16px;
+      overflow-y: auto;
+    }
+    .req-tab-intro {
+      font-size: 16px; font-weight: 300; line-height: 22px;
+      color: var(--brand-70); text-align: center;
+      padding-bottom: 4px;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+    .form-label {
+      font-family: inherit; font-weight: 300; font-size: 16px;
+      color: var(--brand-30);
+    }
+    .spotify-input-wrapper {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--brand-90); border: 1px solid var(--brand-80);
+      border-radius: 56px; padding: 12px 20px;
+      transition: border-color 0.2s;
+    }
+    .spotify-input-wrapper:focus-within { border-color: var(--brand-50); }
+    .spotify-input-wrapper.invalid { border-color: var(--red); }
+    .spotify-input-icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--brand-70); }
+    .form-input {
+      flex: 1; background: transparent; border: none;
+      font-family: inherit; font-weight: 300; font-size: 16px; line-height: 22px;
+      color: var(--brand-00); outline: none; min-width: 0;
+      -webkit-appearance: none;
+    }
+    .form-input::placeholder { color: var(--brand-70); }
+    .fetch-status {
+      font-size: 13px; font-weight: 300;
+      color: var(--brand-50); min-height: 16px; margin-top: -8px;
+    }
+    .fetch-status.error { color: var(--red); }
+
+    .song-preview { display: none; }
+    .song-preview.visible { display: flex; }
+
+    /* Inline success state */
+    .req-success {
+      display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; padding: 24px 0;
+      text-align: center;
+    }
+    .req-success.visible { display: flex; }
+    .req-success-text {
+      font-size: 18px; font-weight: 300; color: var(--brand-50);
+    }
+
+    .req-tab-footer {
+      padding: 16px; flex-shrink: 0;
+      background: var(--bg);
+      box-shadow: 0 -12px 24px rgba(17,18,16,0.9);
+    }
+    .req-submit-btn {
+      width: 100%; height: 56px; border: none; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 700;
+      font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em;
+      background: var(--brand-80); color: var(--brand-100);
+      cursor: not-allowed; opacity: 0.4;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .req-submit-btn.ready {
+      background: var(--brand-20); color: var(--brand-100);
+      cursor: pointer; opacity: 1;
+    }
+
+    /* ── Battle Tab ── */
+    .battle-instruction {
+      font-size: 16px; font-weight: 300; line-height: 24px;
+      color: var(--brand-50); text-align: center;
+      padding: 4px 0 8px;
+    }
+    .battle-cards {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .battle-result-card { display: flex; flex-direction: column; gap: 0; }
+    .battle-choice-card {
+      background: #000;
+      border: 2px solid #000;
+      border-radius: 16px; padding: 8px;
+      display: flex; flex-direction: column; gap: 0;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .battle-choice-card.selected   { border-color: var(--green); }
+    .battle-choice-card.unselected { background: var(--brand-100); border-color: #20221f; }
+    .battle-choice-card.static     { cursor: default; }
+    /* Top row: artwork + info + optional checkmark */
+    .battle-card-top {
+      display: flex; align-items: center; gap: 8px;
+      min-height: 64px;
+    }
+    .battle-check-col {
+      width: 32px; flex-shrink: 0; align-self: center;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Progress bar — inside the card, below the top row */
+    .battle-vote-bar-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 4px 2px;
+    }
+    .battle-vote-bar-track {
+      flex: 1; height: 6px; border-radius: 3px;
+      background: var(--brand-90); overflow: hidden;
+    }
+    .battle-vote-bar-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 0.4s ease;
+      background: var(--brand-70);
+    }
+    .battle-vote-bar-fill.leading { background: var(--green); }
+    .battle-vote-pct {
+      font-size: 16px; font-weight: 300; color: var(--brand-70);
+      min-width: 38px; text-align: right; flex-shrink: 0;
+    }
+
+    .battle-submit-btn {
+      width: 100%; height: 56px; border: none; border-radius: 8px;
+      font-family: 'Kanit', sans-serif; font-weight: 700;
+      font-size: 18px; text-transform: uppercase;
+      background: var(--brand-80); color: var(--brand-100);
+      cursor: not-allowed; opacity: 0.4;
+      transition: background 0.15s, opacity 0.15s;
+      margin-top: 8px;
+    }
+    .battle-submit-btn.ready {
+      background: var(--brand-20); color: var(--brand-100);
+      cursor: pointer; opacity: 1;
+    }
+
+    /* Battle status labels */
+    .battle-time-remaining {
+      font-size: 16px; font-weight: 300; color: var(--green);
+      text-align: center; padding-bottom: 12px;
+    }
+    .battle-voted-msg {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; padding: 0 0 16px;
+      text-align: center;
+    }
+    .battle-voted-subtext {
+      font-size: 16px; font-weight: 300; color: var(--brand-50);
+      line-height: 22px;
+    }
+    .battle-status-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 24px; line-height: 1; text-transform: uppercase;
+      text-align: center; padding-bottom: 12px;
+    }
+    .battle-status-label.ended { color: #d34242; }
+    .battle-ended-msg {
+      background: var(--brand-100); border: 1px solid var(--brand-90);
+      border-radius: 16px; padding: 20px;
+      font-size: 16px; font-weight: 300; line-height: 22px;
+      color: var(--brand-50); text-align: center;
+      margin-bottom: 8px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Sticky Top ── -->
+  <div class="sticky-top">
+
+    <header class="req-header">
+      <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
+      <!-- Event image — populated dynamically from event data -->
+      <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
+    </header>
+
+    <!-- 4 Tabs — always visible -->
+    <div class="tabs-row" id="tabs-row">
+      <button class="tab-btn active"   id="tab-info"     data-key="tab.info"     data-en="INFO"     data-fr="INFO">INFO</button>
+      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="BATTLE"   data-fr="BATTLE">BATTLE</button>
+      <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="PLAYED"   data-fr="JOUÉES">PLAYED</button>
+      <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="MESSAGE"  data-fr="MESSAGE">MESSAGE</button>
+    </div>
+
+  </div><!-- /sticky-top -->
+
+  <!-- ── Info Panel ── -->
+  <div class="tab-panel active" id="panel-info">
+    <div class="info-cover-wrap">
+      <img class="info-cover-img" id="info-cover-img" src="" alt="">
+    </div>
+    <div class="info-body">
+      <div class="info-status-row">
+        <div class="event-status-badge status-live" id="event-status-live" style="display:none">
+          <div class="status-dot"></div>
+          <span data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+        </div>
+        <div class="event-status-badge status-next" id="event-status-next" style="display:none">
+          <span data-key="req.next" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
+        </div>
+        <div class="event-status-badge status-past" id="event-status-past" style="display:none">
+          <span data-key="req.past" data-en="PAST" data-fr="PASSÉ">PAST</span>
+        </div>
+      </div>
+      <h1 class="info-venue-name" id="info-venue-name"></h1>
+      <p class="info-address" id="info-address" style="display:none"></p>
+      <div class="info-datetime-row" id="info-datetime-row" style="display:none">
+        <span class="info-date" id="info-date"></span>
+        <span class="info-hours" id="info-hours"></span>
+      </div>
+      <div class="info-links" id="info-links">
+        <a class="info-link-btn" id="info-ig-link" href="" target="_blank" rel="noopener" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
+          </svg>
+          Instagram
+        </a>
+        <a class="info-link-btn" id="info-twitch-link" href="" target="_blank" rel="noopener" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 2L2 6v14h5v2h3l2-2h3l4-4V2H4zm14 13l-3 3h-4l-2 2v-2H5V4h13v11z" fill="currentColor"/>
+            <path d="M15 7h2v5h-2V7zm-4 0h2v5h-2V7z" fill="currentColor"/>
+          </svg>
+          Twitch
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Battle Panel ── -->
+  <div class="tab-panel" id="panel-battle">
+    <div class="song-list" id="battle-list"></div>
+  </div>
+
+  <!-- ── Played Panel ── -->
+  <div class="tab-panel" id="panel-played">
+    <p class="played-intro" id="played-intro"
+       data-key="played.intro"
+       data-en="Songs played so far today. You can also make a request."
+       data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
+    <div class="song-list" id="played-list">
+      <div class="empty-state" id="played-empty">
+        <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Requests Panel (inline form) ── -->
+  <div class="tab-panel" id="panel-requests">
+    <div class="req-tab-body">
+      <p class="req-tab-intro" data-key="req.tab.intro" data-en="Copy the Spotify sharing link from the Spotify mobile app below." data-fr="Copiez le lien de partage Spotify depuis l'application mobile Spotify ci-dessous.">Copy the Spotify sharing link from the Spotify mobile app below.</p>
+
+      <div class="form-field">
+        <label class="form-label" for="spotify-url"
+               data-key="req.tab.field.label"
+               data-en="Spotify share link *"
+               data-fr="Lien de partage Spotify *">Spotify share link *</label>
+        <div class="spotify-input-wrapper" id="spotify-input-wrapper">
+          <svg class="spotify-input-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input class="form-input" type="url" id="spotify-url"
+                 data-placeholder-en="Copy Spotify app song link"
+                 data-placeholder-fr="Copiez le lien depuis Spotify"
+                 placeholder="Copy Spotify app song link"
+                 autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <p class="fetch-status" id="fetch-status"></p>
+      </div>
+
+      <!-- Song preview card — appears once a valid Spotify URL is detected -->
+      <div class="song-card song-preview" id="song-preview">
+        <img class="song-art" id="preview-art" src="" alt=""
+             onerror="this.style.background='var(--brand-90)'">
+        <div class="preview-content">
+          <p class="song-title" id="preview-title"></p>
+          <p class="song-artist" id="preview-artist"></p>
+        </div>
+        <div class="preview-delete-col">
+          <button class="song-delete-btn" id="preview-delete" aria-label="Remove">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline success state — shown for 5 s after submit -->
+      <div class="req-success" id="req-success">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="19" stroke="#34C759" stroke-width="2"/>
+          <path d="M12 20.5L17.5 26L28 15" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="req-success-text" data-key="req.tab.thanks" data-en="Thank you!" data-fr="Merci !">Thank you!</p>
+      </div>
+    </div>
+
+    <!-- Sticky submit button -->
+    <div class="req-tab-footer">
+      <button class="req-submit-btn" id="req-submit-btn" disabled
+              data-key="req.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
+    </div>
+  </div>
+
+  <!-- ── Message Panel ── -->
+  <div class="tab-panel" id="panel-message">
+    <div class="msg-tab-body">
+      <p class="msg-tab-intro"
+         data-key="msg.tab.intro"
+         data-en="Want to share something with me? Leave a message or visit the booth."
+         data-fr="Tu veux me dire quelque chose ? Laisse un message ou passe au booth.">Want to share something with me? Leave a message or visit the booth.</p>
+
+      <div class="msg-textarea-wrap">
+        <label class="form-label" for="msg-input"
+               data-key="msg.tab.label"
+               data-en="Message"
+               data-fr="Message">Message</label>
+        <textarea class="msg-textarea" id="msg-input"
+                  data-placeholder-en="Type your message here"
+                  data-placeholder-fr="Écris ton message ici"
+                  placeholder="Type your message here"
+                  rows="6" maxlength="1000"></textarea>
+      </div>
+
+      <!-- Success state -->
+      <div class="msg-success" id="msg-success">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="23" fill="#34C759"/>
+          <path d="M14 24.5L21 31.5L34 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="msg-success-text"
+           data-key="msg.tab.thanks"
+           data-en="Your message has been sent. Thank you!"
+           data-fr="Ton message a été envoyé. Merci !">Your message has been sent. Thank you!</p>
+      </div>
+    </div>
+
+    <!-- Sticky submit button -->
+    <div class="req-tab-footer">
+      <button class="req-submit-btn" id="msg-submit-btn" disabled
+              data-key="msg.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
+    </div>
+  </div>
+
+  <!-- ── Now Playing Footer ── -->
+  <div class="now-playing-bar" id="now-playing-bar" style="display:none">
+    <div class="now-playing-card">
+      <img class="now-playing-art" id="now-playing-art" src="" alt=""
+           onerror="this.style.background='var(--brand-90)'">
+      <div class="now-playing-info">
+        <p class="now-playing-title"  id="now-playing-title"></p>
+        <p class="now-playing-artist" id="now-playing-artist"></p>
+        <a class="now-playing-link"   id="now-playing-link" href="" target="_blank" rel="noopener" style="display:none">Spotify</a>
+        <div class="now-playing-state">
+          <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
+            <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
+          </svg>
+          <span data-key="req.playing" data-en="Playing" data-fr="En lecture">Playing</span>
+        </div>
+      </div>
+      <div class="now-playing-request-col" id="now-playing-request-col">
+        <img class="now-playing-request-icon" src="images/request-sent-icon.svg" alt="Requested">
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  // ─────────────────────────────────────────────
+  // CONFIG
+  // ─────────────────────────────────────────────
+  const SPOTIFY_CLIENT_ID     = '20fd4c8184404ca6ac11da2f123cf2e9';
+  const SPOTIFY_CLIENT_SECRET = 'aca3231685184876977a605978ebb368';
+  const FORMSPREE_ID = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+  const SUPABASE_URL  = 'https://rxypcvyvgzdercoxvqsk.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_C4thzUmbJsmXg8seY2_dDw_li70Zx0z';
+
+  // ─────────────────────────────────────────────
+  // URL params
+  // ─────────────────────────────────────────────
+  const params    = new URLSearchParams(window.location.search);
+  let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+  const EVENT_SLUG = (params.get('event') || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
+  const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
+  const COPY = { en: {}, fr: {} };
+
+  // ─────────────────────────────────────────────
+  // Language
+  // ─────────────────────────────────────────────
+  Promise.all([
+    fetch('/api/copy?lang=en').then(r => r.json()).catch(() => ({})),
+    fetch('/api/copy?lang=fr').then(r => r.json()).catch(() => ({}))
+  ]).then(([en, fr]) => {
+    COPY.en = en; COPY.fr = fr;
+    applyLang(currentLang);
+  });
+
+  function applyLang(lang) {
+    currentLang = lang;
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val
+        : lang === 'fr' ? (el.dataset.fr || el.textContent)
+        : (el.dataset.en || el.textContent);
+    });
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
+      const val = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+      if (val !== undefined) el.textContent = val;
+    });
+    document.querySelectorAll('[data-placeholder-en]').forEach(el => {
+      el.placeholder = lang === 'fr' ? (el.dataset.placeholderFr || '') : (el.dataset.placeholderEn || '');
+    });
+    document.documentElement.lang = lang;
+  }
+  // Language is set once from the URL param (?lang=fr) passed by the home page
+  applyLang(currentLang);
+
+  // ─────────────────────────────────────────────
+  // Liveness helpers
+  // ─────────────────────────────────────────────
+  function parseMins(t) {
+    if (!t) return null;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function checkEventLive(ev) {
+    if (!ev.date || !ev.start_time) return false;
+    const now  = new Date();
+    const y    = now.getFullYear();
+    const mo   = String(now.getMonth() + 1).padStart(2, '0');
+    const d    = String(now.getDate()).padStart(2, '0');
+    const today    = `${y}-${mo}-${d}`;
+    const nowMins  = now.getHours() * 60 + now.getMinutes();
+    const start    = parseMins(ev.start_time);
+    const end      = parseMins(ev.end_time);
+    if (end === null) return ev.date === today && nowMins >= start;
+    const overnight = start > end;
+    if (overnight) {
+      const evMidnight = new Date(ev.date + 'T00:00:00');
+      evMidnight.setDate(evMidnight.getDate() + 1);
+      const ny = evMidnight.getFullYear();
+      const nm = String(evMidnight.getMonth() + 1).padStart(2, '0');
+      const nd = String(evMidnight.getDate()).padStart(2, '0');
+      const nextDayStr = `${ny}-${nm}-${nd}`;
+      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
+    }
+    return ev.date === today && nowMins >= start && nowMins < end;
+  }
+
+  function checkEventPast(ev) {
+    if (!ev.date || !ev.start_time || !ev.end_time) return false;
+    const start    = parseMins(ev.start_time);
+    const end      = parseMins(ev.end_time);
+    const overnight = end !== null && start > end;
+    let endDateStr = ev.date;
+    if (overnight) {
+      const d = new Date(ev.date + 'T00:00:00');
+      d.setDate(d.getDate() + 1);
+      const ny = d.getFullYear();
+      const nm = String(d.getMonth() + 1).padStart(2, '0');
+      const nd = String(d.getDate()).padStart(2, '0');
+      endDateStr = `${ny}-${nm}-${nd}`;
+    }
+    return Date.now() > new Date(`${endDateStr}T${ev.end_time}:00`).getTime();
+  }
+
+  // ─────────────────────────────────────────────
+  // Populate Info panel from events.json
+  // ─────────────────────────────────────────────
+  let gigDate = null;
+
+  function populateInfoPanel(ev) {
+    // Resolve event image URL (cover + header thumbnail share the same source)
+    let resolvedImage = ev.image || '';
+    if (!resolvedImage && ev.instagram) {
+      const igUser = (ev.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1]?.replace(/\/$/, '');
+      if (igUser) resolvedImage = `https://unavatar.io/instagram/${igUser}`;
+    }
+
+    // Cover image (Info panel)
+    const coverImg = document.getElementById('info-cover-img');
+    if (coverImg && resolvedImage) coverImg.src = resolvedImage;
+
+    // Header event image thumbnail
+    const headerImg = document.getElementById('header-event-img');
+    if (headerImg && resolvedImage) {
+      headerImg.src = resolvedImage;
+      headerImg.alt = ev.venue || '';
+      headerImg.style.display = '';
+    }
+    // Venue name
+    const venueName = document.getElementById('info-venue-name');
+    if (venueName) venueName.textContent = ev.venue || '';
+
+    // Address
+    const addr = document.getElementById('info-address');
+    if (addr) {
+      if (ev.address) { addr.textContent = ev.address; addr.style.display = ''; }
+      else addr.style.display = 'none';
+    }
+    // Date + Hours
+    const dateEl  = document.getElementById('info-date');
+    const hoursEl = document.getElementById('info-hours');
+    const dtRow   = document.getElementById('info-datetime-row');
+    if (dateEl)  dateEl.textContent  = ev.date || '';
+    if (hoursEl) hoursEl.textContent = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
+    if (dtRow) dtRow.style.display = (ev.date || ev.start_time) ? '' : 'none';
+
+    // Instagram
+    const igLink = document.getElementById('info-ig-link');
+    if (igLink) {
+      if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
+      else igLink.style.display = 'none';
+    }
+    // Twitch — Info tab only
+    const twitchLink = document.getElementById('info-twitch-link');
+    if (twitchLink) {
+      if (ev.twitch) { twitchLink.href = ev.twitch; twitchLink.style.display = ''; }
+      else twitchLink.style.display = 'none';
+    }
+  }
+
+  if (EVENT_SLUG) {
+    fetch('/api/events')
+      .then(r => r.json())
+      .then(data => {
+        const events = Array.isArray(data) ? data : (data.events || []);
+        const ev = events.find(e => e.slug === EVENT_SLUG);
+        if (!ev) return;
+
+        populateInfoPanel(ev);
+
+        if (checkEventLive(ev)) {
+          gigDate = ev.date || null;
+          document.getElementById('event-status-live').style.display = '';
+          document.getElementById('now-playing-bar').style.display = '';
+          // Load live data
+          checkForBattle();
+          setInterval(checkForBattle, 30_000);
+          // Default tab for live event: played (most useful)
+          if (!localStorage.getItem(TAB_KEY)) showTab('played');
+          else showTab(localStorage.getItem(TAB_KEY));
+          pollLivePlaylist();
+          setInterval(pollLivePlaylist, 30_000);
+          startNowPlayingRealtime(ev.date);
+          // Fetch requests for the now-playing request-icon matching
+          fetchRequests();
+          setInterval(() => { if (!document.hidden) fetchRequests(); }, 10_000);
+        } else if (checkEventPast(ev)) {
+          gigDate = ev.date || null;
+          document.getElementById('event-status-past').style.display = '';
+          checkForBattle();
+          if (!localStorage.getItem(TAB_KEY)) showTab('played');
+          else showTab(localStorage.getItem(TAB_KEY));
+          pollLivePlaylist();
+          fetchRequests();
+        } else if (ev.date) {
+          document.getElementById('event-status-next').style.display = '';
+          // Default: Info tab (already active)
+          showTab(localStorage.getItem(TAB_KEY) || 'info');
+        }
+      })
+      .catch(() => {});
+  } else {
+    // No event slug — general live page
+    showTab(localStorage.getItem(TAB_KEY) || 'played');
+    pollLivePlaylist();
+    setInterval(pollLivePlaylist, 30_000);
+  }
+
+  // ─────────────────────────────────────────────
+  // Tab switching
+  // ─────────────────────────────────────────────
+  const TAB_KEY    = `momo_active_tab_${EVENT_SLUG || 'global'}`;
+  const TAB_IDS    = ['info', 'battle', 'played', 'requests', 'message'];
+
+  function showTab(tab) {
+    if (!TAB_IDS.includes(tab)) tab = 'info';
+    TAB_IDS.forEach(t => {
+      document.getElementById(`tab-${t}`).className    = 'tab-btn ' + (t === tab ? 'active' : 'inactive');
+      document.getElementById(`panel-${t}`).className  = 'tab-panel' + (t === tab ? ' active' : '');
+    });
+    localStorage.setItem(TAB_KEY, tab);
+
+    if (tab === 'battle') {
+      loadPublicBattle();
+    } else {
+      stopBattlePoll();
+    }
+    if (tab === 'requests') {
+      setTimeout(() => document.getElementById('spotify-url')?.focus(), 80);
+    }
+  }
+
+  document.getElementById('tab-info').addEventListener('click',     () => showTab('info'));
+  document.getElementById('tab-battle').addEventListener('click',   () => showTab('battle'));
+  document.getElementById('tab-played').addEventListener('click',   () => showTab('played'));
+  document.getElementById('tab-requests').addEventListener('click', () => showTab('requests'));
+  document.getElementById('tab-message').addEventListener('click',  () => showTab('message'));
+
+
+  // ─────────────────────────────────────────────
+  // Spotify helpers
+  // ─────────────────────────────────────────────
+  function parseSpotifyTrackId(url) {
+    const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    return m ? m[1] : null;
+  }
+
+  async function getSpotifyToken() {
+    const cached = sessionStorage.getItem('sp_token');
+    const expiry  = parseInt(sessionStorage.getItem('sp_expiry') || '0');
+    if (cached && Date.now() < expiry) return cached;
+    const resp = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET)
+      },
+      body: 'grant_type=client_credentials'
+    });
+    const data = await resp.json();
+    if (!data.access_token) throw new Error('Token error');
+    sessionStorage.setItem('sp_token', data.access_token);
+    sessionStorage.setItem('sp_expiry', Date.now() + (data.expires_in - 60) * 1000);
+    return data.access_token;
+  }
+
+  async function fetchTrackInfo(spotifyUrl) {
+    const trackId = parseSpotifyTrackId(spotifyUrl);
+    if (!trackId) throw new Error('invalid');
+
+    if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
+      try {
+        const token = await getSpotifyToken();
+        const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resp.ok) throw new Error(`API ${resp.status}`);
+        const d = await resp.json();
+        return {
+          title:  d.name,
+          artist: d.artists.map(a => a.name).join(', '),
+          image:  d.album.images[0]?.url || '',
+          url:    d.external_urls.spotify
+        };
+      } catch (e) {
+        console.warn('[Momo] Spotify API failed, falling back to oEmbed:', e);
+      }
+    }
+
+    const oembed = await fetch(
+      `https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`
+    );
+    if (!oembed.ok) throw new Error('oEmbed failed');
+    const d = await oembed.json();
+    return {
+      title:  d.title || '',
+      artist: '',
+      image:  d.thumbnail_url || '',
+      url:    spotifyUrl
+    };
+  }
+
+  // ─────────────────────────────────────────────
+  // Requests — inline form
+  // ─────────────────────────────────────────────
+  const urlInput    = document.getElementById('spotify-url');
+  const submitBtn   = document.getElementById('req-submit-btn');
+  const preview     = document.getElementById('song-preview');
+  const previewArt  = document.getElementById('preview-art');
+  const previewTitle  = document.getElementById('preview-title');
+  const previewArtist = document.getElementById('preview-artist');
+  const fetchStatus = document.getElementById('fetch-status');
+  const successEl   = document.getElementById('req-success');
+  const inputWrapper = document.getElementById('spotify-input-wrapper');
+
+  let currentTrack = null;
+  let fetchTimer   = null;
+  let successTimer = null;
+
+  function resetRequestForm() {
+    clearTimeout(fetchTimer);
+    clearTimeout(successTimer);
+    urlInput.value = '';
+    preview.classList.remove('visible');
+    successEl.classList.remove('visible');
+    fetchStatus.textContent = '';
+    fetchStatus.className = 'fetch-status';
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('ready');
+    currentTrack = null;
+  }
+
+  document.getElementById('preview-delete').addEventListener('click', () => {
+    clearTimeout(fetchTimer);
+    urlInput.value = '';
+    preview.classList.remove('visible');
+    fetchStatus.textContent = '';
+    fetchStatus.className = 'fetch-status';
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('ready');
+    currentTrack = null;
+    setTimeout(() => urlInput.focus(), 50);
+  });
+
+  // Live URL detection
+  urlInput.addEventListener('input', () => {
+    clearTimeout(fetchTimer);
+    const val = urlInput.value.trim();
+    successEl.classList.remove('visible');
+    if (!val) {
+      preview.classList.remove('visible');
+      fetchStatus.textContent = '';
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('ready');
+      currentTrack = null;
+      return;
+    }
+    if (!parseSpotifyTrackId(val)) {
+      preview.classList.remove('visible');
+      fetchStatus.textContent = currentLang === 'fr'
+        ? "Assurez-vous que le lien provient de l'application Spotify mobile."
+        : 'Please make sure the link is from the Spotify mobile app.';
+      fetchStatus.className = 'fetch-status error';
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('ready');
+      currentTrack = null;
+      return;
+    }
+    fetchStatus.textContent = currentLang === 'fr' ? 'Récupération…' : 'Fetching…';
+    fetchStatus.className = 'fetch-status';
+    fetchTimer = setTimeout(async () => {
+      try {
+        const info = await fetchTrackInfo(val);
+        currentTrack = { ...info, url: val };
+        previewArt.src    = info.image;
+        previewArt.alt    = info.title;
+        previewTitle.textContent  = info.title;
+        previewArtist.textContent = info.artist;
+        preview.classList.add('visible');
+        fetchStatus.textContent = '';
+        submitBtn.disabled = false;
+        submitBtn.classList.add('ready');
+      } catch {
+        preview.classList.remove('visible');
+        fetchStatus.textContent = currentLang === 'fr'
+          ? 'Impossible de récupérer la chanson.'
+          : 'Could not fetch song info.';
+        fetchStatus.className = 'fetch-status error';
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('ready');
+        currentTrack = null;
+      }
+    }, 600);
+  });
+
+  // Submit
+  submitBtn.addEventListener('click', async () => {
+    if (!currentTrack || submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('ready');
+
+    let requestId = null;
+    try {
+      const res = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentTrack)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        requestId = data.id;
+      }
+    } catch { /* non-blocking */ }
+
+    // Save to localStorage (for request-icon matching on now-playing bar)
+    const mine = myRequests();
+    mine.unshift({ ...currentTrack, id: requestId, ts: Date.now() });
+    saveMyRequests(mine);
+
+    // Email via Formspree (non-blocking)
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Song request: ${currentTrack.title}`,
+        song:     currentTrack.title,
+        artist:   currentTrack.artist,
+        spotify:  currentTrack.url,
+        from:     'Anonymous'
+      })
+    }).catch(() => {});
+
+    // Show success inline
+    preview.classList.remove('visible');
+    urlInput.value = '';
+    fetchStatus.textContent = '';
+    fetchStatus.className = 'fetch-status';
+    currentTrack = null;
+    successEl.classList.add('visible');
+
+    // Refresh requests cache for icon matching
+    if (EVENT_SLUG) fetchRequests();
+
+    // Auto-reset after 5 s
+    successTimer = setTimeout(() => {
+      successEl.classList.remove('visible');
+    }, 5000);
+  });
+
+  // ─────────────────────────────────────────────
+  // Message tab
+  // ─────────────────────────────────────────────
+  const msgInput     = document.getElementById('msg-input');
+  const msgSubmitBtn = document.getElementById('msg-submit-btn');
+  const msgSuccess   = document.getElementById('msg-success');
+  let msgSuccessTimer = null;
+
+  msgInput.addEventListener('input', () => {
+    const hasText = msgInput.value.trim().length > 0;
+    msgSubmitBtn.disabled = !hasText;
+    msgSubmitBtn.classList.toggle('ready', hasText);
+  });
+
+  msgSubmitBtn.addEventListener('click', async () => {
+    const text = msgInput.value.trim();
+    if (!text || msgSubmitBtn.disabled) return;
+    msgSubmitBtn.disabled = true;
+    msgSubmitBtn.classList.remove('ready');
+
+    // Send via Formspree (non-blocking)
+    fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Message from public page${EVENT_SLUG ? ` — ${EVENT_SLUG}` : ''}`,
+        message:  text,
+        event:    EVENT_SLUG || 'n/a'
+      })
+    }).catch(() => {});
+
+    // Show success
+    msgInput.value = '';
+    msgSuccess.classList.add('visible');
+
+    // Auto-reset after 5 s
+    clearTimeout(msgSuccessTimer);
+    msgSuccessTimer = setTimeout(() => {
+      msgSuccess.classList.remove('visible');
+    }, 5000);
+  });
+
+  // ─────────────────────────────────────────────
+  // Request store (localStorage)
+  // ─────────────────────────────────────────────
+  function myRequests()       { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  function saveMyRequests(l)  { localStorage.setItem(LS_KEY, JSON.stringify(l)); }
+
+  // All event requests — used for request-icon matching in Played list
+  let allRequestsCache = [];
+
+  async function fetchRequests() {
+    if (!EVENT_SLUG) return;
+    try {
+      const res = await fetch(API_BASE);
+      if (!res.ok) return;
+      allRequestsCache = await res.json();
+    } catch { /* non-blocking */ }
+  }
+
+  // ─────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────
+  function safeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Decode HTML entities from Serato (e.g. &amp; → &)
+  function decodeHtml(str) {
+    if (!str) return str || '';
+    const el = document.createElement('textarea');
+    el.innerHTML = str;
+    return el.value;
+  }
+
+  function normalizeForMatch(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function findMatchingRequest(title, artist) {
+    const nTitle  = normalizeForMatch(title);
+    const nArtist = normalizeForMatch(artist);
+    return allRequestsCache.find(r => {
+      const rTitle  = normalizeForMatch(r.title);
+      const rArtist = normalizeForMatch(r.artist);
+      if (!rTitle) return false;
+      const titleMatch = rTitle.includes(nTitle) || nTitle.includes(rTitle);
+      if (!titleMatch) return false;
+      if (nArtist && rArtist) return rArtist.includes(nArtist) || nArtist.includes(rArtist);
+      return true;
+    }) || null;
+  }
+
+  // ─────────────────────────────────────────────
+  // Artwork cache
+  // ─────────────────────────────────────────────
+  // Migrate old cache: drop entries whose keys contain encoded entities (e.g. &amp;)
+  (function migrateArtworkCache() {
+    try {
+      const raw = localStorage.getItem('momo_artwork_cache');
+      if (!raw) return;
+      const old = JSON.parse(raw);
+      const clean = {};
+      for (const [k, v] of Object.entries(old)) {
+        if (!k.includes('&')) clean[k] = v; // keep only already-clean keys
+      }
+      localStorage.setItem('momo_artwork_cache', JSON.stringify(clean));
+    } catch { localStorage.removeItem('momo_artwork_cache'); }
+  })();
+  let artworkCache    = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
+  let liveSessionSlug = null;
+  let lastTrackSig    = '';
+
+  function artworkKey(artist, title) {
+    return `${(artist || '').toLowerCase().trim()}|||${(title || '').toLowerCase().trim()}`;
+  }
+
+  // ─────────────────────────────────────────────
+  // Build a played song card
+  // ─────────────────────────────────────────────
+  function buildPlayedCard(artist, title, image, spotifyUrl, trackId, isRequested) {
+    const card = document.createElement('div');
+    card.className = 'song-card';
+    if (trackId) card.dataset.trackId = trackId;
+    const dispTitle  = decodeHtml(title);
+    const dispArtist = decodeHtml(artist);
+    // No placeholder — if image is unavailable, render nothing; artwork patch inserts <img> later
+    const artHtml = image
+      ? `<img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(dispTitle)}" onerror="this.remove()">`
+      : '';
+    card.innerHTML = `
+      ${artHtml}
+      <div class="song-info">
+        <div class="song-text-group">
+          <p class="song-title">${safeHtml(dispTitle)}</p>
+          ${dispArtist ? `<p class="song-artist">${safeHtml(dispArtist)}</p>` : ''}
+        </div>
+        <a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener"
+           style="${spotifyUrl ? '' : 'display:none'}">Spotify</a>
+      </div>
+      ${isRequested ? `<div class="song-request-col"><img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested"></div>` : ''}`;
+    return card;
+  }
+
+  // ─────────────────────────────────────────────
+  // Now Playing bar
+  // ─────────────────────────────────────────────
+  function updateNowPlayingBar(track) {
+    const cleanArtist    = decodeHtml(track.artist);
+    const cleanTitle     = decodeHtml(track.title);
+    const c              = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+    const npArt      = document.getElementById('now-playing-art');
+    const npTitle    = document.getElementById('now-playing-title');
+    const npArtist   = document.getElementById('now-playing-artist');
+    const npLink     = document.getElementById('now-playing-link');
+    const npReqCol   = document.getElementById('now-playing-request-col');
+    const resolvedTitle  = c?.title  || cleanTitle;
+    const resolvedArtist = c?.artist || cleanArtist;
+    if (npArt) {
+      npArt.alt = resolvedTitle;
+      if (c?.image) { npArt.src = c.image; npArt.style.background = ''; }
+      else { npArt.removeAttribute('src'); npArt.style.background = 'var(--brand-90)'; }
+    }
+    if (npTitle)  npTitle.textContent  = resolvedTitle;
+    if (npArtist) npArtist.textContent = resolvedArtist;
+    if (npLink) {
+      if (c?.spotifyUrl) { npLink.href = c.spotifyUrl; npLink.style.display = ''; }
+      else npLink.style.display = 'none';
+    }
+    if (npReqCol) {
+      const match = findMatchingRequest(resolvedTitle, resolvedArtist);
+      npReqCol.classList.toggle('visible', !!match);
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // Supabase Realtime — instant now-playing updates
+  // ─────────────────────────────────────────────
+  let _supabaseChannel = null;
+
+  function startNowPlayingRealtime(eventDate) {
+    if (_supabaseChannel) return;
+    if (typeof window.supabase === 'undefined') return;
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    _supabaseChannel = sb
+      .channel('now-playing-broadcast')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'now_playing' },
+        (payload) => {
+          const row = payload.new;
+          if (eventDate && row.gig_date !== eventDate) return;
+          const npArt    = document.getElementById('now-playing-art');
+          const npTitle  = document.getElementById('now-playing-title');
+          const npArtist = document.getElementById('now-playing-artist');
+          const npLink   = document.getElementById('now-playing-link');
+          if (npArt)    { npArt.src = row.image_url || ''; npArt.alt = row.title || ''; }
+          if (npTitle)  npTitle.textContent  = row.title  || '';
+          if (npArtist) npArtist.textContent = row.artist || '';
+          if (npLink) {
+            if (row.spotify_url) { npLink.href = row.spotify_url; npLink.style.display = ''; }
+            else npLink.style.display = 'none';
+          }
+          const npReqCol = document.getElementById('now-playing-request-col');
+          if (npReqCol) {
+            const match = findMatchingRequest(row.title, row.artist);
+            npReqCol.classList.toggle('visible', !!match);
+          }
+        }
+      )
+      .subscribe();
+  }
+
+  // ─────────────────────────────────────────────
+  // Spotify search (for artwork on live tracks)
+  // ─────────────────────────────────────────────
+  async function searchSpotifyTrack(token, artist, title) {
+    const primaryArtist = (artist || '').split(',')[0].trim();
+    async function query(q) {
+      const res = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=1`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      const track = data.tracks?.items?.[0];
+      if (!track) return null;
+      return {
+        image:      track.album.images[1]?.url || track.album.images[0]?.url || '',
+        spotifyUrl: track.external_urls.spotify,
+        artist:     track.artists.map(a => a.name).join(', '),
+        title:      track.name
+      };
+    }
+    if (primaryArtist && title) {
+      const result = await query(`track:"${title}" artist:"${primaryArtist}"`);
+      if (result) return result;
+    }
+    if (primaryArtist && title) {
+      const result = await query(`${title} ${primaryArtist}`);
+      if (result) return result;
+    }
+    if (title) return await query(`track:"${title}"`);
+    return null;
+  }
+
+  // ─────────────────────────────────────────────
+  // iTunes Search (primary — free, no auth)
+  // ─────────────────────────────────────────────
+  async function searchItunesTrack(artist, title) {
+    const term = artist ? `${title} ${artist}` : title;
+    const res = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=song&limit=5`
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const results = data.results || [];
+    // Pick the first result whose title roughly matches
+    const titleLow = title.toLowerCase();
+    const track = results.find(r => r.trackName?.toLowerCase().includes(titleLow)) || results[0];
+    if (!track) return null;
+    return {
+      image:      (track.artworkUrl100 || '').replace('100x100bb', '400x400bb'),
+      spotifyUrl: '',
+      artist:     track.artistName || artist,
+      title:      track.trackName  || title
+    };
+  }
+
+  // Deezer fallback (free, no auth)
+  // ─────────────────────────────────────────────
+  async function searchDeezerTrack(artist, title) {
+    // Simple unquoted query — quoted syntax is unreliable on Deezer's public API
+    const term = artist ? `${title} ${artist}` : title;
+    const res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(term)}&limit=1`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const track = data.data?.[0];
+    if (!track) return null;
+    return {
+      image:      track.album?.cover_medium || track.album?.cover || '',
+      spotifyUrl: '',
+      artist:     track.artist?.name || artist,
+      title:      track.title        || title
+    };
+  }
+
+  // ─────────────────────────────────────────────
+  // Live playlist polling  (/api/live → Serato)
+  // ─────────────────────────────────────────────
+  async function pollLivePlaylist() {
+    try {
+      const liveUrl = gigDate ? `/api/live?date=${encodeURIComponent(gigDate)}` : '/api/live';
+      const res = await fetch(liveUrl);
+      if (!res.ok) return;
+      const { tracks, session } = await res.json();
+      const allTracks = tracks || [];
+
+      const mostRecentTrack = allTracks.length
+        ? allTracks.reduce((best, t) => {
+            const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
+            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
+            return nt > nb ? t : best;
+          })
+        : null;
+
+      const sig = allTracks.map(t => t.id).sort().join(',');
+      if (sig === lastTrackSig && session === liveSessionSlug) {
+        if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
+        return;
+      }
+      lastTrackSig    = sig;
+      liveSessionSlug = session;
+
+      if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
+
+      const list      = document.getElementById('played-list');
+      const emptyEl   = document.getElementById('played-empty');
+      if (allTracks.length === 0) {
+        if (emptyEl) emptyEl.style.display = '';
+      } else {
+        if (emptyEl) emptyEl.style.display = 'none';
+        // Remove all non-empty cards
+        Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
+
+        const displayTracks = [...allTracks].sort((a, b) => {
+          const numA = parseInt((a.id || '').replace(/\D/g, '')) || 0;
+          const numB = parseInt((b.id || '').replace(/\D/g, '')) || 0;
+          return numB - numA;
+        });
+        for (const t of displayTracks) {
+          const cleanArtist    = decodeHtml(t.artist);
+          const cleanTitle     = decodeHtml(t.title);
+          const cached         = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+          const resolvedTitle  = cached?.title  || cleanTitle;
+          const resolvedArtist = cached?.artist || cleanArtist;
+          const isRequested    = !!findMatchingRequest(resolvedTitle, resolvedArtist);
+          list.appendChild(buildPlayedCard(
+            resolvedArtist, resolvedTitle,
+            cached?.image || '', cached?.spotifyUrl || '',
+            t.id, isRequested
+          ));
+        }
+      }
+
+      // Artwork fetch in background (iTunes → Deezer → Spotify)
+      if (allTracks.length) {
+        (async () => {
+          let spotifyToken = null;
+          if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
+            try { spotifyToken = await getSpotifyToken(); }
+            catch (e) { console.warn('[Momo] Spotify token error:', e); }
+          }
+          try {
+            for (const t of allTracks) {
+              // Decode HTML entities (e.g. &amp; from Serato) before searching
+              const cleanArtist = decodeHtml(t.artist);
+              const cleanTitle  = decodeHtml(t.title);
+              const cKey = artworkKey(cleanArtist, cleanTitle);
+              if (!artworkCache[cKey] && cleanTitle) {
+                let info = null;
+                // 1. iTunes — free, no auth, most reliable
+                try { info = await searchItunesTrack(cleanArtist, cleanTitle); }
+                catch (e) { console.warn('[Momo] iTunes search failed:', cleanTitle, e); }
+                // 2. Deezer fallback
+                if (!info) {
+                  try { info = await searchDeezerTrack(cleanArtist, cleanTitle); }
+                  catch (e) { console.warn('[Momo] Deezer search failed:', cleanTitle, e); }
+                }
+                // 3. Spotify fallback (requires credentials)
+                if (!info && spotifyToken) {
+                  try { info = await searchSpotifyTrack(spotifyToken, cleanArtist, cleanTitle); }
+                  catch (e) { console.warn('[Momo] Spotify search failed:', cleanTitle, e); }
+                }
+                try {
+                  if (info) {
+                    artworkCache[cKey] = info;
+                    const card = list.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
+                    if (card) {
+                      if (info.image) {
+                        // Insert <img> only if not already present
+                        let img = card.querySelector('.song-art');
+                        if (!img) {
+                          img = document.createElement('img');
+                          img.className = 'song-art';
+                          img.alt = decodeHtml(info.title);
+                          img.onerror = () => img.remove();
+                          card.insertBefore(img, card.firstChild);
+                        }
+                        img.src = info.image;
+                      }
+                      const link = card.querySelector('.song-link');
+                      if (link && info.spotifyUrl) { link.href = info.spotifyUrl; link.style.display = ''; }
+                      const nowMatched = !!findMatchingRequest(info.title, info.artist);
+                      let reqCol = card.querySelector('.song-request-col');
+                      if (nowMatched && !reqCol) {
+                        reqCol = document.createElement('div');
+                        reqCol.className = 'song-request-col';
+                        reqCol.innerHTML = '<img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested">';
+                        card.appendChild(reqCol);
+                      } else if (!nowMatched && reqCol) {
+                        reqCol.remove();
+                      }
+                    }
+                    if (mostRecentTrack?.id === t.id) updateNowPlayingBar(mostRecentTrack);
+                  }
+                } catch (e) { console.warn('[Momo] Artwork patch failed:', t.artist, t.title, e); }
+              }
+            }
+            localStorage.setItem('momo_artwork_cache', JSON.stringify(artworkCache));
+          } catch (e) { console.warn('[Momo] Artwork fetch loop error:', e); }
+        })();
+      }
+    } catch { /* network error — keep existing content */ }
+  }
+
+  if (!EVENT_SLUG) {
+    // General live/demo mode — poll immediately
+  }
+
+  // ─────────────────────────────────────────────
+  // Battle tab (public)
+  // ─────────────────────────────────────────────
+  const BATTLES_API = EVENT_SLUG
+    ? `/api/battles?event=${encodeURIComponent(EVENT_SLUG)}`
+    : '/api/battles';
+
+  const battleVoteKey = id => `momo_battle_vote_${id}`;
+
+  let _battlePoll   = null;
+  let _activeBattle = null;
+  let _battleChoice = null;
+
+  function stopBattlePoll() {
+    if (_battlePoll) { clearInterval(_battlePoll); _battlePoll = null; }
+  }
+
+  const BATTLE_ENDED_WINDOW_MS = 10 * 60 * 1000; // 10 min per spec
+  function isEndedBattleVisible(battle) {
+    if (battle.status !== 'ended') return true;
+    const endedAt = battle.ended_at
+      || (battle.started_at ? battle.started_at + battle.duration * 1000 : null);
+    if (!endedAt) return false;
+    return (Date.now() - endedAt) < BATTLE_ENDED_WINDOW_MS;
+  }
+
+  async function checkForBattle() {
+    if (!EVENT_SLUG) return;
+    try {
+      const res = await fetch(BATTLES_API);
+      if (!res.ok) return;
+      const battles = await res.json();
+      // If battle tab is active and content not yet loaded, refresh it
+      if (document.getElementById('tab-battle').classList.contains('active')) {
+        loadPublicBattle();
+      }
+    } catch { /* non-blocking */ }
+  }
+
+  async function loadPublicBattle() {
+    const battleList = document.getElementById('battle-list');
+    battleList.innerHTML = '<div class="empty-state">Loading…</div>';
+    try {
+      const res = await fetch(BATTLES_API);
+      if (!res.ok) throw new Error('API error');
+      const battles = await res.json();
+
+      const active = battles.find(b => b.status === 'active');
+      const ended  = battles.find(b => b.status === 'ended' && isEndedBattleVisible(b));
+      const battle = active || ended;
+
+      if (!battle) {
+        battleList.innerHTML = `<div class="empty-state">${
+          currentLang === 'fr'
+            ? 'Pas de battle pour le moment.<br>Revenez plus tard !'
+            : 'No battle right now.<br>Come back later!'
+        }</div>`;
+        return;
+      }
+
+      _activeBattle = battle;
+      const voted = localStorage.getItem(battleVoteKey(battle.id));
+
+      if (battle.status === 'ended') {
+        stopBattlePoll();
+        renderBattleEnded(battle);
+      } else if (voted) {
+        renderBattleVoted(battle);
+        startBattlePoll();
+      } else {
+        renderBattleVoting(battle);
+        startBattlePoll();
+      }
+    } catch {
+      const battleList = document.getElementById('battle-list');
+      battleList.innerHTML = `<div class="empty-state">${
+        currentLang === 'fr'
+          ? 'Impossible de charger le battle. Réessayez.'
+          : 'Could not load battle. Please try again.'
+      }</div>`;
+    }
+  }
+
+  function startBattlePoll() {
+    stopBattlePoll();
+    _battlePoll = setInterval(async () => {
+      const battleList = document.getElementById('battle-list');
+      if (document.hidden || !document.getElementById('panel-battle').classList.contains('active')) return;
+      try {
+        const res = await fetch(BATTLES_API);
+        if (!res.ok) return;
+        const battles = await res.json();
+        const b = battles.find(x => x.id === _activeBattle?.id);
+        if (!b) return;
+        _activeBattle = b;
+        const voted = localStorage.getItem(battleVoteKey(b.id));
+        if (b.status === 'ended') {
+          stopBattlePoll();
+          renderBattleEnded(b);
+        } else if (voted) {
+          refreshVoteBars(b);
+          // Update time remaining display
+          if (b.ends_at) {
+            const timeEl = battleList.querySelector('.battle-time-remaining');
+            if (timeEl) timeEl.textContent = formatTimeRemaining(b.ends_at);
+          }
+        }
+      } catch { /* non-blocking */ }
+    }, 5000);
+  }
+
+  function formatTimeRemaining(endsAt) {
+    const ms = endsAt - Date.now();
+    if (ms <= 0) return currentLang === 'fr' ? 'Temps écoulé' : 'Time up';
+    const s  = Math.floor(ms / 1000);
+    const h  = Math.floor(s / 3600);
+    const m  = Math.floor((s % 3600) / 60);
+    const sc = s % 60;
+    const pad = n => String(n).padStart(2, '0');
+    const label = currentLang === 'fr' ? 'Temps restant :' : 'Time remaining:';
+    return `${label} ${h > 0 ? pad(h) + ':' : ''}${pad(m)}:${pad(sc)}`;
+  }
+
+  function computePcts(battle) {
+    const votes    = battle.votes || {};
+    const total    = Object.values(votes).reduce((s, n) => s + n, 0);
+    const maxCount = total > 0 ? Math.max(...battle.songs.map(s => votes[s.id] || 0)) : 0;
+    return battle.songs.map(s => {
+      const count   = votes[s.id] || 0;
+      const pct     = total > 0 ? Math.round(count / total * 100) : 0;
+      const leading = count > 0 && count === maxCount;
+      return { song: s, count, pct, leading };
+    });
+  }
+
+  function refreshVoteBars(battle) {
+    const battleList = document.getElementById('battle-list');
+    const entries    = computePcts(battle);
+    entries.forEach(({ song, pct, leading }) => {
+      const fill  = battleList.querySelector(`.battle-vote-bar-fill[data-song-id="${CSS.escape(song.id)}"]`);
+      const pctEl = battleList.querySelector(`.battle-vote-pct[data-song-id="${CSS.escape(song.id)}"]`);
+      if (fill)  { fill.style.width = pct + '%'; fill.classList.toggle('leading', leading); }
+      if (pctEl) pctEl.textContent = pct + '%';
+    });
+  }
+
+  function renderBattleVoting(battle) {
+    const battleList = document.getElementById('battle-list');
+    _battleChoice = null;
+    battleList.innerHTML = '';
+
+    const instr = document.createElement('p');
+    instr.className = 'battle-instruction';
+    instr.textContent = currentLang === 'fr'
+      ? 'Sélectionne la chanson. Soumet. Regarde-les se battre.'
+      : 'Tap the song you want. Submit. Watch them fight.';
+    battleList.appendChild(instr);
+
+    const cardsDiv  = document.createElement('div');
+    cardsDiv.className = 'battle-cards';
+
+    const submitBtn = document.createElement('button');
+    submitBtn.className   = 'battle-submit-btn';
+    submitBtn.disabled    = true;
+    submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
+
+    battle.songs.forEach(song => {
+      const card = document.createElement('div');
+      card.className    = 'battle-choice-card';
+      card.dataset.songId = song.id;
+      card.innerHTML = `
+        <div class="battle-card-top">
+          <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
+               onerror="this.style.background='var(--brand-90)'">
+          <div class="song-info">
+            <div class="song-text-group">
+              <p class="song-title">${safeHtml(song.title)}</p>
+              ${song.artist ? `<p class="song-artist">${safeHtml(song.artist)}</p>` : ''}
+            </div>
+          </div>
+        </div>`;
+      card.addEventListener('click', () => {
+        _battleChoice = song.id;
+        cardsDiv.querySelectorAll('.battle-choice-card').forEach(c => {
+          c.classList.remove('selected', 'unselected');
+          c.classList.add(c.dataset.songId === song.id ? 'selected' : 'unselected');
+        });
+        submitBtn.disabled = false;
+        submitBtn.classList.add('ready');
+      });
+      cardsDiv.appendChild(card);
+    });
+
+    battleList.appendChild(cardsDiv);
+
+    submitBtn.addEventListener('click', async () => {
+      if (!_battleChoice || submitBtn.disabled) return;
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('ready');
+      submitBtn.textContent = currentLang === 'fr' ? 'ENVOI…' : 'SENDING…';
+      try {
+        const res = await fetch(BATTLES_API, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: _activeBattle.id, vote: _battleChoice })
+        });
+        if (res.ok || res.status === 410) {
+          localStorage.setItem(battleVoteKey(_activeBattle.id), _battleChoice);
+          const r2 = await fetch(BATTLES_API);
+          if (r2.ok) {
+            const bs2 = await r2.json();
+            const b2  = bs2.find(b => b.id === _activeBattle.id) || _activeBattle;
+            _activeBattle = b2;
+            if (b2.status === 'ended') { stopBattlePoll(); renderBattleEnded(b2); }
+            else { renderBattleVoted(b2); startBattlePoll(); }
+          } else {
+            renderBattleVoted(_activeBattle);
+          }
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.classList.add('ready');
+          submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
+        }
+      } catch {
+        submitBtn.disabled = false;
+        submitBtn.classList.add('ready');
+        submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
+      }
+    });
+    battleList.appendChild(submitBtn);
+  }
+
+  function renderBattleVoted(battle) {
+    const battleList = document.getElementById('battle-list');
+    const entries    = computePcts(battle);
+    const myVoteId   = localStorage.getItem(battleVoteKey(battle.id));
+    battleList.innerHTML = '';
+
+    // Time remaining
+    if (battle.ends_at && battle.status === 'active') {
+      const timeEl = document.createElement('p');
+      timeEl.className   = 'battle-time-remaining';
+      timeEl.textContent = formatTimeRemaining(battle.ends_at);
+      battleList.appendChild(timeEl);
+    }
+
+    // Voted confirmation
+    const votedMsg = document.createElement('div');
+    votedMsg.className = 'battle-voted-msg';
+    votedMsg.innerHTML = `
+      <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="#34C759" stroke-width="2"/>
+        <path d="M12 20.5L17.5 26L28 15" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="battle-voted-subtext">${
+        currentLang === 'fr'
+          ? 'Merci pour ton vote.<br>Voici les résultats jusqu\'ici :'
+          : 'Thank you for submitting your vote.<br>Here are the results so far:'
+      }</p>`;
+    battleList.appendChild(votedMsg);
+
+    // Results
+    const cardsDiv = document.createElement('div');
+    cardsDiv.className = 'battle-cards';
+    entries.forEach(({ song, pct, leading }) => {
+      const isMyVote = song.id === myVoteId;
+      const card = document.createElement('div');
+      card.className = `battle-choice-card static${isMyVote ? ' selected' : ''}`;
+      card.innerHTML = `
+        <div class="battle-card-top">
+          <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
+               onerror="this.style.background='var(--brand-90)'">
+          <div class="song-info">
+            <div class="song-text-group">
+              <p class="song-title">${safeHtml(song.title)}</p>
+              ${song.artist ? `<p class="song-artist">${safeHtml(song.artist)}</p>` : ''}
+            </div>
+          </div>
+          ${isMyVote ? `<div class="battle-check-col"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#34C759" stroke-width="1.5"/><path d="M7 12.5L10.5 16L17 9" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+        </div>
+        <div class="battle-vote-bar-row">
+          <div class="battle-vote-bar-track">
+            <div class="battle-vote-bar-fill${leading ? ' leading' : ''}"
+                 data-song-id="${safeHtml(song.id)}" style="width:${pct}%"></div>
+          </div>
+          <span class="battle-vote-pct" data-song-id="${safeHtml(song.id)}">${pct}%</span>
+        </div>`;
+      cardsDiv.appendChild(card);
+    });
+    battleList.appendChild(cardsDiv);
+
+    // Disabled submit (greyed out per design)
+    const submitBtn = document.createElement('button');
+    submitBtn.className   = 'battle-submit-btn';
+    submitBtn.disabled    = true;
+    submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
+    battleList.appendChild(submitBtn);
+  }
+
+  function renderBattleEnded(battle) {
+    const battleList = document.getElementById('battle-list');
+    stopBattlePoll();
+    const entries  = computePcts(battle);
+    const myVoteId = localStorage.getItem(battleVoteKey(battle.id));
+    battleList.innerHTML = '';
+
+    const statusLabel = document.createElement('p');
+    statusLabel.className   = 'battle-status-label ended';
+    statusLabel.textContent = currentLang === 'fr' ? 'Terminé' : 'Ended';
+    battleList.appendChild(statusLabel);
+
+    const msgBox = document.createElement('div');
+    msgBox.className   = 'battle-ended-msg';
+    msgBox.textContent = currentLang === 'fr'
+      ? 'Revenez plus tard lorsque le prochain battle sera créé et annoncé pour voter à nouveau.'
+      : 'Come back later when the next battle has been set and announced to vote once more.';
+    battleList.appendChild(msgBox);
+
+    const cardsDiv = document.createElement('div');
+    cardsDiv.className = 'battle-cards';
+    entries.forEach(({ song, pct, leading }) => {
+      const isMyVote = song.id === myVoteId;
+      const card = document.createElement('div');
+      card.className = `battle-choice-card static${isMyVote ? ' selected' : ''}`;
+      card.innerHTML = `
+        <div class="battle-card-top">
+          <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
+               onerror="this.style.background='var(--brand-90)'">
+          <div class="song-info">
+            <div class="song-text-group">
+              <p class="song-title">${safeHtml(song.title)}</p>
+              ${song.artist ? `<p class="song-artist">${safeHtml(song.artist)}</p>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="battle-vote-bar-row">
+          <div class="battle-vote-bar-track">
+            <div class="battle-vote-bar-fill${leading ? ' leading' : ''}"
+                 data-song-id="${safeHtml(song.id)}" style="width:${pct}%"></div>
+          </div>
+          <span class="battle-vote-pct" data-song-id="${safeHtml(song.id)}">${pct}%</span>
+        </div>`;
+      cardsDiv.appendChild(card);
+    });
+    battleList.appendChild(cardsDiv);
+
+    // Disabled submit
+    const submitBtn = document.createElement('button');
+    submitBtn.className   = 'battle-submit-btn';
+    submitBtn.disabled    = true;
+    submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
+    battleList.appendChild(submitBtn);
+  }
+
+</script>
+</body>
+</html>
