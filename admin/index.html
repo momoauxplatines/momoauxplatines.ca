@@ -41,7 +41,7 @@
     #admin-screen.active { display: block; }
 
     /* ── Fixed header ── */
-    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--brand-105); display: flex; align-items: center; justify-content: space-between; padding: 24px; }
+    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--brand-105); display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 16px 24px; gap: 0; }
     .header-left { display: flex; align-items: center; gap: 16px; }
     .header-favicon { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
     .header-favicon img { width: 100%; height: 100%; object-fit: cover; }
@@ -50,16 +50,22 @@
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Scrollable content ── */
-    .admin-content { padding-top: 88px; max-width: 800px; margin: 0 auto; }
-
-    /* ── Language tabs ── */
-    .lang-tabs { display: flex; padding: 16px; }
-    .lang-tab { flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 18px; color: var(--brand-70); text-transform: uppercase; cursor: pointer; border: none; background: none; transition: color 0.15s; }
-    .lang-tab:first-child { border-radius: 8px 0 0 8px; }
-    .lang-tab:last-child  { border-radius: 0 8px 8px 0; }
-    .lang-tab:not(.active):hover { color: var(--brand-60); }
+    /* ── Language tabs (in header) ── */
+    .lang-tabs { display: flex; order: 3; width: 100%; justify-content: flex-start; padding: 10px 0 2px; }
+    .lang-tab { height: 36px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-60); cursor: pointer; border: none; background: none; transition: color 0.15s; padding: 0 12px; white-space: nowrap; }
+    .lang-tab:not(.active):hover { color: var(--brand-40); }
     .lang-tab.active { color: var(--brand-00); }
+
+    /* ── Tablet+: lang-tabs inline in header, centered ── */
+    @media (min-width: 768px) {
+      .admin-header { flex-wrap: nowrap; padding: 20px 32px; }
+      .lang-tabs { order: 0; width: auto; flex: 1; justify-content: center; padding: 0; }
+      .lang-tab { font-size: 18px; }
+    }
+
+    /* ── Scrollable content ── */
+    .admin-content { padding-top: 110px; max-width: 770px; margin: 0 auto; }
+    @media (min-width: 768px) { .admin-content { padding-top: 88px; } }
 
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
@@ -301,6 +307,33 @@
     .battle-ongoing-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #fff; flex-shrink: 0; }
     .battle-ongoing-text { font-size: 18px; font-weight: 300; color: var(--brand-30); text-align: center; }
 
+    /* ── Event detail screen ── */
+    .event-screen { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow: hidden; }
+    .event-screen.open { opacity: 1; pointer-events: auto; }
+    .event-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--bg); }
+    .btn-back { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 16px; font-weight: 300; padding: 8px 0; line-height: 20px; }
+    .btn-back:hover { color: var(--brand-30); }
+    .event-logo { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; border: 1px solid var(--brand-100); flex-shrink: 0; }
+    .event-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .event-tabs-wrap { flex-shrink: 0; display: flex; justify-content: center; overflow-x: auto; padding: 16px; scrollbar-width: none; }
+    .event-tabs-wrap::-webkit-scrollbar { display: none; }
+    .event-tabs { display: flex; gap: 8px; }
+    .event-tab { height: 48px; padding: 0 20px; border-radius: 40px; border: 1px solid var(--brand-90); background: var(--brand-100); color: var(--brand-70); font-size: 18px; font-weight: 300; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
+    .event-tab.active { border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
+    .event-tab:not(.active):hover { color: var(--brand-50); border-color: var(--brand-80); }
+    .event-detail-body { flex: 1; overflow-y: auto; }
+    .event-pane { display: none; }
+    .event-pane.active { display: block; }
+    .event-form { max-width: 770px; margin: 0 auto; padding: 0 24px 160px; display: flex; flex-direction: column; gap: 16px; }
+    .event-footer { flex-shrink: 0; padding: 16px 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+    .event-footer-inner { max-width: 770px; margin: 0 auto; }
+    .btn-delete-event { background: var(--brand-90); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: all 0.15s; }
+    .btn-delete-event:hover { background: var(--red); color: var(--brand-00); }
+    @media (min-width: 768px) {
+      .event-header { padding: 20px 32px; }
+      .event-tabs-wrap { padding: 24px 32px; }
+    }
+
   </style>
 </head>
 <body>
@@ -333,16 +366,14 @@
       <div class="header-favicon"><img src="../images/og-image.png" alt="Momo"></div>
       <span class="header-title">DJ Admin</span>
     </div>
+    <div class="lang-tabs">
+      <button class="lang-tab active" data-lang="en">English</button>
+      <button class="lang-tab" data-lang="fr">Français</button>
+    </div>
     <button class="btn-admin" id="logout-btn" data-i18n="header.signout">Sign out</button>
   </header>
 
   <div class="admin-content">
-
-    <!-- Language tabs -->
-    <div class="lang-tabs">
-      <button class="lang-tab active" data-lang="en">EN</button>
-      <button class="lang-tab" data-lang="fr">FR</button>
-    </div>
 
     <!-- ── LIVE ── -->
     <section class="admin-section">
@@ -486,6 +517,127 @@
       <button class="btn-dark" id="req-refresh-btn" data-i18n="btn.refresh">Refresh</button>
     </div>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     EVENT DETAIL SCREEN
+══════════════════════════════════════════════ -->
+<div id="event-screen" class="event-screen">
+
+  <!-- Header -->
+  <header class="event-header">
+    <button class="btn-back" id="event-back-btn">
+      <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 1L1 7L7 13" stroke="var(--brand-50)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span data-i18n="btn.back">Back</span>
+    </button>
+    <div class="event-logo">
+      <img src="../images/og-image.png" alt="Momo">
+    </div>
+  </header>
+
+  <!-- Tab bar -->
+  <div class="event-tabs-wrap">
+    <div class="event-tabs">
+      <button class="event-tab active" data-tab="info">Info</button>
+      <button class="event-tab" data-tab="playing">Playing</button>
+      <button class="event-tab" data-tab="battle">Battle</button>
+      <button class="event-tab" data-tab="requests">Requests</button>
+      <button class="event-tab" data-tab="messages">Messages</button>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="event-detail-body">
+
+    <!-- Info tab -->
+    <div class="event-pane active" data-pane="info">
+      <div class="event-form">
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.venue.label">Venue*</label>
+          <input class="edit-input" type="text" id="ev-venue" placeholder="Buvette Chez Simone">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.address.label">Address</label>
+          <input class="edit-input" type="text" id="ev-address" placeholder="4869 Rue Villeneuve O, Montréal">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.date.label">Date*</label>
+          <input class="edit-input" type="date" id="ev-date">
+        </div>
+        <div class="form-row">
+          <div class="edit-field">
+            <label class="edit-label" data-i18n="form.gig.start.label">Start*</label>
+            <input class="edit-input" type="time" id="ev-start">
+          </div>
+          <div class="edit-field">
+            <label class="edit-label" data-i18n="form.gig.end.label">End*</label>
+            <input class="edit-input" type="time" id="ev-end">
+          </div>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.ig.label">Instagram</label>
+          <input class="edit-input" type="url" id="ev-instagram" placeholder="https://www.instagram.com/venue">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.twitch.label">Twitch</label>
+          <input class="edit-input" type="url" id="ev-twitch" placeholder="https://www.twitch.tv/channel">
+        </div>
+        <input type="file" id="ev-img-file" accept="image/*" style="display:none">
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.photo.label">Photo</label>
+          <div class="image-row">
+            <div class="image-preview rect" style="flex-shrink:0;">
+              <img id="ev-img-preview" src="" alt="" style="display:none;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <button type="button" class="btn-card-edit" id="ev-overwrite-btn" data-i18n="form.gig.overwrite">Overwrite photo</button>
+              <button type="button" class="btn-card-edit" id="ev-revert-btn" style="display:none;" data-i18n="form.gig.revert">Revert to Instagram</button>
+            </div>
+          </div>
+          <p id="ev-img-status" style="font-size:12px;font-weight:300;color:var(--brand-50);margin:0;line-height:18px;"></p>
+        </div>
+        <div class="show-toggle-row">
+          <span class="show-toggle-label" data-i18n="form.gig.show">Show on home page</span>
+          <button type="button" class="req-switch" id="ev-show-toggle" aria-label="Show on home page"></button>
+        </div>
+        <input type="hidden" id="ev-image-path" value="">
+        <button class="btn-delete-event" id="ev-delete-btn" data-i18n="form.gig.delete">Delete event</button>
+      </div>
+    </div>
+
+    <!-- Playing tab -->
+    <div class="event-pane" data-pane="playing">
+      <div class="event-form" id="ev-playing-pane"></div>
+    </div>
+
+    <!-- Battle tab -->
+    <div class="event-pane" data-pane="battle">
+      <div class="event-form" id="ev-battle-pane"></div>
+    </div>
+
+    <!-- Requests tab -->
+    <div class="event-pane" data-pane="requests">
+      <div class="req-list" id="ev-req-pane">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Messages tab -->
+    <div class="event-pane" data-pane="messages">
+      <div class="event-form" id="ev-messages-pane"></div>
+    </div>
+
+  </div>
+
+  <!-- Save footer -->
+  <div class="event-footer">
+    <div class="event-footer-inner">
+      <button class="btn-save" id="ev-save-btn" data-i18n="btn.save">Save</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- Toast -->
@@ -1145,7 +1297,7 @@
     const imgSrc = ev.image ? '../' + ev.image.replace(/^\//, '') : '';
     const card = document.createElement('div');
     card.className = 'gig-card gig-card--link';
-    card.dataset.action = 'open-requests';
+    card.dataset.action = 'edit-gig';
     card.dataset.index = String(idx);
     card.innerHTML = `
       <div class="gig-card-top" style="pointer-events:none;">
@@ -1303,7 +1455,7 @@
     if (action === 'edit-demo')     openForm('demo',     DEMOS.find(d => d.id === id));
     if (action === 'delete-demo')   deleteDemo(id);
     if (action === 'edit-timeline') openForm('timeline', { item: TIMELINE[decade]?.find(x => x.id === id), decade });
-    if (action === 'edit-gig')      openForm('gig',      { index: parseInt(index) });
+    if (action === 'edit-gig')      openEventDetail(parseInt(index));
     if (action === 'delete-gig')    deleteGig(parseInt(index));
     if (action === 'open-requests') openRequests(parseInt(index));
     if (action === 'open-event-page') window.open(btn.dataset.url, '_blank');
@@ -1702,6 +1854,7 @@
   saveBtn.addEventListener('click', async () => {
     saveBtn.disabled = true;
     saveBtn.textContent = t('btn.saving');
+    let _openEventIdx = -1; // index of newly created gig to navigate to after save
     try {
       if (editFormType === 'intro') {
         const imgInput = document.getElementById('ef-img-input');
@@ -1954,6 +2107,7 @@
 
         const idx = parseInt(document.getElementById('ef-gig-index')?.value);
         const isNew = idx < 0;
+        const newIdx = isNew ? currentEvents.length : idx; // capture before push
         if (isNew) currentEvents.push(ev);
         else currentEvents[idx] = ev;
 
@@ -1962,6 +2116,8 @@
         renderGigs();
         scheduleGigRefresh();
         showToast(`"${venue}" ${isNew ? t('toast.entry.added').toLowerCase() : t('toast.entry.saved').toLowerCase()}`, 'success');
+
+        if (isNew) _openEventIdx = newIdx; // set flag — navigation happens after closeForm()
       }
 
       closeForm();
@@ -1970,6 +2126,9 @@
     }
     saveBtn.disabled = false;
     saveBtn.textContent = t('btn.save');
+
+    // Navigate to event detail page after popup closes (new gig only)
+    if (_openEventIdx >= 0) openEventDetail(_openEventIdx);
   });
 
   // ── Delete demo ───────────────────────────────────────────────────────────────
@@ -3041,6 +3200,8 @@
       const res = await fetch(`/api/messages${qs}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      // 401/404 = endpoint not yet available or no messages — show empty state
+      if (res.status === 401 || res.status === 404) { renderMessages([]); return; }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const messages = await res.json();
       renderMessages(messages);
@@ -3093,6 +3254,257 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────────
   if (token) showAdmin();
+
+  // ── EVENT DETAIL SCREEN ───────────────────────────────────────────────────────
+
+  let currentEventDetailIdx = -1;
+  let evPendingCustomFile   = null;
+  let evPendingAvatarUrl    = null;
+  let evPendingAvatarUser   = null;
+
+  function openEventDetail(idx) {
+    currentEventDetailIdx = idx;
+    const ev = currentEvents[idx];
+    if (!ev) return;
+
+    // Populate fields
+    document.getElementById('ev-venue').value      = ev.venue      || '';
+    document.getElementById('ev-address').value    = ev.address    || '';
+    document.getElementById('ev-date').value       = ev.date       || '';
+    document.getElementById('ev-start').value      = ev.start_time || '';
+    document.getElementById('ev-end').value        = ev.end_time   || '';
+    document.getElementById('ev-instagram').value  = ev.instagram  || '';
+    document.getElementById('ev-twitch').value     = ev.twitch     || '';
+    document.getElementById('ev-image-path').value = ev.image      || '';
+
+    // Reset pending state
+    evPendingCustomFile = null;
+    evPendingAvatarUrl  = null;
+    evPendingAvatarUser = null;
+
+    // Image preview
+    const preview = document.getElementById('ev-img-preview');
+    const status  = document.getElementById('ev-img-status');
+    const revertBtn = document.getElementById('ev-revert-btn');
+
+    if (ev.image) {
+      const src = ev.image.startsWith('/api/') ? ev.image : '../' + ev.image.replace(/^\//, '');
+      preview.src = src;
+      preview.style.display = '';
+      status.textContent = 'Current photo';
+    } else if (ev.instagram) {
+      const u = extractIgUsername(ev.instagram);
+      if (u) {
+        const src = `https://unavatar.io/instagram/${u}`;
+        preview.src = src;
+        preview.style.display = '';
+        status.textContent = 'From Instagram';
+        evPendingAvatarUrl  = src;
+        evPendingAvatarUser = u;
+      } else {
+        preview.style.display = 'none';
+        status.textContent = '';
+      }
+    } else {
+      preview.style.display = 'none';
+      status.textContent = '';
+    }
+    revertBtn.style.display = extractIgUsername(ev.instagram || '') ? '' : 'none';
+
+    // Show toggle
+    document.getElementById('ev-show-toggle').classList.toggle('on', ev.show !== false);
+
+    // Placeholder content for non-Info tabs
+    evFillSupportTabs(ev);
+
+    // Switch to Info tab & show screen
+    switchEventTab('info');
+    document.getElementById('event-screen').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeEventDetail() {
+    document.getElementById('event-screen').classList.remove('open');
+    document.body.style.overflow = '';
+    currentEventDetailIdx = -1;
+    evPendingCustomFile = null;
+    evPendingAvatarUrl  = null;
+    evPendingAvatarUser = null;
+  }
+
+  function switchEventTab(name) {
+    document.querySelectorAll('.event-tab').forEach(tab =>
+      tab.classList.toggle('active', tab.dataset.tab === name));
+    document.querySelectorAll('.event-pane').forEach(pane =>
+      pane.classList.toggle('active', pane.dataset.pane === name));
+  }
+
+  function evFillSupportTabs(ev) {
+    const isLive = ev && isEventLive(ev);
+    // Playing
+    document.getElementById('ev-playing-pane').innerHTML =
+      `<p class="empty-state">${t('playing.empty')}</p><p class="empty-state" style="margin-top:8px;">${t('playing.empty.hint') || ''}</p>`;
+    // Battle
+    document.getElementById('ev-battle-pane').innerHTML =
+      `<p class="empty-state">${t('battle.not.live')}</p>`;
+    // Requests
+    document.getElementById('ev-req-pane').innerHTML =
+      `<div class="empty-state">${t('req.empty') || 'No requests yet.'}</div>`;
+    // Messages
+    document.getElementById('ev-messages-pane').innerHTML =
+      `<p class="empty-state">${t('msg.empty')}</p>`;
+  }
+
+  // Tab clicks
+  document.querySelector('#event-screen .event-tabs').addEventListener('click', e => {
+    const tab = e.target.closest('.event-tab');
+    if (tab) switchEventTab(tab.dataset.tab);
+  });
+
+  // Back button
+  document.getElementById('event-back-btn').addEventListener('click', closeEventDetail);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('event-screen').classList.contains('open')) {
+      closeEventDetail();
+    }
+  });
+
+  // Show toggle
+  document.getElementById('ev-show-toggle').addEventListener('click', function() {
+    this.classList.toggle('on');
+  });
+
+  // Instagram debounce → preview
+  {
+    const igInput = document.getElementById('ev-instagram');
+    let igDebounce;
+    igInput.addEventListener('input', () => {
+      const revertBtn = document.getElementById('ev-revert-btn');
+      revertBtn.style.display = extractIgUsername(igInput.value.trim()) ? '' : 'none';
+      if (evPendingCustomFile) return;
+      clearTimeout(igDebounce);
+      igDebounce = setTimeout(() => {
+        const u = extractIgUsername(igInput.value.trim());
+        const preview = document.getElementById('ev-img-preview');
+        const status  = document.getElementById('ev-img-status');
+        if (!u) {
+          preview.style.display = 'none'; status.textContent = '';
+          evPendingAvatarUrl = null; evPendingAvatarUser = null;
+          return;
+        }
+        const src = `https://unavatar.io/instagram/${u}`;
+        evPendingAvatarUrl = src; evPendingAvatarUser = u;
+        document.getElementById('ev-image-path').value = '';
+        preview.src = src; preview.style.display = '';
+        status.textContent = 'From Instagram · will be saved on save';
+      }, 600);
+    });
+  }
+
+  // Overwrite photo
+  document.getElementById('ev-overwrite-btn').addEventListener('click', () => {
+    document.getElementById('ev-img-file').click();
+  });
+  document.getElementById('ev-img-file').addEventListener('change', () => {
+    const file = document.getElementById('ev-img-file').files[0];
+    if (!file) return;
+    evPendingCustomFile = file;
+    evPendingAvatarUrl  = null;
+    evPendingAvatarUser = null;
+    document.getElementById('ev-image-path').value = '';
+    const preview = document.getElementById('ev-img-preview');
+    const status  = document.getElementById('ev-img-status');
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = '';
+    status.textContent = 'Custom photo · will be saved on save';
+  });
+
+  // Revert to Instagram
+  document.getElementById('ev-revert-btn').addEventListener('click', () => {
+    evPendingCustomFile = null;
+    document.getElementById('ev-image-path').value = '';
+    const u = extractIgUsername(document.getElementById('ev-instagram').value.trim());
+    const preview = document.getElementById('ev-img-preview');
+    const status  = document.getElementById('ev-img-status');
+    if (u) {
+      const src = `https://unavatar.io/instagram/${u}`;
+      evPendingAvatarUrl = src; evPendingAvatarUser = u;
+      preview.src = src; preview.style.display = '';
+      status.textContent = 'From Instagram · will be saved on save';
+    } else {
+      preview.style.display = 'none'; status.textContent = '';
+    }
+  });
+
+  // Save from event detail page
+  document.getElementById('ev-save-btn').addEventListener('click', async () => {
+    if (currentEventDetailIdx < 0) return;
+    const saveBtn = document.getElementById('ev-save-btn');
+    const venue = document.getElementById('ev-venue').value.trim();
+    if (!venue) { showToast(t('toast.venue.required'), 'error'); return; }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = t('btn.saving');
+
+    try {
+      let imagePath = document.getElementById('ev-image-path').value.trim();
+
+      if (evPendingCustomFile) {
+        try {
+          const key = `events/${slugify(venue)}.jpg`;
+          imagePath = await uploadImageToBlob(evPendingCustomFile, key);
+          evPendingCustomFile = null;
+        } catch (e) { showToast(t('toast.img.failed') + e.message, 'error'); }
+      } else if (evPendingAvatarUrl && evPendingAvatarUser) {
+        try {
+          imagePath = await uploadAvatarToBlob(evPendingAvatarUrl, evPendingAvatarUser);
+          evPendingAvatarUrl = null; evPendingAvatarUser = null;
+        } catch (_) { imagePath = ''; }
+      }
+
+      const ev = currentEvents[currentEventDetailIdx];
+      ev.venue      = venue;
+      ev.address    = document.getElementById('ev-address').value.trim();
+      ev.date       = document.getElementById('ev-date').value;
+      ev.start_time = document.getElementById('ev-start').value;
+      ev.end_time   = document.getElementById('ev-end').value;
+      ev.instagram  = document.getElementById('ev-instagram').value.trim();
+      ev.twitch     = document.getElementById('ev-twitch').value.trim();
+      ev.image      = imagePath;
+      ev.show       = document.getElementById('ev-show-toggle').classList.contains('on');
+
+      await saveEvents(`Update gig: ${venue}`);
+      renderLive();
+      renderGigs();
+      scheduleGigRefresh();
+      document.getElementById('ev-image-path').value = imagePath;
+      showToast(`"${venue}" ${t('toast.entry.saved').toLowerCase()}`, 'success');
+    } catch (e) {
+      showToast(t('toast.save.failed') + e.message, 'error');
+    }
+
+    saveBtn.disabled = false;
+    saveBtn.textContent = t('btn.save');
+  });
+
+  // Delete from event detail page
+  document.getElementById('ev-delete-btn').addEventListener('click', async () => {
+    if (currentEventDetailIdx < 0) return;
+    const ev = currentEvents[currentEventDetailIdx];
+    if (!confirm(`Delete "${ev.venue}"?\nThis cannot be undone.`)) return;
+    const idx = currentEventDetailIdx;
+    closeEventDetail();
+    currentEvents.splice(idx, 1);
+    try {
+      await saveEvents(`Delete gig: ${ev.venue}`);
+      renderLive();
+      renderGigs();
+      showToast(`"${ev.venue}" ${t('toast.deleted')}`, 'success');
+    } catch (e) {
+      showToast(t('toast.delete.failed') + e.message, 'error');
+      loadEvents().then(() => { renderLive(); renderGigs(); });
+    }
+  });
 </script>
 </body>
 </html>

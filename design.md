@@ -9,9 +9,9 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 | Page Figma | Contenu |
 |------------|---------|
 | Cover | Couverture du fichier |
+| Proto | Liens de prototypage (navigation entre screens) |
 | _DJ | Portfolio DJ principal (toutes les screens) |
 | _Event | Screens et cards d'événement (live & next) |
-| _Event - New | Nouvelle version de la page événement (en cours) |
 | _School | Section École |
 | _Forms | Formulaires (edit de gig, contact, request) |
 | _Admin | Panel d'administration |
@@ -345,12 +345,13 @@ Composante Figma : `Event Status` · Page `_System`
 
 ## Tabs
 
-Composante Figma : `Tabs` · Page `_System`
+Composante Figma : `tab-new` · Page `_System`
 
 | Variante | Description |
 |----------|-------------|
-| Activated=Left | Tab gauche actif |
-| Activated=Right | Tab droit actif |
+| Property 1=default | Tab au repos |
+| Property 1=hover | Tab survolé |
+| Property 1=active | Tab actif |
 
 - Full-width · `Brand/95` bg · active tab text: `Brand/00` · font: Tab (SF Pro Black 18px)
 
@@ -488,7 +489,7 @@ Separate page, active when an event is live.
 - Venue thumbnail · "● LIVE" red badge · "Détails ▾" dropdown
 
 ### Tabs
-- Composante Figma : `Tabs`
+- Composante Figma : `tab-new`
 - **REQUESTS** | **PLAYED** — Tab font, full-width, `Brand/95` bg, active tab `Brand/00`
 
 ### Song Request Card
@@ -597,6 +598,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-15 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-05-19 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
