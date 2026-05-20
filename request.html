@@ -336,7 +336,7 @@
       display: none; align-items: center; justify-content: center;
     }
     .now-playing-request-col.visible { display: flex; }
-    .now-playing-request-icon { width: 20px; height: auto; object-fit: contain; }
+    .now-playing-request-icon { width: 24px; height: 24px; flex-shrink: 0; }
 
     /* ── Requests Panel (inline form) ── */
     .req-tab-body {
@@ -474,6 +474,11 @@
       cursor: pointer; opacity: 1;
     }
 
+    .battle-footer-note {
+      font-size: 14px; font-weight: 300; color: var(--brand-50);
+      text-align: center; padding: 8px 0 4px;
+    }
+
     /* Battle status labels */
     .battle-time-remaining {
       font-size: 16px; font-weight: 300; color: var(--green);
@@ -522,7 +527,7 @@
       <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="BATTLE"   data-fr="BATTLE">BATTLE</button>
       <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="PLAYED"   data-fr="JOUÉES">PLAYED</button>
       <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
-      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="MESSAGE"  data-fr="MESSAGE">MESSAGE</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="MESSAGES" data-fr="MESSAGES">MESSAGES</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -580,7 +585,7 @@
   <div class="tab-panel" id="panel-played">
     <p class="played-intro" id="played-intro"
        data-key="played.intro"
-       data-en="Songs played so far today. You can also make a request."
+       data-en="That's what's been going on so far. Want to make a request? Hit the tab or come and chat at the booth."
        data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
     <div class="song-list" id="played-list">
       <div class="empty-state" id="played-empty">
@@ -592,7 +597,7 @@
   <!-- ── Requests Panel (inline form) ── -->
   <div class="tab-panel" id="panel-requests">
     <div class="req-tab-body">
-      <p class="req-tab-intro" data-key="req.tab.intro" data-en="Copy the Spotify sharing link from the Spotify mobile app below." data-fr="Copiez le lien de partage Spotify depuis l'application mobile Spotify ci-dessous.">Copy the Spotify sharing link from the Spotify mobile app below.</p>
+      <p class="req-tab-intro" data-key="req.tab.intro" data-en="Open your Spotify app, copy the link to the song below and let's chill." data-fr="Ouvre Spotify, copie le lien de la chanson ci-dessous et on s'amuse.">Open your Spotify app, copy the link to the song below and let's chill.</p>
 
       <div class="form-field">
         <label class="form-label" for="spotify-url"
@@ -605,9 +610,9 @@
             <path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <input class="form-input" type="url" id="spotify-url"
-                 data-placeholder-en="Copy Spotify app song link"
-                 data-placeholder-fr="Copiez le lien depuis Spotify"
-                 placeholder="Copy Spotify app song link"
+                 data-placeholder-en="Copy Spotify link here"
+                 data-placeholder-fr="Copiez le lien Spotify ici"
+                 placeholder="Copy Spotify link here"
                  autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
         <p class="fetch-status" id="fetch-status"></p>
@@ -650,11 +655,6 @@
   <!-- ── Message Panel ── -->
   <div class="tab-panel" id="panel-message">
     <div class="msg-tab-body">
-      <p class="msg-tab-intro"
-         data-key="msg.tab.intro"
-         data-en="Want to share something with me? Leave a message or visit the booth."
-         data-fr="Tu veux me dire quelque chose ? Laisse un message ou passe au booth.">Want to share something with me? Leave a message or visit the booth.</p>
-
       <div class="msg-textarea-wrap">
         <label class="form-label" for="msg-input"
                data-key="msg.tab.label"
@@ -704,7 +704,7 @@
         </div>
       </div>
       <div class="now-playing-request-col" id="now-playing-request-col">
-        <img class="now-playing-request-icon" src="images/request-sent-icon.svg" alt="Requested">
+        <img class="now-playing-request-icon" src="images/request-sent-icon.svg" alt="">
       </div>
     </div>
   </div>
@@ -1639,8 +1639,8 @@
       if (!battle) {
         battleList.innerHTML = `<div class="empty-state">${
           currentLang === 'fr'
-            ? 'Pas de battle pour le moment.<br>Revenez plus tard !'
-            : 'No battle right now.<br>Come back later!'
+            ? 'Pas de battle encore.<br>Mais ça chauffe.<br>Ça va arriver.'
+            : 'No battle yet.<br>But the heat is on.<br>It will happen.'
         }</div>`;
         return;
       }
@@ -1875,6 +1875,14 @@
       cardsDiv.appendChild(card);
     });
     battleList.appendChild(cardsDiv);
+
+    // Footer note
+    const footerNote = document.createElement('p');
+    footerNote.className   = 'battle-footer-note';
+    footerNote.textContent = currentLang === 'fr'
+      ? "C'est pas fini tant que c'est pas fini."
+      : "It ain't over till it's over.";
+    battleList.appendChild(footerNote);
 
     // Disabled submit (greyed out per design)
     const submitBtn = document.createElement('button');
