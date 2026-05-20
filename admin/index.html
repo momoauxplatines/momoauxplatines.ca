@@ -324,9 +324,11 @@
     .event-tab { height: 48px; padding: 0 20px; border-radius: 40px; border: 1px solid var(--brand-90); background: var(--brand-100); color: var(--brand-70); font-size: 18px; font-weight: 300; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
     .event-tab.active { border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
     .event-tab:not(.active):hover { color: var(--brand-50); border-color: var(--brand-80); }
-    .event-detail-body { flex: 1; overflow-y: auto; }
+    .event-detail-body { flex: 1; overflow-y: auto; padding-top: 32px; }
     .event-pane { display: none; }
     .event-pane.active { display: block; }
+    .event-pane .req-list { padding-top: 0; }
+    .event-pane .battle-form { padding: 0; }
     .event-form { max-width: 770px; margin: 0 auto; padding: 0 24px 160px; display: flex; flex-direction: column; gap: 16px; }
     .event-footer { flex-shrink: 0; padding: 16px 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
     .event-footer-inner { max-width: 770px; margin: 0 auto; }
@@ -366,7 +368,7 @@
   <!-- Fixed header -->
   <header class="admin-header">
     <div class="header-left">
-      <div class="header-favicon"><img src="../images/og-image.png" alt="Momo"></div>
+      <div class="header-favicon"><img id="event-logo-img" src="../images/og-image.png" alt="Momo"></div>
       <span class="header-title">Admin</span>
     </div>
     <div class="lang-tabs">
@@ -536,7 +538,7 @@
       <span data-i18n="btn.back">Back</span>
     </button>
     <div class="event-logo">
-      <img src="../images/og-image.png" alt="Momo">
+      <img id="event-logo-img" src="../images/og-image.png" alt="Momo">
     </div>
   </header>
 
@@ -3267,6 +3269,7 @@
   let evPendingAvatarUrl    = null;
   let evPendingAvatarUser   = null;
 
+  function updateEventLogo(s){var l=document.getElementById('event-logo-img');if(l)l.src=s||'../images/og-image.png';}
   function openEventDetail(idx) {
     currentEventDetailIdx = idx;
     const ev = currentEvents[idx];
@@ -3296,14 +3299,14 @@
       const src = ev.image.startsWith('/api/') ? ev.image : '../' + ev.image.replace(/^\//, '');
       preview.src = src;
       preview.style.display = '';
-      status.textContent = 'Current photo';
+      status.textContent = 'Current photo';updateEventLogo(src);
     } else if (ev.instagram) {
       const u = extractIgUsername(ev.instagram);
       if (u) {
         const src = `https://unavatar.io/instagram/${u}`;
         preview.src = src;
         preview.style.display = '';
-        status.textContent = 'From Instagram';
+        status.textContent = 'From Instagram';updateEventLogo(src);
         evPendingAvatarUrl  = src;
         evPendingAvatarUser = u;
       } else {
@@ -3370,8 +3373,7 @@
   function evFillSupportTabs(ev) {
     const isLive = ev && isEventLive(ev);
     // Playing
-    document.getElementById('ev-playing-pane').innerHTML =
-      `<p class="empty-state">${t('playing.empty')}</p><p class="empty-state" style="margin-top:8px;">${t('playing.empty.hint')}</p>`;
+    document.getElementById('ev-playing-pane').innerHTML = `<div style="display:flex;flex-direction:column;gap:12px;padding-top:8px;"><p style="font-size:16px;font-weight:300;color:var(--brand-50);line-height:22px;margin:0;">${t('playing.empty')}</p><p style="font-size:14px;font-weight:300;color:var(--brand-70);line-height:20px;margin:0;">${t('playing.empty.hint')}</p></div>`;
     // Battle — depends on whether event is live
     document.getElementById('ev-battle-pane').innerHTML = isLive
       ? `<div class="battle-form">
@@ -3458,7 +3460,7 @@
     const status  = document.getElementById('ev-img-status');
     preview.src = URL.createObjectURL(file);
     preview.style.display = '';
-    status.textContent = 'Custom photo · will be saved on save';
+    status.textContent = 'Custom photo · will be saved on save';updateEventLogo(preview.src);
   });
 
   // Revert to Instagram
