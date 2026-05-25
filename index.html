@@ -129,38 +129,13 @@
       width: 330px; height: 331px; position: relative;
       flex-shrink: 0; z-index: 1;
       pointer-events: auto; touch-action: none;
-      cursor: grab; user-select: none; -webkit-user-select: none;
-    }
-    .stamp-container:active { cursor: grabbing; }
-
-    @keyframes spin-cw-mobile {
-      from { transform: translate(-50%,-50%) scale(0.4893) rotate(0deg); }
-      to   { transform: translate(-50%,-50%) scale(0.4893) rotate(360deg); }
-    }
-    @keyframes spin-cw-tablet {
-      from { transform: translate(-50%,-50%) scale(0.7865) rotate(0deg); }
-      to   { transform: translate(-50%,-50%) scale(0.7865) rotate(360deg); }
+      cursor: default; user-select: none; -webkit-user-select: none;
     }
 
-    .stamp-component {
-      position: absolute; width: 437.48px; height: 437.479px;
-      top: 50%; left: 50%;
-      animation: spin-cw-mobile 60s linear infinite;
+    .stamp-logo {
+      width: 100%; height: 100%;
+      object-fit: contain; border-radius: 16px; display: block;
     }
-    .stamp-base { position: absolute; width: 100%; height: 100%; }
-    .stamp-letters { display: contents; }
-    .stamp-bottom-wrap {
-      position: absolute; top: 43.33%; right: 17.59%; bottom: 19.42%; left: 27.05%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .stamp-top-wrap {
-      position: absolute; top: 18.09%; right: 23.92%; bottom: 44.31%; left: 20.62%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .stamp-text { flex-shrink: 0; width: 221.466px; height: 109.343px; position: relative; }
-    .stamp-text img { position: absolute; width: 100%; height: 100%; }
-    .stamp-text--bottom { transform: rotate(-15deg); }
-    .stamp-text--top    { transform: rotate(-15.49deg); }
 
     /* ─── Horizontal Scroll Row ─── */
     .scroll-row {
@@ -228,7 +203,7 @@
     .ev-venue-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 28px; line-height: 31px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-00); text-transform: uppercase;
     }
     .ev-address {
       font-size: 16px; font-weight: 300; line-height: 20px;
@@ -277,7 +252,7 @@
     .next-events-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 44px; line-height: 48px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-00); text-transform: uppercase;
       width: 100%;
     }
     .next-events-list {
@@ -298,7 +273,7 @@
     .section-heading {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 48px; line-height: 48px;
-      color: var(--brand-30); text-transform: uppercase;
+      color: var(--brand-00); text-transform: uppercase;
     }
 
     /* ─── Intro ─── */
@@ -447,8 +422,7 @@
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px;
     }
-    .footer-stamp { width: 80px; height: 80px; position: relative; overflow: hidden; flex-shrink: 0; }
-    .footer-stamp .stamp-component { animation: none; transform: translate(-50%, -50%) scale(0.1829); }
+    .footer-stamp { width: 40px; height: 40px; flex-shrink: 0; }
     .footer-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 34px;
@@ -579,7 +553,6 @@
       .page-content { padding: 0 56px 0; }
       .stamp-section { margin-left: -56px; margin-right: -56px; }
       .stamp-container { width: 360px; height: 361px; }
-      .stamp-component { animation: spin-cw-tablet 60s linear infinite; }
 
       .scroll-row  { margin: 0 -56px; padding: 0 56px; }
       .site-footer { margin: 0 -56px 0; padding: 80px 56px; }
@@ -647,21 +620,7 @@
     <div class="stamp-section">
       <div class="stamp-gradient"></div>
       <div class="stamp-container">
-        <div class="stamp-component">
-          <img class="stamp-base" src="images/stamp-base.svg" alt="">
-          <div class="stamp-letters">
-            <div class="stamp-bottom-wrap">
-              <div class="stamp-text stamp-text--bottom">
-                <img src="images/stamp-bottom.svg" alt="">
-              </div>
-            </div>
-            <div class="stamp-top-wrap">
-              <div class="stamp-text stamp-text--top">
-                <img src="images/stamp-top.svg" alt="">
-              </div>
-            </div>
-          </div>
-        </div>
+        <img class="stamp-logo" src="images/logo.box.jpg" alt="Momo Aux Platines">
       </div>
     </div>
 
@@ -1119,13 +1078,7 @@
     ══════════════════════════════════════════════ -->
     <footer class="site-footer">
       <div class="footer-stamp">
-        <div class="stamp-component">
-          <img class="stamp-base" src="images/stamp-base.svg" alt="">
-          <span class="stamp-letters">
-            <div class="stamp-bottom-wrap"><div class="stamp-text stamp-text--bottom"><img src="images/stamp-bottom.svg" alt=""></div></div>
-            <div class="stamp-top-wrap"><div class="stamp-text stamp-text--top"><img src="images/stamp-top.svg" alt=""></div></div>
-          </span>
-        </div>
+        <img class="stamp-logo" src="images/logo.box.jpg" alt="Momo Aux Platines">
       </div>
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
@@ -1751,22 +1704,17 @@
   }
 
   // ─────────────────────────────────────────────
-  // Stamp drag-to-rotate interaction
-  // Drag down → clockwise + scratch-forth sound
-  // Drag up   → counter-clockwise + scratch-back sound
+  // Stamp scroll-to-scratch interaction
+  // Scroll/swipe down over logo → scratch-forth sound
+  // Scroll/swipe up over logo   → scratch-back sound
+  // Logo is static — no rotation, sounds only.
   // ─────────────────────────────────────────────
   (function () {
     const container = document.querySelector('.stamp-section .stamp-container');
-    const stamp     = document.querySelector('.stamp-section .stamp-component');
-    if (!container || !stamp) return;
+    if (!container) return;
 
-    const PX_PER_DEG = 0.7; // sensitivity
-
-    let dragging      = false;
-    let startY        = 0;
-    let baseAngle     = 0;
-    let lastY         = 0;
     let lastDirection = 0; // 1 = down, -1 = up
+    let scrollTimeout = null;
 
     // ── Audio (Web Audio API — mobile-compatible lazy init) ──
     // Pre-fetch raw ArrayBuffers eagerly so decoding is instant on first touch,
@@ -1789,7 +1737,7 @@
       } catch (_) {}
     })();
 
-    // Must be called synchronously inside touchstart/mousedown so the AudioContext
+    // Must be called synchronously inside a user-gesture handler so the AudioContext
     // is created within a user-gesture context — the only way iOS/Android allow audio.
     function primeAudio() {
       if (audioReady || audioPriming) return;
@@ -1827,74 +1775,48 @@
       activeSource = null;
     }
 
-    function getCurrentAngle() {
-      const m = new DOMMatrix(window.getComputedStyle(stamp).transform);
-      const a = Math.atan2(m.b, m.a) * (180 / Math.PI);
-      return ((a % 360) + 360) % 360;
-    }
-
-    function getScale() {
-      return window.matchMedia('(min-width: 640px)').matches ? 0.7865 : 0.4893;
-    }
-
-    function setAngle(angle) {
-      stamp.style.transform = `translate(-50%,-50%) scale(${getScale()}) rotate(${angle}deg)`;
-    }
-
-    function startDrag(y) {
-      primeAudio(); // must run synchronously inside touchstart to unlock audio on mobile
-      baseAngle     = getCurrentAngle();
-      stamp.style.animation = 'none';
-      setAngle(baseAngle);
-      dragging      = true;
-      startY        = y;
-      lastY         = y;
-      lastDirection = 0;
-    }
-
-    function moveDrag(y) {
-      if (!dragging) return;
-      setAngle(baseAngle + (y - startY) * PX_PER_DEG);
-
-      const delta = y - lastY;
-      if (delta !== 0) {
-        const dir = delta > 0 ? 1 : -1;
-        if (dir !== lastDirection) {
-          lastDirection = dir;
-          playSound(dir > 0 ? 'forth' : 'back');
-        }
+    // Called on each scroll tick — plays sound on direction change,
+    // stops sound after a short idle.
+    function onScroll(dir) {
+      if (dir !== lastDirection) {
+        lastDirection = dir;
+        playSound(dir > 0 ? 'forth' : 'back');
       }
-      lastY = y;
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        stopSound();
+        lastDirection = 0;
+      }, 150);
     }
 
-    function endDrag(y) {
-      if (!dragging) return;
-      dragging = false;
-      stopSound();
-      const finalAngle = ((baseAngle + (y - startY) * PX_PER_DEG) % 360 + 360) % 360;
-      // Resume auto-spin from the current angle
-      const animName = window.matchMedia('(min-width: 640px)').matches
-        ? 'spin-cw-tablet' : 'spin-cw-mobile';
-      const delay = -(finalAngle / 360 * 60);
-      stamp.style.transform  = '';
-      stamp.style.animation  = `${animName} 60s ${delay}s linear infinite`;
-    }
+    // ── Desktop: wheel event on the container ──
+    container.addEventListener('wheel', e => {
+      e.preventDefault(); // prevent page scroll while over the logo
+      primeAudio();
+      onScroll(e.deltaY > 0 ? 1 : -1);
+    }, { passive: false });
 
-    // Mouse
-    container.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientY); });
-    window.addEventListener('mousemove',    e => { moveDrag(e.clientY); });
-    window.addEventListener('mouseup',      e => { endDrag(e.clientY); });
+    // ── Mobile: touch swipe on the container ──
+    let lastTouchY = 0;
 
-    // Touch
     container.addEventListener('touchstart', e => {
-      e.preventDefault();
-      startDrag(e.touches[0].clientY);
+      primeAudio(); // must be synchronous inside touchstart to unlock audio
+      lastTouchY    = e.touches[0].clientY;
+      lastDirection = 0;
     }, { passive: false });
-    window.addEventListener('touchmove', e => {
-      if (dragging) { e.preventDefault(); moveDrag(e.touches[0].clientY); }
+
+    container.addEventListener('touchmove', e => {
+      e.preventDefault(); // prevent page scroll while swiping the logo
+      const y     = e.touches[0].clientY;
+      const delta = y - lastTouchY;
+      if (delta !== 0) onScroll(delta > 0 ? 1 : -1);
+      lastTouchY = y;
     }, { passive: false });
-    window.addEventListener('touchend', e => {
-      if (dragging) endDrag(e.changedTouches[0].clientY);
+
+    container.addEventListener('touchend', () => {
+      stopSound();
+      lastDirection = 0;
+      clearTimeout(scrollTimeout);
     });
   })();
 
