@@ -9,7 +9,6 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 | Page Figma | Contenu |
 |------------|---------|
 | Cover | Couverture du fichier |
-| Proto | Liens de prototypage (navigation entre screens) |
 | _DJ | Portfolio DJ principal (toutes les screens) |
 | _Event | Screens et cards d'événement (live & next) |
 | _School | Section École |
@@ -274,15 +273,15 @@ Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field
 
 ### Card / Web / Song — Battle
 
-Composante Figma : `battle.song` · Page `_System`
+Composante Figma : `song.battle` · Page `_System`
 
-| Variante | Description |
-|----------|-------------|
-| Song | Battle – Default |
-| Song | Battle – Selected |
-| Song | Battle – Unselected |
-| Song | Battle – Result Lead |
-| Song | Battle – Result Not-Leading |
+| Type | State |
+|------|-------|
+| Type=Choice | Default |
+| Type=Choice | Selected |
+| Type=Choice | Not Selected |
+| Type=Result | Leading |
+| Type=Result | Contender |
 
 - Mêmes specs visuelles que Card / Web / Song (64×64px art, `Brand/95` bg, border-radius `16px`)
 - Usage: mode Battle — les visiteurs votent pour un morceau contre un autre
@@ -318,6 +317,7 @@ Composante Figma : `Header` · Page `_System`
 | All | Main | Yes |
 | Mobile | Requests | Yes |
 | Mobile | Admin | No |
+| Desktop | Admin | No |
 | Mobile | Event | No |
 | Mobile | Event 2 | No |
 | All | Form | — |
@@ -370,7 +370,7 @@ Composante Figma : `Switch` · Page `_System`
 
 ## Request Icon
 
-Composante Figma : `Request Icon` · Page `_System`
+Composante Figma : `icon.requests` · Page `_System`
 
 | Variante | Usage |
 |----------|-------|
@@ -401,8 +401,13 @@ Composantes Figma : `icon.radio`, `icon.caret`, `icon.check` · Page `_System`
 
 Usage: navigation, accordéons, sélecteurs ouverts/fermés.
 
-### icon.check
-- 80×80px · Checkmark de confirmation (usage : overlay de confirmation, état `input.field.selector.radio.filled`)
+### icon.messages
+Composante Figma : `icon.messages` · Page `_System`
+
+| Variante | Description |
+|----------|-------------|
+| Property 1=icon.check | 80×80px · Checkmark de confirmation (overlay de confirmation, état `input.field.selector.radio.filled`) |
+| Property 1=icon.error | 80×80px · Icône d'erreur (overlay d'échec) |
 
 ---
 
@@ -598,6 +603,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-19 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-05-24 — tokens ✓ · pages ✓ · composantes ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
