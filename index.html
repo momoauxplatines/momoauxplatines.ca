@@ -116,25 +116,15 @@
       margin-left: -32px; margin-right: -32px;
       touch-action: pan-y;
     }
-    .stamp-gradient {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-      width: 100vw; height: 100%; min-height: 100svh;
-      background: radial-gradient(ellipse at 50% 50%,
-        rgba(202,211,193,0.25) 0%, rgba(156,163,149,0.22) 22.5%,
-        rgba(110,115,105,0.15) 45%, rgba(86,90,82,0.08) 56%,
-        rgba(63,66,60,0.04) 67%, rgba(40,42,38,0.01) 79%, rgba(17,18,16,0) 90%);
-      pointer-events: none; z-index: 0;
-    }
     .stamp-container {
-      width: 330px; height: 331px; position: relative;
+      /* Mobile: 326×160px — matches logo-momoauxplatines-pen.svg aspect ratio */
+      width: 326px; height: 160px;
       flex-shrink: 0; z-index: 1;
       pointer-events: auto; touch-action: none;
       cursor: default; user-select: none; -webkit-user-select: none;
     }
-
     .stamp-logo {
-      width: 100%; height: 100%;
-      object-fit: contain; display: block;
+      width: 100%; height: auto; display: block;
     }
 
     /* ─── Horizontal Scroll Row ─── */
@@ -552,7 +542,7 @@
 
       .page-content { padding: 0 56px 0; }
       .stamp-section { margin-left: -56px; margin-right: -56px; }
-      .stamp-container { width: 360px; height: 361px; }
+      .stamp-container { width: 489px; height: 240px; }
 
       .scroll-row  { margin: 0 -56px; padding: 0 56px; }
       .site-footer { margin: 0 -56px 0; padding: 80px 56px; }
@@ -595,6 +585,7 @@
     @media (min-width: 1100px) {
       .page { max-width: 1440px; }
       .site-header { max-width: 1440px; }
+      .stamp-container { width: 540px; height: 265px; }
     }
   </style>
 </head>
@@ -618,9 +609,8 @@
          HERO / STAMP
     ══════════════════════════════════════════════ -->
     <div class="stamp-section">
-      <div class="stamp-gradient"></div>
       <div class="stamp-container">
-        <img class="stamp-logo" src="images/logo.box.png" alt="Momo Aux Platines">
+        <img class="stamp-logo" src="images/logo-momoauxplatines-pen.svg" alt="Momo Aux Platines">
       </div>
     </div>
 
@@ -1078,7 +1068,7 @@
     ══════════════════════════════════════════════ -->
     <footer class="site-footer">
       <div class="footer-stamp">
-        <img class="stamp-logo" src="images/logo.box.png" alt="Momo Aux Platines">
+        <img class="stamp-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
       </div>
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">

@@ -59,7 +59,7 @@
     /* ── Sticky top (header + tabs) ── */
     .sticky-top {
       position: sticky; top: 0; z-index: 50;
-      background: var(--brand-100);
+      background: var(--bg);
       display: flex; flex-direction: column;
     }
 
@@ -430,7 +430,7 @@
       transition: border-color 0.15s, background 0.15s;
     }
     .battle-choice-card.selected   { border-color: var(--green); }
-    .battle-choice-card.unselected { background: var(--brand-100); border-color: #20221f; }
+    .battle-choice-card.unselected { background: var(--bg); border-color: #20221f; }
     .battle-choice-card.static     { cursor: default; }
     /* Top row: artwork + info + optional checkmark */
     .battle-card-top {
@@ -501,7 +501,7 @@
     }
     .battle-status-label.ended { color: #d34242; }
     .battle-ended-msg {
-      background: var(--brand-100); border: 1px solid var(--brand-90);
+      background: var(--bg); border: 1px solid var(--brand-90);
       border-radius: 16px; padding: 20px;
       font-size: 16px; font-weight: 300; line-height: 22px;
       color: var(--brand-50); text-align: center;
@@ -517,7 +517,7 @@
   <div class="sticky-top">
 
     <header class="req-header">
-      <a href="/"><img class="header-logo" src="images/logo.box.jpg" alt="Momo Aux Platines"></a>
+      <a href="/"><img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines"></a>
       <!-- Event image — populated dynamically from event data -->
       <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
     </header>
