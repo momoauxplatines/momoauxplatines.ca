@@ -1790,10 +1790,10 @@
     let lastTouchY = 0;
 
     container.addEventListener('touchstart', e => {
-      primeAudio(); // must be synchronous inside touchstart to unlock audio
+      primeAudio(); // passive:true still runs synchronously — safe for AudioContext unlock
       lastTouchY    = e.touches[0].clientY;
       lastDirection = 0;
-    }, { passive: false });
+    }, { passive: true });
 
     container.addEventListener('touchmove', e => {
       const y     = e.touches[0].clientY;
