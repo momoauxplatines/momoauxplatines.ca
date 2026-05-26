@@ -120,7 +120,7 @@
       /* Mobile: 326×160px — matches logo-momoauxplatines-pen.svg aspect ratio */
       width: 326px; height: 160px;
       flex-shrink: 0; z-index: 1;
-      pointer-events: auto; touch-action: none;
+      pointer-events: auto; touch-action: pan-y;
       cursor: default; user-select: none; -webkit-user-select: none;
     }
     .stamp-logo {
@@ -412,7 +412,7 @@
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px;
     }
-    .footer-stamp { width: 40px; height: 40px; flex-shrink: 0; }
+    .footer-stamp { width: 160px; height: auto; flex-shrink: 0; }
     .footer-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 34px;
@@ -1068,7 +1068,7 @@
     ══════════════════════════════════════════════ -->
     <footer class="site-footer">
       <div class="footer-stamp">
-        <img class="stamp-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
+        <img class="stamp-logo" src="images/logo-momoauxplatines-pen.svg" alt="Momo Aux Platines">
       </div>
       <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
@@ -1796,12 +1796,11 @@
     }, { passive: false });
 
     container.addEventListener('touchmove', e => {
-      e.preventDefault(); // prevent page scroll while swiping the logo
       const y     = e.touches[0].clientY;
       const delta = y - lastTouchY;
       if (delta !== 0) onScroll(delta > 0 ? 1 : -1);
       lastTouchY = y;
-    }, { passive: false });
+    }, { passive: true });
 
     container.addEventListener('touchend', () => {
       stopSound();
