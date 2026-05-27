@@ -120,11 +120,11 @@
       /* Mobile: 326×160px — matches logo-momoauxplatines-pen.svg aspect ratio */
       width: 326px; height: 160px;
       flex-shrink: 0; z-index: 1;
-      pointer-events: auto; touch-action: pan-y;
-      cursor: default; user-select: none; -webkit-user-select: none;
+      pointer-events: none;
     }
     .stamp-logo {
       width: 100%; height: auto; display: block;
+      pointer-events: none;
     }
 
     /* ─── Horizontal Scroll Row ─── */
@@ -1070,7 +1070,6 @@
       <div class="footer-stamp">
         <img class="stamp-logo" src="images/logo-momoauxplatines-pen.svg" alt="Momo Aux Platines">
       </div>
-      <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
         <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
         <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
