@@ -1778,10 +1778,9 @@
 
     // ── Desktop: wheel event on the container ──
     container.addEventListener('wheel', e => {
-      e.preventDefault(); // prevent page scroll while over the logo
       primeAudio();
       onScroll(e.deltaY > 0 ? 1 : -1);
-    }, { passive: false });
+    }, { passive: true });
 
     // ── Mobile: touch swipe on the container ──
     let lastTouchY = 0;
