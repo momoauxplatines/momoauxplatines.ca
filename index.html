@@ -120,12 +120,10 @@
       /* Mobile: 326×160px — matches logo-momoauxplatines-pen.svg aspect ratio */
       width: 326px; height: 160px;
       flex-shrink: 0; z-index: 1;
-      pointer-events: none;
+      pointer-events: auto; touch-action: pan-y;
+      cursor: default; user-select: none; -webkit-user-select: none;
     }
-    .stamp-logo {
-      width: 100%; height: auto; display: block;
-      pointer-events: none;
-    }
+    .stamp-logo { width: 100%; height: auto; display: block; }
 
     /* ─── Horizontal Scroll Row ─── */
     .scroll-row {
