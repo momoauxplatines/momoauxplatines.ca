@@ -309,9 +309,11 @@
       border: 1px solid var(--brand-100);
     }
     .now-playing-info {
-      flex: 1; display: flex; flex-direction: row;
-      align-items: center; gap: 8px;
-      min-width: 0; overflow: hidden;
+      flex: 1; overflow: hidden; min-width: 0;
+    }
+    .now-playing-info-inner {
+      display: inline-flex; align-items: center; gap: 8px;
+      white-space: nowrap;
     }
     .now-playing-triangle { flex-shrink: 0; display: block; }
     .now-playing-title {
@@ -324,9 +326,17 @@
     }
     .now-playing-artist {
       font-weight: 300; font-size: 16px; line-height: 20px;
-      color: var(--brand-30);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      min-width: 0;
+      color: var(--brand-30); white-space: nowrap; flex-shrink: 0;
+    }
+    @keyframes np-scroll {
+      0%   { transform: translateX(0); }
+      12%  { transform: translateX(0); }
+      72%  { transform: translateX(var(--np-dx, 0px)); }
+      88%  { transform: translateX(var(--np-dx, 0px)); }
+      100% { transform: translateX(0); }
+    }
+    .now-playing-info-inner.np-scrolling {
+      animation: np-scroll var(--np-dur, 6s) ease-in-out 1;
     }
     .now-playing-request-col {
       flex-shrink: 0; padding: 0 8px;
@@ -690,12 +700,14 @@
       <img class="now-playing-art" id="now-playing-art" src="" alt=""
            onerror="this.style.background='var(--brand-90)'">
       <div class="now-playing-info">
-        <svg class="now-playing-triangle" width="12" height="14" viewBox="0 0 8 10" fill="none">
-          <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
-        </svg>
-        <p class="now-playing-title"  id="now-playing-title"></p>
-        <span class="now-playing-sep"> - </span>
-        <p class="now-playing-artist" id="now-playing-artist"></p>
+        <div class="now-playing-info-inner" id="now-playing-info-inner">
+          <svg class="now-playing-triangle" width="12" height="14" viewBox="0 0 8 10" fill="none">
+            <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
+          </svg>
+          <p class="now-playing-title"  id="now-playing-title"></p>
+          <span class="now-playing-sep"> - </span>
+          <p class="now-playing-artist" id="now-playing-artist"></p>
+        </div>
       </div>
       <div class="now-playing-request-col" id="now-playing-request-col">
         <img class="now-playing-request-icon" src="images/request-sent-icon.svg" alt="">
@@ -886,6 +898,7 @@
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
           startNowPlayingRealtime(ev.date);
+          initMarquee();
           // Fetch requests for the now-playing request-icon matching
           fetchRequests();
           setInterval(() => { if (!document.hidden) fetchRequests(); }, 10_000);
@@ -1327,6 +1340,8 @@
       const match = findMatchingRequest(resolvedTitle, resolvedArtist);
       npReqCol.classList.toggle('visible', !!match);
     }
+    // Re-check marquee after new content lands (rAF ensures layout is updated)
+    requestAnimationFrame(triggerMarquee);
   }
 
   // ─────────────────────────────────────────────
@@ -1434,6 +1449,33 @@
       artist:     track.artist?.name || artist,
       title:      track.title        || title
     };
+  }
+
+  // ─────────────────────────────────────────────
+  // Now-playing title marquee scroll
+  // ─────────────────────────────────────────────
+  let _marqueeTimer = null;
+
+  function triggerMarquee() {
+    const inner     = document.getElementById('now-playing-info-inner');
+    const container = inner?.parentElement;
+    if (!inner || !container) return;
+    const overflow = inner.scrollWidth - container.clientWidth;
+    if (overflow <= 4) return; // fits, nothing to do
+    const scrollSecs = Math.max(2, overflow / 60);
+    const totalSecs  = scrollSecs + 2.5;
+    inner.style.setProperty('--np-dx',  `-${overflow}px`);
+    inner.style.setProperty('--np-dur', `${totalSecs.toFixed(2)}s`);
+    inner.classList.remove('np-scrolling');
+    void inner.offsetWidth; // force reflow to restart animation
+    inner.classList.add('np-scrolling');
+    inner.addEventListener('animationend', () => inner.classList.remove('np-scrolling'), { once: true });
+  }
+
+  function initMarquee() {
+    if (_marqueeTimer) clearInterval(_marqueeTimer);
+    setTimeout(triggerMarquee, 1200); // first trigger after content loads
+    _marqueeTimer = setInterval(triggerMarquee, 25_000);
   }
 
   // ─────────────────────────────────────────────
