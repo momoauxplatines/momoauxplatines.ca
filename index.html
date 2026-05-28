@@ -123,9 +123,7 @@
       pointer-events: auto; touch-action: pan-y;
       cursor: default; user-select: none; -webkit-user-select: none;
     }
-    .stamp-logo {
-      width: 100%; height: auto; display: block;
-    }
+    .stamp-logo { width: 100%; height: auto; display: block; }
 
     /* ─── Horizontal Scroll Row ─── */
     .scroll-row {
@@ -1070,7 +1068,6 @@
       <div class="footer-stamp">
         <img class="stamp-logo" src="images/logo-momoauxplatines-pen.svg" alt="Momo Aux Platines">
       </div>
-      <p class="footer-name">Momo aux platines</p>
       <div class="footer-links">
         <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
         <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
@@ -1781,10 +1778,9 @@
 
     // ── Desktop: wheel event on the container ──
     container.addEventListener('wheel', e => {
-      e.preventDefault(); // prevent page scroll while over the logo
       primeAudio();
       onScroll(e.deltaY > 0 ? 1 : -1);
-    }, { passive: false });
+    }, { passive: true });
 
     // ── Mobile: touch swipe on the container ──
     let lastTouchY = 0;

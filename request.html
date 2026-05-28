@@ -90,19 +90,18 @@
 
     .tab-btn {
       flex-shrink: 0;
-      height: 40px;
-      border: 2px solid transparent;
-      border-radius: 99px;
-      background: none;
+      height: 48px;
+      border: 1px solid var(--brand-90);
+      border-radius: 32px;
+      background: var(--brand-100);
       cursor: pointer;
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-      font-weight: 900; font-size: 18px; line-height: 26px;
-      text-transform: uppercase;
-      padding: 0 16px;
-      transition: color 0.15s, border-color 0.15s;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300; font-size: 20px; line-height: 1;
+      padding: 0 20px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s, border-radius 0.15s;
     }
-    .tab-btn.active   { color: var(--brand-00); border-color: var(--brand-00); }
-    .tab-btn.inactive { color: var(--brand-70); border-color: transparent; }
+    .tab-btn.active   { color: var(--brand-00); background: var(--bg); border-color: var(--brand-80); border-radius: 40px; }
+    .tab-btn.inactive { color: var(--brand-70); }
 
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
@@ -524,11 +523,11 @@
 
     <!-- 4 Tabs — always visible -->
     <div class="tabs-row" id="tabs-row">
-      <button class="tab-btn active"   id="tab-info"     data-key="tab.info"     data-en="INFO"     data-fr="INFO">INFO</button>
-      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="BATTLE"   data-fr="BATTLE">BATTLE</button>
-      <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="PLAYED"   data-fr="JOUÉES">PLAYED</button>
-      <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="REQUESTS" data-fr="DEMANDES">REQUESTS</button>
-      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="MESSAGES" data-fr="MESSAGES">MESSAGES</button>
+      <button class="tab-btn active"   id="tab-info"     data-key="tab.info"     data-en="Info"     data-fr="Info">Info</button>
+      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle">Battle</button>
+      <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="Played"   data-fr="Jouées">Played</button>
+      <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="Req"      data-fr="Demandes">Req</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Messages" data-fr="Messages">Messages</button>
     </div>
 
   </div><!-- /sticky-top -->
