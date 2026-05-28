@@ -91,17 +91,19 @@
     .tab-btn {
       flex-shrink: 0;
       height: 48px;
-      border: 1px solid var(--brand-90);
-      border-radius: 32px;
-      background: var(--brand-100);
+      border: 1px solid transparent;
+      border-radius: 100px;
+      background: none;
       cursor: pointer;
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 300; font-size: 20px; line-height: 1;
       padding: 0 20px;
-      transition: color 0.15s, border-color 0.15s, background 0.15s, border-radius 0.15s;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .tab-btn.active   { color: var(--brand-00); background: var(--bg); border-color: var(--brand-80); border-radius: 40px; }
-    .tab-btn.inactive { color: var(--brand-70); }
+    .tab-btn.active            { color: var(--brand-00); border-color: var(--brand-00); }
+    .tab-btn.inactive          { color: var(--brand-70); border-color: transparent; }
+    .tab-btn.inactive:hover    { color: var(--brand-00); border-color: var(--brand-00); }
 
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
