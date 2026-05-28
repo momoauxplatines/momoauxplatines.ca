@@ -183,7 +183,7 @@
       color: var(--brand-30); text-decoration: none; display: block;
     }
     .info-address:hover { color: var(--brand-00); }
-    .info-hours {
+    .info-date, .info-hours {
       font-size: 20px; font-weight: 300; line-height: 26px;
       color: var(--brand-30);
     }
@@ -192,7 +192,7 @@
     }
     .info-link-btn {
       display: inline-flex; align-items: center; justify-content: center;
-      height: 56px; padding: 0 24px; border-radius: 8px;
+      height: 56px; padding: 0 16px; border-radius: 8px;
       background: var(--brand-90);
       color: var(--brand-00);
       font-family: 'Kanit', sans-serif;
@@ -563,6 +563,7 @@
       <div class="info-copy">
         <h1 class="info-venue-name" id="info-venue-name"></h1>
         <a class="info-address" id="info-address" href="" target="_blank" rel="noopener" style="display:none"></a>
+        <p class="info-date"  id="info-date"  style="display:none"></p>
         <p class="info-hours" id="info-hours" style="display:none"></p>
       </div>
       <div class="info-links" id="info-links">
@@ -847,12 +848,18 @@
         addr.style.display = 'none';
       }
     }
-    // Date + Hours combined
+    // Date — only for upcoming events
+    const dateEl  = document.getElementById('info-date');
     const hoursEl = document.getElementById('info-hours');
+    const isFuture = !checkEventLive(ev) && !checkEventPast(ev);
+    if (dateEl) {
+      if (isFuture && ev.date) { dateEl.textContent = ev.date; dateEl.style.display = ''; }
+      else dateEl.style.display = 'none';
+    }
+    // Hours — always shown if available
     if (hoursEl) {
       const timeStr = [ev.start_time, ev.end_time].filter(Boolean).join(' – ');
-      const parts   = [ev.date, timeStr].filter(Boolean);
-      if (parts.length) { hoursEl.textContent = parts.join('  '); hoursEl.style.display = ''; }
+      if (timeStr) { hoursEl.textContent = timeStr; hoursEl.style.display = ''; }
       else hoursEl.style.display = 'none';
     }
 
@@ -899,14 +906,14 @@
           setInterval(() => { if (!document.hidden) fetchRequests(); }, 10_000);
         } else if (checkEventPast(ev)) {
           gigDate = ev.date || null;
-          document.getElementById('event-status-past').style.display = '';
+          // No status badge for past events in public view
           checkForBattle();
           if (!localStorage.getItem(TAB_KEY)) showTab('played');
           else showTab(localStorage.getItem(TAB_KEY));
           pollLivePlaylist();
           fetchRequests();
         } else if (ev.date) {
-          document.getElementById('event-status-next').style.display = '';
+          // No status badge for upcoming events in public view
           // Default: Info tab (already active)
           showTab(localStorage.getItem(TAB_KEY) || 'info');
         }
