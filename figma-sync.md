@@ -23,7 +23,7 @@
 
 ---
 
-## live-event-public — request.html
+## event-public-live — request.html
 
 | Statut  | Node ID  | Screen                                    | Dernière vérification |
 |---------|----------|-------------------------------------------|-----------------------|
