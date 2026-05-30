@@ -69,6 +69,20 @@
       padding: 24px 16px 16px;
     }
     .req-header > a { flex-shrink: 0; }
+    .req-header-live {
+      display: none; align-items: center; gap: 4px;
+    }
+    .req-header-live.visible { display: flex; }
+    .req-live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #D34242; flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .req-live-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 16px; line-height: 24px;
+      color: #D34242; text-transform: uppercase;
+    }
 
     /* Event image thumbnail in header (right side) */
     .header-event-img {
@@ -545,6 +559,10 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines"></a>
+      <div class="req-header-live" id="req-header-live">
+        <div class="req-live-dot"></div>
+        <span class="req-live-label" data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+      </div>
       <!-- Event image — populated dynamically from event data -->
       <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
     </header>
@@ -555,7 +573,7 @@
       <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle">Battle</button>
       <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="Played"   data-fr="Jouées">Played</button>
       <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="Request"  data-fr="Demandes">Request</button>
-      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Messages" data-fr="Messages">Messages</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Message" data-fr="Message">Message</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -636,7 +654,7 @@
       <!-- Song preview card — appears once a valid Spotify URL is detected -->
       <div class="song-card song-preview" id="song-preview">
         <img class="song-art" id="preview-art" src="" alt=""
-             onerror="this.style.background='var(--brand-90)'">
+             onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">
         <div class="preview-content">
           <p class="song-title" id="preview-title"></p>
           <p class="song-artist" id="preview-artist"></p>
@@ -668,12 +686,12 @@
       <div class="msg-textarea-wrap">
         <label class="form-label" for="msg-input"
                data-key="msg.tab.label"
-               data-en="Message"
-               data-fr="Message">Message</label>
+               data-en="Want to send a message to the dj?"
+               data-fr="Tu veux envoyer un message au DJ ?">Want to send a message to the dj?</label>
         <textarea class="msg-textarea" id="msg-input"
-                  data-placeholder-en="Type your message here"
-                  data-placeholder-fr="Écris ton message ici"
-                  placeholder="Type your message here"
+                  data-placeholder-en="Ideally positive and respectful"
+                  data-placeholder-fr="Idéalement positif et respectueux"
+                  placeholder="Ideally positive and respectful"
                   rows="6" maxlength="1000"></textarea>
       </div>
 
@@ -709,7 +727,7 @@
   <div class="now-playing-bar" id="now-playing-bar" style="display:none">
     <div class="now-playing-card">
       <img class="now-playing-art" id="now-playing-art" src="" alt=""
-           onerror="this.style.background='var(--brand-90)'">
+           onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">
       <div class="now-playing-info">
         <div class="now-playing-info-inner" id="now-playing-info-inner">
           <svg class="now-playing-triangle" width="12" height="14" viewBox="0 0 8 10" fill="none">
@@ -913,6 +931,7 @@
 
         if (checkEventLive(ev)) {
           gigDate = ev.date || null;
+          document.getElementById('req-header-live').classList.add('visible');
           document.getElementById('event-status-live').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           // Load live data
@@ -1344,10 +1363,7 @@
     if (trackId) card.dataset.trackId = trackId;
     const dispTitle  = decodeHtml(title);
     const dispArtist = decodeHtml(artist);
-    // No placeholder — if image is unavailable, render nothing; artwork patch inserts <img> later
-    const artHtml = image
-      ? `<img class="song-art" src="${safeHtml(image)}" alt="${safeHtml(dispTitle)}" onerror="this.remove()">`
-      : '';
+    const artHtml = `<img class="song-art" src="${image ? safeHtml(image) : ''}" alt="${safeHtml(dispTitle)}" onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">`;
     card.innerHTML = `
       ${artHtml}
       <div class="song-info">
@@ -1626,7 +1642,7 @@
                           img = document.createElement('img');
                           img.className = 'song-art';
                           img.alt = decodeHtml(info.title);
-                          img.onerror = () => img.remove();
+                          img.onerror = () => { img.onerror = null; img.src = 'images/logo-momoauxplatines-box.svg'; };
                           card.insertBefore(img, card.firstChild);
                         }
                         img.src = info.image;
@@ -1841,7 +1857,7 @@
       card.innerHTML = `
         <div class="battle-card-top">
           <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
-               onerror="this.style.background='var(--brand-90)'">
+               onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">
           <div class="song-info">
             <div class="song-text-group">
               <p class="song-title">${safeHtml(song.title)}</p>
@@ -1925,7 +1941,7 @@
       card.innerHTML = `
         <div class="battle-card-top">
           <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
-               onerror="this.style.background='var(--brand-90)'">
+               onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">
           <div class="song-info">
             <div class="song-text-group">
               <p class="song-title">${safeHtml(song.title)}</p>
@@ -1983,7 +1999,7 @@
       card.innerHTML = `
         <div class="battle-card-top">
           <img class="song-art" src="${safeHtml(song.image)}" alt="${safeHtml(song.title)}"
-               onerror="this.style.background='var(--brand-90)'">
+               onerror="this.onerror=null;this.src='images/logo-momoauxplatines-box.svg'">
           <div class="song-info">
             <div class="song-text-group">
               <p class="song-title">${safeHtml(song.title)}</p>
