@@ -6,15 +6,19 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 
 ## Structure Figma
 
-| Page Figma | Contenu |
-|------------|---------|
-| Cover | Couverture du fichier |
-| _DJ | Portfolio DJ principal (toutes les screens) |
-| _Event | Screens et cards d'événement (live & next) |
-| _School | Section École |
-| _Forms | Formulaires (edit de gig, contact, request) |
-| _Admin | Panel d'administration |
-| _System | Design system — composantes, tokens, couleurs |
+| Page Figma | ID | Contenu |
+|------------|----|---------|
+| `_` | `522:4072` | Couverture du fichier |
+| `home-dj` | `0:1` | Portfolio DJ principal |
+| `event-public-live` | `857:2830` | Event live — vue publique |
+| `event-public-next` | `978:4986` | Event next — vue publique |
+| `admin-dj` | `473:3188` | Panel admin DJ |
+| `admin-school` | `1044:6271` | Panel admin École |
+| `event-admin-next` | `972:5977` | Event next — vue admin |
+| `event-admin-live` | `972:3515` | Event live — vue admin |
+| `home-school` | `51:970` | Portfolio École |
+| `forms` | `653:3319` | Formulaires (booking, contact, request) |
+| `design-system` | `1:2` | Design system — composantes, tokens, couleurs |
 
 ---
 
@@ -76,6 +80,7 @@ Card gap within a section: `16px` (cards), `24px` (admin list items).
 | Event/Black | `#000000` | Live event card bg |
 | Event/Red   | `#d34242` | Live indicator dot & label, delete button |
 | Event/Blue  | `#007aff` | Next event date badge, song request link |
+| Background  | alias → `Event/Black` | `--bg: #000000` — fond des pages et formulaires |
 | Event/Green | `#34c759` | Song played state |
 
 ---
@@ -607,6 +612,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-05-27 — tokens ✓ · pages ✓ · composantes ✓_
+_Dernière sync Figma : 2026-06-03 — tokens ✓ · pages ✓ · composantes ✓ · --bg = Background (alias Event/Black) ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
