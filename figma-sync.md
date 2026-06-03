@@ -50,9 +50,9 @@
 
 | Statut  | Node ID  | Screen                                    | Dernière vérification |
 |---------|----------|-------------------------------------------|-----------------------|
+| `live`  | 1-137    | Home page (full)                          | 2026-06-03            |
 | `live`  | —        | Event cards (live / next / past)          | 2026-06-03            |
 | `live`  | 522-4075 | Hero stamp logo (330px)                   | 2026-06-03            |
-| `live`  | 522-4075 | Footer stamp logo (40px)                  | 2026-06-03            |
 
 ---
 
