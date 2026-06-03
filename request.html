@@ -104,6 +104,23 @@
     }
     .req-header > a { flex-shrink: 0; }
 
+    /* ── Header Live badge ── */
+    .req-header-live {
+      display: none; align-items: center; gap: 6px;
+      background: #000; border-radius: 99px;
+      padding: 4px 14px; height: 36px;
+    }
+    .req-header-live.visible { display: flex; }
+    .req-live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #D34242; flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .req-live-label {
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 16px; line-height: 24px; color: var(--brand-00);
+    }
+
     /* Event image thumbnail in header (right side) */
     .header-event-img {
       width: 40px; height: 40px; border-radius: 8px;
@@ -233,7 +250,7 @@
       color: var(--brand-00);
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
       font-size: 18px; font-weight: 900; line-height: 26px;
-      text-transform: uppercase; text-decoration: none;
+      text-decoration: none;
       transition: background 0.15s;
     }
     .info-link-btn:hover { background: var(--brand-80); }
@@ -405,7 +422,7 @@
     .spotify-input-wrapper {
       display: flex; align-items: center; gap: 12px;
       background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 0; padding: 12px 20px;
+      border-radius: 8px; padding: 12px 20px;
       transition: border-color 0.2s;
     }
     .spotify-input-wrapper:focus-within { border-color: var(--brand-50); }
@@ -564,6 +581,10 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines"></a>
+      <div class="req-header-live" id="req-header-live">
+        <div class="req-live-dot"></div>
+        <span class="req-live-label" data-en="Live" data-fr="En direct">Live</span>
+      </div>
       <!-- Event image — populated dynamically from event data -->
       <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
     </header>
@@ -574,7 +595,7 @@
       <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle">Battle</button>
       <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="Played"   data-fr="Jouées">Played</button>
       <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="Request"  data-fr="Demandes">Request</button>
-      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Messages" data-fr="Messages">Messages</button>
+      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Message" data-fr="Message">Message</button>
     </div>
 
   </div><!-- /sticky-top -->
@@ -639,14 +660,10 @@
                data-en="Spotify share link *"
                data-fr="Lien de partage Spotify *">Spotify share link *</label>
         <div class="spotify-input-wrapper" id="spotify-input-wrapper">
-          <svg class="spotify-input-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
           <input class="form-input" type="url" id="spotify-url"
-                 data-placeholder-en="Copy Spotify app song link"
-                 data-placeholder-fr="Copiez le lien de la chanson Spotify"
-                 placeholder="Copy Spotify app song link"
+                 data-placeholder-en="Copy mobile app link here"
+                 data-placeholder-fr="Copiez le lien de l'app mobile ici"
+                 placeholder="Copy mobile app link here"
                  autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
         <p class="fetch-status" id="fetch-status"></p>
@@ -692,11 +709,11 @@
       <div class="msg-textarea-wrap">
         <label class="form-label" for="msg-input"
                data-key="msg.tab.label"
-               data-en="Message"
-               data-fr="Message">Message</label>
+               data-en="Want to send a message to Momo?"
+               data-fr="Tu veux envoyer un message à Momo ?">Want to send a message to Momo?</label>
         <textarea class="msg-textarea" id="msg-input"
-                  data-placeholder-en="Type your message here"
-                  data-placeholder-fr="Écris ton message ici"
+                  data-placeholder-en="Ideally positive and respectful"
+                  data-placeholder-fr="Idéalement positif et respectueux"
                   placeholder="Type your message here"
                   rows="6" maxlength="1000"></textarea>
       </div>
@@ -926,6 +943,7 @@
 
         if (checkEventLive(ev)) {
           gigDate = ev.date || null;
+          document.getElementById('req-header-live').classList.add('visible');
           document.getElementById('event-status-live').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
           // Load live data
