@@ -142,9 +142,9 @@
     .tab-btn {
       flex-shrink: 0;
       height: 48px;
-      border: 1px solid var(--brand-95);
+      border: none;
       border-radius: 0;
-      background: var(--brand-105);
+      background: var(--bg);
       cursor: pointer;
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 300; font-size: 20px; line-height: 1;
@@ -421,11 +421,11 @@
     }
     .spotify-input-wrapper {
       display: flex; align-items: center; gap: 12px;
-      background: var(--brand-90); border: 1px solid var(--brand-80);
+      background: var(--brand-95); border: 1px solid var(--brand-90);
       border-radius: 8px; padding: 12px 20px;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .spotify-input-wrapper:focus-within { border-color: var(--brand-50); }
+    .spotify-input-wrapper:focus-within { background: var(--brand-100); border-color: var(--brand-80); }
     .spotify-input-wrapper.invalid { border-color: var(--red); }
     .spotify-input-icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--brand-70); }
     .form-input {
@@ -434,7 +434,7 @@
       color: var(--brand-00); outline: none; min-width: 0;
       -webkit-appearance: none;
     }
-    .form-input::placeholder { color: var(--brand-70); }
+    .form-input::placeholder { color: var(--brand-60); }
     .fetch-status {
       font-size: 13px; font-weight: 300;
       color: var(--brand-50); min-height: 16px; margin-top: -8px;
