@@ -18,3 +18,10 @@ videos/
 .claude/
 .agents/
 skills-lock.json
+
+# Node
+node_modules/
+package-lock.json
+
+# Netlify deploy artifacts
+deploy-*.zip
