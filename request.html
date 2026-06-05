@@ -776,7 +776,8 @@
   // ─────────────────────────────────────────────
   const params    = new URLSearchParams(window.location.search);
   let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
-  const EVENT_SLUG = (params.get('event') || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const _pathSlug  = (window.location.pathname.match(/^\/requests\/([^/]+)$/) || [])[1] || '';
+  const EVENT_SLUG = ((params.get('event') || _pathSlug) || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
   const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
   const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
   const COPY = { en: {}, fr: {} };
