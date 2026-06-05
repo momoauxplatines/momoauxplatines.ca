@@ -86,15 +86,15 @@
     /* ─── Page wrapper ─── */
     .page { max-width: 390px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
 
-    /* ─── Fixed Header ─── */
+    /* ─── Header ─── */
     .site-header {
-      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 390px; z-index: 100;
-      display: flex; justify-content: flex-end; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+      width: 100%; background: var(--bg);
+      display: flex; justify-content: space-between; align-items: center;
       padding: 24px; pointer-events: none;
       transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
     }
-    .site-header.header-hidden { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+    .site-header.header-hidden { transform: translateY(-100%); opacity: 0; }
 
     /* Live header pill — left-aligned when live, space-between layout */
     .site-header.has-live { justify-content: space-between; }
@@ -145,7 +145,7 @@
 
     /* ─── Stamp Section ─── */
     .stamp-section {
-      min-height: 100svh; position: relative;
+      min-height: calc(100svh - 88px); position: relative;
       display: flex; align-items: center; justify-content: center;
       margin-left: -32px; margin-right: -32px;
       touch-action: pan-y;
@@ -319,7 +319,7 @@
       font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
       color: var(--brand-00); line-height: 26px; white-space: nowrap; text-transform: uppercase;
     }
-    .bio { font-weight: 300; font-size: 24px; line-height: 32px; color: white; }
+    .bio { font-weight: 300; font-size: 24px; line-height: 32px; color: var(--brand-00); }
     .bio p + p { margin-top: 24px; }
 
     /* Responsive visibility */
@@ -332,9 +332,9 @@
       display: flex; align-items: center; justify-content: center;
       height: 56px; width: 100%; padding: 0 16px;
       background: var(--brand-20); color: var(--brand-100);
-      border: none; border-radius: 0; outline: none;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-weight: 860; font-size: 18px; line-height: 26px;
+      border: none; border-radius: 8px; outline: none;
+      font-family: 'Kanit', sans-serif; font-weight: 900;
+      font-size: 18px; line-height: 26px; text-transform: uppercase;
       text-decoration: none; cursor: pointer;
       transition: background 0.15s;
     }
@@ -353,30 +353,30 @@
     /* ─── Reviews ─── */
     .reviews { display: flex; flex-direction: column; gap: 40px; }
     .review-card {
-      flex-shrink: 0; width: 310px;
-      background: var(--brand-95);
-      border-radius: 16px; padding: 16px;
-      display: flex; flex-direction: column; gap: 16px;
+      flex-shrink: 0; width: 320px;
+      background: var(--brand-105);
+      border-radius: 8px; padding: 16px;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .review-card-header { display: flex; align-items: center; justify-content: space-between; width: 278px; }
-    .review-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .review-card-header { display: flex; align-items: center; justify-content: space-between; height: 80px; width: 100%; }
+    .review-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
-    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-50); text-transform: uppercase; }
-    .review-subtitle { font-weight: 300; font-size: 16px; line-height: 17px; color: var(--brand-50); }
-    .review-text { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-00); width: 278px; flex: 1; }
+    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
+    .review-subtitle { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-50); }
+    .review-text { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-10); width: 278px; flex: 1; }
 
     /* ─── Demos ─── */
     .demos { display: flex; flex-direction: column; gap: 32px; }
 
     /* Video card */
     .video-card {
-      flex-shrink: 0; width: 310px; height: 400px;
-      background: var(--brand-95);
-      border-radius: 16px; display: flex; flex-direction: column;
-      gap: 24px; padding: 16px;
+      flex-shrink: 0; width: 320px; height: 400px;
+      background: var(--brand-105);
+      border-radius: 8px; display: flex; flex-direction: column;
+      gap: 20px; padding: 16px;
     }
-    .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 16px; overflow: hidden; text-decoration: none; }
+    .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 8px; overflow: hidden; text-decoration: none; }
     .video-thumb-wrapper[data-ytid] { cursor: pointer; }
     .video-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
     .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; transition: opacity 0.15s; }
@@ -396,24 +396,22 @@
 
     /* Mobile timeline card (80px thumb, side-by-side header) */
     .timeline-card {
-      flex-shrink: 0; width: 310px;
-      background: var(--brand-95);
-      border-radius: 16px; padding: 16px;
-      display: flex; flex-direction: column; gap: 16px;
+      flex-shrink: 0; width: 320px;
+      background: var(--brand-105);
+      border-radius: 8px; padding: 16px;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .timeline-card-header { display: flex; gap: 16px; align-items: flex-start; width: 278px; }
-    .timeline-thumb { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .timeline-thumb { width: 80px; height: 80px; overflow: hidden; flex-shrink: 0; }
     .timeline-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .timeline-card-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 24px;
+      font-size: 32px; line-height: 34px;
       color: var(--brand-30); text-transform: uppercase;
-      flex: 1; align-self: stretch;
     }
-    .timeline-card-body { display: flex; flex-direction: column; gap: 16px; }
+    .timeline-card-body { display: flex; flex-direction: column; gap: 20px; }
     .timeline-card-copy { display: flex; flex-direction: column; gap: 8px; }
-    .timeline-card-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
-    .timeline-card-dates { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); }
+    .timeline-card-desc  { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
+    .timeline-card-dates { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50); }
 
     /* ─── Timeline Desktop (tablet+) ─── */
     .timeline-all-scroll {
@@ -428,22 +426,22 @@
 
     /* Large timeline card (80px thumb, stacked) */
     .timeline-card-lg {
-      flex-shrink: 0; width: 310px; height: 400px;
-      background: var(--brand-95);
-      border-radius: 16px; padding: 16px;
-      display: flex; flex-direction: column; gap: 16px;
+      flex-shrink: 0; width: 320px; height: 416px;
+      background: var(--brand-105);
+      border-radius: 8px; padding: 16px;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .timeline-thumb-lg { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--brand-100); flex-shrink: 0; }
+    .timeline-thumb-lg { width: 80px; height: 80px; overflow: hidden; flex-shrink: 0; }
     .timeline-thumb-lg img { width: 100%; height: 100%; object-fit: cover; }
     .timeline-card-lg-title {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 32px; line-height: 34px;
       color: var(--brand-30); text-transform: uppercase;
     }
-    .timeline-card-lg-body { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+    .timeline-card-lg-body { display: flex; flex-direction: column; gap: 20px; flex: 1; }
     .timeline-card-lg-copy { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .timeline-card-lg-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
-    .timeline-card-lg-dates { font-weight: 300; font-size: 16px; line-height: 26px; color: var(--brand-50); }
+    .timeline-card-lg-desc  { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
+    .timeline-card-lg-dates { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50); }
 
     /* ─── Footer ─── */
     .site-footer {
@@ -710,7 +708,7 @@
             </div>
           </div>
           <p class="review-text" data-key="reviews.simone.text" data-en="Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us." data-fr="Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
-          <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
         </div>
 
         <div class="review-card">
@@ -724,7 +722,7 @@
             </div>
           </div>
           <p class="review-text" data-key="reviews.tmo.text" data-en="A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices." data-fr="Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
-          <a class="card-link" href="https://www.instagram.com/taktika_officiel">Instagram</a>
+          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/taktika_officiel">Instagram</a>
         </div>
 
         <div class="review-card">
@@ -738,7 +736,7 @@
             </div>
           </div>
           <p class="review-text" data-key="reviews.jessie.text" data-en="We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!" data-fr="On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
-          <a class="card-link" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
+          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
         </div>
 
         <div id="reviews-dynamic"></div>
@@ -773,7 +771,7 @@
                 <p class="timeline-card-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
                 <p class="timeline-card-dates">1998–1999</p>
               </div>
-              <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -786,7 +784,7 @@
                 <p class="timeline-card-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                 <p class="timeline-card-dates">1998–2002</p>
               </div>
-              <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
             </div>
           </div>
         </div>
@@ -805,7 +803,7 @@
                 <p class="timeline-card-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                 <p class="timeline-card-dates">2000–2012</p>
               </div>
-              <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://taktika.ca/">Taktika Website</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -818,7 +816,7 @@
                 <p class="timeline-card-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                 <p class="timeline-card-dates">2002–2009</p>
               </div>
-              <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/artist/3668374/u">Tidal</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -867,7 +865,7 @@
                 <p class="timeline-card-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
                 <p class="timeline-card-dates">2023–2025</p>
               </div>
-              <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -880,7 +878,7 @@
                 <p class="timeline-card-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
                 <p class="timeline-card-dates">2021–2023</p>
               </div>
-              <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -893,7 +891,7 @@
                 <p class="timeline-card-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                 <p class="timeline-card-dates">2021–2023</p>
               </div>
-              <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
             </div>
           </div>
           <div class="timeline-card">
@@ -906,7 +904,7 @@
                 <p class="timeline-card-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
                 <p class="timeline-card-dates">2022–2023</p>
               </div>
-              <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
+              <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
             </div>
           </div>
         </div>
@@ -933,7 +931,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
                   <p class="timeline-card-lg-dates">2023–2025</p>
                 </div>
-                <a class="card-link" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -944,7 +942,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
-                <a class="card-link" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -955,7 +953,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
                   <p class="timeline-card-lg-dates">2021–2023</p>
                 </div>
-                <a class="card-link" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -966,7 +964,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
                   <p class="timeline-card-lg-dates">2022–2023</p>
                 </div>
-                <a class="card-link" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
               </div>
             </div>
           </div>
@@ -1001,7 +999,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
                   <p class="timeline-card-lg-dates">2000–2012</p>
                 </div>
-                <a class="card-link" href="https://taktika.ca/">Taktika Website</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://taktika.ca/">Taktika Website</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -1032,7 +1030,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
                   <p class="timeline-card-lg-dates">2002–2009</p>
                 </div>
-                <a class="card-link" href="https://tidal.com/artist/3668374/u">Tidal</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/artist/3668374/u">Tidal</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -1063,7 +1061,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.pagail.desc" data-en='Studio recorded scratches on the one and only album "C\'est pour les miens".' data-fr='Scratches sur le seul et unique album "C\'est pour les miens".'>Studio recorded scratches on the one and only album "C'est pour les miens".</p>
                   <p class="timeline-card-lg-dates">2002</p>
                 </div>
-                <a class="card-link" href="https://tidal.com/album/189830926/u">Tidal</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/album/189830926/u">Tidal</a>
               </div>
             </div>
           </div>
@@ -1081,7 +1079,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
                   <p class="timeline-card-lg-dates">1998–1999</p>
                 </div>
-                <a class="card-link" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
               </div>
             </div>
             <div class="timeline-card-lg">
@@ -1092,7 +1090,7 @@
                   <p class="timeline-card-lg-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
                   <p class="timeline-card-lg-dates">1998–2002</p>
                 </div>
-                <a class="card-link" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
+                <a class="card-link" target="_blank" rel="noopener" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
               </div>
             </div>
           </div>
@@ -1647,7 +1645,7 @@
           </div>
         </div>
         <p class="review-text">${text}</p>
-        ${instagram ? `<a class="card-link" href="${instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}`;
+        ${instagram ? `<a class="card-link" target="_blank" rel="noopener" href="${instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}`;
       container.appendChild(card);
     });
   }
