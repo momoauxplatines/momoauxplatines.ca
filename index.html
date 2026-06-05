@@ -278,17 +278,22 @@
       width: 100%;
     }
     .next-events-list {
-      display: flex; flex-direction: column;
-      align-items: flex-start; gap: 16px; width: 100%;
+      display: flex; flex-direction: row;
+      gap: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin: 0 -32px; padding: 0 32px;
+      align-items: stretch;
     }
+    .next-events-list::-webkit-scrollbar { display: none; }
+    .next-events-list .event-card-home { width: 312px; flex-shrink: 0; }
 
     /* Tablet: max 400px */
     @media (min-width: 640px) {
-      .event-card-home { max-width: 400px; }
+      .next-events-list { margin: 0 -56px; padding: 0 56px; }
     }
-    /* Desktop: max 480px */
+    /* Desktop: cartes un peu plus larges dans le scroll row */
     @media (min-width: 1024px) {
-      .event-card-home { max-width: 480px; }
+      .next-events-list .event-card-home { width: 352px; }
     }
 
     /* ─── Section Heading ─── */
@@ -446,26 +451,21 @@
       background: var(--bg);
       margin: 0 -32px -80px; padding: 80px 32px;
       flex-direction: column; align-items: center; justify-content: center;
-      gap: 14px;
+      gap: 24px;
     }
-    .footer-stamp { width: 160px; height: auto; flex-shrink: 0; }
-    .footer-name {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 32px; line-height: 34px;
-      color: var(--brand-30); text-transform: uppercase; text-align: center;
-    }
-    .footer-links { display: flex; gap: 8px; align-items: center; }
+    .footer-links { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+    .footer-links-row { display: flex; gap: 8px; }
     .footer-btn {
       background: var(--brand-90); border: none; border-radius: 8px;
-      padding: 0 16px; height: 56px;
+      padding: 0 16px; height: 40px;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
-      color: var(--brand-00); text-transform: uppercase; text-decoration: none;
+      color: var(--brand-50); text-transform: uppercase; text-decoration: none;
       cursor: pointer; white-space: nowrap; line-height: 26px;
       transition: opacity 0.15s;
     }
     .footer-btn:hover { opacity: 0.75; }
-    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-50); text-align: center; }
+    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-80); text-align: center; }
 
     /* ─── Booking Overlay ─── */
     .booking-overlay {
@@ -582,6 +582,8 @@
 
       .scroll-row  { margin: 0 -56px; padding: 0 56px; }
       .site-footer { margin: 0 -56px 0; padding: 80px 56px; }
+      .footer-links { flex-direction: row; gap: 8px; }
+      .footer-links-row { display: contents; }
 
       .section-heading { font-size: 44px; line-height: 48px; }
       .intro-name      { font-size: 52px; line-height: 52px; }
@@ -1107,8 +1109,10 @@
         <img src="images/og-image.png" alt="Momo Aux Platines" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
       </div>
       <div class="footer-links">
-        <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
-        <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
+        <div class="footer-links-row">
+          <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
+          <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
+        </div>
         <a class="footer-btn" href="https://tidal.com/@momoauxplatines" target="_blank" rel="noopener">Tidal</a>
       </div>
       <p class="footer-copy" data-key="footer.copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
