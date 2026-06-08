@@ -89,15 +89,21 @@
     /* ─── Header ─── */
     .site-header {
       position: sticky; top: 0; z-index: 100;
-      width: 100%; background: var(--bg);
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 24px; pointer-events: none;
+      width: 100%; padding: 16px; pointer-events: none;
       transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
     }
     .site-header.header-hidden { transform: translateY(-100%); opacity: 0; }
 
-    /* Live header pill — left-aligned when live, space-between layout */
-    .site-header.has-live { justify-content: space-between; }
+    .header-pill {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg);
+      border: 1px solid var(--brand-95);
+      border-radius: 72px;
+      padding: 24px;
+      width: 100%;
+    }
+
+    /* Live header pill */
     .header-live-link {
       display: none; align-items: center; gap: 4px;
       text-decoration: none; pointer-events: auto;
@@ -139,7 +145,7 @@
     .lang-toggle {
       pointer-events: auto;
       background: var(--brand-105);
-      height: 39px; padding: 0 16px; border-radius: var(--radius-8);
+      height: 39px; padding: 0 16px; border-radius: 72px;
       font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
       color: var(--brand-00); line-height: 26px; cursor: pointer;
     }
@@ -149,7 +155,7 @@
 
     /* ─── Stamp Section ─── */
     .stamp-section {
-      min-height: calc(100svh - 88px); position: relative;
+      min-height: calc(100svh - 121px); position: relative;
       display: flex; align-items: center; justify-content: center;
       margin-left: -32px; margin-right: -32px;
       touch-action: pan-y;
@@ -576,7 +582,7 @@
     @media (min-width: 640px) {
 
       .page { max-width: 834px; }
-      .site-header { max-width: 834px; justify-content: flex-end; }
+      .site-header { max-width: 834px; }
       .header-school { display: none; }
       .intro-ctas { width: 326px; }
 
@@ -636,14 +642,16 @@
 
   <!-- ── Fixed Header ── -->
   <header class="site-header" id="site-header">
-    <img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
-    <a class="header-school">SCHOOL</a>
-    <a class="header-live-link" id="header-live-link" href="#events-section"
-       aria-label="Live event — scroll to card">
-      <div class="header-live-dot"></div>
-      <span class="header-live-label" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-    </a>
-    <div class="lang-toggle" id="lang-btn">FR</div>
+    <div class="header-pill">
+      <img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
+      <a class="header-school">SCHOOL</a>
+      <a class="header-live-link" id="header-live-link" href="#events-section"
+         aria-label="Live event — scroll to card">
+        <div class="header-live-dot"></div>
+        <span class="header-live-label" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+      </a>
+      <div class="lang-toggle" id="lang-btn">FR</div>
+    </div>
   </header>
 
   <div class="page-content">
