@@ -21,7 +21,7 @@ Appliqués 2026-06-06 :
 Appliqués 2026-06-08 :
 [x] 985:2627 — Tab Public : weight 274 (default/hover) → 510 (active), 20px/26px, brand-70/60/50, gap 0
 [x] 982:5685 — Messages système : success 20px/26px brand-50 icon 24px filled, error 18px/22px brand-50, gap 8px, padding 16px, radius 8px
-[x] 972:6588 — Header index : logo-box 40px gauche, live pill bg brand-100/radius-72/dot+label rouge, lang-toggle bg brand-105/18px/h39px
+[x] 972:6588 / 956:2517 — Header index : logo-box 40px gauche, live pill bg brand-100/radius-72, lang-toggle display:flex/h40px/radius-72/brand-105, hover brand-100
 [x] 879:4256 — Header admin tablet/desktop : logo-box 40px gauche (remplace favicon+title), tabs gap 16px centré, logout droite
 -->
 
