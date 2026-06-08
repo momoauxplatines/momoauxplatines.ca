@@ -34,7 +34,7 @@
     .login-sub { font-size: 14px; font-weight: 300; color: var(--brand-50); line-height: 1.5; }
     .login-sub a { color: var(--brand-50); }
     .field { display: flex; flex-direction: column; gap: 8px; }
-    .field-label { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 11px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.08em; }
+    .field-label { font-family: inherit; font-weight: 274; font-size: 18px; line-height: 22px; color: var(--brand-60); }
     .field-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 10px; padding: 12px 16px; font-family: inherit; font-size: 16px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; }
     .field-input::placeholder { color: var(--brand-80); }
     .field-input:focus { border-color: var(--brand-50); }
@@ -49,28 +49,30 @@
     #admin-screen.active { display: block; }
 
     /* ── Fixed header ── */
-    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--brand-105); display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 16px 24px; gap: 0; }
+    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 24px 16px; gap: 0; }
     .header-left { display: flex; align-items: center; gap: 16px; }
     .header-favicon { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
     .header-favicon img { width: 100%; height: 100%; object-fit: cover; }
     .header-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; }
+    .header-logo-box { display: none; width: 40px; height: auto; flex-shrink: 0; }
     .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
-    #logout-btn { background: none; border-color: var(--brand-50); border-radius: 40px; font-size: 16px; font-weight: 900; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-    #logout-btn:hover { background: var(--brand-90); }
+    #logout-btn { background: var(--brand-90); border: none; border-radius: var(--radius-4); font-size: 18px; font-weight: 700; font-family: inherit; }
+    #logout-btn:hover { opacity: 0.85; }
 
     /* ── Language tabs (in header) ── */
-    .lang-tabs { display: flex; order: 3; width: 100%; justify-content: flex-start; padding: 10px 0 2px; }
-    .lang-tab { height: 36px; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 900; font-size: 16px; color: var(--brand-60); cursor: pointer; border: 1px solid transparent; background: none; border-radius: 40px; transition: color 0.15s, border-color 0.15s; padding: 0 16px; white-space: nowrap; }
-    .lang-tab:not(.active):hover { color: var(--brand-40); }
-    .lang-tab.active { color: var(--brand-00); border-color: var(--brand-50); }
+    .lang-tabs { display: flex; order: 3; width: 100%; justify-content: flex-start; padding: 10px 0 2px; gap: 8px; }
+    .lang-tab { height: 48px; display: flex; align-items: center; justify-content: center; font-family: inherit; font-weight: 274; font-size: 20px; line-height: 26px; color: var(--brand-70); cursor: pointer; border: 1px solid var(--brand-90); background: var(--brand-100); border-radius: 32px; transition: color 0.15s, border-color 0.15s, background 0.15s, border-radius 0.15s; padding: 0 20px; white-space: nowrap; }
+    .lang-tab:not(.active):hover { color: var(--brand-50); }
+    .lang-tab.active { background: var(--brand-105); border-color: var(--brand-80); border-radius: 40px; color: var(--brand-00); }
 
-    /* ── Tablet+: grid 1fr auto 1fr — tabs always truly centred ── */
+    /* ── Tablet+: grid 1fr auto 1fr — logo gauche, tabs centré, logout droite ── */
     @media (min-width: 768px) {
-      .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex-wrap: nowrap; padding: 20px 32px; }
-      .lang-tabs { order: 0; width: auto; flex: none; justify-content: center; padding: 0; }
-      .lang-tab { font-size: 18px; }
+      .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex-wrap: nowrap; padding: 24px 16px; }
+      .header-left { display: none; }
+      .header-logo-box { display: block; }
+      .lang-tabs { order: 0; width: auto; flex: none; justify-content: center; padding: 0; gap: 16px; }
       #logout-btn { justify-self: end; }
     }
 
@@ -139,12 +141,12 @@
 
     /* ── Form fields (in edit overlay) ── */
     .edit-field { display: flex; flex-direction: column; gap: 8px; }
-    .edit-label { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em; }
-    .edit-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 0; padding: 12px 16px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-00); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; resize: none; }
-    .edit-input::placeholder { color: var(--brand-80); }
-    .edit-input:focus { border-color: var(--brand-50); }
-    .edit-select { background: var(--bg); border: 1px solid var(--brand-50); border-radius: 0; padding: 16px 48px 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; appearance: none; cursor: pointer; transition: border-color 0.2s; background-image: url("data:image/svg+xml,%3Csvg width='16' height='10' viewBox='0 0 16 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L8 9L15 1' stroke='%23C9D3C0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 20px center; }
-    .edit-select:focus { border-color: var(--brand-30); }
+    .edit-label { font-family: inherit; font-weight: 274; font-size: 18px; line-height: 22px; color: var(--brand-60); }
+    .edit-input { background: var(--brand-95); border: 1px solid var(--brand-90); border-radius: var(--radius-8); padding: 12px 16px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s, background 0.2s; resize: none; }
+    .edit-input::placeholder { color: var(--brand-60); }
+    .edit-input:focus { background: var(--brand-100); border-color: var(--brand-90); }
+    .edit-select { background: var(--brand-95); border: 1px solid var(--brand-90); border-radius: var(--radius-8); padding: 16px 48px 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; appearance: none; cursor: pointer; transition: border-color 0.2s, background 0.2s; background-image: url("data:image/svg+xml,%3Csvg width='16' height='10' viewBox='0 0 16 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L8 9L15 1' stroke='%23C9D3C0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 20px center; }
+    .edit-select:focus { background: var(--brand-100); border-color: var(--brand-90); }
     .edit-select option { background: var(--brand-100); }
 
     /* ── Card list gaps ── */
@@ -257,16 +259,16 @@
     /* ── Battle tab ── */
     .battle-form { display: flex; flex-direction: column; gap: 24px; padding: 16px; }
     .battle-field { display: flex; flex-direction: column; gap: 8px; }
-    .battle-label { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 13px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.06em; }
-    .battle-input { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 0; padding: 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s; }
-    .battle-input::placeholder { color: var(--brand-80); }
-    .battle-input:focus { border-color: var(--brand-50); }
-    .battle-input.active { background: var(--brand-100); border-color: var(--brand-50); }
-    .battle-spotify-wrap { position: relative; display: flex; align-items: center; gap: 16px; background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 0; padding: 14px 20px; transition: border-color 0.2s; }
-    .battle-spotify-wrap:focus-within { border-color: var(--brand-50); }
+    .battle-label { font-family: inherit; font-weight: 274; font-size: 18px; line-height: 22px; color: var(--brand-60); }
+    .battle-input { background: var(--brand-95); border: 1px solid var(--brand-90); border-radius: var(--radius-8); padding: 16px 20px; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); outline: none; width: 100%; -webkit-appearance: none; transition: border-color 0.2s, background 0.2s; }
+    .battle-input::placeholder { color: var(--brand-60); }
+    .battle-input:focus { background: var(--brand-100); border-color: var(--brand-90); }
+    .battle-input.active { background: var(--brand-100); border-color: var(--brand-90); }
+    .battle-spotify-wrap { position: relative; display: flex; align-items: center; gap: 16px; background: var(--brand-95); border: 1px solid var(--brand-90); border-radius: var(--radius-8); padding: 14px 20px; transition: border-color 0.2s, background 0.2s; }
+    .battle-spotify-wrap:focus-within { background: var(--brand-100); border-color: var(--brand-80); }
     .battle-spotify-wrap svg { flex-shrink: 0; color: var(--brand-60); }
     .battle-spotify-input { flex: 1; background: none; border: none; outline: none; font-family: inherit; font-size: 18px; font-weight: 300; color: var(--brand-30); min-width: 0; }
-    .battle-spotify-input::placeholder { color: var(--brand-80); }
+    .battle-spotify-input::placeholder { color: var(--brand-60); }
     .battle-spotify-status { font-size: 13px; font-weight: 300; color: var(--brand-60); min-height: 18px; padding-left: 4px; }
     .battle-spotify-status.err { color: var(--red); }
     .battle-songs-list { display: flex; flex-direction: column; gap: 8px; }
@@ -331,9 +333,9 @@
     .event-tabs-wrap { flex-shrink: 0; display: flex; justify-content: center; overflow-x: auto; padding: 16px; scrollbar-width: none; }
     .event-tabs-wrap::-webkit-scrollbar { display: none; }
     .event-tabs { display: flex; gap: 8px; }
-    .event-tab { height: 48px; padding: 0 20px; border-radius: 40px; border: 1px solid var(--brand-90); background: var(--brand-100); color: var(--brand-70); font-size: 18px; font-weight: 300; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
-    .event-tab.active { border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
-    .event-tab:not(.active):hover { color: var(--brand-50); border-color: var(--brand-80); }
+    .event-tab { height: 48px; padding: 0 20px; border-radius: 32px; border: 1px solid var(--brand-90); background: var(--brand-100); color: var(--brand-70); font-family: inherit; font-size: 20px; font-weight: 274; line-height: 26px; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
+    .event-tab.active { border-radius: 40px; border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
+    .event-tab:not(.active):hover { color: var(--brand-50); }
     .event-detail-body { flex: 1; overflow-y: auto; padding-top: 32px; }
     .event-pane { display: none; }
     .event-pane.active { display: block; }
@@ -377,6 +379,7 @@
 
   <!-- Fixed header -->
   <header class="admin-header">
+    <img class="header-logo-box" src="../images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
     <div class="header-left">
       <div class="header-favicon"><img id="event-logo-img" src="../images/og-image.png" alt="Momo"></div>
       <span class="header-title">Admin</span>

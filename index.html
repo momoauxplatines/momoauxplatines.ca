@@ -101,8 +101,8 @@
     .header-live-link {
       display: none; align-items: center; gap: 4px;
       text-decoration: none; pointer-events: auto;
-      background: #d34242; border-radius: 24px;
-      padding: 0 12px; height: 39px; flex-shrink: 0;
+      background: var(--brand-100); border-radius: var(--radius-72);
+      padding: 4px 12px; flex-shrink: 0;
     }
     .site-header.has-live .header-live-link { display: flex; }
     @keyframes pulse {
@@ -111,14 +111,18 @@
     }
     .header-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
-      background: var(--brand-00); flex-shrink: 0;
+      background: var(--red); flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .header-live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 18px; line-height: 26px;
-      color: var(--brand-00); text-transform: uppercase;
+      color: var(--red); text-transform: uppercase;
       white-space: nowrap;
+    }
+
+    .header-logo {
+      width: 40px; height: auto; flex-shrink: 0;
     }
 
     .header-school {
@@ -134,10 +138,10 @@
 
     .lang-toggle {
       pointer-events: auto;
-      background: var(--brand-90);
-      padding: 4px 16px; border-radius: 8px;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
-      color: var(--brand-00); line-height: 31px; cursor: pointer;
+      background: var(--brand-105);
+      height: 39px; padding: 0 16px; border-radius: var(--radius-8);
+      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
+      color: var(--brand-00); line-height: 26px; cursor: pointer;
     }
 
     /* ─── Page Content ─── */
@@ -181,8 +185,8 @@
     /* Card — full width on mobile */
     .event-card-home {
       width: 100%;
-      background: var(--brand-105);
-      border-radius: 16px; padding: 16px;
+      background: var(--brand-100);
+      border-radius: var(--radius-8); padding: 16px;
       display: flex; flex-direction: column; gap: 16px;
     }
 
@@ -197,7 +201,7 @@
       border: 1px solid var(--brand-100);
       background: var(--brand-90);
     }
-    .ev-live-status { display: flex; align-items: center; gap: 8px; }
+    .ev-live-status { display: flex; align-items: center; gap: 4px; background: var(--brand-100); border-radius: 72px; padding: 4px 12px; }
     .ev-live-dot {
       width: 12px; height: 12px; border-radius: 50%;
       background: var(--red); flex-shrink: 0;
@@ -205,15 +209,15 @@
     }
     .ev-live-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 22px; line-height: 26px;
+      font-size: 18px; line-height: 26px;
       color: var(--red); text-transform: uppercase;
     }
 
     /* "Go to event page" button — black bg */
     .ev-go-btn {
-      background: var(--brand-90); border: none; border-radius: 8px;
-      color: var(--brand-00); font-family: inherit;
-      font-weight: 1000; font-size: 18px; text-transform: uppercase;
+      background: var(--brand-90); border: none; border-radius: var(--radius-8);
+      color: var(--brand-00); font-family: 'Kanit', sans-serif;
+      font-weight: 900; font-size: 18px; text-transform: uppercase;
       height: 56px; width: 100%; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       text-decoration: none; transition: opacity 0.15s;
@@ -221,10 +225,10 @@
     .ev-go-btn:hover { opacity: 0.85; }
 
     /* Content */
-    .ev-content { display: flex; flex-direction: column; gap: 4px; }
+    .ev-content { display: flex; flex-direction: column; gap: 8px; }
     .ev-venue-name {
-      font-family: inherit; font-weight: 700;
-      font-size: 24px; line-height: 28px;
+      font-family: inherit; font-weight: 1000;
+      font-size: 24px; line-height: normal;
       color: var(--brand-30);
     }
     .ev-address {
@@ -243,8 +247,10 @@
 
     /* Date badge — blue Kanit Black */
     .ev-next-label {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--brand-100); border-radius: 72px; padding: 4px 12px;
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 20px; line-height: 26px;
+      font-size: 18px; line-height: 26px;
       color: var(--blue); text-transform: uppercase;
     }
 
@@ -515,18 +521,18 @@
 
     .form-field { display: flex; flex-direction: column; gap: 8px; }
     .form-label {
-      font-family: inherit; font-weight: 300; font-size: 18px;
-      color: var(--brand-50);
+      font-family: inherit; font-weight: 274; font-size: 18px; line-height: 22px;
+      color: var(--brand-60);
     }
     .form-input {
-      background: var(--brand-90); border: 1px solid var(--brand-80);
-      border-radius: 0; padding: 16px 20px;
+      background: var(--brand-95); border: 1px solid var(--brand-90);
+      border-radius: var(--radius-8); padding: 16px 20px;
       font-family: inherit; font-weight: 300; font-size: 18px; line-height: 26px;
-      color: var(--brand-00); outline: none; width: 100%;
-      transition: border-color 0.2s; -webkit-appearance: none;
+      color: var(--brand-30); outline: none; width: 100%;
+      transition: border-color 0.2s, background 0.2s; -webkit-appearance: none;
     }
-    .form-input::placeholder { color: var(--brand-80); }
-    .form-input:focus { border-color: var(--brand-50); }
+    .form-input::placeholder { color: var(--brand-60); }
+    .form-input:focus { background: var(--brand-100); border-color: var(--brand-90); }
     .form-input.invalid { border-color: var(--red); }
     input[type="date"].form-input { color-scheme: dark; }
 
@@ -630,6 +636,7 @@
 
   <!-- ── Fixed Header ── -->
   <header class="site-header" id="site-header">
+    <img class="header-logo" src="images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
     <a class="header-school">SCHOOL</a>
     <a class="header-live-link" id="header-live-link" href="#events-section"
        aria-label="Live event — scroll to card">
@@ -1490,7 +1497,7 @@
               ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
             </div>
             <a class="ev-go-btn" href="${ev.slug ? '/requests/' + encodeURIComponent(ev.slug) : '/requests'}"
-               data-key="next-events.btn.go" data-en="EVENT PAGE" data-fr="PAGE DE L'ÉVÉNEMENT">EVENT PAGE</a>`;
+               data-key="next-events.btn.go" data-en="Come on in" data-fr="Allez entre">Come on in</a>`;
           liveSection.appendChild(card);
         });
       }
