@@ -4,6 +4,29 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 
 ---
 
+## Pending
+
+Changements Figma en attente d'application dans le code.
+Format : `[ ] node-id — description` → `[x]` quand appliqué → retiré au prochain push.
+
+_(aucun changement en attente)_
+
+<!--
+Appliqués 2026-06-06 :
+[x] 71:1921 — Field/Search : radius 8px, bg brand-95/100, border brand-90→brand-80 focus
+[x] 390:2756 — Field/Text : radius 8px, bg brand-95/100, border brand-90, placeholder brand-60
+[x] 443:3023 — Field/Selector Radio : radius 8px, bg brand-95/100, border brand-90
+[x] 473:3366 — Field/Drop Down : radius 8px, bg brand-95/100, border brand-90
+
+Appliqués 2026-06-08 :
+[x] 985:2627 — Tab Public : weight 274 (default/hover) → 510 (active), 20px/26px, brand-70/60/50, gap 0
+[x] 982:5685 — Messages système : success 20px/26px brand-50 icon 24px filled, error 18px/22px brand-50, gap 8px, padding 16px, radius 8px
+[x] 972:6588 — Header index : logo-box 40px gauche, live pill bg brand-100/radius-72/dot+label rouge, lang-toggle bg brand-105/18px/h39px
+[x] 879:4256 — Header admin tablet/desktop : logo-box 40px gauche (remplace favicon+title), tabs gap 16px centré, logout droite
+-->
+
+---
+
 ## Structure Figma
 
 | Page Figma | ID | Contenu |
@@ -100,7 +123,7 @@ All headings use **Kanit Black (900)**. Body and UI text use **SF Pro** (system-
 | Small Body | SF Pro Light | 274 | 16px | 20px | `Brand/50` |
 | Bold | SF Pro Bold | 700 | 18px | 100% | `Brand/30` |
 | Button | SF Pro Black | 1000 | 18px | 26px | — per variant |
-| Tab | SF Pro Black | 1000 | 18px | 24px | `Brand/00` active, `Brand/50` inactive |
+| Tab | SF Pro Light / Medium | 274 default · 510 active | 20px | 26px | `Brand/50` active, `Brand/70` default, `Brand/60` hover |
 | Skill | SF Pro Black | 1000 | 16px | 30px | `Brand/00` |
 | Link | SF Pro Light | 274 | 18px | 26px | `Brand/30` |
 
@@ -193,29 +216,36 @@ Composante Figma : `Button` · Page `_System`
 
 Composantes Figma : `Field / Text`, `Field / Search`, `Field / Selector`, `Field / Drop Down` · Page `_System`
 
-### Field / Text (champ standard)
-- Background: `Brand/100`
-- Border: `1px solid Brand/50`
-- Border-radius: `12px`
-- Padding: `16px 20px`
-- Font: Body (Light, 18px, `Brand/50` text)
-- States : Default · Active · Filled · Error · Disabled
-- Focus: border → `Brand/30`, text → `Brand/30`
-- Empty/unfilled: bg: `Brand/90`, border: `Brand/80`, text: `Brand/60`
-- Label (`Field / Label`): Body Light, `Brand/30`, 18px
+### Field / Text — node `390:2756`
+- **Default** — bg `Brand/95` · border `Brand/90` · text `Brand/30` · placeholder `Brand/60`
+- **Active/Focus** — bg `Brand/100` · border `Brand/90`
+- **Filled** — bg `Brand/100` · border `Brand/90` · text `Brand/60`
+- **Error** — bg `Brand/100` · border `Event/Red` · text `Event/Red`
+- **Disabled** — bg `Brand/100` · border `Brand/90` · text `Brand/80`
+- Border-radius: `8px` (`--radius-8`) · Padding: `16px 20px` · Font: Body Light 18px/26px
 
-### Field / Search
-- Même specs que Field / Text + icône loupe
-- Pill shape (`rounded-full`) pour la page Request
-- States : Default · Active · Filled · Error · Disabled
+### Field / Search — node `71:1921`
+- **Default** — bg `Brand/95` · border `Brand/90` · icon + placeholder `Brand/60`
+- **Active/Focus** — bg `Brand/100` · border `Brand/80`
+- **Filled** — bg `Brand/100` · border `Brand/90`
+- **Error** — bg `Brand/100` · border `Event/Red` · text `Event/Red`
+- **Disabled** — bg `Brand/100` · border `Brand/95`
+- Border-radius: `8px` · Padding: `16px 20px 16px 20px` (icon left) · Gap: `16px`
 
-### Field / Selector
-- Même gabarit que Field / Text
-- States : Default · Active · Filled · Error · Disabled
+### Field / Selector Radio — node `443:3023`
+- **Default** — bg `Brand/95` · border `Brand/90` · radio: bg `Brand/100` border `Brand/80`
+- **Selected** — bg `Brand/100` · border `Brand/90` · radio: bg+border `Event/Green` + checkmark
+- **Error** — bg `Brand/100` · border `Event/Red` · radio border `Event/Red`
+- **Disabled** — bg `Brand/100` · border `Brand/95`
+- Border-radius: `8px` · Padding: `16px 20px` · Radio icon: `24×24px` circle
 
-### Field / Drop Down
-- Même gabarit + état ouvert avec liste de choix
-- States : Default · Active · Filled · Error · Disabled · Choice Middle · Choice Bottom
+### Field / Drop Down — node `473:3366`
+- **Default** — bg `Brand/95` · border `Brand/90` · text `Brand/60` · caret `Brand/50`
+- **Active (open)** — bg `Brand/100` · border `Brand/90` · radius top only
+- **Selected** — bg `Brand/100` · border `Brand/90` · text `Brand/50`
+- **Error** — bg `Brand/100` · border `Event/Red` · text `Event/Red`
+- **Disabled** — bg `Brand/100` · border `Brand/95` · text `Brand/80`
+- Border-radius: `8px` (closed) · Padding: `16px 20px`
 
 ### Checkbox
 - 24×24px · States : Default · Checked · Error
@@ -479,10 +509,13 @@ Composante Figma : `Logo/DJ`, `Logo/School` · Page `_System`
 
 ### 8. Footer
 - Composante Figma : `Footer` (Context=DJ) · Page `_System`
-- Logo mark (80px)
-- Site name: H4 Kanit Black `Brand/30` centred
-- Links: INSTAGRAM · TWITCH · SCHOOL — Type=Admin Small button style
-- Copyright: Small Body Light `Brand/50` centred
+- Background: `var(--bg)` = `#000000` (Event/Black) · padding: `80px 16px` · gap: `24px`
+- **Logo stamp** : `og-image.png` · 163×80px · `object-fit: contain` · `filter: drop-shadow(4px 4px 0 #000)`
+- **Links** (`.footer-btn`) : bg `Brand/90` · text `Brand/50` · height `40px` · padding `0 16px` · radius `0` · SF Pro Black 860 18px · no uppercase · `transition: opacity 0.15s`
+  - Row 1 : Instagram + Twitch (flex-row, gap `8px`)
+  - Row 2 : Tidal (seul)
+  - Gap entre rows : `14px`
+- **Copyright** : Small Body Light 16px/20px · `Brand/80` · centred
 
 ---
 
@@ -612,6 +645,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-06-03 — tokens ✓ · pages ✓ · composantes ✓ · --bg = Background (alias Event/Black) ✓_
+_Dernière sync Figma : 2026-06-06 — tokens ✓ · pages ✓ · composantes ✓ · --bg = Background (alias Event/Black) ✓ · footer ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._
