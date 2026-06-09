@@ -3046,8 +3046,9 @@
   });
 
   // ── DEMANDES tab: song requests ───────────────────────────────────────────────
-  async function loadRequests() {
-    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+  async function loadRequests(targetEl) {
+    const el = targetEl || reqBody;
+    el.innerHTML = '<div class="empty-state">Loading…</div>';
     const slug = currentEvents[reqEventIdx]?.slug || '';
     const qs   = slug ? `?event=${encodeURIComponent(slug)}` : '';
     try {
@@ -3057,10 +3058,10 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       reqList = await res.json();
     } catch (e) {
-      reqBody.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed: ${e.message}</div>`;
+      el.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed: ${e.message}</div>`;
       return;
     }
-    renderRequests();
+    renderRequests(el);
   }
 
   function updateRequestFooter() {
@@ -3077,8 +3078,9 @@
     }
   }
 
-  function renderRequests() {
-    reqBody.innerHTML = '';
+  function renderRequests(targetEl) {
+    const el = targetEl || reqBody;
+    el.innerHTML = '';
 
     if (!reqList.length) {
       const emptyWrap = document.createElement('div');
@@ -3086,7 +3088,7 @@
       emptyWrap.innerHTML = `
         <p>${t('req.empty')}</p>
         <p style="margin-top:8px;color:var(--brand-80,#51534E)">${t('req.empty.hint').replace('\n', '<br>')}</p>`;
-      reqBody.appendChild(emptyWrap);
+      el.appendChild(emptyWrap);
       return;
     }
 
@@ -3149,7 +3151,7 @@
         });
       }
 
-      reqBody.appendChild(card);
+      el.appendChild(card);
     });
 
     updateRequestFooter();
@@ -3381,7 +3383,18 @@
         footerInner.innerHTML = ''; // spec: only text shown when event is not live
       }
     } else if (name === 'requests') {
-      footerInner.innerHTML = `<button class="btn-dark">${t('btn.refresh')}</button>`;
+      footerInner.innerHTML = `<button class="btn-dark" id="ev-req-refresh-btn">${t('btn.refresh')}</button>`;
+      reqEventIdx    = currentEventDetailIdx;
+      reqEventIsLive = isEventLive(currentEvents[currentEventDetailIdx]);
+      loadRequests(document.getElementById('ev-req-pane'));
+      setTimeout(() => {
+        const btn = document.getElementById('ev-req-refresh-btn');
+        if (btn) btn.addEventListener('click', () => {
+          reqEventIdx    = currentEventDetailIdx;
+          reqEventIsLive = isEventLive(currentEvents[currentEventDetailIdx]);
+          loadRequests(document.getElementById('ev-req-pane'));
+        });
+      }, 0);
     } else if (name === 'messages') {
       footerInner.innerHTML = `<button class="btn-dark">${t('btn.refresh')}</button>`;
     }
