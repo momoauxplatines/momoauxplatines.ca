@@ -50,11 +50,11 @@
 
     /* ── Fixed header ── */
     .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 24px 16px; gap: 0; }
-    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-left { display: none; }
     .header-favicon { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
     .header-favicon img { width: 100%; height: 100%; object-fit: cover; }
     .header-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; }
-    .header-logo-box { display: none; width: 40px; height: auto; flex-shrink: 0; }
+    .header-logo-box { display: block; width: 40px; height: 40px; object-fit: cover; flex-shrink: 0; }
     .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -70,8 +70,6 @@
     /* ── Tablet+: grid 1fr auto 1fr — logo gauche, tabs centré, logout droite ── */
     @media (min-width: 768px) {
       .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex-wrap: nowrap; padding: 24px 16px; }
-      .header-left { display: none; }
-      .header-logo-box { display: block; }
       .lang-tabs { order: 0; width: auto; flex: none; justify-content: center; padding: 0; gap: 16px; }
       #logout-btn { justify-self: end; }
     }
@@ -122,22 +120,22 @@
     .edit-close:hover { background: var(--brand-80); }
     .edit-subtitle { font-weight: 300; font-size: 16px; line-height: 22px; color: var(--brand-50); }
     .edit-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-    .edit-footer { flex-shrink: 0; padding: 16px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+    .edit-footer { flex-shrink: 0; padding: 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
 
     /* ── Desktop: overlay becomes backdrop, panel floats centred ── */
     @media (min-width: 860px) {
       .edit-overlay { background: rgba(17,18,16,0.75); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
       .edit-panel { display: flex; flex-direction: column; width: 480px; max-height: 90dvh; background: var(--bg); border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px 20px rgba(0,0,0,0.7); }
     }
-    .btn-save { background: var(--brand-10, #f4f6f3); border: none; border-radius: 8px; color: var(--brand-100); font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 1000; font-size: 18px; height: 56px; width: 100%; cursor: pointer; text-transform: uppercase; transition: background 0.15s; }
-    .btn-save:hover:not(:disabled) { background: var(--brand-00, #fafbf9); }
-    .btn-save:disabled { background: var(--brand-80, #51534e); color: var(--brand-100); cursor: not-allowed; }
+    .btn-save { background: var(--brand-90); border: none; border-radius: 8px; color: var(--brand-00); font-family: inherit; font-weight: 700; font-size: 18px; height: 56px; width: 100%; max-width: 770px; cursor: pointer; transition: background 0.15s; }
+    .btn-save:hover:not(:disabled) { background: var(--brand-80); }
+    .btn-save:disabled { background: var(--brand-100); color: var(--brand-80); cursor: not-allowed; }
     .btn-dark { background: var(--brand-90, #282a27); border: 1px solid var(--brand-80, #51534e); border-radius: 8px; color: var(--brand-00, #fafbf9); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
     .btn-dark:hover { opacity: 0.8; }
-    .gig-live-status { display: flex; align-items: center; gap: 8px; }
-    .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red, #F06A6A); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
+    .gig-live-status { display: flex; align-items: center; gap: 4px; background: var(--brand-100); padding: 4px 12px; border-radius: 72px; }
+    .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
     @keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .gig-live-label { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--red, #F06A6A); text-transform: uppercase; line-height: 26px; }
+    .gig-live-label { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px; color: var(--red); text-transform: uppercase; line-height: 26px; }
 
     /* ── Form fields (in edit overlay) ── */
     .edit-field { display: flex; flex-direction: column; gap: 8px; }
@@ -185,16 +183,16 @@
     .ig-preview-status.err { color: var(--red); }
 
     /* ── Gig card ── */
-    .gig-card { background: #000; border: 1px solid var(--brand-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 24px; cursor: default; transition: opacity 0.15s; }
+    .gig-card { background: var(--brand-105); border: 1px solid var(--brand-90); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 24px; cursor: default; transition: opacity 0.15s; }
     .gig-card--link { cursor: pointer; }
     .gig-card--link:hover { opacity: 0.85; }
-    .gig-card-top { display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
+    .gig-card-top { display: flex; gap: 16px; align-items: flex-start; pointer-events: none; }
     .gig-card-avatar { width: 72px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--brand-90); }
     .gig-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .gig-card-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .gig-card-name { font-size: 18px; font-weight: 700; color: var(--brand-30); line-height: 1; }
     .gig-card-meta { font-size: 16px; font-weight: 300; color: var(--brand-30); line-height: 20px; }
-    .gig-card-actions { display: flex; align-items: center; justify-content: space-between; }
+    .gig-card-actions { display: flex; align-items: center; justify-content: flex-end; }
 
     /* ── Requests overlay ── */
     .req-back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 18px; font-weight: 300; padding: 0; line-height: 26px; }
@@ -218,6 +216,11 @@
     .req-delete-btn:hover { opacity: 0.65; }
     .req-restore-btn { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--brand-50); padding: 4px 8px; flex-shrink: 0; font-size: 12px; font-weight: 300; transition: opacity 0.15s; white-space: nowrap; }
     .req-restore-btn:hover { opacity: 0.75; }
+    .req-prior-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; width: 100%; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 16px; font-weight: 300; font-family: inherit; }
+    .req-prior-toggle svg { transition: transform 0.2s; flex-shrink: 0; }
+    .req-prior-toggle.open svg { transform: rotate(180deg); }
+    .req-prior-section { display: none; flex-direction: column; gap: 16px; width: 100%; }
+    .req-prior-section.open { display: flex; }
     .req-card.played   { border-width: 0; }
     .req-card.selected { border-color: var(--green); }
     .req-card.deleted  { opacity: 0.45; }
@@ -323,13 +326,17 @@
     .battle-ongoing-text { font-size: 18px; font-weight: 300; color: var(--brand-30); text-align: center; }
 
     /* ── Event detail screen ── */
-    .event-screen { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow: hidden; }
-    .event-screen.open { opacity: 1; pointer-events: auto; }
+    .event-screen { background: var(--bg); display: none; flex-direction: column; overflow: hidden; min-height: 100vh; }
+    .event-screen.open { display: flex; }
     .event-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--bg); }
     .btn-back { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 16px; font-weight: 300; padding: 8px 0; line-height: 20px; }
     .btn-back:hover { color: var(--brand-30); }
     .event-logo { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; border: 1px solid var(--brand-100); flex-shrink: 0; }
     .event-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .event-status-badge { font-family: Kanit, sans-serif; font-weight: 900; font-size: 18px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 12px; border-radius: 72px; background: var(--brand-100); flex: 1; text-align: center; }
+    .event-status-badge.live { color: #d34242; }
+    .event-status-badge.live::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #d34242; margin-right: 6px; vertical-align: middle; margin-bottom: 2px; }
+    .event-status-badge.next { color: #007aff; }
     .event-tabs-wrap { flex-shrink: 0; display: flex; justify-content: center; overflow-x: auto; padding: 16px; scrollbar-width: none; }
     .event-tabs-wrap::-webkit-scrollbar { display: none; }
     .event-tabs { display: flex; gap: 8px; }
@@ -337,12 +344,13 @@
     .event-tab.active { border-radius: 40px; border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
     .event-tab:not(.active):hover { color: var(--brand-50); }
     .event-detail-body { flex: 1; overflow-y: auto; padding-top: 32px; }
-    .event-pane { display: none; }
+    .event-pane { display: none; width: 100%; }
     .event-pane.active { display: block; }
-    .event-pane .req-list { padding-top: 0; }
+    .event-pane .req-list { max-width: 770px; margin: 0 auto; padding-top: 0; }
     .event-pane .battle-form { padding: 0; }
+    .event-detail-body { width: 100%; }
     .event-form { max-width: 770px; margin: 0 auto; padding: 0 24px 160px; display: flex; flex-direction: column; gap: 16px; }
-    .event-footer { flex-shrink: 0; padding: 16px 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+    .event-footer { flex-shrink: 0; padding: 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
     .event-footer-inner { max-width: 770px; margin: 0 auto; }
     .btn-delete-event { background: var(--brand-90); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: all 0.15s; }
     .btn-delete-event:hover { background: var(--red); color: var(--brand-00); }
@@ -379,7 +387,7 @@
 
   <!-- Fixed header -->
   <header class="admin-header">
-    <img class="header-logo-box" src="../images/logo-momoauxplatines-box.svg" alt="Momo Aux Platines">
+    <img class="header-logo-box" src="../images/og-image.png" alt="Momo Aux Platines">
     <div class="header-left">
       <div class="header-favicon"><img id="event-logo-img" src="../images/og-image.png" alt="Momo"></div>
       <span class="header-title">Admin</span>
@@ -550,6 +558,7 @@
       </svg>
       <span data-i18n="btn.back">Back</span>
     </button>
+    <span id="event-status-badge" class="event-status-badge"></span>
     <div class="event-logo">
       <img id="event-logo-img" src="../images/og-image.png" alt="Momo">
     </div>
@@ -712,7 +721,13 @@
       'playing.now.label': 'Now playing',
       'playing.mark.label': 'Mark as now playing',
       'battle.not.live': 'Battles can only be set once the event is live.',
+      'battle.next.empty': 'Battles can only be set once the event is live.',
       'battle.start.btn': 'Start The Battle',
+      'battle.create.btn': 'Create a battle',
+      'status.live': 'Live',
+      'status.next': 'Next',
+      'playing.next.empty': 'Songs used in Serato will be listed here once the event is live.',
+      'playing.next.empty.hint': 'Make sure to start the Serato Live Playlist to see the songs here.',
       'battle.new.btn': 'Create New Battle',
       'battle.time.label': 'Time*',
       'battle.songs.label': 'Add 2 to 5 songs*',
@@ -731,6 +746,7 @@
       'req.create.battle': 'Create a Battle',
       'req.mark.played': 'Mark as played',
       'req.mark.not.played': 'Mark as not played',
+      'req.prior.toggle': 'Requested before the event',
       'msg.empty': 'No messages have been sent to you yet.',
       'form.intro.title': 'Edit Intro',
       'form.intro.sub': "Tell 'em who you are mr DJ.",
@@ -836,7 +852,13 @@
       'playing.now.label': 'En cours',
       'playing.mark.label': 'Marquer comme en cours',
       'battle.not.live': "Les batailles ne peuvent être lancées qu'une fois l'événement en direct.",
+      'battle.next.empty': "Les batailles ne peuvent être lancées qu'une fois l'événement en direct.",
       'battle.start.btn': 'Lancer la bataille',
+      'battle.create.btn': 'Créer une bataille',
+      'status.live': 'En direct',
+      'status.next': 'Prochain',
+      'playing.next.empty': "Les chansons utilisées dans Serato s'afficheront ici une fois l'événement en direct.",
+      'playing.next.empty.hint': 'Assurez-vous de démarrer la liste de lecture en direct Serato pour voir les chansons ici.',
       'battle.new.btn': 'Nouvelle bataille',
       'battle.time.label': 'Durée*',
       'battle.songs.label': 'Ajouter 2 à 5 chansons*',
@@ -855,6 +877,7 @@
       'req.create.battle': 'Créer une bataille',
       'req.mark.played': 'Marquer comme joué',
       'req.mark.not.played': 'Marquer comme non joué',
+      'req.prior.toggle': "Demandé avant l'événement",
       'msg.empty': "Aucun message ne vous a encore été envoyé.",
       'form.intro.title': "Modifier l'intro",
       'form.intro.sub': 'Dis-leur qui tu es, DJ.',
@@ -1029,6 +1052,11 @@
     await Promise.all([loadAllCopy(), loadEvents()]);
     loadRegistries();
     renderAll();
+    const _urlEventId = new URLSearchParams(location.search).get('event');
+    if (_urlEventId) {
+      const _urlIdx = currentEvents.findIndex(e => String(e.id) === _urlEventId);
+      if (_urlIdx >= 0) openEventDetail(_urlIdx);
+    }
   }
 
   function slugify(name) {
@@ -1279,15 +1307,12 @@
             <p class="gig-card-meta">${esc(liveEvent.start_time || '')}–${esc(liveEvent.end_time || '')}</p>
           </div>
         </div>
-        <div class="gig-card-actions" style="pointer-events:none;">
+        <div class="gig-card-actions" style="pointer-events:none; justify-content: space-between;">
           <div class="gig-live-status" style="pointer-events:none;">
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">${t('live.label')}</span>
           </div>
-          <div style="display:flex;gap:8px;pointer-events:none;">
-            ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto;">${t('btn.copyurl')}</button>` : ''}
-            <button class="btn-card-edit" data-action="edit-gig" data-index="${currentEvents.indexOf(liveEvent)}" style="pointer-events:auto;">${t('btn.edit')}</button>
-          </div>
+          ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
         </div>
       </div>`;
   }
@@ -1335,8 +1360,7 @@
         </div>
       </div>
       <div class="gig-card-actions" style="pointer-events:none;">
-        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto;">${t('btn.copyurl')}</button>` : '<div></div>'}
-        <button class="btn-card-edit" data-action="edit-gig" data-index="${idx}" style="pointer-events:auto;">${t('btn.edit')}</button>
+        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
       </div>`;
     return card;
   }
@@ -2591,12 +2615,12 @@
   let battleSelectedIds  = new Set(); // request IDs selected for battle from requests tab
   let _battleFromRequests = false;    // true when battle form was launched from requests tab
 
-  function parseBattleSpotifyId(url) {
+  function parseSpotifyId(url) {
     const m = (url || '').match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
     return m ? m[1] : null;
   }
 
-  async function getBattleSpotifyToken() {
+  async function getSpotifyToken() {
     const cached = sessionStorage.getItem('sp_token');
     const expiry = parseInt(sessionStorage.getItem('sp_expiry') || '0');
     if (cached && Date.now() < expiry) return cached;
@@ -2615,29 +2639,51 @@
     return data.access_token;
   }
 
-  async function fetchBattleTrackInfo(spotifyUrl) {
-    const trackId = parseBattleSpotifyId(spotifyUrl);
-    if (!trackId) throw new Error('invalid');
+  const TRACK_DEFAULT_IMAGE = '../images/track-default.svg';
+
+  async function fetchItunesImage(title, artist) {
     try {
-      const spTok = await getBattleSpotifyToken();
-      const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: { Authorization: `Bearer ${spTok}` }
-      });
-      if (!resp.ok) throw new Error(`API ${resp.status}`);
-      const d = await resp.json();
-      return {
-        title:  d.name,
-        artist: d.artists.map(a => a.name).join(', '),
-        image:  d.album.images[0]?.url || '',
-        url:    d.external_urls.spotify
-      };
-    } catch {
-      // oEmbed fallback
-      const oe = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`);
-      if (!oe.ok) throw new Error('Could not fetch track info');
-      const d = await oe.json();
-      return { title: d.title || '', artist: '', image: d.thumbnail_url || '', url: spotifyUrl };
+      const q = encodeURIComponent([artist, title].filter(Boolean).join(' '));
+      const resp = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&limit=1`);
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const art = data.results?.[0]?.artworkUrl100;
+      return art ? art.replace('100x100bb', '600x600bb') : null;
+    } catch { return null; }
+  }
+
+  // Unified track info — Battle (spotifyUrl) and Playing (artist + title)
+  async function fetchTrackInfo({ spotifyUrl = null, artist = '', title = '' } = {}) {
+    if (spotifyUrl) {
+      const trackId = parseSpotifyId(spotifyUrl);
+      if (trackId) {
+        try {
+          const spTok = await getSpotifyToken();
+          const resp  = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+            headers: { Authorization: `Bearer ${spTok}` }
+          });
+          if (resp.ok) {
+            const d = await resp.json();
+            const spArtist = d.artists.map(a => a.name).join(', ');
+            const spTitle  = d.name;
+            const spImage  = d.album.images[0]?.url
+              || await fetchItunesImage(spTitle, spArtist)
+              || TRACK_DEFAULT_IMAGE;
+            return { title: spTitle, artist: spArtist, image: spImage, url: d.external_urls.spotify };
+          }
+        } catch {}
+        try {
+          const oe = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`);
+          if (oe.ok) {
+            const d = await oe.json();
+            const oeImage = d.thumbnail_url || await fetchItunesImage(d.title || '', '') || TRACK_DEFAULT_IMAGE;
+            return { title: d.title || '', artist: '', image: oeImage, url: spotifyUrl };
+          }
+        } catch {}
+      }
     }
+    const itunesImage = (artist || title) ? await fetchItunesImage(title, artist) : null;
+    return { title, artist, image: itunesImage || TRACK_DEFAULT_IMAGE, url: spotifyUrl || '' };
   }
 
   function secondsToHMS(s) {
@@ -2879,7 +2925,7 @@
       clearTimeout(battleSpotifyTimer);
       const val = spInput.value.trim();
       if (!val) { spStatus.textContent = ''; spStatus.className = 'battle-spotify-status'; return; }
-      if (!parseBattleSpotifyId(val)) {
+      if (!parseSpotifyId(val)) {
         spStatus.textContent = t('battle.spotify.invalid');
         spStatus.className = 'battle-spotify-status err';
         return;
@@ -2888,9 +2934,9 @@
       spStatus.className = 'battle-spotify-status';
       battleSpotifyTimer = setTimeout(async () => {
         try {
-          const info = await fetchBattleTrackInfo(val);
+          const info = await fetchTrackInfo({ spotifyUrl: val });
           // Check for duplicate
-          if (battleSongs.find(s => parseBattleSpotifyId(s.url) === parseBattleSpotifyId(val))) {
+          if (battleSongs.find(s => parseSpotifyId(s.url) === parseSpotifyId(val))) {
             spStatus.textContent = t('battle.spotify.duplicate');
             spStatus.className = 'battle-spotify-status err';
             return;
@@ -3092,28 +3138,49 @@
       return;
     }
 
-    reqList.forEach(r => {
+    // Split live vs prior when event is live
+    let liveReqs = reqList, priorReqs = [];
+    if (reqEventIsLive) {
+      const ev = currentEvents[reqEventIdx];
+      const eventStartMs = ev && ev.date && ev.start_time
+        ? new Date(`${ev.date}T${ev.start_time}:00`).getTime() : null;
+      if (eventStartMs !== null) {
+        priorReqs = reqList.filter(r => r.ts && r.ts < eventStartMs);
+        liveReqs  = reqList.filter(r => !r.ts || r.ts >= eventStartMs);
+      }
+    }
+
+    // Helper: build a request card
+    function buildReqCard(r, battleSelectable) {
       const isPlayed  = r.status === 'played';
       const isDeleted = r.status === 'deleted';
       const card = document.createElement('div');
       const isSelected = battleSelectedIds.has(r.id);
       let cls = 'req-card';
-      if (isDeleted)               cls += ' deleted';
-      if (reqEventIsLive && !isDeleted) cls += ' battle-selectable';
-      if (isSelected)              cls += ' battle-selected';
+      if (isDeleted)                  cls += ' deleted';
+      if (battleSelectable && !isDeleted) cls += ' battle-selectable';
+      if (isSelected)                 cls += ' battle-selected';
       card.className = cls;
       card.dataset.id = r.id;
 
-      // Format timestamp using r.ts (milliseconds)
       let timeStr = '';
       if (r.ts) {
-        const d = new Date(r.ts);
-        timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const d   = new Date(r.ts);
+        const hh  = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const dd  = String(d.getDate()).padStart(2, '0');
+        const mo  = String(d.getMonth() + 1).padStart(2, '0');
+        if (reqEventIsLive) {
+          const ev2 = currentEvents[reqEventIdx];
+          const esMs = ev2 && ev2.date && ev2.start_time
+            ? new Date(`${ev2.date}T${ev2.start_time}:00`).getTime() : null;
+          const isPrior = esMs !== null && r.ts < esMs;
+          timeStr = isPrior ? `${dd}/${mo} • ${hh}:${min}` : `${hh}:${min}`;
+        } else {
+          timeStr = `${dd}/${mo} • ${hh}:${min}`;
+        }
       }
-      // Right control:
-      //   • live event  → toggle switch (played/not played)
-      //   • deleted item → restore button
-      //   • normal item  → red ✕ delete button
+
       let controlHtml;
       if (isDeleted) {
         controlHtml = `<button class="req-restore-btn" aria-label="${t('req.restore')}" data-req-action="restore" data-id="${r.id}">${t('req.restore')}</button>`;
@@ -3131,28 +3198,45 @@
         <img class="req-art" src="${r.image || ''}" alt="" onerror="this.style.background='var(--brand-90)'">
         <div class="req-info">
           <p class="req-title">${escReq(r.title)}</p>
-          ${r.artist   ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
-          ${r.url      ? `<a class="req-artist" href="${escReq(r.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Spotify</a>` : ''}
-          ${timeStr    ? `<p class="req-time">${escReq(timeStr)}</p>`    : ''}
-          ${isDeleted  ? `<p class="req-time" style="color:var(--red);font-size:12px;">${t('req.deleted.label')}</p>` : ''}
+          ${r.artist  ? `<p class="req-artist">${escReq(r.artist)}</p>` : ''}
+          ${r.url     ? `<a class="req-artist" href="${escReq(r.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Spotify</a>` : ''}
+          ${timeStr   ? `<p class="req-time">${escReq(timeStr)}</p>` : ''}
+          ${isDeleted ? `<p class="req-time" style="color:var(--red);font-size:12px;">${t('req.deleted.label')}</p>` : ''}
         </div>
         <div class="req-controls">${controlHtml}</div>`;
 
-      // Tap-to-select for battle (live event, non-deleted cards only)
-      if (reqEventIsLive && !isDeleted) {
+      if (battleSelectable && !isDeleted) {
         card.addEventListener('click', e => {
-          // Don't toggle if the tap was on the switch or a button
           if (e.target.closest('[data-req-action]')) return;
           if (battleSelectedIds.has(r.id)) battleSelectedIds.delete(r.id);
-          else if (battleSelectedIds.size < 5)  battleSelectedIds.add(r.id);
-          // Re-render just this card's selection state
+          else if (battleSelectedIds.size < 5) battleSelectedIds.add(r.id);
           card.classList.toggle('battle-selected', battleSelectedIds.has(r.id));
           updateRequestFooter();
         });
       }
+      return card;
+    }
 
-      el.appendChild(card);
-    });
+    // Render live requests
+    liveReqs.forEach(r => el.appendChild(buildReqCard(r, reqEventIsLive)));
+
+    // "Requested before the event" toggle + collapsible prior section
+    if (priorReqs.length > 0) {
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'req-prior-toggle';
+      toggleBtn.innerHTML = `${escReq(t('req.prior.toggle'))}<svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1.5L4 4.5L7 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      el.appendChild(toggleBtn);
+
+      const priorSection = document.createElement('div');
+      priorSection.className = 'req-prior-section';
+      el.appendChild(priorSection);
+      priorReqs.forEach(r => priorSection.appendChild(buildReqCard(r, false)));
+
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = priorSection.classList.toggle('open');
+        toggleBtn.classList.toggle('open', isOpen);
+      });
+    }
 
     updateRequestFooter();
   }
@@ -3188,13 +3272,22 @@
     const btn = e.target.closest('[data-req-action]');
     if (!btn) return;
     const { reqAction, id, status } = btn.dataset;
+
+    // Confirm before deleting (next events only — live uses toggle, not delete)
+    if (reqAction === 'delete') {
+      const msg = currentLang === 'fr'
+        ? 'Supprimer cette demande ? Cette action est irréversible.'
+        : 'Delete this request? This cannot be undone.';
+      if (!confirm(msg)) return;
+    }
+
     btn.disabled = true;
     const patchSlug = currentEvents[reqEventIdx]?.slug || '';
     const patchQs   = patchSlug ? `?event=${encodeURIComponent(patchSlug)}` : '';
 
     // Determine which status to send
     let newStatus;
-    if (reqAction === 'delete')   newStatus = 'deleted';
+    if (reqAction === 'delete')      newStatus = 'deleted';
     else if (reqAction === 'restore') newStatus = 'sent';
     else newStatus = status; // toggle sends 'played' or 'sent' via data-status
 
@@ -3205,9 +3298,12 @@
         body: JSON.stringify({ id, status: newStatus })
       });
       if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`);
-      // Update local list
+      // Delete: remove from list entirely; others: update status in place
       const i = reqList.findIndex(r => r.id === id);
-      if (i >= 0) reqList[i].status = newStatus;
+      if (i >= 0) {
+        if (reqAction === 'delete') reqList.splice(i, 1);
+        else reqList[i].status = newStatus;
+      }
       renderRequests();
     } catch (err) {
       showToast(t('toast.failed') + err.message, 'error');
@@ -3344,15 +3440,24 @@
     // Placeholder content for non-Info tabs
     evFillSupportTabs(ev);
 
+    // Set status badge
+    const _badge = document.getElementById('event-status-badge');
+    if (_badge) {
+      const _isLive = isEventLive(ev);
+      _badge.textContent = _isLive ? t('status.live') : t('status.next');
+      _badge.className = 'event-status-badge ' + (_isLive ? 'live' : 'next');
+    }
     // Switch to Info tab & show screen
     switchEventTab('info');
+    document.getElementById('admin-screen').style.display = 'none';
     document.getElementById('event-screen').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    history.pushState({ eventId: ev.id }, '', '?event=' + encodeURIComponent(ev.id));
   }
 
   function closeEventDetail() {
     document.getElementById('event-screen').classList.remove('open');
-    document.body.style.overflow = '';
+    document.getElementById('admin-screen').style.display = '';
+    history.pushState({}, '', location.pathname);
     currentEventDetailIdx = -1;
     evPendingCustomFile = null;
     evPendingAvatarUrl  = null;
@@ -3374,13 +3479,12 @@
     if (name === 'info') {
       footerInner.innerHTML = `<button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">${t('btn.save')}</button>`;
     } else if (name === 'playing') {
-      footerInner.innerHTML = ''; // spec: no footer button on Playing tab
+      footerInner.innerHTML = isLive ? `<button class="btn-dark">${t('btn.refresh')}</button>` : '';
     } else if (name === 'battle') {
       if (isLive) {
-        // Default live state: "Start new battle" inactive (no songs added yet)
-        footerInner.innerHTML = `<button class="battle-start-btn" disabled>${t('battle.start.btn')}</button>`;
+        footerInner.innerHTML = `<button class="battle-start-btn" disabled>${t('battle.create.btn')}</button>`;
       } else {
-        footerInner.innerHTML = ''; // spec: only text shown when event is not live
+        footerInner.innerHTML = '';
       }
     } else if (name === 'requests') {
       footerInner.innerHTML = `<button class="btn-dark" id="ev-req-refresh-btn">${t('btn.refresh')}</button>`;
@@ -3402,8 +3506,11 @@
 
   function evFillSupportTabs(ev) {
     const isLive = ev && isEventLive(ev);
-    // Playing
-    document.getElementById('ev-playing-pane').innerHTML = `<div style="display:flex;flex-direction:column;gap:12px;padding-top:8px;"><p style="font-size:16px;font-weight:300;color:var(--brand-50);line-height:22px;margin:0;">${t('playing.empty')}</p><p style="font-size:14px;font-weight:300;color:var(--brand-70);line-height:20px;margin:0;">${t('playing.empty.hint')}</p></div>`;
+    // Playing — next = Serato hint centered; live = same but with live context
+    document.getElementById('ev-playing-pane').innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;padding-top:8px;text-align:center;">`
+      + `<p style="font-size:16px;font-weight:300;color:var(--brand-50);line-height:22px;margin:0;">${isLive ? t('playing.empty') : t('playing.next.empty')}</p>`
+      + `<p style="font-size:14px;font-weight:300;color:var(--brand-70);line-height:20px;margin:0;">${isLive ? t('playing.empty.hint') : t('playing.next.empty.hint')}</p>`
+      + `</div>`;
     // Battle — depends on whether event is live
     document.getElementById('ev-battle-pane').innerHTML = isLive
       ? `<div class="battle-form">
@@ -3420,7 +3527,7 @@
             <input class="edit-input" type="url" placeholder="${t('battle.spotify.placeholder')}">
           </div>
         </div>`
-      : `<p class="empty-state">${t('battle.not.live')}</p>`;
+      : `<p class="empty-state" style="text-align:center;">${t('battle.next.empty')}</p>`;
     // Requests
     document.getElementById('ev-req-pane').innerHTML =
       `<div class="empty-state">${t('req.empty')}</div>`;
@@ -3437,6 +3544,18 @@
 
   // Back button
   document.getElementById('event-back-btn').addEventListener('click', closeEventDetail);
+  window.addEventListener('popstate', () => {
+    const _pid = new URLSearchParams(location.search).get('event');
+    if (_pid) {
+      const _pidx = currentEvents.findIndex(e => String(e.id) === _pid);
+      if (_pidx >= 0) { openEventDetail(_pidx); return; }
+    }
+    if (document.getElementById('event-screen').classList.contains('open')) {
+      document.getElementById('event-screen').classList.remove('open');
+      document.getElementById('admin-screen').style.display = '';
+      currentEventDetailIdx = -1;
+    }
+  });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && document.getElementById('event-screen').classList.contains('open')) {
       closeEventDetail();
