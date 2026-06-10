@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Momo Aux Platines</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+  <meta name="description" content="Book Momo Aux Platines for your next event.">
+  <meta property="og:title" content="Contact — Momo Aux Platines">
+  <meta property="og:description" content="Book Momo Aux Platines for your next event.">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://momoauxplatines.ca/en/contact">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --brand-00:  #fafbf9;
+      --brand-10:  #f4f6f3;
+      --brand-20:  #eaede5;
+      --brand-30:  #dee4da;
+      --brand-40:  #d5dccc;
+      --brand-50:  #c9d3c0;
+      --brand-60:  #a2a89b;
+      --brand-70:  #797f73;
+      --brand-80:  #51534e;
+      --brand-90:  #282a27;
+      --brand-95:  #20221f;
+      --brand-100: #141513;
+      --brand-105: #111210;
+      --bg:        #000000;
+      --red:       #d34242;
+      --radius-8:  8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--brand-00);
+      font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .contact-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 48px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--brand-50);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 300;
+      text-decoration: none;
+      padding: 0;
+    }
+
+    .back-btn:hover { color: var(--brand-30); }
+
+    .back-caret {
+      width: 12px;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .back-caret svg { transform: rotate(90deg); }
+
+    /* ── Main content ── */
+    .contact-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 120px; /* room for sticky footer */
+    }
+
+    .contact-top {
+      padding: 24px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contact-title {
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      line-height: 34px;
+      text-transform: uppercase;
+      color: var(--brand-00);
+    }
+
+    .contact-subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 22px;
+      color: var(--brand-50);
+    }
+
+    /* ── Form ── */
+    .contact-form {
+      padding: 32px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 770px;
+      width: 100%;
+    }
+
+    .form-label {
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 22px;
+      color: var(--brand-50);
+    }
+
+    .form-input {
+      background: var(--brand-95);
+      border: 1px solid var(--brand-90);
+      border-radius: var(--radius-8);
+      padding: 16px 20px;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 26px;
+      color: var(--brand-00);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    .form-input::placeholder { color: var(--brand-60); }
+
+    .form-input:focus {
+      background: var(--brand-100);
+      border-color: var(--brand-80);
+    }
+
+    .form-input.invalid { border-color: var(--red); }
+
+    input[type="date"].form-input { color-scheme: dark; }
+
+    .form-textarea {
+      resize: none;
+      min-height: 80px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    /* ── Sticky footer ── */
+    .contact-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-send {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 770px;
+      height: 56px;
+      background: var(--brand-95);
+      border: none;
+      border-radius: var(--radius-8);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 26px;
+      text-transform: uppercase;
+      color: var(--bg);
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .btn-send:hover:not(:disabled) { background: var(--brand-80); }
+    .btn-send:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Confirmation screen ── */
+    .confirm-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex: 1;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .confirm-screen.visible { display: flex; }
+
+    .confirm-check {
+      width: 56px;
+      height: 56px;
+    }
+
+    .confirm-title {
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900;
+      font-size: 24px;
+      line-height: 28px;
+      text-transform: uppercase;
+      color: var(--brand-00);
+    }
+
+    .confirm-copy {
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 24px;
+      color: var(--brand-50);
+      max-width: 320px;
+    }
+
+    .btn-back-home {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      padding: 0 32px;
+      background: var(--brand-95);
+      border: none;
+      border-radius: var(--radius-8);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      text-transform: uppercase;
+      color: var(--bg);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── Desktop ── */
+    @media (min-width: 640px) {
+      .contact-header { padding: 0 40px; }
+      .contact-top    { padding: 40px 40px 0; }
+      .contact-title  { font-size: 44px; line-height: 48px; }
+      .contact-form   { padding: 40px 40px 40px; }
+      .contact-footer { padding: 24px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="contact-header">
+    <a class="back-btn" id="back-btn" href="/">
+      <span class="back-caret">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L6 7L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span id="back-label" data-en="Back" data-fr="Retour">Back</span>
+    </a>
+  </header>
+
+  <!-- Main -->
+  <main class="contact-main" id="contact-main">
+
+    <!-- Form view -->
+    <div id="form-view">
+      <div class="contact-top">
+        <h1 class="contact-title" data-en="Contact Momo" data-fr="Contacter Momo">Contact Momo</h1>
+        <p class="contact-subtitle" data-en="Watcha want to talk about?" data-fr="De quoi veux-tu parler ?">Watcha want to talk about?</p>
+      </div>
+
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="form-field">
+          <label class="form-label" for="field-name" data-en="Name *" data-fr="Nom *">Name *</label>
+          <input class="form-input" id="field-name" type="text" placeholder="Your full name" autocomplete="name" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="field-phone" data-en="Phone number *" data-fr="Numéro de téléphone *">Phone number *</label>
+          <input class="form-input" id="field-phone" type="tel" placeholder="+1 (514) 000-0000" autocomplete="tel" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="field-email" data-en="Email *" data-fr="Courriel *">Email *</label>
+          <input class="form-input" id="field-email" type="email" placeholder="name@domain.com" autocomplete="email" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="field-company" data-en="Company name *" data-fr="Nom de compagnie *">Company name *</label>
+          <input class="form-input" id="field-company" type="text" placeholder="The best buvette" autocomplete="organization" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="field-desc" data-en="Description *" data-fr="Description *">Description *</label>
+          <textarea class="form-input form-textarea" id="field-desc" placeholder="Tell me about your project" required></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="field-date" data-en="Date" data-fr="Date">Date</label>
+          <input class="form-input" id="field-date" type="date">
+        </div>
+      </form>
+    </div>
+
+    <!-- Confirmation screen (hidden until sent) -->
+    <div class="confirm-screen" id="confirm-screen">
+      <svg class="confirm-check" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="28" cy="28" r="28" fill="#22C55E"/>
+        <polyline points="16,29 24,37 40,20" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="confirm-title" data-en="Booking request sent!" data-fr="Demande envoyée !">Booking request sent!</p>
+      <p class="confirm-copy" data-en="Thank you for contacting Momo. I'm excited about this already and will get back to you shortly." data-fr="Merci d'avoir contacté Momo. Je suis déjà enthousiaste et je te reviens sous peu.">Thank you for contacting Momo. I'm excited about this already and will get back to you shortly.</p>
+      <a class="btn-back-home" id="back-home-btn" href="/" data-en="BACK TO HOME" data-fr="RETOUR À L'ACCUEIL">BACK TO HOME</a>
+    </div>
+
+  </main>
+
+  <!-- Sticky send button -->
+  <footer class="contact-footer" id="contact-footer">
+    <button class="btn-send" id="send-btn" disabled data-en="SEND" data-fr="ENVOYER">SEND</button>
+  </footer>
+
+  <script>
+    // ── Language detection ──
+    // Priority: URL path (/en/ or /fr/) → stored pref → browser lang → default en
+    function detectLang() {
+      const path = window.location.pathname;
+      if (path.startsWith('/fr')) return 'fr';
+      if (path.startsWith('/en')) return 'en';
+      try {
+        const stored = localStorage.getItem('momo-lang');
+        if (stored === 'fr' || stored === 'en') return stored;
+      } catch {}
+      return (navigator.language || '').startsWith('fr') ? 'fr' : 'en';
+    }
+
+    let currentLang = detectLang();
+
+    function applyLang(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const text = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+        if (text) el.textContent = text;
+      });
+      // Placeholders
+      const placeholders = {
+        'field-name':    { en: 'Your full name',           fr: 'Votre nom complet' },
+        'field-phone':   { en: '+1 (514) 000-0000',        fr: '+1 (514) 000-0000' },
+        'field-email':   { en: 'name@domain.com',          fr: 'nom@domaine.com' },
+        'field-company': { en: 'The best buvette',         fr: 'La meilleure buvette' },
+        'field-desc':    { en: 'Tell me about your project', fr: 'Parle-moi de ton projet' },
+      };
+      Object.entries(placeholders).forEach(([id, p]) => {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = lang === 'fr' ? p.fr : p.en;
+      });
+      // Update back link to home in correct language
+      const backBtn = document.getElementById('back-btn');
+      backBtn.href = lang === 'fr' ? '/fr' : '/';
+      const backHomeBtn = document.getElementById('back-home-btn');
+      if (backHomeBtn) backHomeBtn.href = lang === 'fr' ? '/fr' : '/';
+      currentLang = lang;
+    }
+
+    applyLang(currentLang);
+
+    // ── Form validation ──
+    const sendBtn      = document.getElementById('send-btn');
+    const contactForm  = document.getElementById('contact-form');
+    const textarea     = document.getElementById('field-desc');
+    const mandatoryIds = ['field-name', 'field-phone', 'field-email', 'field-company', 'field-desc'];
+
+    function isEmailValid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function isPhoneValid(v) { return v.replace(/[\s\-().+]/g, '').length >= 7; }
+
+    function validateForm() {
+      let ok = true;
+      mandatoryIds.forEach(id => {
+        const el = document.getElementById(id);
+        const val = el.value.trim();
+        let fieldOk = val.length > 0;
+        if (id === 'field-email') fieldOk = isEmailValid(val);
+        if (id === 'field-phone') fieldOk = isPhoneValid(val);
+        if (!fieldOk) ok = false;
+      });
+      sendBtn.disabled = !ok;
+    }
+
+    contactForm.addEventListener('input', validateForm);
+
+    // Inline error on blur
+    mandatoryIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('blur', () => {
+        const val = el.value.trim();
+        let ok = val.length > 0;
+        if (id === 'field-email') ok = isEmailValid(val);
+        if (id === 'field-phone') ok = isPhoneValid(val);
+        el.classList.toggle('invalid', !ok && val.length > 0);
+      });
+      el.addEventListener('input', () => el.classList.remove('invalid'));
+    });
+
+    // Auto-resize textarea
+    textarea.addEventListener('input', () => {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 240) + 'px';
+    });
+
+    // ── Submission ──
+    const WEB3FORMS_KEY = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+
+    sendBtn.addEventListener('click', async () => {
+      const originalText = sendBtn.textContent;
+      sendBtn.textContent = '...';
+      sendBtn.disabled = true;
+
+      const data = {
+        access_key:  WEB3FORMS_KEY,
+        subject:     'New Booking Request — Momo Aux Platines',
+        from_name:   'Momo Aux Platines Website',
+        name:        document.getElementById('field-name').value.trim(),
+        phone:       document.getElementById('field-phone').value.trim(),
+        email:       document.getElementById('field-email').value.trim(),
+        company:     document.getElementById('field-company').value.trim(),
+        description: document.getElementById('field-desc').value.trim(),
+        date:        document.getElementById('field-date').value || '—',
+      };
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body:    JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          // Show confirmation
+          document.getElementById('form-view').style.display = 'none';
+          document.getElementById('contact-footer').style.display = 'none';
+          const confirmScreen = document.getElementById('confirm-screen');
+          confirmScreen.classList.add('visible');
+          applyLang(currentLang); // re-apply lang to confirmation strings
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        sendBtn.textContent = currentLang === 'fr' ? 'ERREUR — RÉESSAYER' : 'ERROR — TRY AGAIN';
+        sendBtn.disabled = false;
+        setTimeout(() => { sendBtn.textContent = originalText; validateForm(); }, 3000);
+      }
+    });
+  </script>
+
+</body>
+</html>
