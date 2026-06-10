@@ -9,7 +9,11 @@ Figma source: https://www.figma.com/design/jLKivsLOR22DJmngjsCcYz/Momo-Aux-Plati
 Changements Figma en attente d'application dans le code.
 Format : `[ ] node-id — description` → `[x]` quand appliqué → retiré au prochain push.
 
-_(aucun changement en attente)_
+[x] 1072:1534 — Header index pill : padding 24px → 16px 24px (py:16 px:24) + logo-box → og-image (40×40 carré)
+[x] 972:6617 — Header admin : logo-box → og-image, visible mobile+desktop (header-left toujours caché)
+[x] 972:6618 — Header événements publics (request.html) : logo-box → og-image
+[x] 867:2332 — Carte demande admin : Prior (r.ts < event start) → DD/MM • HH:MM, Live (r.ts ≥ event start) → HH:MM seul
+[x] 982:5911 — Cartes événements admin : bg brand-105, border brand-90, radius 8px, top gap 16px, live pill brand-100/radius-72, retrait bouton Edit, Copy URL text-transform:none
 
 <!--
 Appliqués 2026-06-06 :
@@ -20,6 +24,9 @@ Appliqués 2026-06-06 :
 
 Appliqués 2026-06-08 :
 [x] 985:2627 — Tab Public : weight 274 (default/hover) → 510 (active), 20px/26px, brand-70/60/50, gap 0
+[x] 867:2333 — Carte demande admin (next) : date•heure DD/MM•HH:MM 24h, confirm avant delete, retrait immédiat de la liste
+[x] 998:4914 — Footer admin : btn-save dark (brand-90/brand-00/700), disabled brand-100/brand-80, padding 24px
+[x] 998:4743 — Footer public : submit disabled brand-95/#000/radius-8, active brand-50/brand-100/Kanit-900, hover brand-40, padding 24px
 [x] 982:5685 — Messages système : success 20px/26px brand-50 icon 24px filled, error 18px/22px brand-50, gap 8px, padding 16px, radius 8px
 [x] 972:6588 / 956:2517 — Header index : logo-box 40px gauche, live pill bg brand-100/radius-72, lang-toggle display:flex/h40px/radius-72/brand-105, hover brand-100
 [x] 879:4256 — Header admin tablet/desktop : logo-box 40px gauche (remplace favicon+title), tabs gap 16px centré, logout droite
