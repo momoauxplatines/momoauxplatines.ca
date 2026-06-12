@@ -130,8 +130,9 @@
     .btn-save { background: var(--brand-90); border: none; border-radius: 8px; color: var(--brand-00); font-family: inherit; font-weight: 700; font-size: 18px; height: 56px; width: 100%; max-width: 770px; cursor: pointer; transition: background 0.15s; }
     .btn-save:hover:not(:disabled) { background: var(--brand-80); }
     .btn-save:disabled { background: var(--brand-100); color: var(--brand-80); cursor: not-allowed; }
-    .btn-dark { background: var(--brand-90, #282a27); border: 1px solid var(--brand-80, #51534e); border-radius: 8px; color: var(--brand-00, #fafbf9); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
-    .btn-dark:hover { opacity: 0.8; }
+    .btn-dark { background: var(--brand-90, #282a27); border: 1px solid var(--brand-80, #51534e); border-radius: 8px; color: var(--brand-00, #fafbf9); font-family: inherit; font-size: 18px; font-weight: 700; height: 56px; width: 100%; cursor: pointer; transition: opacity 0.15s; }
+    .btn-dark:hover:not(:disabled) { opacity: 0.8; }
+    .btn-dark:disabled { background: var(--brand-100, #141513); border-color: var(--brand-90, #282a27); color: var(--brand-80, #51534e); cursor: not-allowed; }
     .gig-live-status { display: flex; align-items: center; gap: 4px; background: var(--brand-100); padding: 4px 12px; border-radius: 72px; }
     .gig-live-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex-shrink: 0; animation: live-pulse 1.5s ease-in-out infinite; }
     @keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -326,20 +327,20 @@
     .battle-ongoing-text { font-size: 18px; font-weight: 300; color: var(--brand-30); text-align: center; }
 
     /* ── Event detail screen ── */
-    .event-screen { background: var(--bg); display: none; flex-direction: column; overflow: hidden; min-height: 100vh; }
+    .event-screen { background: var(--bg); display: none; flex-direction: column; overflow: hidden; height: 100dvh; }
     .event-screen.open { display: flex; }
     .event-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--bg); }
     .btn-back { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; color: var(--brand-50); font-size: 16px; font-weight: 300; padding: 8px 0; line-height: 20px; }
     .btn-back:hover { color: var(--brand-30); }
     .event-logo { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; border: 1px solid var(--brand-100); flex-shrink: 0; }
     .event-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .event-status-badge { font-family: Kanit, sans-serif; font-weight: 900; font-size: 18px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 12px; border-radius: 72px; background: var(--brand-100); flex: 1; text-align: center; }
+    .event-status-badge { font-family: Kanit, sans-serif; font-weight: 900; font-size: 18px; line-height: 26px; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 12px; border-radius: 72px; background: var(--brand-100); flex-shrink: 0; }
     .event-status-badge.live { color: #d34242; }
     .event-status-badge.live::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #d34242; margin-right: 6px; vertical-align: middle; margin-bottom: 2px; }
     .event-status-badge.next { color: #007aff; }
-    .event-tabs-wrap { flex-shrink: 0; display: flex; justify-content: center; overflow-x: auto; padding: 16px; scrollbar-width: none; }
+    .event-tabs-wrap { flex-shrink: 0; display: flex; overflow-x: auto; padding: 16px; scrollbar-width: none; }
     .event-tabs-wrap::-webkit-scrollbar { display: none; }
-    .event-tabs { display: flex; gap: 8px; }
+    .event-tabs { display: flex; gap: 8px; margin: 0 auto; flex-shrink: 0; }
     .event-tab { height: 48px; padding: 0 20px; border-radius: 32px; border: 1px solid var(--brand-90); background: var(--brand-100); color: var(--brand-70); font-family: inherit; font-size: 20px; font-weight: 274; line-height: 26px; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
     .event-tab.active { border-radius: 40px; border-color: var(--brand-80); background: var(--brand-105); color: var(--brand-00); }
     .event-tab:not(.active):hover { color: var(--brand-50); }
@@ -350,7 +351,7 @@
     .event-pane .battle-form { padding: 0; }
     .event-detail-body { width: 100%; }
     .event-form { max-width: 770px; margin: 0 auto; padding: 0 24px 160px; display: flex; flex-direction: column; gap: 16px; }
-    .event-footer { flex-shrink: 0; padding: 24px; background: var(--bg); box-shadow: 0 -12px 24px rgba(17,18,16,0.9); }
+    .event-footer { flex-shrink: 0; padding: 24px; background: var(--bg); }
     .event-footer-inner { max-width: 770px; margin: 0 auto; }
     .btn-delete-event { background: var(--brand-90); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: inherit; font-size: 18px; font-weight: 300; height: 56px; width: 100%; cursor: pointer; transition: all 0.15s; }
     .btn-delete-event:hover { background: var(--red); color: var(--brand-00); }
@@ -560,7 +561,7 @@
     </button>
     <span id="event-status-badge" class="event-status-badge"></span>
     <div class="event-logo">
-      <img id="event-logo-img" src="../images/og-image.png" alt="Momo">
+      <img id="event-screen-logo" src="../images/og-image.png" alt="">
     </div>
   </header>
 
@@ -3384,7 +3385,7 @@
   let evPendingAvatarUrl    = null;
   let evPendingAvatarUser   = null;
 
-  function updateEventLogo(s){var l=document.getElementById('event-logo-img');if(l)l.src=s||'../images/og-image.png';}
+  function updateEventLogo(s){var l=document.getElementById('event-logo-img');if(l)l.src=s||'../images/og-image.png';var l2=document.getElementById('event-screen-logo');if(l2)l2.src=s||'../images/og-image.png';}
   function openEventDetail(idx) {
     currentEventDetailIdx = idx;
     const ev = currentEvents[idx];
@@ -3451,6 +3452,8 @@
     switchEventTab('info');
     document.getElementById('admin-screen').style.display = 'none';
     document.getElementById('event-screen').classList.add('open');
+    const _body = document.querySelector('.event-detail-body');
+    if (_body) _body.scrollTop = 0;
     history.pushState({ eventId: ev.id }, '', '?event=' + encodeURIComponent(ev.id));
   }
 
