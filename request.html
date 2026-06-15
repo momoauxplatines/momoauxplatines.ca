@@ -460,7 +460,7 @@
     .req-tab-footer {
       padding: 24px; flex-shrink: 0;
       background: var(--bg);
-      box-shadow: 0 -12px 24px rgba(17,18,16,0.9);
+      position: sticky; bottom: 0; z-index: 30;
     }
     .req-submit-btn {
       display: flex; align-items: center; justify-content: center;
@@ -526,6 +526,7 @@
       min-width: 38px; text-align: right; flex-shrink: 0;
     }
 
+    /* battle-submit-btn — used for disabled inline states (voted / ended) */
     .battle-submit-btn {
       display: flex; align-items: center; justify-content: center;
       width: 100%; height: 56px; padding: 0 16px;
@@ -538,8 +539,6 @@
       transition: background 0.15s;
       margin-top: 8px;
     }
-    .battle-submit-btn.ready { background: var(--brand-50); color: var(--brand-100); cursor: pointer; }
-    .battle-submit-btn.ready:hover { background: var(--brand-40); }
 
     .battle-footer-note {
       font-size: 14px; font-weight: 300; color: var(--brand-50);
@@ -640,6 +639,7 @@
   <!-- ── Battle Panel ── -->
   <div class="tab-panel" id="panel-battle">
     <div class="song-list" id="battle-list"></div>
+    <div class="req-tab-footer" id="battle-footer" style="display:none"></div>
   </div>
 
   <!-- ── Played Panel ── -->
@@ -1895,6 +1895,12 @@
 
     battleList.appendChild(cardsDiv);
 
+    // Move submit into sticky footer
+    const battleFooter = document.getElementById('battle-footer');
+    battleFooter.innerHTML = '';
+    battleFooter.style.display = '';
+    submitBtn.className = 'req-submit-btn';
+
     submitBtn.addEventListener('click', async () => {
       if (!_battleChoice || submitBtn.disabled) return;
       submitBtn.disabled = true;
@@ -1929,11 +1935,12 @@
         submitBtn.textContent = currentLang === 'fr' ? 'VOTER' : 'SUBMIT';
       }
     });
-    battleList.appendChild(submitBtn);
+    battleFooter.appendChild(submitBtn);
   }
 
   function renderBattleVoted(battle) {
     const battleList = document.getElementById('battle-list');
+    document.getElementById('battle-footer').style.display = 'none';
     const entries    = computePcts(battle);
     const myVoteId   = localStorage.getItem(battleVoteKey(battle.id));
     battleList.innerHTML = '';
@@ -1994,6 +2001,7 @@
 
   function renderBattleEnded(battle) {
     const battleList = document.getElementById('battle-list');
+    document.getElementById('battle-footer').style.display = 'none';
     stopBattlePoll();
     const entries  = computePcts(battle);
     const myVoteId = localStorage.getItem(battleVoteKey(battle.id));
