@@ -1201,7 +1201,7 @@
               ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
               ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
             </div>
-            <a class="ev-go-btn" href="${ev.slug ? '/requests/' + encodeURIComponent(ev.slug) : '/requests'}"
+            <a class="ev-go-btn" href="${ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events'}"
                data-key="next-events.btn.go" data-en="Come on in" data-fr="Allez entre">Come on in</a>`;
           liveSection.appendChild(card);
         });

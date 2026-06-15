@@ -30,14 +30,25 @@
   status = 200
 
 [[redirects]]
-  from = "/requests/:slug"
-  to = "/request.html"
+  from = "/events/:slug"
+  to = "/event.html"
   status = 200
 
 [[redirects]]
-  from = "/requests"
-  to = "/request.html"
+  from = "/events"
+  to = "/event.html"
   status = 200
+
+# Rétrocompatibilité — anciennes URLs /requests/
+[[redirects]]
+  from = "/requests/:slug"
+  to = "/events/:slug"
+  status = 301
+
+[[redirects]]
+  from = "/requests"
+  to = "/events"
+  status = 301
 
 [[redirects]]
   from = "/demandesspeciales"
