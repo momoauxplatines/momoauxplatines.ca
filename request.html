@@ -280,6 +280,21 @@
       color: var(--brand-70);
       font-size: 16px; font-weight: 300; line-height: 24px;
     }
+    #played-next-message {
+      flex-direction: column;
+      gap: 24px;
+      min-height: calc(100vh - 160px);
+      padding: 16px;
+    }
+    #played-next-message img {
+      width: 170px; height: 134px;
+      object-fit: contain; display: block; flex-shrink: 0;
+    }
+    #played-next-message p {
+      font-size: 18px; line-height: 22px;
+      color: var(--brand-70);
+      font-weight: 300; margin: 0;
+    }
 
     /* ── Song Card ── */
     .song-card {
@@ -645,12 +660,10 @@
   <!-- ── Played Panel ── -->
   <div class="tab-panel" id="panel-played">
     <div class="empty-state" id="played-next-message" style="display:none">
-      <p data-key="played.next.p1"
-         data-en="This is where the songs played during the event will be listed so you can add them to your favorite playlists."
-         data-fr="Les chansons jouées pendant l'événement seront listées ici pour que vous puissiez les ajouter à vos playlists préférées.">This is where the songs played during the event will be listed so you can add them to your favorite playlists.</p>
-      <p data-key="played.next.p2"
-         data-en="You can also Shazam on your own. I won't be mad about that."
-         data-fr="Vous pouvez aussi Shazamer de votre côté. Je ne vous en voudrai pas.">You can also Shazam on your own. I won't be mad about that.</p>
+      <img src="images/illustration.empty.png" alt="" width="170" height="134">
+      <p data-key="played.next"
+         data-en="Songs played will be listed here."
+         data-fr="Les chansons jouées seront listées ici.">Songs played will be listed here.</p>
     </div>
     <p class="played-intro" id="played-intro"
        data-key="played.intro"
