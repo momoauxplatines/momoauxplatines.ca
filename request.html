@@ -295,6 +295,23 @@
       color: var(--brand-70);
       font-weight: 300; margin: 0;
     }
+    .battle-empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 24px;
+      min-height: calc(100vh - 160px);
+      padding: 16px;
+      text-align: center;
+    }
+    .battle-empty-state img {
+      width: 170px; height: 274px;
+      object-fit: contain; display: block; flex-shrink: 0;
+    }
+    .battle-empty-state p {
+      font-size: 18px; line-height: 22px;
+      color: var(--brand-70);
+      font-weight: 300; margin: 0;
+    }
 
     /* ── Song Card ── */
     .song-card {
@@ -1765,11 +1782,10 @@
       const battle = active || ended;
 
       if (!battle) {
-        battleList.innerHTML = `<div class="empty-state">${
-          currentLang === 'fr'
-            ? 'Pas de battle encore.<br>Mais ça chauffe.<br>Ça va arriver.'
-            : 'No battle yet.<br>But the heat is on.<br>It will happen.'
-        }</div>`;
+        battleList.innerHTML = `<div class="battle-empty-state">
+          <img src="images/illustration.empty.battle.png" alt="" width="170" height="274">
+          <p>${currentLang === 'fr' ? 'Pas de battle encore.' : 'No battle yet.'}</p>
+        </div>`;
         return;
       }
 
