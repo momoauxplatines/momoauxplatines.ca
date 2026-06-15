@@ -172,15 +172,15 @@
     .msg-tab-intro  { font-size: 14px; line-height: 1.5; color: var(--brand-30); text-align: center; }
     .msg-textarea-wrap { display: flex; flex-direction: column; gap: 8px; }
     .msg-textarea   {
-      width: 100%; min-height: 140px; resize: none;
-      background: var(--brand-90); color: var(--brand-00);
-      border: 1.5px solid var(--brand-70); border-radius: 0;
-      padding: 14px 16px; font-family: 'Kanit', sans-serif; font-size: 15px;
-      line-height: 1.5; outline: none; box-sizing: border-box;
+      width: 100%; resize: none; overflow: hidden;
+      background: var(--brand-100); color: var(--brand-00);
+      border: 1px solid var(--brand-90); border-radius: 8px;
+      padding: 16px 20px; font-family: 'Kanit', sans-serif; font-size: 18px;
+      line-height: 26px; outline: none; box-sizing: border-box;
       transition: border-color 0.15s;
     }
-    .msg-textarea:focus          { border-color: var(--brand-00); }
-    .msg-textarea::placeholder   { color: var(--brand-70); }
+    .msg-textarea:focus          { border-color: var(--brand-60); }
+    .msg-textarea::placeholder   { color: var(--brand-60); }
     .msg-success { display: none; flex-direction: column; align-items: center; gap: 8px; padding: 16px 0; border-radius: 8px; }
     .msg-success.visible { display: flex; }
     .msg-success-text { font-size: 20px; font-weight: 274; line-height: 26px; color: var(--brand-50); text-align: center; }
@@ -731,7 +731,7 @@
                   data-placeholder-en="Ideally positive and respectful"
                   data-placeholder-fr="Idéalement positif et respectueux"
                   placeholder="Type your message here"
-                  rows="6" maxlength="1000"></textarea>
+                  maxlength="1000"></textarea>
       </div>
 
       <!-- Success state -->
@@ -1255,7 +1255,13 @@
   const msgSuccess   = document.getElementById('msg-success');
   let msgSuccessTimer = null;
 
+  function autoResizeMsgInput() {
+    msgInput.style.height = 'auto';
+    msgInput.style.height = msgInput.scrollHeight + 'px';
+  }
+
   msgInput.addEventListener('input', () => {
+    autoResizeMsgInput();
     const hasText = msgInput.value.trim().length > 0;
     msgSubmitBtn.disabled = !hasText;
     msgSubmitBtn.classList.toggle('ready', hasText);
@@ -1280,6 +1286,7 @@
 
     // Show success
     msgInput.value = '';
+    msgInput.style.height = 'auto';
     msgSuccess.classList.add('visible');
 
     // Auto-reset after 5 s
