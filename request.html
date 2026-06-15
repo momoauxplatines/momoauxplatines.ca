@@ -104,22 +104,27 @@
     }
     .req-header > a { flex-shrink: 0; }
 
-    /* ── Header Live badge ── */
-    .req-header-live {
+    /* ── Header status badges ── */
+    .req-header-badge {
       display: none; align-items: center; gap: 6px;
-      background: #000; border-radius: 99px;
+      background: #111312; border-radius: 99px;
       padding: 4px 14px; height: 36px;
     }
-    .req-header-live.visible { display: flex; }
+    .req-header-badge.visible { display: flex; }
     .req-live-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: #D34242; flex-shrink: 0;
       animation: pulse 1.4s ease-in-out infinite;
     }
-    .req-live-label {
+    .req-badge-label {
       font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 16px; line-height: 24px; color: var(--brand-00);
+      font-size: 16px; line-height: 24px;
     }
+    .req-header-badge.badge-live .req-badge-label { color: #D34242; }
+    .req-header-badge.badge-next .req-badge-label { color: #007AFF; }
+    /* keep old class name working for any existing references */
+    .req-header-live { display: none; }
+    .req-header-live.visible { display: flex; }
 
     /* Event image thumbnail in header (right side) */
     .header-event-img {
@@ -579,9 +584,12 @@
 
     <header class="req-header">
       <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
-      <div class="req-header-live" id="req-header-live">
+      <div class="req-header-badge badge-live" id="req-header-live">
         <div class="req-live-dot"></div>
-        <span class="req-live-label" data-en="Live" data-fr="En direct">Live</span>
+        <span class="req-badge-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+      </div>
+      <div class="req-header-badge badge-next" id="req-header-next" style="display:none">
+        <span class="req-badge-label" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
       </div>
       <!-- Event image — populated dynamically from event data -->
       <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
@@ -977,7 +985,10 @@
           pollLivePlaylist();
           fetchRequests();
         } else if (ev.date) {
-          // Upcoming event — show next-state message in Played tab, hide live content
+          // Upcoming event — show NEXT badge in header
+          const nextBadge = document.getElementById('req-header-next');
+          if (nextBadge) nextBadge.style.display = '';
+          // Show next-state message in Played tab, hide live content
           const nextMsg  = document.getElementById('played-next-message');
           const introEl  = document.getElementById('played-intro');
           const listEl   = document.getElementById('played-list');
