@@ -717,17 +717,17 @@
       'overlay.tab.battle': 'Battle',
       'overlay.tab.messages': 'Messages',
       'overlay.back': 'Back',
-      'playing.empty': 'Songs used in Serato will be listed here once the event is live.',
+      'playing.empty': 'Songs from your Serato Live Playlist will be listed here.',
       'playing.empty.hint': 'Make sure to start the Serato Live Playlist to see the songs here.',
       'playing.now.label': 'Now playing',
       'playing.mark.label': 'Mark as now playing',
       'battle.not.live': 'Battles can only be set once the event is live.',
-      'battle.next.empty': 'Battles can only be set once the event is live.',
+      'battle.next.empty': 'Battles can only be planned live.',
       'battle.start.btn': 'Start The Battle',
       'battle.create.btn': 'Create a battle',
       'status.live': 'Live',
       'status.next': 'Next',
-      'playing.next.empty': 'Songs used in Serato will be listed here once the event is live.',
+      'playing.next.empty': 'Songs from your Serato Live Playlist will be listed here once the event is live.',
       'playing.next.empty.hint': 'Make sure to start the Serato Live Playlist to see the songs here.',
       'battle.new.btn': 'Create New Battle',
       'battle.time.label': 'Time*',
@@ -848,17 +848,17 @@
       'overlay.tab.battle': 'Bataille',
       'overlay.tab.messages': 'Messages',
       'overlay.back': 'Retour',
-      'playing.empty': "Les chansons utilisées dans Serato s'afficheront ici une fois l'événement en direct.",
+      'playing.empty': 'Les chansons de votre liste de lecture Serato Live s\'afficheront ici.',
       'playing.empty.hint': 'Assurez-vous de démarrer la liste de lecture en direct Serato pour voir les chansons ici.',
       'playing.now.label': 'En cours',
       'playing.mark.label': 'Marquer comme en cours',
       'battle.not.live': "Les batailles ne peuvent être lancées qu'une fois l'événement en direct.",
-      'battle.next.empty': "Les batailles ne peuvent être lancées qu'une fois l'événement en direct.",
+      'battle.next.empty': 'Les batailles ne peuvent être planifiées qu\'en direct.',
       'battle.start.btn': 'Lancer la bataille',
       'battle.create.btn': 'Créer une bataille',
       'status.live': 'En direct',
       'status.next': 'Prochain',
-      'playing.next.empty': "Les chansons utilisées dans Serato s'afficheront ici une fois l'événement en direct.",
+      'playing.next.empty': "Les chansons de votre liste de lecture Serato Live s'afficheront ici une fois l'événement en direct.",
       'playing.next.empty.hint': 'Assurez-vous de démarrer la liste de lecture en direct Serato pour voir les chansons ici.',
       'battle.new.btn': 'Nouvelle bataille',
       'battle.time.label': 'Durée*',
@@ -3509,10 +3509,10 @@
 
   function evFillSupportTabs(ev) {
     const isLive = ev && isEventLive(ev);
-    // Playing — next = Serato hint centered; live = same but with live context
-    document.getElementById('ev-playing-pane').innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;padding-top:8px;text-align:center;">`
-      + `<p style="font-size:16px;font-weight:300;color:var(--brand-50);line-height:22px;margin:0;">${isLive ? t('playing.empty') : t('playing.next.empty')}</p>`
-      + `<p style="font-size:14px;font-weight:300;color:var(--brand-70);line-height:20px;margin:0;">${isLive ? t('playing.empty.hint') : t('playing.next.empty.hint')}</p>`
+    // Playing — empty state with illustration
+    document.getElementById('ev-playing-pane').innerHTML = `<div style="display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;min-height:60vh;padding:16px;text-align:center;">`
+      + `<img src="../images/illustration.empty.playing.png" alt="" style="width:170px;height:auto;display:block;">`
+      + `<p style="font-size:18px;font-weight:300;color:var(--brand-70);line-height:22px;margin:0;max-width:300px;">${isLive ? t('playing.empty') : t('playing.next.empty')}</p>`
       + `</div>`;
     // Battle — depends on whether event is live
     document.getElementById('ev-battle-pane').innerHTML = isLive
@@ -3530,7 +3530,7 @@
             <input class="edit-input" type="url" placeholder="${t('battle.spotify.placeholder')}">
           </div>
         </div>`
-      : `<p class="empty-state" style="text-align:center;">${t('battle.next.empty')}</p>`;
+      : `<div style="display:flex;flex-direction:column;gap:24px;align-items:center;justify-content:center;min-height:60vh;padding:16px;text-align:center;"><img src="../images/illustration.empty.battle.png" alt="" style="width:170px;height:auto;display:block;"><p style="font-size:18px;font-weight:300;color:var(--brand-70);line-height:22px;margin:0;max-width:300px;">${t('battle.next.empty')}</p></div>`;
     // Requests
     document.getElementById('ev-req-pane').innerHTML =
       `<div class="empty-state">${t('req.empty')}</div>`;
