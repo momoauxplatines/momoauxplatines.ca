@@ -164,9 +164,9 @@
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-    /* Requests + Message panels use flex column so submit btn can stick to bottom */
+    /* Requests + Message panels — block layout, footer is fixed */
     #panel-requests.active,
-    #panel-message.active  { display: flex; flex-direction: column; flex: 1; }
+    #panel-message.active  { display: block; }
 
     .msg-tab-body   { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 24px 20px 0; }
     .msg-tab-intro  { font-size: 14px; line-height: 1.5; color: var(--brand-30); text-align: center; }
@@ -490,10 +490,19 @@
     }
 
     .req-tab-footer {
-      padding: 24px; flex-shrink: 0;
+      padding: 24px;
       background: var(--bg);
-      position: sticky; bottom: 0; z-index: 30;
+      position: fixed;
+      bottom: var(--footer-bottom, 0px);
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      z-index: 30;
+      box-sizing: border-box;
     }
+    /* Space so content doesn't hide behind fixed footer */
+    #panel-requests.active,
+    #panel-message.active  { padding-bottom: 104px; }
+    #panel-battle.active   { padding-bottom: 104px; }
     .req-submit-btn {
       display: flex; align-items: center; justify-content: center;
       width: 100%; height: 56px; padding: 0 16px;
@@ -993,6 +1002,7 @@
           document.getElementById('req-header-live').classList.add('visible');
           document.getElementById('event-status-live').style.display = '';
           document.getElementById('now-playing-bar').style.display = '';
+          document.documentElement.style.setProperty('--footer-bottom', '60px');
           // Load live data
           checkForBattle();
           setInterval(checkForBattle, 30_000);
