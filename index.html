@@ -234,12 +234,17 @@
     .ev-go-btn:hover { opacity: 0.85; }
 
     /* Content */
-    .ev-content { display: flex; flex-direction: column; gap: 8px; }
+    .ev-copy { display: flex; flex-direction: column; gap: 12px; }
     .ev-venue-name {
       font-family: inherit; font-weight: 1000;
       font-size: 24px; line-height: normal;
       color: var(--brand-30);
     }
+    .ev-description {
+      font-size: 20px; font-weight: 274; line-height: 22px;
+      color: var(--brand-10);
+    }
+    .ev-content { display: flex; flex-direction: column; gap: 8px; }
     .ev-address {
       font-size: 16px; font-weight: 300; line-height: 20px;
       color: var(--brand-30);
@@ -1173,7 +1178,7 @@
   function renderEvents() {
     const all  = window.MOMO_EVENTS || [];
     const live = all.filter(eventIsLive);
-    const next = all.filter(eventIsNext);
+    const next = all.filter(eventIsNext).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
     // ── Live events section (between hero and intro) ──
     const liveSection = document.getElementById('events-section');
@@ -1195,11 +1200,14 @@
                 <span class="ev-live-label" data-key="next-events.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
               </div>
             </div>
-            <p class="ev-venue-name">${ev.venue}</p>
-            <div class="ev-content">
-              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
-              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
+            <div class="ev-copy">
+              <p class="ev-venue-name">${ev.venue}</p>
+              ${ev.description ? `<p class="ev-description">${ev.description}</p>` : ''}
+              <div class="ev-content">
+                ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+                ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+                ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
+              </div>
             </div>
             <a class="ev-go-btn" href="${ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events'}"
                data-key="next-events.btn.go" data-en="Come on in" data-fr="Allez entre">Come on in</a>`;
@@ -1227,11 +1235,14 @@
                    onerror="this.style.background='var(--brand-90)'">
               <span class="ev-next-label">${formatShortDate(ev.date)}</span>
             </div>
-            <p class="ev-venue-name">${ev.venue}</p>
-            <div class="ev-content">
-              ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
-              ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-              ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
+            <div class="ev-copy">
+              <p class="ev-venue-name">${ev.venue}</p>
+              ${ev.description ? `<p class="ev-description">${ev.description}</p>` : ''}
+              <div class="ev-content">
+                ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
+                ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
+                ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
+              </div>
             </div>`;
           nextList.appendChild(card);
         });

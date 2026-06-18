@@ -189,7 +189,7 @@
     /* ── Info Panel ── */
     .info-body {
       padding: 32px 16px 16px;
-      display: flex; flex-direction: column; gap: 24px;
+      display: flex; flex-direction: column; gap: var(--gap-32);
     }
     .info-top-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -198,6 +198,7 @@
       width: 80px; height: 80px; border-radius: 4px;
       object-fit: cover; flex-shrink: 0;
       background: var(--brand-90);
+      box-shadow: 4px 4px 0 0 #000;
     }
     .info-status-row {
       display: flex; align-items: center; gap: 8px;
@@ -230,32 +231,42 @@
       50%       { opacity: 0.3; }
     }
     .info-copy {
-      display: flex; flex-direction: column; gap: 4px;
+      display: flex; flex-direction: column; gap: var(--gap-16);
+    }
+    .info-top {
+      display: flex; flex-direction: column; gap: var(--gap-12);
+    }
+    .info-details {
+      display: flex; flex-direction: column; gap: var(--gap-8);
     }
     .info-venue-name {
       font-family: 'Kanit', sans-serif; font-weight: 900;
       font-size: 28px; line-height: 31px;
       color: var(--brand-00); text-transform: uppercase;
     }
+    .info-description {
+      font-size: 20px; font-weight: 300; line-height: 22px;
+      color: var(--brand-10);
+    }
     .info-address {
-      font-size: 20px; font-weight: 300; line-height: 26px;
-      color: var(--brand-30); text-decoration: none; display: block;
+      font-size: 20px; font-weight: 300; line-height: 22px;
+      color: var(--brand-50); text-decoration: none; display: block;
     }
     .info-address:hover { color: var(--brand-00); }
     .info-date, .info-hours {
-      font-size: 20px; font-weight: 300; line-height: 26px;
-      color: var(--brand-30);
+      font-size: 20px; font-weight: 300; line-height: 22px;
+      color: var(--brand-50);
     }
     .info-links {
-      display: flex; gap: 12px; flex-wrap: wrap;
+      display: flex; gap: var(--gap-8); flex-wrap: wrap;
     }
     .info-link-btn {
       display: inline-flex; align-items: center; justify-content: center;
       height: 56px; padding: 0 16px; border-radius: 8px;
       background: var(--brand-90);
-      color: var(--brand-00);
+      color: var(--brand-20);
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-      font-size: 18px; font-weight: 900; line-height: 26px;
+      font-size: 18px; font-weight: 500; line-height: 26px;
       text-decoration: none;
       transition: background 0.15s;
     }
@@ -666,10 +677,15 @@
         </div>
       </div>
       <div class="info-copy">
-        <h1 class="info-venue-name" id="info-venue-name"></h1>
-        <a class="info-address" id="info-address" href="" target="_blank" rel="noopener" style="display:none"></a>
-        <p class="info-date"  id="info-date"  style="display:none"></p>
-        <p class="info-hours" id="info-hours" style="display:none"></p>
+        <div class="info-top">
+          <h1 class="info-venue-name" id="info-venue-name"></h1>
+          <p class="info-description" id="info-description" style="display:none"></p>
+        </div>
+        <div class="info-details">
+          <a class="info-address" id="info-address" href="" target="_blank" rel="noopener" style="display:none"></a>
+          <p class="info-date"  id="info-date"  style="display:none"></p>
+          <p class="info-hours" id="info-hours" style="display:none"></p>
+        </div>
       </div>
       <div class="info-links" id="info-links">
         <a class="info-link-btn" id="info-ig-link" href="" target="_blank" rel="noopener" style="display:none">Instagram</a>
@@ -947,6 +963,13 @@
     // Venue name
     const venueName = document.getElementById('info-venue-name');
     if (venueName) venueName.textContent = ev.venue || '';
+
+    // Description
+    const descEl = document.getElementById('info-description');
+    if (descEl) {
+      if (ev.description) { descEl.textContent = ev.description; descEl.style.display = ''; }
+      else descEl.style.display = 'none';
+    }
 
     // Address (links to Google Maps directions)
     const addr = document.getElementById('info-address');
