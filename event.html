@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event — Momo Aux Platines</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
   <meta name="description" content="Live event page for Momo Aux Platines.">
   <meta property="og:title" content="Event — Momo Aux Platines">
   <meta property="og:image" content="images/og-image.png">
@@ -614,7 +614,7 @@
   <div class="sticky-top">
 
     <header class="req-header">
-      <a href="/"><img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines"></a>
+      <a href="/"><img class="header-logo" src="/images/og-image.png" alt="Momo Aux Platines"></a>
       <div class="req-header-badge badge-live" id="req-header-live">
         <div class="req-live-dot"></div>
         <span class="req-badge-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
@@ -677,7 +677,7 @@
   <!-- ── Played Panel ── -->
   <div class="tab-panel" id="panel-played">
     <div class="empty-state" id="played-next-message" style="display:none">
-      <img src="images/illustration.empty.png" alt="" width="170" height="134">
+      <img src="/images/illustration.empty.png" alt="" width="170" height="134">
       <p data-key="played.next"
          data-en="Songs played will be listed here."
          data-fr="Les chansons jouées seront listées ici.">Songs played will be listed here.</p>
@@ -800,7 +800,7 @@
         </div>
       </div>
       <div class="now-playing-request-col" id="now-playing-request-col">
-        <img class="now-playing-request-icon" src="images/request-played-icon.svg" alt="">
+        <img class="now-playing-request-icon" src="/images/request-played-icon.svg" alt="">
       </div>
     </div>
   </div>
@@ -1431,7 +1431,7 @@
         <a class="song-link" href="${safeHtml(spotifyUrl)}" target="_blank" rel="noopener"
            style="${spotifyUrl ? '' : 'display:none'}">Spotify</a>
       </div>
-      ${isRequested ? `<div class="song-request-col"><img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested"></div>` : ''}`;
+      ${isRequested ? `<div class="song-request-col"><img class="song-request-icon" src="/images/request-played-icon.svg" alt="Requested"></div>` : ''}`;
     return card;
   }
 
@@ -1708,7 +1708,7 @@
                       if (nowMatched && !reqCol) {
                         reqCol = document.createElement('div');
                         reqCol.className = 'song-request-col';
-                        reqCol.innerHTML = '<img class="song-request-icon" src="images/request-played-icon.svg" alt="Requested">';
+                        reqCol.innerHTML = '<img class="song-request-icon" src="/images/request-played-icon.svg" alt="Requested">';
                         card.appendChild(reqCol);
                       } else if (!nowMatched && reqCol) {
                         reqCol.remove();
@@ -1783,7 +1783,7 @@
 
       if (!battle) {
         battleList.innerHTML = `<div class="battle-empty-state">
-          <img src="images/illustration.empty.battle.png" alt="" width="170" height="274">
+          <img src="/images/illustration.empty.battle.png" alt="" width="170" height="274">
           <p>${currentLang === 'fr' ? 'Pas de battle encore.' : 'No battle yet.'}</p>
         </div>`;
         return;
