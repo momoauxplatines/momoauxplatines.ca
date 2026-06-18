@@ -29,7 +29,7 @@
 |---------|----------|-------------------------------------------|-----------------------|
 | `live`  | 857-4553 | Header (logo + event image)               | 2026-06-03            |
 | `live`  | 839-2645 | Now playing footer                        | 2026-06-03            |
-| `live`  | 857-2958 | Info tab                                  | 2026-06-03            |
+| `live`  | 978-4987 | Info tab — Next/Live (+ Description)      | 2026-06-18            |
 | `live`  | 860-1252 | Battle — no battle                        | 2026-06-03            |
 | `live`  | 857-2831 | Battle — in progress, default             | 2026-06-03            |
 | `live`  | 857-2848 | Battle — in progress, choice made         | 2026-06-03            |
