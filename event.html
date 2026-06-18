@@ -831,7 +831,7 @@
   // ─────────────────────────────────────────────
   const params    = new URLSearchParams(window.location.search);
   let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
-  const _pathSlug  = (window.location.pathname.match(/^\/requests\/([^/]+)$/) || [])[1] || '';
+  const _pathSlug  = (window.location.pathname.match(/^\/(?:requests|events)\/([^/]+)$/) || [])[1] || '';
   const EVENT_SLUG = ((params.get('event') || _pathSlug) || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
   const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
   const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
@@ -1312,6 +1312,14 @@
     if (!text || msgSubmitBtn.disabled) return;
     msgSubmitBtn.disabled = true;
     msgSubmitBtn.classList.remove('ready');
+
+    // Save to admin via API
+    const msgQs = EVENT_SLUG ? `?event=${encodeURIComponent(EVENT_SLUG)}` : '';
+    fetch(`/api/messages${msgQs}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    }).catch(() => {});
 
     // Send via Formspree (non-blocking)
     fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
