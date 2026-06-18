@@ -168,7 +168,7 @@
     #panel-requests.active,
     #panel-message.active  { display: block; }
 
-    .msg-tab-body   { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 24px 20px 0; }
+    .msg-tab-body   { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 32px 16px 0; }
     .msg-tab-intro  { font-size: 14px; line-height: 1.5; color: var(--brand-30); text-align: center; }
     .msg-textarea-wrap { display: flex; flex-direction: column; gap: 8px; }
     .msg-textarea   {
@@ -438,7 +438,7 @@
     /* ── Requests Panel (inline form) ── */
     .req-tab-body {
       flex: 1;
-      padding: 16px;
+      padding: 32px 16px 16px;
       display: flex; flex-direction: column; gap: 16px;
       overflow-y: auto;
     }
@@ -1066,7 +1066,20 @@
       stopBattlePoll();
     }
     if (tab === 'requests') {
-      setTimeout(() => document.getElementById('spotify-url')?.focus(), 80);
+      // Reset to default state
+      const urlInput   = document.getElementById('spotify-url');
+      const wrapper    = document.getElementById('spotify-input-wrapper');
+      const preview    = document.getElementById('song-preview');
+      const success    = document.getElementById('req-success');
+      const status     = document.getElementById('fetch-status');
+      const submitBtn  = document.getElementById('req-submit-btn');
+      if (urlInput)  { urlInput.value = ''; }
+      if (wrapper)   { wrapper.classList.remove('invalid'); }
+      if (preview)   { preview.classList.remove('visible'); }
+      if (success)   { success.classList.remove('visible'); }
+      if (status)    { status.textContent = ''; status.className = 'fetch-status'; }
+      if (submitBtn) { submitBtn.disabled = true; }
+      setTimeout(() => urlInput?.focus(), 80);
     }
   }
 
