@@ -587,8 +587,12 @@
           <input class="edit-input" type="text" id="ev-venue" placeholder="Buvette Chez Simone">
         </div>
         <div class="edit-field">
-          <label class="edit-label" data-i18n="form.gig.address.label">Address</label>
-          <input class="edit-input" type="text" id="ev-address" placeholder="4869 Rue Villeneuve O, Montréal">
+          <label class="edit-label" data-i18n="form.gig.address.label">Venue*</label>
+          <input class="edit-input" type="text" id="ev-address" placeholder="Le Rodman">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.description.label">Description*</label>
+          <textarea class="edit-input" id="ev-description" rows="3" placeholder="Bouffe, cocktails, bon beats par Momo…"></textarea>
         </div>
         <div class="edit-field">
           <label class="edit-label" data-i18n="form.gig.date.label">Date*</label>
@@ -784,7 +788,9 @@
       'form.gig.add.title': 'Add Gig',
       'form.gig.edit.title': 'Edit Gig',
       'form.gig.venue.label': 'Venue*',
-      'form.gig.address.label': 'Address',
+      'form.gig.desc.label': 'Description',
+      'form.gig.address.label': 'Venue*',
+      'form.gig.description.label': 'Description*',
       'form.gig.date.label': 'Date*',
       'form.gig.start.label': 'Start*',
       'form.gig.end.label': 'End*',
@@ -804,6 +810,7 @@
       'toast.entry.saved': 'Entry saved',
       'toast.title.required': 'Title is required',
       'toast.venue.required': 'Venue is required',
+      'toast.description.required': 'Description is required',
       'toast.copy.error': 'Could not copy',
       'toast.battle.started': 'Battle started! ⚔',
       'toast.now.playing': 'Now playing updated',
@@ -915,7 +922,9 @@
       'form.gig.add.title': 'Ajouter un gig',
       'form.gig.edit.title': 'Modifier le gig',
       'form.gig.venue.label': 'Lieu*',
-      'form.gig.address.label': 'Adresse',
+      'form.gig.desc.label': 'Description',
+      'form.gig.address.label': 'Lieu*',
+      'form.gig.description.label': 'Description*',
       'form.gig.date.label': 'Date*',
       'form.gig.start.label': 'Début*',
       'form.gig.end.label': 'Fin*',
@@ -935,6 +944,7 @@
       'toast.entry.saved': 'Entrée enregistrée',
       'toast.title.required': 'Le titre est requis',
       'toast.venue.required': 'Le lieu est requis',
+      'toast.description.required': 'La description est requise',
       'toast.copy.error': 'Impossible de copier',
       'toast.battle.started': 'Bataille lancée ! ⚔',
       'toast.now.playing': 'En cours mis à jour',
@@ -1745,6 +1755,10 @@
           <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-venue" value="${esc(ev?.venue || '')}" placeholder="Buvette Chez Simone">
         </div>
         <div class="edit-field">
+          <label class="edit-label">${t('form.gig.desc.label')}</label>
+          <textarea class="edit-input ${ev?.description ? '' : 'empty'}" id="ef-desc" rows="3" placeholder="Old school hip-hop d'ici et d'ailleurs…">${esc(ev?.description || '')}</textarea>
+        </div>
+        <div class="edit-field">
           <label class="edit-label">${t('form.gig.address.label')}</label>
           <input class="edit-input ${ev?.address ? '' : 'empty'}" type="text" id="ef-address" value="${esc(ev?.address || '')}" placeholder="4869 Rue Villeneuve O, Montréal">
         </div>
@@ -2144,6 +2158,7 @@
         const ev = {
           slug,
           venue,
+          description: document.getElementById('ef-desc')?.value.trim() || '',
           address:    document.getElementById('ef-address')?.value.trim() || '',
           date:       dateVal,
           start_time: document.getElementById('ef-start')?.value || '',
@@ -3392,8 +3407,9 @@
     if (!ev) return;
 
     // Populate fields
-    document.getElementById('ev-venue').value      = ev.venue      || '';
-    document.getElementById('ev-address').value    = ev.address    || '';
+    document.getElementById('ev-venue').value       = ev.venue       || '';
+    document.getElementById('ev-address').value    = ev.address     || '';
+    document.getElementById('ev-description').value = ev.description || '';
     document.getElementById('ev-date').value       = ev.date       || '';
     document.getElementById('ev-start').value      = ev.start_time || '';
     document.getElementById('ev-end').value        = ev.end_time   || '';
@@ -3639,6 +3655,8 @@
     const saveBtn = document.getElementById('ev-save-btn');
     const venue = document.getElementById('ev-venue').value.trim();
     if (!venue) { showToast(t('toast.venue.required'), 'error'); return; }
+    const description = document.getElementById('ev-description').value.trim();
+    if (!description) { showToast(t('toast.description.required'), 'error'); return; }
 
     saveBtn.disabled = true;
     saveBtn.textContent = t('btn.saving');
@@ -3660,8 +3678,9 @@
       }
 
       const ev = currentEvents[currentEventDetailIdx];
-      ev.venue      = venue;
-      ev.address    = document.getElementById('ev-address').value.trim();
+      ev.venue       = venue;
+      ev.address     = document.getElementById('ev-address').value.trim();
+      ev.description = description;
       ev.date       = document.getElementById('ev-date').value;
       ev.start_time = document.getElementById('ev-start').value;
       ev.end_time   = document.getElementById('ev-end').value;
