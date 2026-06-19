@@ -14,7 +14,7 @@ Format : `[ ] node-id — description` → `[x]` quand appliqué → retiré au 
 [x] 972:6618 — Header événements publics (request.html) : logo-box → og-image
 [x] 867:2332 — Carte demande admin : Prior (r.ts < event start) → DD/MM • HH:MM, Live (r.ts ≥ event start) → HH:MM seul
 [x] 956:2121 — Bouton principal public : disabled brand-95 → brand-90 (.req-submit-btn + .battle-submit-btn dans event.html)
-[x] 70:1019 — Carte événement publique : champ description (SF Pro Light 20px/22px brand-10) dans les deux états live et next ; form admin ef-desc + ev.description dans save logic
+[x] 70:1019 — Carte événement publique : champ description (SF Pro Light 20px/22px brand-10) dans les deux états live et next ; form admin ef-desc + ev.description dans save logic ; image 48px → 80px
 [x] 982:5911 — Cartes événements admin : bg brand-105, border brand-90, radius 8px, top gap 16px, live pill brand-100/radius-72, retrait bouton Edit, Copy URL text-transform:none
 
 <!--
