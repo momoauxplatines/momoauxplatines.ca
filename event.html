@@ -846,12 +846,45 @@
   // ─────────────────────────────────────────────
   // URL params
   // ─────────────────────────────────────────────
-  const params    = new URLSearchParams(window.location.search);
-  let currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
-  const _pathSlug  = (window.location.pathname.match(/^\/(?:requests|events)\/([^/]+)$/) || [])[1] || '';
-  const EVENT_SLUG = ((params.get('event') || _pathSlug) || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
-  const API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
-  const LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
+  const params = new URLSearchParams(window.location.search);
+
+  // Mois pour détecter la langue dans les nouvelles URLs /:name_slug/:date_slug
+  const _FR_MONTHS = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  const _EN_MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+
+  // Détecter le nouveau format /:name_slug/:date_slug (ex: /pepouzeenterrasse/7juillet2026)
+  const _newFmt = window.location.pathname.match(/^\/([a-z0-9]+)\/([a-z0-9]+)$/);
+  let currentLang, _pendingNameSlug = null, _pendingDate = null;
+
+  if (_newFmt) {
+    const _namePart = _newFmt[1];
+    const _datePart = _newFmt[2];
+    const _frMonth  = _FR_MONTHS.find(m => _datePart.includes(m));
+    const _enMonth  = _EN_MONTHS.find(m => _datePart.includes(m));
+    if (_frMonth) {
+      currentLang = 'fr';
+      const _mi = _FR_MONTHS.indexOf(_frMonth) + 1;
+      const _dm = _datePart.match(/^(\d{1,2})/);
+      const _ym = _datePart.match(/(\d{4})$/);
+      if (_dm && _ym) _pendingDate = `${_ym[1]}-${String(_mi).padStart(2,'0')}-${String(parseInt(_dm[1])).padStart(2,'0')}`;
+    } else if (_enMonth) {
+      currentLang = 'en';
+      const _mi = _EN_MONTHS.indexOf(_enMonth) + 1;
+      const _dm = _datePart.replace(_enMonth, '').match(/^(\d{1,2})/);
+      const _ym = _datePart.match(/(\d{4})$/);
+      if (_dm && _ym) _pendingDate = `${_ym[1]}-${String(_mi).padStart(2,'0')}-${String(parseInt(_dm[1])).padStart(2,'0')}`;
+    } else {
+      currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+    }
+    _pendingNameSlug = _namePart;
+  } else {
+    currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+  }
+
+  const _pathSlug = _newFmt ? '' : ((window.location.pathname.match(/^\/(?:requests|events)\/([^/]+)$/) || [])[1] || '');
+  let EVENT_SLUG = ((params.get('event') || _pathSlug) || '').replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  let API_BASE   = EVENT_SLUG ? `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}` : '/api/requests';
+  let LS_KEY     = `momo_my_requests_${EVENT_SLUG || 'global'}`;
   const COPY = { en: {}, fr: {} };
 
   // ─────────────────────────────────────────────
@@ -1011,12 +1044,23 @@
     }
   }
 
-  if (EVENT_SLUG) {
+  if (EVENT_SLUG || _pendingNameSlug) {
     fetch('/api/events')
       .then(r => r.json())
       .then(data => {
         const events = Array.isArray(data) ? data : (data.events || []);
-        const ev = events.find(e => e.slug === EVENT_SLUG);
+        let ev;
+        if (_pendingNameSlug) {
+          ev = events.find(e => e.name_slug === _pendingNameSlug && (!_pendingDate || e.date === _pendingDate));
+          if (ev) {
+            EVENT_SLUG = ev.slug;
+            API_BASE   = `/api/requests?event=${encodeURIComponent(EVENT_SLUG)}`;
+            LS_KEY     = `momo_my_requests_${EVENT_SLUG}`;
+            TAB_KEY    = `momo_active_tab_${EVENT_SLUG}`;
+          }
+        } else {
+          ev = events.find(e => e.slug === EVENT_SLUG);
+        }
         if (!ev) return;
 
         populateInfoPanel(ev);
@@ -1073,7 +1117,7 @@
   // ─────────────────────────────────────────────
   // Tab switching
   // ─────────────────────────────────────────────
-  const TAB_KEY    = `momo_active_tab_${EVENT_SLUG || 'global'}`;
+  let TAB_KEY      = `momo_active_tab_${EVENT_SLUG || 'global'}`;
   const TAB_IDS    = ['info', 'battle', 'played', 'requests', 'message'];
 
   function showTab(tab) {

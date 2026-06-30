@@ -1175,6 +1175,21 @@
     hdr.classList.toggle('has-live', isLive);
   }
 
+  // Construit l'URL d'un événement dans le nouveau format /:name_slug/:date_slug
+  const _IDX_FM = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  const _IDX_EM = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  function buildEventUrl(ev, lang) {
+    if (ev.name_slug && ev.date) {
+      const p   = ev.date.split('-');
+      const day = parseInt(p[2]);
+      const mi  = parseInt(p[1]) - 1;
+      const yr  = p[0];
+      const dp  = lang === 'fr' ? `${day}${_IDX_FM[mi]}${yr}` : `${_IDX_EM[mi]}${day}${yr}`;
+      return `/${ev.name_slug}/${dp}`;
+    }
+    return ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events';
+  }
+
   function renderEvents() {
     const all  = window.MOMO_EVENTS || [];
     const live = all.filter(eventIsLive);
@@ -1209,7 +1224,7 @@
                 ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
               </div>
             </div>
-            <a class="ev-go-btn" href="${ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events'}"
+            <a class="ev-go-btn" href="${buildEventUrl(ev, currentLang)}"
                data-key="next-events.btn.go" data-en="Come on in" data-fr="Allez entre">Come on in</a>`;
           liveSection.appendChild(card);
         });

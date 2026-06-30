@@ -59,3 +59,10 @@
   from = "/demandespeciale"
   to = "/demandespeciale.html"
   status = 200
+
+# Nouvelles URLs simplifiées — /:name_slug/:date_slug (ex: /pepouzeenterrasse/7juillet2026)
+# Doit venir après toutes les routes spécifiques
+[[redirects]]
+  from = "/:eventslug/:dateslug"
+  to = "/event.html"
+  status = 200
