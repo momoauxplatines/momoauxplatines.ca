@@ -278,7 +278,7 @@
       display: flex; flex-direction: column; gap: 8px;
     }
     .played-intro {
-      padding: 16px 16px 0;
+      padding: 16px;
       font-size: 16px; font-weight: 300; line-height: 22px;
       color: var(--brand-70); text-align: center;
     }
@@ -708,15 +708,15 @@
          data-en="Songs played will be listed here."
          data-fr="Les chansons jouées seront listées ici.">Songs played will be listed here.</p>
     </div>
-    <p class="played-intro" id="played-intro"
-       data-key="played.intro"
-       data-en="That's what's been going on so far. Want to make a request? Hit the tab or come and chat at the booth."
-       data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
     <div class="song-list" id="played-list">
       <div class="empty-state" id="played-empty">
         <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
       </div>
     </div>
+    <p class="played-intro" id="played-intro"
+       data-key="played.intro"
+       data-en="That's what's been going on so far. Want to make a request? Hit the tab or come and chat at the booth."
+       data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
   </div>
 
   <!-- ── Requests Panel (inline form) ── -->
@@ -1495,7 +1495,8 @@
   // ─────────────────────────────────────────────
   // Artwork cache
   // ─────────────────────────────────────────────
-  // Migrate old cache: drop entries whose keys contain encoded entities (e.g. &amp;)
+  // Migrate old cache: drop entries whose keys still contain HTML entities (e.g. &amp; &lt;)
+  // Note: keep keys with literal & (e.g. "simon & garfunkel") — only drop encoded forms.
   (function migrateArtworkCache() {
     try {
       const raw = localStorage.getItem('momo_artwork_cache');
@@ -1503,7 +1504,7 @@
       const old = JSON.parse(raw);
       const clean = {};
       for (const [k, v] of Object.entries(old)) {
-        if (!k.includes('&')) clean[k] = v; // keep only already-clean keys
+        if (!/&amp;|&lt;|&gt;|&quot;|&#/.test(k)) clean[k] = v;
       }
       localStorage.setItem('momo_artwork_cache', JSON.stringify(clean));
     } catch { localStorage.removeItem('momo_artwork_cache'); }
@@ -1592,13 +1593,24 @@
           const npTitle  = document.getElementById('now-playing-title');
           const npArtist = document.getElementById('now-playing-artist');
           const npReqCol = document.getElementById('now-playing-request-col');
-          if (npArt)    { npArt.src = row.image_url || ''; npArt.alt = row.title || ''; }
-          if (npTitle)  npTitle.textContent  = row.title  || '';
-          if (npArtist) npArtist.textContent = row.artist || '';
+          if (npArt) {
+            // image_url from the server is null (artwork is resolved client-side only).
+            // Fall back to the local artwork cache before clearing the image.
+            const cleanArtist = decodeHtml(row.artist || '');
+            const cleanTitle  = decodeHtml(row.title  || '');
+            const cached      = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+            const imgSrc      = row.image_url || cached?.image || '';
+            if (imgSrc) { npArt.src = imgSrc; npArt.style.background = ''; }
+            else { npArt.removeAttribute('src'); npArt.style.background = 'var(--brand-90)'; }
+            npArt.alt = cleanTitle;
+          }
+          if (npTitle)  npTitle.textContent  = decodeHtml(row.title  || '');
+          if (npArtist) npArtist.textContent = decodeHtml(row.artist || '');
           if (npReqCol) {
             const match = findMatchingRequest(row.title, row.artist);
             npReqCol.classList.toggle('visible', !!match);
           }
+          requestAnimationFrame(triggerMarquee);
         }
       )
       .subscribe();
@@ -1716,11 +1728,12 @@
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];
 
+      // Serato assigns the lowest numeric id to the most recently played track.
       const mostRecentTrack = allTracks.length
         ? allTracks.reduce((best, t) => {
-            const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
-            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
-            return nt > nb ? t : best;
+            const nb = parseInt((best.id || '').replace(/\D/g, '')) || Infinity;
+            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || Infinity;
+            return nt < nb ? t : best;
           })
         : null;
 
@@ -1743,10 +1756,11 @@
         // Remove all non-empty cards
         Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
 
+        // Sort ascending by numeric id: lowest id = most recently played (top).
         const displayTracks = [...allTracks].sort((a, b) => {
-          const numA = parseInt((a.id || '').replace(/\D/g, '')) || 0;
-          const numB = parseInt((b.id || '').replace(/\D/g, '')) || 0;
-          return numB - numA;
+          const numA = parseInt((a.id || '').replace(/\D/g, '')) || Infinity;
+          const numB = parseInt((b.id || '').replace(/\D/g, '')) || Infinity;
+          return numA - numB;
         });
         for (const t of displayTracks) {
           const cleanArtist    = decodeHtml(t.artist);
