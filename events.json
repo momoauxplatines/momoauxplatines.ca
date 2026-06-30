@@ -2,6 +2,7 @@
   "events": [
     {
       "slug": "testing-the-thingy-thing",
+      "name_slug": "testingthethingything",
       "venue": "Testing the thingy thing",
       "address": "2242 rue de la roche, montréal",
       "date": "",
@@ -14,6 +15,7 @@
     },
     {
       "slug": "testing-one-two-2026-06-24",
+      "name_slug": "testinonetwo",
       "venue": "Testing one two",
       "address": "2242 rue de la roche, montréal",
       "date": "2026-06-24",
