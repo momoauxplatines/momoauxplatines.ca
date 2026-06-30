@@ -185,7 +185,14 @@ exports.handler = async (event) => {
 
     // 3. Push the current (most recent) track to Supabase so Realtime can
     //    broadcast it instantly to all connected gig pages.
-    const nowTrack = tracks[0];
+    // Serato assigns the lowest numeric id to the most recently played track.
+    const nowTrack = tracks.length
+      ? tracks.reduce((best, t) => {
+          const nb = parseInt((best.id || '').replace(/\D/g, '')) || Infinity;
+          const nt = parseInt((t.id    || '').replace(/\D/g, '')) || Infinity;
+          return nt < nb ? t : best;
+        })
+      : null;
     if (nowTrack) {
       const sbUrl    = process.env.SUPABASE_URL;
       const sbKey    = process.env.SUPABASE_ANON_KEY;
