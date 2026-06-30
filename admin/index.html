@@ -1589,7 +1589,7 @@
     if (action === 'edit-timeline') openForm('timeline', { item: TIMELINE[decade]?.find(x => x.id === id), decade });
     if (action === 'edit-gig')      openEventDetail(parseInt(index));
     if (action === 'delete-gig')    deleteGig(parseInt(index));
-    if (action === 'open-requests') openRequests(parseInt(index));
+    if (action === 'open-requests') openEventDetail(parseInt(index));
     if (action === 'open-event-page') window.open(btn.dataset.url, '_blank');
     if (action === 'copy-url') {
       e.stopPropagation();
@@ -2438,6 +2438,7 @@
   // ── Requests ──────────────────────────────────────────────────────────────────
   const reqOverlay  = document.getElementById('req-overlay');
   const reqBody     = document.getElementById('req-body');
+  let   _trackPaneEl = null; // overrides reqBody when playing tab is active in event-screen
   const liveTabsRow = document.getElementById('live-tabs-row');
   let reqList = [];
   let reqEventIdx = -1;
@@ -2462,6 +2463,7 @@
   }
 
   function openRequests(idx) {
+    _trackPaneEl = null;
     reqEventIdx = idx;
     const ev = currentEvents[idx];
     reqEventIsLive = isEventLive(ev);
@@ -2535,7 +2537,7 @@
   }
 
   async function loadPlayedTracks() {
-    reqBody.innerHTML = '<div class="empty-state">Loading…</div>';
+    (_trackPaneEl || reqBody).innerHTML = '<div class="empty-state">Loading…</div>';
     const ev = currentEvents[reqEventIdx];
     const gigDate = ev?.date || '';
 
@@ -2572,10 +2574,11 @@
   }
 
   function renderTrackCards() {
-    reqBody.innerHTML = '';
+    const _tb = _trackPaneEl || reqBody;
+    _tb.innerHTML = '';
 
     if (!liveTracksCache.length) {
-      reqBody.innerHTML = `
+      _tb.innerHTML = `
         <div class="req-empty-body">
           <p>${t('playing.empty')}</p>
           <p style="margin-top:8px;color:var(--brand-80)">${t('playing.empty.hint')}</p>
@@ -2625,7 +2628,7 @@
           ${btnIcon}
         </button>`;
 
-      reqBody.appendChild(card);
+      _tb.appendChild(card);
     });
   }
 
@@ -3350,6 +3353,17 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && reqOverlay.classList.contains('open')) closeRequests(); });
 
+  async function handleTrackClick(e) {
+    const trackBtn = e.target.closest('[data-track-action="set-now-playing"]');
+    if (trackBtn) {
+      trackBtn.disabled = true;
+      await setNowPlayingTrack(trackBtn.dataset.trackId);
+      trackBtn.disabled = false;
+      return;
+    }
+  }
+  document.getElementById('ev-playing-pane').addEventListener('click', handleTrackClick);
+
   reqBody.addEventListener('click', async e => {
     // Handle track now-playing buttons
     const trackBtn = e.target.closest('[data-track-action="set-now-playing"]');
@@ -3549,6 +3563,8 @@
   }
 
   function closeEventDetail() {
+    stopLivePolling();
+    _trackPaneEl = null;
     document.getElementById('event-screen').classList.remove('open');
     document.getElementById('admin-screen').style.display = '';
     history.pushState({}, '', '/admin/');
@@ -3571,16 +3587,33 @@
     const isLive = isEventLive(ev);
 
     if (name === 'info') {
+      _trackPaneEl = null;
       footerInner.innerHTML = `<button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">${t('btn.save')}</button>`;
     } else if (name === 'playing') {
-      footerInner.innerHTML = isLive ? `<button class="btn-dark">${t('btn.refresh')}</button>` : '';
+      if (isLive) {
+        _trackPaneEl   = document.getElementById('ev-playing-pane');
+        reqEventIdx    = currentEventDetailIdx;
+        reqEventIsLive = true;
+        liveActiveTab  = 'played';
+        footerInner.innerHTML = `<button class="btn-dark" id="ev-playing-refresh-btn">${t('btn.refresh')}</button>`;
+        loadPlayedTracks();
+        setTimeout(() => {
+          const btn = document.getElementById('ev-playing-refresh-btn');
+          if (btn) btn.addEventListener('click', loadPlayedTracks);
+        }, 0);
+      } else {
+        _trackPaneEl = null;
+        footerInner.innerHTML = '';
+      }
     } else if (name === 'battle') {
+      _trackPaneEl = null;
       if (isLive) {
         footerInner.innerHTML = `<button class="battle-start-btn" disabled>${t('battle.create.btn')}</button>`;
       } else {
         footerInner.innerHTML = '';
       }
     } else if (name === 'requests') {
+      _trackPaneEl = null;
       footerInner.innerHTML = `<button class="btn-dark" id="ev-req-refresh-btn">${t('btn.refresh')}</button>`;
       reqEventIdx    = currentEventDetailIdx;
       reqEventIsLive = isEventLive(currentEvents[currentEventDetailIdx]);
@@ -3594,6 +3627,7 @@
         });
       }, 0);
     } else if (name === 'messages') {
+      _trackPaneEl = null;
       footerInner.innerHTML = `<button class="btn-dark">${t('btn.refresh')}</button>`;
     }
   }
