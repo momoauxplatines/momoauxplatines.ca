@@ -1063,10 +1063,30 @@
     await Promise.all([loadAllCopy(), loadEvents()]);
     loadRegistries();
     renderAll();
-    const _urlEventId = new URLSearchParams(location.search).get('event');
-    if (_urlEventId) {
-      const _urlIdx = currentEvents.findIndex(e => String(e.id) === _urlEventId);
-      if (_urlIdx >= 0) openEventDetail(_urlIdx);
+    // Nouveau format : /admin/:nameslug/:dateslug
+    const _adminPath = location.pathname.match(/^\/admin\/([a-z0-9]+)\/([a-z0-9]+)$/);
+    if (_adminPath) {
+      const _namePart = _adminPath[1];
+      const _datePart = _adminPath[2];
+      // Détecter la langue depuis le nom du mois dans l'URL
+      if (_ADMIN_FR_MONTHS.some(m => _datePart.includes(m))) {
+        currentLang = 'fr';
+        document.querySelectorAll('.lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === 'fr'));
+        renderAll();
+      }
+      const _pendingDate = parseDateFromAdminPath(_namePart, _datePart);
+      const _idx = currentEvents.findIndex(e => {
+        const ns = e.name_slug || nameSlug(e.venue || '');
+        return ns === _namePart && (!_pendingDate || e.date === _pendingDate);
+      });
+      if (_idx >= 0) openEventDetail(_idx);
+    } else {
+      // Ancien format : ?event=id (rétrocompat)
+      const _urlEventId = new URLSearchParams(location.search).get('event');
+      if (_urlEventId && _urlEventId !== 'undefined') {
+        const _urlIdx = currentEvents.findIndex(e => e.slug === _urlEventId || String(e.id) === _urlEventId);
+        if (_urlIdx >= 0) openEventDetail(_urlIdx);
+      }
     }
   }
 
@@ -1084,6 +1104,7 @@
 
   // Slug propre pour le nom de l'événement (sans date, sans tirets, accents supprimés)
   const _ADMIN_FR_MONTHS = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  const _ADMIN_EN_MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
   function nameSlug(venue) {
     return (venue || '').toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -1091,16 +1112,52 @@
   }
 
   // Build the full request page URL — nouveau format /:name_slug/:date_slug
-  function requestUrl(slug, nSlug, date) {
-    if (nSlug && date) {
+  // nSlug peut être absent sur les vieux événements — on le calcule depuis venue si besoin
+  function requestUrl(slug, nSlug, date, venue) {
+    const resolvedSlug = nSlug || nameSlug(venue || '');
+    if (resolvedSlug && date) {
       const p    = date.split('-');
       const day  = parseInt(p[2]);
       const mon  = _ADMIN_FR_MONTHS[parseInt(p[1]) - 1];
       const year = p[0];
-      return `https://momoauxplatines.ca/${nSlug}/${day}${mon}${year}`;
+      return `https://momoauxplatines.ca/${resolvedSlug}/${day}${mon}${year}`;
     }
-    // Fallback pour les événements sans date ou name_slug
+    // Fallback si pas de date
     return `https://momoauxplatines.ca/events/${encodeURIComponent(slug)}?lang=fr`;
+  }
+
+  // Construit l'URL admin d'un événement selon la langue active
+  function adminEventUrl(ev, lang) {
+    const resolvedSlug = ev.name_slug || nameSlug(ev.venue || '');
+    if (resolvedSlug && ev.date) {
+      const p   = ev.date.split('-');
+      const day = parseInt(p[2]);
+      const mi  = parseInt(p[1]) - 1;
+      const yr  = p[0];
+      const months = lang === 'fr' ? _ADMIN_FR_MONTHS : _ADMIN_EN_MONTHS;
+      const dp  = lang === 'fr' ? `${day}${months[mi]}${yr}` : `${months[mi]}${day}${yr}`;
+      return `/admin/${resolvedSlug}/${dp}`;
+    }
+    return '/admin/';
+  }
+
+  // Parse /:nameslug/:dateslug et retourne la date ISO ou null
+  function parseDateFromAdminPath(namePart, datePart) {
+    const frM = _ADMIN_FR_MONTHS.find(m => datePart.includes(m));
+    const enM = _ADMIN_EN_MONTHS.find(m => datePart.includes(m));
+    if (frM) {
+      const mi = _ADMIN_FR_MONTHS.indexOf(frM) + 1;
+      const dm = datePart.match(/^(\d{1,2})/);
+      const ym = datePart.match(/(\d{4})$/);
+      return (dm && ym) ? `${ym[1]}-${String(mi).padStart(2,'0')}-${String(parseInt(dm[1])).padStart(2,'0')}` : null;
+    }
+    if (enM) {
+      const mi = _ADMIN_EN_MONTHS.indexOf(enM) + 1;
+      const dm = datePart.replace(enM, '').match(/^(\d{1,2})/);
+      const ym = datePart.match(/(\d{4})$/);
+      return (dm && ym) ? `${ym[1]}-${String(mi).padStart(2,'0')}-${String(parseInt(dm[1])).padStart(2,'0')}` : null;
+    }
+    return null;
   }
 
   function loadRegistries() {
@@ -1339,7 +1396,7 @@
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">${t('live.label')}</span>
           </div>
-          ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug, liveEvent.name_slug, liveEvent.date))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
+          ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug, liveEvent.name_slug, liveEvent.date, liveEvent.venue))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
         </div>
       </div>`;
   }
@@ -1387,7 +1444,7 @@
         </div>
       </div>
       <div class="gig-card-actions" style="pointer-events:none;">
-        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug, ev.name_slug, ev.date))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
+        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug, ev.name_slug, ev.date, ev.venue))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
       </div>`;
     return card;
   }
@@ -3488,13 +3545,13 @@
     document.getElementById('event-screen').classList.add('open');
     const _body = document.querySelector('.event-detail-body');
     if (_body) _body.scrollTop = 0;
-    history.pushState({ eventId: ev.id }, '', '?event=' + encodeURIComponent(ev.id));
+    history.pushState({ eventSlug: ev.slug }, '', adminEventUrl(ev, currentLang));
   }
 
   function closeEventDetail() {
     document.getElementById('event-screen').classList.remove('open');
     document.getElementById('admin-screen').style.display = '';
-    history.pushState({}, '', location.pathname);
+    history.pushState({}, '', '/admin/');
     currentEventDetailIdx = -1;
     evPendingCustomFile = null;
     evPendingAvatarUrl  = null;

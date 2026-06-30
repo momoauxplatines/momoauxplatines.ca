@@ -66,3 +66,9 @@
   from = "/:eventslug/:dateslug"
   to = "/event.html"
   status = 200
+
+# Admin — pages détail d'événement (ex: /admin/pepouzeenterrasse/3juillet2026)
+[[redirects]]
+  from = "/admin/:eventslug/:dateslug"
+  to = "/admin/index.html"
+  status = 200
