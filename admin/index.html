@@ -1082,8 +1082,24 @@
     return [v, d].filter(Boolean).join('-').replace(/-{2,}/g, '-');
   }
 
-  // Build the full request page URL for an event slug
-  function requestUrl(slug) {
+  // Slug propre pour le nom de l'événement (sans date, sans tirets, accents supprimés)
+  const _ADMIN_FR_MONTHS = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  function nameSlug(venue) {
+    return (venue || '').toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  // Build the full request page URL — nouveau format /:name_slug/:date_slug
+  function requestUrl(slug, nSlug, date) {
+    if (nSlug && date) {
+      const p    = date.split('-');
+      const day  = parseInt(p[2]);
+      const mon  = _ADMIN_FR_MONTHS[parseInt(p[1]) - 1];
+      const year = p[0];
+      return `https://momoauxplatines.ca/${nSlug}/${day}${mon}${year}`;
+    }
+    // Fallback pour les événements sans date ou name_slug
     return `https://momoauxplatines.ca/events/${encodeURIComponent(slug)}?lang=fr`;
   }
 
@@ -1323,7 +1339,7 @@
             <div class="gig-live-dot"></div>
             <span class="gig-live-label">${t('live.label')}</span>
           </div>
-          ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
+          ${liveEvent.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(liveEvent.slug, liveEvent.name_slug, liveEvent.date))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
         </div>
       </div>`;
   }
@@ -1371,7 +1387,7 @@
         </div>
       </div>
       <div class="gig-card-actions" style="pointer-events:none;">
-        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
+        ${ev.slug ? `<button class="btn-card-edit" data-action="copy-url" data-url="${esc(requestUrl(ev.slug, ev.name_slug, ev.date))}" style="pointer-events:auto; text-transform:none;">${t('btn.copyurl')}</button>` : ''}
       </div>`;
     return card;
   }
@@ -2153,10 +2169,12 @@
 
         const dateVal = document.getElementById('ef-date')?.value || '';
         const existingEv = (() => { const i = parseInt(document.getElementById('ef-gig-index')?.value); return i >= 0 ? currentEvents[i] : null; })();
-        const slug = existingEv?.slug || eventSlug(venue, dateVal);
+        const slug  = existingEv?.slug     || eventSlug(venue, dateVal);
+        const nSlug = existingEv?.name_slug || nameSlug(venue);
 
         const ev = {
           slug,
+          name_slug: nSlug,
           venue,
           description: document.getElementById('ef-desc')?.value.trim() || '',
           address:    document.getElementById('ef-address')?.value.trim() || '',
@@ -3679,6 +3697,7 @@
 
       const ev = currentEvents[currentEventDetailIdx];
       ev.venue       = venue;
+      ev.name_slug   = ev.name_slug || nameSlug(venue);
       ev.address     = document.getElementById('ev-address').value.trim();
       ev.description = description;
       ev.date       = document.getElementById('ev-date').value;
