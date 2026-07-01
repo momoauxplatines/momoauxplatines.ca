@@ -1728,12 +1728,12 @@
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];
 
-      // Serato assigns the lowest numeric id to the most recently played track.
+      // Serato assigns the highest numeric id to the most recently played track.
       const mostRecentTrack = allTracks.length
         ? allTracks.reduce((best, t) => {
-            const nb = parseInt((best.id || '').replace(/\D/g, '')) || Infinity;
-            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || Infinity;
-            return nt < nb ? t : best;
+            const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
+            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
+            return nt > nb ? t : best;
           })
         : null;
 
@@ -1756,11 +1756,11 @@
         // Remove all non-empty cards
         Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
 
-        // Sort ascending by numeric id: lowest id = most recently played (top).
+        // Sort descending by numeric id: highest id = most recently played (top).
         const displayTracks = [...allTracks].sort((a, b) => {
-          const numA = parseInt((a.id || '').replace(/\D/g, '')) || Infinity;
-          const numB = parseInt((b.id || '').replace(/\D/g, '')) || Infinity;
-          return numA - numB;
+          const numA = parseInt((a.id || '').replace(/\D/g, '')) || 0;
+          const numB = parseInt((b.id || '').replace(/\D/g, '')) || 0;
+          return numB - numA;
         });
         for (const t of displayTracks) {
           const cleanArtist    = decodeHtml(t.artist);
