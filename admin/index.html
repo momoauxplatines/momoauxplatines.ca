@@ -1150,9 +1150,14 @@
     }
     if (enM) {
       const mi = _ADMIN_EN_MONTHS.indexOf(enM) + 1;
-      const dm = datePart.replace(enM, '').match(/^(\d{1,2})/);
       const ym = datePart.match(/(\d{4})$/);
-      return (dm && ym) ? `${ym[1]}-${String(mi).padStart(2,'0')}-${String(parseInt(dm[1])).padStart(2,'0')}` : null;
+      if (!ym) return null;
+      // Slice off the year from the end, then slice off the month name from the start.
+      // Using slice instead of a greedy regex avoids "july12026" → day=12 instead of day=1.
+      const dayStr = datePart.slice(0, -4).replace(enM, '');
+      const day = parseInt(dayStr);
+      if (!day) return null;
+      return `${ym[1]}-${String(mi).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     }
     return null;
   }
@@ -2550,7 +2555,7 @@
     // Supabase is authoritative; fall back to localStorage if Supabase returns nothing
     nowPlayingTrackId = npId || localStorage.getItem(`momo_np_${gigDate}`) || null;
     renderTrackCards();
-    startLivePolling(); // auto-refresh every 15s while live
+    if (reqEventIsLive) startLivePolling(); // auto-refresh only during live
   }
 
   // Silent background poll — only re-renders if tracks changed
@@ -3601,17 +3606,23 @@
       _trackPaneEl = null;
       footerInner.innerHTML = `<button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">${t('btn.save')}</button>`;
     } else if (name === 'playing') {
-      if (isLive) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const hasPastTracks = ev && ev.date <= todayStr; // today or any past date
+      if (isLive || hasPastTracks) {
         _trackPaneEl   = document.getElementById('ev-playing-pane');
         reqEventIdx    = currentEventDetailIdx;
-        reqEventIsLive = true;
+        reqEventIsLive = isLive; // buttons only enabled during live
         liveActiveTab  = 'played';
-        footerInner.innerHTML = `<button class="btn-dark" id="ev-playing-refresh-btn">${t('btn.refresh')}</button>`;
-        loadPlayedTracks();
-        setTimeout(() => {
-          const btn = document.getElementById('ev-playing-refresh-btn');
-          if (btn) btn.addEventListener('click', loadPlayedTracks);
-        }, 0);
+        if (isLive) {
+          footerInner.innerHTML = `<button class="btn-dark" id="ev-playing-refresh-btn">${t('btn.refresh')}</button>`;
+          setTimeout(() => {
+            const btn = document.getElementById('ev-playing-refresh-btn');
+            if (btn) btn.addEventListener('click', loadPlayedTracks);
+          }, 0);
+        } else {
+          footerInner.innerHTML = ''; // no refresh button for past events
+        }
+        loadPlayedTracks(); // startLivePolling() called inside if reqEventIsLive
       } else {
         _trackPaneEl = null;
         footerInner.innerHTML = '';
