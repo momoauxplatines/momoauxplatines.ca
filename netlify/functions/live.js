@@ -30,23 +30,34 @@ function seratoDateToISO(str) {
   return `${year}-${m}-${day.padStart(2, '0')}`;
 }
 
-// Simple HTTPS GET with redirect support
-function get(url, redirects = 0) {
+// Simple HTTPS GET with redirect support and cookie passthrough.
+// cookieJar is a plain object { name: value } accumulated across redirects.
+function get(url, redirects = 0, cookieJar = {}) {
   if (redirects > 5) return Promise.reject(new Error('Too many redirects'));
   return new Promise((resolve, reject) => {
+    const cookieHeader = Object.entries(cookieJar).map(([k, v]) => `${k}=${v}`).join('; ');
     https.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
+        ...(cookieHeader ? { 'Cookie': cookieHeader } : {}),
       }
     }, res => {
+      // Capture any cookies set by this response and forward them on redirects.
+      const newJar = { ...cookieJar };
+      for (const raw of (res.headers['set-cookie'] || [])) {
+        const kv = raw.split(';')[0].trim();
+        const eq = kv.indexOf('=');
+        if (eq > 0) newJar[kv.slice(0, eq)] = kv.slice(eq + 1);
+      }
+
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         const next = res.headers.location.startsWith('http')
           ? res.headers.location
           : `https://serato.com${res.headers.location}`;
         res.resume();
-        return get(next, redirects + 1).then(resolve).catch(reject);
+        return get(next, redirects + 1, newJar).then(resolve).catch(reject);
       }
       let body = '';
       res.on('data', chunk => body += chunk);
@@ -79,31 +90,105 @@ function decodeHtmlEntities(str) {
 }
 
 function parseTracks(html) {
-  const tracks = [];
-  const re = /id="(track_\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/div>/g;
+  // Helper: strip inner tags and decode entities from a matched fragment.
+  const clean = (s) => decodeHtmlEntities(s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+
   let m;
-  while ((m = re.exec(html)) !== null) {
-    const raw = decodeHtmlEntities(m[2].replace(/<[^>]+>/g, '').trim());
-    if (!raw) continue;
-    const { artist, title } = parseTrackName(raw);
-    tracks.push({ id: m[1], artist, title });
+
+  // ── Pattern A ── Original format: id="track_NNN" + class="playlist-trackname"
+  {
+    const re = /id="(track_\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/(?:div|td|li|span)>/g;
+    const found = [];
+    while ((m = re.exec(html)) !== null) {
+      const raw = clean(m[2]);
+      if (!raw || raw.length < 3) continue;
+      found.push({ id: m[1], ...parseTrackName(raw) });
+    }
+    if (found.length) { found.reverse(); return found; }
   }
-  tracks.reverse(); // most recent first
-  return tracks;
+
+  // ── Pattern B ── Alternate ID format: id="pl-NNN" + class="playlist-trackname"
+  {
+    const re = /id="(pl-\d+)"[\s\S]*?class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/(?:div|td|li|span)>/g;
+    const found = [];
+    while ((m = re.exec(html)) !== null) {
+      const raw = clean(m[2]);
+      if (!raw || raw.length < 3) continue;
+      found.push({ id: m[1], ...parseTrackName(raw) });
+    }
+    if (found.length) { found.reverse(); return found; }
+  }
+
+  // ── Pattern C ── class="playlist-trackname" anywhere; synthetic sequential IDs
+  {
+    const re = /class="playlist-trackname"[^>]*>\s*([\s\S]*?)\s*<\/(?:div|td|li|span)>/g;
+    const found = [];
+    let idx = 0;
+    while ((m = re.exec(html)) !== null) {
+      const raw = clean(m[1]);
+      if (!raw || raw.length < 3) continue;
+      found.push({ id: `track_${idx++}`, ...parseTrackName(raw) });
+    }
+    if (found.length) { found.reverse(); return found; }
+  }
+
+  // ── Pattern D ── Serato may have renamed the class; match anything containing "trackname"
+  {
+    const re = /class="[^"]*trackname[^"]*"[^>]*>\s*([\s\S]*?)\s*<\/(?:div|td|li|span)>/g;
+    const found = [];
+    let idx = 0;
+    while ((m = re.exec(html)) !== null) {
+      const raw = clean(m[1]);
+      if (!raw || raw.length < 5) continue;
+      const parsed = parseTrackName(raw);
+      // Only accept if the string looks like a track (contains " - " separator or has an artist)
+      if (!parsed.artist && !raw.includes(' - ')) continue;
+      found.push({ id: `track_${idx++}`, ...parsed });
+    }
+    if (found.length) { found.reverse(); return found; }
+  }
+
+  return [];
 }
 
 // Find a session slug matching a target ISO date by scanning the listings page.
-// Split on playlist-card boundaries so slug+date are always paired correctly.
+// Tries multiple possible card-boundary patterns in case Serato renamed classes/ids.
 function findSlugByDate(listingsHtml, targetDate) {
-  const cards = listingsHtml.split(/<div\s+id="pl-\d+"/);
-  for (const card of cards.slice(1)) {
-    const slugMatch = card.match(
-      new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`)
-    );
-    const dateMatch = card.match(/<span class="playlist-start-time">([^<]+)<\/span>/);
-    if (!slugMatch || !dateMatch) continue;
-    const iso = seratoDateToISO(dateMatch[1]);
-    if (iso === targetDate) return slugMatch[1];
+  // Possible card separators Serato has used over time.
+  const boundaries = [
+    /<div\s+id="pl-\d+"/g,
+    /<li\s[^>]*class="[^"]*playlist[^"]*"/g,
+    /<div\s[^>]*class="[^"]*playlist-card[^"]*"/g,
+  ];
+
+  // Date label patterns: <span class="playlist-start-time"> or <time ...> elements.
+  const datePats = [
+    /<span[^>]*class="playlist-start-time"[^>]*>([^<]+)<\/span>/,
+    /<time[^>]*datetime="(\d{4}-\d{2}-\d{2})[^"]*"/,
+    /<time[^>]*>([^<]+)<\/time>/,
+  ];
+
+  const slugRe = new RegExp(`href="/playlists/${SERATO_USER}/([^"/?#]+)"`);
+
+  for (const boundary of boundaries) {
+    const parts = listingsHtml.split(boundary);
+    if (parts.length <= 1) continue;
+
+    for (const card of parts.slice(1)) {
+      const slugMatch = card.match(slugRe);
+      if (!slugMatch) continue;
+
+      for (const pat of datePats) {
+        const dateMatch = card.match(pat);
+        if (!dateMatch) continue;
+        // datetime attr is already ISO; start-time / <time> text needs conversion.
+        const iso = /^\d{4}-\d{2}-\d{2}/.test(dateMatch[1])
+          ? dateMatch[1].slice(0, 10)
+          : seratoDateToISO(dateMatch[1]);
+        if (iso === targetDate) return slugMatch[1];
+        break;
+      }
+    }
   }
   return null;
 }
@@ -128,18 +213,20 @@ exports.handler = async (event) => {
 
     let tracks = [];
 
-    if (liveHtml.includes('playlist-trackname')) {
+    tracks = parseTracks(liveHtml);
+    if (tracks.length) {
       // Active session in progress — parse tracks directly from the /live page.
       // No slug matching needed: the DJ is streaming right now.
-      tracks = parseTracks(liveHtml);
       session = 'live';
     } else if (targetDate) {
       // No active session — look up a completed session by date.
 
       // 2a. Try the permanent date slug URL directly.
-      const directHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${targetDate}`);
-      if (directHtml.includes('playlist-trackname')) {
-        tracks = parseTracks(directHtml);
+      //     Pass an empty cookie jar so Serato session cookies flow through
+      //     any redirect (e.g. /2026-07-01 → /live with session context).
+      const directHtml = await get(`https://serato.com/playlists/${SERATO_USER}/${targetDate}`, 0, {});
+      tracks = parseTracks(directHtml);
+      if (tracks.length) {
         session = targetDate;
       }
 
