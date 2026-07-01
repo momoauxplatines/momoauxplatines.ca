@@ -2629,12 +2629,16 @@
       _tb.appendChild(card);
     });
 
-    // Lazy-load album artwork from iTunes after cards are in the DOM
+    // Lazy-load album artwork from iTunes after cards are in the DOM.
+    // Also store the URL back to liveTracksCache so setNowPlayingTrack
+    // can include it in the now-playing API call (public footer needs it).
     sorted.forEach(t => {
       fetchItunesImage(t.title, t.artist).then(url => {
         if (!url) return;
         const img = _tb.querySelector(`[data-art-id="${CSS.escape(t.id)}"]`);
         if (img) img.src = url;
+        const cached = liveTracksCache.find(c => c.id === t.id);
+        if (cached) cached.artwork = url;
       }).catch(() => {});
     });
   }
