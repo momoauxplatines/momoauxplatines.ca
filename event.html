@@ -1074,22 +1074,25 @@
 
         populateInfoPanel(ev);
 
+        // Always subscribe to now-playing Realtime and fetch current state —
+        // the admin can set a track manually regardless of the event's time window.
+        startNowPlayingRealtime(ev.date || null);
+        fetchCurrentNowPlaying(ev.date || null);
+        initMarquee();
+
         if (checkEventLive(ev)) {
           gigDate = ev.date || null;
           document.getElementById('req-header-live').classList.add('visible');
           document.getElementById('event-status-live').style.display = '';
-          document.getElementById('now-playing-bar').style.display = '';
-          document.documentElement.style.setProperty('--footer-bottom', '60px');
           // Load live data
           checkForBattle();
           setInterval(checkForBattle, 30_000);
           // Default tab for live event: played (most useful)
           if (!localStorage.getItem(TAB_KEY)) showTab('played');
           else showTab(localStorage.getItem(TAB_KEY));
+          _pollLiveActive = true;
           pollLivePlaylist();
           setInterval(pollLivePlaylist, 30_000);
-          startNowPlayingRealtime(ev.date);
-          initMarquee();
           // Fetch requests for the now-playing request-icon matching
           fetchRequests();
           setInterval(() => { if (!document.hidden) fetchRequests(); }, 10_000);
@@ -1099,6 +1102,7 @@
           checkForBattle();
           if (!localStorage.getItem(TAB_KEY)) showTab('played');
           else showTab(localStorage.getItem(TAB_KEY));
+          _pollLiveActive = true;
           pollLivePlaylist();
           fetchRequests();
         } else if (ev.date) {
@@ -1545,37 +1549,67 @@
   }
 
   // ─────────────────────────────────────────────
-  // Now Playing bar
+  // Now Playing bar (called from Serato live polling)
   // ─────────────────────────────────────────────
   function updateNowPlayingBar(track) {
-    const cleanArtist    = decodeHtml(track.artist);
-    const cleanTitle     = decodeHtml(track.title);
-    const c              = artworkCache[artworkKey(cleanArtist, cleanTitle)];
-    const npArt      = document.getElementById('now-playing-art');
-    const npTitle    = document.getElementById('now-playing-title');
-    const npArtist   = document.getElementById('now-playing-artist');
-    const npReqCol   = document.getElementById('now-playing-request-col');
-    const resolvedTitle  = c?.title  || cleanTitle;
-    const resolvedArtist = c?.artist || cleanArtist;
-    if (npArt) {
-      npArt.alt = resolvedTitle;
-      if (c?.image) { npArt.src = c.image; npArt.style.background = ''; }
-      else { npArt.removeAttribute('src'); npArt.style.background = 'var(--brand-90)'; }
+    const cleanArtist = decodeHtml(track.artist);
+    const cleanTitle  = decodeHtml(track.title);
+    const c           = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+    showNowPlayingBar({
+      title:     c?.title  || cleanTitle,
+      artist:    c?.artist || cleanArtist,
+      image_url: c?.image  || null,
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // Now Playing bar — shared render + show/hide
+  // ─────────────────────────────────────────────
+  function showNowPlayingBar(row) {
+    const bar     = document.getElementById('now-playing-bar');
+    const npArt   = document.getElementById('now-playing-art');
+    const npTitle = document.getElementById('now-playing-title');
+    const npArtist= document.getElementById('now-playing-artist');
+    const npReqCol= document.getElementById('now-playing-request-col');
+    if (!bar) return;
+
+    const cleanTitle  = decodeHtml(row.title  || '');
+    const cleanArtist = decodeHtml(row.artist || '');
+
+    if (!cleanTitle) {
+      // No active track — hide bar and reset footer offset
+      bar.style.display = 'none';
+      document.documentElement.style.setProperty('--footer-bottom', '0px');
+      return;
     }
-    if (npTitle)  npTitle.textContent  = resolvedTitle;
-    if (npArtist) npArtist.textContent = resolvedArtist;
+
+    // Show bar and push sticky footers up
+    bar.style.display = '';
+    document.documentElement.style.setProperty('--footer-bottom', '60px');
+
+    if (npTitle)  npTitle.textContent  = cleanTitle;
+    if (npArtist) npArtist.textContent = cleanArtist;
+    if (npArt) {
+      // image_url from the server is null for Serato tracks (artwork resolved client-side).
+      // Fall back to the local artwork cache before clearing the image.
+      const cached = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+      const imgSrc = row.image_url || cached?.image || '';
+      if (imgSrc) { npArt.src = imgSrc; npArt.style.background = ''; }
+      else { npArt.removeAttribute('src'); npArt.style.background = 'var(--brand-90)'; }
+      npArt.alt = cleanTitle;
+    }
     if (npReqCol) {
-      const match = findMatchingRequest(resolvedTitle, resolvedArtist);
+      const match = findMatchingRequest(cleanTitle, cleanArtist);
       npReqCol.classList.toggle('visible', !!match);
     }
-    // Re-check marquee after new content lands (rAF ensures layout is updated)
     requestAnimationFrame(triggerMarquee);
   }
 
   // ─────────────────────────────────────────────
   // Supabase Realtime — instant now-playing updates
   // ─────────────────────────────────────────────
-  let _supabaseChannel = null;
+  let _supabaseChannel  = null;
+  let _pollLiveActive   = false; // true once pollLivePlaylist has been started
 
   function startNowPlayingRealtime(eventDate) {
     if (_supabaseChannel) return;
@@ -1589,31 +1623,27 @@
         (payload) => {
           const row = payload.new;
           if (eventDate && row.gig_date !== eventDate) return;
-          const npArt    = document.getElementById('now-playing-art');
-          const npTitle  = document.getElementById('now-playing-title');
-          const npArtist = document.getElementById('now-playing-artist');
-          const npReqCol = document.getElementById('now-playing-request-col');
-          if (npArt) {
-            // image_url from the server is null (artwork is resolved client-side only).
-            // Fall back to the local artwork cache before clearing the image.
-            const cleanArtist = decodeHtml(row.artist || '');
-            const cleanTitle  = decodeHtml(row.title  || '');
-            const cached      = artworkCache[artworkKey(cleanArtist, cleanTitle)];
-            const imgSrc      = row.image_url || cached?.image || '';
-            if (imgSrc) { npArt.src = imgSrc; npArt.style.background = ''; }
-            else { npArt.removeAttribute('src'); npArt.style.background = 'var(--brand-90)'; }
-            npArt.alt = cleanTitle;
-          }
-          if (npTitle)  npTitle.textContent  = decodeHtml(row.title  || '');
-          if (npArtist) npArtist.textContent = decodeHtml(row.artist || '');
-          if (npReqCol) {
-            const match = findMatchingRequest(row.title, row.artist);
-            npReqCol.classList.toggle('visible', !!match);
-          }
-          requestAnimationFrame(triggerMarquee);
+          showNowPlayingBar(row);
+          // Refresh the played list immediately when the admin sets a new track
+          if (_pollLiveActive) pollLivePlaylist();
         }
       )
       .subscribe();
+  }
+
+  // ─────────────────────────────────────────────
+  // Initial fetch — show now-playing bar on page load
+  // if the admin has already set a track
+  // ─────────────────────────────────────────────
+  async function fetchCurrentNowPlaying(eventDate) {
+    if (typeof window.supabase === 'undefined') return;
+    try {
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      let q = sb.from('now_playing').select('title,artist,image_url,spotify_url');
+      if (eventDate) q = q.eq('gig_date', eventDate);
+      const { data } = await q.order('updated_at', { ascending: false }).limit(1).maybeSingle();
+      if (data?.title) showNowPlayingBar(data);
+    } catch { /* non-blocking */ }
   }
 
   // ─────────────────────────────────────────────
