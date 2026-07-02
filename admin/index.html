@@ -49,34 +49,20 @@
     #admin-screen.active { display: block; }
 
     /* ── Fixed header ── */
-    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 24px 16px; gap: 0; }
-    .header-left { display: none; }
-    .header-favicon { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-    .header-favicon img { width: 100%; height: 100%; object-fit: cover; }
-    .header-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; }
+    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 24px 16px; }
     .header-logo-box { display: block; width: 40px; height: 40px; object-fit: cover; flex-shrink: 0; }
     .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
-    #logout-btn { background: var(--brand-90); border: none; border-radius: var(--radius-4); font-size: 18px; font-weight: 700; font-family: inherit; }
-    #logout-btn:hover { opacity: 0.85; }
 
     /* ── Language tabs (in header) ── */
-    .lang-tabs { display: flex; order: 3; width: 100%; justify-content: flex-start; padding: 10px 0 2px; gap: 8px; }
+    .lang-tabs { display: flex; gap: 16px; align-items: center; }
     .lang-tab { height: 48px; display: flex; align-items: center; justify-content: center; font-family: inherit; font-weight: 274; font-size: 20px; line-height: 26px; color: var(--brand-70); cursor: pointer; border: 1px solid var(--brand-90); background: var(--brand-100); border-radius: 32px; transition: color 0.15s, border-color 0.15s, background 0.15s, border-radius 0.15s; padding: 0 20px; white-space: nowrap; }
     .lang-tab:not(.active):hover { color: var(--brand-50); }
     .lang-tab.active { background: var(--brand-105); border-color: var(--brand-80); border-radius: 40px; color: var(--brand-00); }
 
-    /* ── Tablet+: grid 1fr auto 1fr — logo gauche, tabs centré, logout droite ── */
-    @media (min-width: 768px) {
-      .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex-wrap: nowrap; padding: 24px 16px; }
-      .lang-tabs { order: 0; width: auto; flex: none; justify-content: center; padding: 0; gap: 16px; }
-      #logout-btn { justify-self: end; }
-    }
-
     /* ── Scrollable content ── */
-    .admin-content { padding-top: 110px; max-width: 770px; margin: 0 auto; }
-    @media (min-width: 768px) { .admin-content { padding-top: 88px; } }
+    .admin-content { padding-top: 96px; max-width: 770px; margin: 0 auto; }
 
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
@@ -386,15 +372,10 @@
   <!-- Fixed header -->
   <header class="admin-header">
     <img class="header-logo-box" src="../images/og-image.png" alt="Momo Aux Platines">
-    <div class="header-left">
-      <div class="header-favicon"><img id="event-logo-img" src="../images/og-image.png" alt="Momo"></div>
-      <span class="header-title">Admin</span>
-    </div>
     <div class="lang-tabs">
       <button class="lang-tab active" data-lang="en">English</button>
       <button class="lang-tab" data-lang="fr">Français</button>
     </div>
-    <button class="btn-admin" id="logout-btn" data-i18n="header.signout">Sign out</button>
   </header>
 
   <div class="admin-content">
@@ -531,7 +512,7 @@
     <div class="live-tabs-row" id="live-tabs-row" style="display:none;">
       <button class="live-tab-btn active" id="live-tab-played" data-i18n="overlay.tab.playing">Playing</button>
       <button class="live-tab-btn inactive" id="live-tab-requests" data-i18n="overlay.tab.requests">Requests</button>
-      <button class="live-tab-btn inactive" id="live-tab-battle" data-i18n="overlay.tab.battle">Battle</button>
+      <button class="live-tab-btn inactive" id="live-tab-battle" data-i18n="overlay.tab.battle" style="display:none">Battle</button>
       <button class="live-tab-btn inactive" id="live-tab-messages" data-i18n="overlay.tab.messages">Messages</button>
     </div>
     <div class="edit-body req-list" id="req-body">
@@ -567,7 +548,7 @@
     <div class="event-tabs">
       <button class="event-tab active" data-tab="info" data-i18n="overlay.tab.info">Info</button>
       <button class="event-tab" data-tab="playing" data-i18n="overlay.tab.playing">Playing</button>
-      <button class="event-tab" data-tab="battle" data-i18n="overlay.tab.battle">Battle</button>
+      <button class="event-tab" data-tab="battle" data-i18n="overlay.tab.battle" style="display:none">Battle</button>
       <button class="event-tab" data-tab="requests" data-i18n="overlay.tab.requests">Requests</button>
       <button class="event-tab" data-tab="messages" data-i18n="overlay.tab.messages">Messages</button>
     </div>
@@ -642,7 +623,7 @@
     </div>
 
     <!-- Battle tab -->
-    <div class="event-pane" data-pane="battle">
+    <div class="event-pane" data-pane="battle" style="display:none">
       <div class="event-form" id="ev-battle-pane"></div>
     </div>
 
@@ -1039,6 +1020,7 @@
     const res = await ghFetch(`/repos/${REPO}/contents/events.json`);
     if (res.ok) {
       sessionStorage.setItem('momo_admin_token', pat);
+      sessionStorage.setItem('momo_admin_login_ts', Date.now());
       showAdmin();
     } else {
       token = '';
@@ -1053,10 +1035,29 @@
   loginBtn.addEventListener('click', doLogin);
   patInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
+  // ── Session expiry (24h auto sign-out) ─────────────────────────────────────
+  const SESSION_MS = 24 * 60 * 60 * 1000;
+  let _sessionTimer = null;
+
+  function doLogout() {
+    if (_sessionTimer) clearTimeout(_sessionTimer);
+    _sessionTimer = null;
+    token = '';
+    sessionStorage.removeItem('momo_admin_token');
+    sessionStorage.removeItem('momo_admin_login_ts');
+    document.getElementById('admin-screen').classList.remove('active');
+    document.getElementById('login-screen').style.display = '';
+  }
+
   // ── Show admin ──────────────────────────────────────────────────────────────
   async function showAdmin() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').classList.add('active');
+    // Schedule auto sign-out for the remaining time in the 24h window
+    const _loginTs   = parseInt(sessionStorage.getItem('momo_admin_login_ts') || '0', 10);
+    const _remaining = SESSION_MS - (Date.now() - _loginTs);
+    if (_sessionTimer) clearTimeout(_sessionTimer);
+    _sessionTimer = setTimeout(doLogout, Math.max(_remaining, 0));
     await Promise.all([loadAllCopy(), loadEvents()]);
     loadRegistries();
     renderAll();
@@ -3496,7 +3497,16 @@
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────────
-  if (token) showAdmin();
+  const _initLoginTs = parseInt(sessionStorage.getItem('momo_admin_login_ts') || '0', 10);
+  const _initExpired = _initLoginTs && (Date.now() - _initLoginTs >= SESSION_MS);
+  if (token && !_initExpired) {
+    showAdmin();
+  } else if (token) {
+    // Session expired while tab was closed — clear silently
+    sessionStorage.removeItem('momo_admin_token');
+    sessionStorage.removeItem('momo_admin_login_ts');
+    token = '';
+  }
 
   // ── EVENT DETAIL SCREEN ───────────────────────────────────────────────────────
 
