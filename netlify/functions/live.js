@@ -20,14 +20,25 @@ const MONTHS = {
   Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
 };
 
-// "16 Apr 2026" → "2026-04-16"
+// "16 Apr 2026" ou "16 Apr 2026 10:00 AM" → "2026-04-16"
+// Supporte les variantes avec suffixe d'heure que Serato ajoute parfois.
 function seratoDateToISO(str) {
-  const parts = str.trim().split(/\s+/);
-  if (parts.length !== 3) return null;
-  const [day, mon, year] = parts;
-  const m = MONTHS[mon];
-  if (!m) return null;
-  return `${year}-${m}-${day.padStart(2, '0')}`;
+  const s = str.trim();
+  // Format jour-en-tête : "2 Jul 2026" ou "2 Jul 2026 10:00 AM"
+  const dmyMatch = s.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})/);
+  if (dmyMatch) {
+    const m = MONTHS[dmyMatch[2]];
+    if (m) return `${dmyMatch[3]}-${m}-${dmyMatch[1].padStart(2, '0')}`;
+  }
+  // Format mois-en-tête : "Jul 2, 2026" ou "Jul 2 2026"
+  const mdyMatch = s.match(/^([A-Za-z]{3})\s+(\d{1,2}),?\s+(\d{4})/);
+  if (mdyMatch) {
+    const m = MONTHS[mdyMatch[1]];
+    if (m) return `${mdyMatch[3]}-${m}-${mdyMatch[2].padStart(2, '0')}`;
+  }
+  // Déjà en format ISO
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  return null;
 }
 
 // Simple HTTPS GET with redirect support and cookie passthrough.
