@@ -941,17 +941,25 @@
   }
 
   function checkEventPast(ev) {
-    if (!ev.date || !ev.start_time || !ev.end_time) return false;
+    if (!ev.date) return false;
+    // Date strictly before today → toujours passé, peu importe end_time
+    const y  = new Date().getFullYear();
+    const mo = String(new Date().getMonth() + 1).padStart(2, '0');
+    const d  = String(new Date().getDate()).padStart(2, '0');
+    const today = `${y}-${mo}-${d}`;
+    if (ev.date < today) return true;
+    // Même jour — il faut start_time ET end_time pour savoir si c'est terminé
+    if (!ev.start_time || !ev.end_time) return false;
     const start    = parseMins(ev.start_time);
     const end      = parseMins(ev.end_time);
     const overnight = end !== null && start > end;
     let endDateStr = ev.date;
     if (overnight) {
-      const d = new Date(ev.date + 'T00:00:00');
-      d.setDate(d.getDate() + 1);
-      const ny = d.getFullYear();
-      const nm = String(d.getMonth() + 1).padStart(2, '0');
-      const nd = String(d.getDate()).padStart(2, '0');
+      const dt = new Date(ev.date + 'T00:00:00');
+      dt.setDate(dt.getDate() + 1);
+      const ny = dt.getFullYear();
+      const nm = String(dt.getMonth() + 1).padStart(2, '0');
+      const nd = String(dt.getDate()).padStart(2, '0');
       endDateStr = `${ny}-${nm}-${nd}`;
     }
     return Date.now() > new Date(`${endDateStr}T${ev.end_time}:00`).getTime();

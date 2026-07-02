@@ -1410,7 +1410,12 @@
 
   // ── NEXT GIGS + PAST GIGS sections ───────────────────────────────────────────
   function isGigPast(ev) {
-    if (!ev.date || !ev.end_time) return false;
+    if (!ev.date) return false;
+    // Date strictement avant aujourd'hui → toujours passé, peu importe end_time
+    const today = new Date().toISOString().slice(0, 10);
+    if (ev.date < today) return true;
+    // Même jour — il faut end_time pour savoir si c'est terminé
+    if (!ev.end_time) return false;
     let endDateStr = ev.date;
     if (ev.start_time && ev.end_time <= ev.start_time) {
       const d = new Date(ev.date); d.setDate(d.getDate() + 1);
