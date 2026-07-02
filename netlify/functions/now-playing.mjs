@@ -56,13 +56,14 @@ export default async (req) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      p_secret:      sbSecret,
-      p_gig_date:    gig_date    || '',
-      p_track_id:    track_id   || '',
-      p_artist:      artist     || '',
-      p_title:       title      || '',
-      p_spotify_url: spotify_url || null,
-      p_image_url:   image_url  || null,
+      p_secret:          sbSecret,
+      p_gig_date:        gig_date    || '',
+      p_track_id:        track_id   || '',
+      p_artist:          artist     || '',
+      p_title:           title      || '',
+      p_spotify_url:     spotify_url || null,
+      p_image_url:       image_url  || null,
+      p_admin_confirmed: true,
     }),
   });
 
