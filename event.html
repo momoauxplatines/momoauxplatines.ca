@@ -650,7 +650,7 @@
     <!-- 4 Tabs — always visible -->
     <div class="tabs-row" id="tabs-row">
       <button class="tab-btn active"   id="tab-info"     data-key="tab.info"     data-en="Info"     data-fr="Info">Info</button>
-      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle">Battle</button>
+      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle" style="display:none">Battle</button>
       <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="Played"   data-fr="Jouées">Played</button>
       <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="Request"  data-fr="Demandes">Request</button>
       <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Message" data-fr="Message">Message</button>
@@ -663,18 +663,6 @@
     <div class="info-body">
       <div class="info-top-row">
         <img class="info-event-thumb" id="info-cover-img" src="" alt="">
-        <div class="info-status-row">
-          <div class="event-status-badge status-live" id="event-status-live" style="display:none">
-            <div class="status-dot"></div>
-            <span data-key="req.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-          </div>
-          <div class="event-status-badge status-next" id="event-status-next" style="display:none">
-            <span data-key="req.next" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
-          </div>
-          <div class="event-status-badge status-past" id="event-status-past" style="display:none">
-            <span data-key="req.past" data-en="PAST" data-fr="PASSÉ">PAST</span>
-          </div>
-        </div>
       </div>
       <div class="info-copy">
         <div class="info-top">
@@ -695,7 +683,7 @@
   </div>
 
   <!-- ── Battle Panel ── -->
-  <div class="tab-panel" id="panel-battle">
+  <div class="tab-panel" id="panel-battle" style="display:none">
     <div class="song-list" id="battle-list"></div>
     <div class="req-tab-footer" id="battle-footer" style="display:none"></div>
   </div>
@@ -1083,7 +1071,6 @@
         if (checkEventLive(ev)) {
           gigDate = ev.date || null;
           document.getElementById('req-header-live').classList.add('visible');
-          document.getElementById('event-status-live').style.display = '';
           // Load live data
           checkForBattle();
           setInterval(checkForBattle, 30_000);
