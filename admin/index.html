@@ -49,17 +49,8 @@
     #admin-screen.active { display: block; }
 
     /* ── Fixed header ── */
-    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; gap: 16px; }
-    .header-logo-box { display: block; width: 40px; height: 40px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
-    .header-left { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-    .header-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px; color: var(--brand-50); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
-    #logout-btn { background: none; border-color: var(--brand-50); border-radius: 40px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; font-weight: 900; flex-shrink: 0; }
-    #logout-btn:hover { background: var(--brand-90); }
-    @media (min-width: 768px) {
-      .admin-header { display: grid; grid-template-columns: 1fr auto 1fr; padding: 20px 32px; }
-      .lang-tabs { justify-content: center; }
-      #logout-btn { justify-self: end; }
-    }
+    .admin-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 24px 16px; }
+    .header-logo-box { display: block; width: 40px; height: 40px; object-fit: cover; flex-shrink: 0; }
     .btn-admin { background: var(--brand-90); border: 1px solid var(--brand-80); border-radius: 8px; color: var(--brand-00); font-family: inherit; font-size: 18px; font-weight: 300; height: 40px; padding: 0 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-admin:hover { background: var(--brand-80); }
     .btn-admin:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -380,15 +371,11 @@
 
   <!-- Fixed header -->
   <header class="admin-header">
-    <div class="header-left">
-      <img class="header-logo-box" src="../images/og-image.png" alt="Momo">
-      <span class="header-title">Admin</span>
-    </div>
+    <img class="header-logo-box" src="../images/og-image.png" alt="Momo Aux Platines">
     <div class="lang-tabs">
       <button class="lang-tab active" data-lang="en">English</button>
       <button class="lang-tab" data-lang="fr">Français</button>
     </div>
-    <button class="btn-admin" id="logout-btn" data-i18n="header.signout">Sign out</button>
   </header>
 
   <div class="admin-content">
@@ -1214,15 +1201,6 @@
       });
     });
   }
-
-  // ── Logout ──────────────────────────────────────────────────────────────────
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem('momo_admin_token');
-    token = '';
-    document.getElementById('login-screen').style.display = '';
-    document.getElementById('admin-screen').classList.remove('active');
-    patInput.value = '';
-  });
 
   // ── Load copy ───────────────────────────────────────────────────────────────
   async function loadAllCopy() {
