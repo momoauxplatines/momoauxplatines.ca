@@ -1665,6 +1665,8 @@
         (payload) => {
           const row = payload.new;
           if (eventDate && row.gig_date !== eventDate) return;
+          // N'afficher la barre que si l'admin a explicitement identifié une chanson
+          if (!row.admin_confirmed) return;
           // Mettre à jour l'ID de la piste en cours, le footer, et la liste Jouées
           _currentNpTrackId = row.track_id || null;
           showNowPlayingBar(row);
@@ -1682,10 +1684,11 @@
     if (typeof window.supabase === 'undefined') return;
     try {
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      let q = sb.from('now_playing').select('track_id,title,artist,image_url,spotify_url');
+      let q = sb.from('now_playing').select('track_id,title,artist,image_url,spotify_url,admin_confirmed');
       if (eventDate) q = q.eq('gig_date', eventDate);
       const { data } = await q.order('updated_at', { ascending: false }).limit(1).maybeSingle();
-      if (data?.title) {
+      // N'afficher la barre que si l'admin a explicitement identifié une chanson
+      if (data?.title && data?.admin_confirmed) {
         _currentNpTrackId = data.track_id || null;
         showNowPlayingBar(data);
         renderPlayedList(_liveTracksCache); // Filtrer dès que le NP est connu
