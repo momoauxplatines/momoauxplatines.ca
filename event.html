@@ -713,7 +713,7 @@
         <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
       </div>
     </div>
-    <p class="played-intro" id="played-intro"
+    <p class="played-intro" id="played-intro" style="display:none"
        data-key="played.intro"
        data-en="That's what's been going on so far. Want to make a request? Hit the tab or come and chat at the booth."
        data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
@@ -1514,8 +1514,10 @@
     } catch { localStorage.removeItem('momo_artwork_cache'); }
   })();
   let artworkCache    = JSON.parse(localStorage.getItem('momo_artwork_cache') || '{}');
-  let liveSessionSlug = null;
-  let lastTrackSig    = '';
+  let liveSessionSlug    = null;
+  let lastTrackSig       = '';
+  let _currentNpTrackId  = null; // Supabase now-playing track_id (set by admin)
+  let _liveTracksCache   = [];   // All Serato tracks — filtered for Jouées display
 
   function artworkKey(artist, title) {
     return `${(artist || '').toLowerCase().trim()}|||${(title || '').toLowerCase().trim()}`;
@@ -1606,6 +1608,59 @@
   }
 
   // ─────────────────────────────────────────────
+  // Jouées list — pilotée par l'ID Supabase now-playing
+  // N'affiche que les pistes antérieures à celle identifiée par l'admin.
+  // ─────────────────────────────────────────────
+  function renderPlayedList(allTracks) {
+    const list    = document.getElementById('played-list');
+    const emptyEl = document.getElementById('played-empty');
+    const introEl = document.getElementById('played-intro');
+    if (!list) return;
+
+    // Seule les pistes dont l'ID numérique Serato est inférieur à celui
+    // de la chanson actuellement identifiée par l'admin s'affichent ici.
+    const npNum = _currentNpTrackId
+      ? (parseInt((_currentNpTrackId).replace(/\D/g, '')) || 0)
+      : 0;
+
+    const playedTracks = npNum
+      ? allTracks.filter(t => (parseInt((t.id || '').replace(/\D/g, '')) || 0) < npNum)
+      : [];
+
+    // Tri décroissant : la plus récente d'abord
+    playedTracks.sort((a, b) => {
+      const na = parseInt((a.id || '').replace(/\D/g, '')) || 0;
+      const nb = parseInt((b.id || '').replace(/\D/g, '')) || 0;
+      return nb - na;
+    });
+
+    // Vider les cartes existantes
+    Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
+
+    if (playedTracks.length === 0) {
+      if (emptyEl) emptyEl.style.display = '';
+      if (introEl) introEl.style.display = 'none';
+      return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    for (const t of playedTracks) {
+      const cleanArtist    = decodeHtml(t.artist);
+      const cleanTitle     = decodeHtml(t.title);
+      const cached         = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+      const resolvedTitle  = cached?.title  || cleanTitle;
+      const resolvedArtist = cached?.artist || cleanArtist;
+      const isRequested    = !!findMatchingRequest(resolvedTitle, resolvedArtist);
+      list.appendChild(buildPlayedCard(
+        resolvedArtist, resolvedTitle,
+        cached?.image || '', cached?.spotifyUrl || '',
+        t.id, isRequested
+      ));
+    }
+    if (introEl) introEl.style.display = '';
+  }
+
+  // ─────────────────────────────────────────────
   // Supabase Realtime — instant now-playing updates
   // ─────────────────────────────────────────────
   let _supabaseChannel  = null;
@@ -1623,9 +1678,10 @@
         (payload) => {
           const row = payload.new;
           if (eventDate && row.gig_date !== eventDate) return;
+          // Mettre à jour l'ID de la piste en cours, le footer, et la liste Jouées
+          _currentNpTrackId = row.track_id || null;
           showNowPlayingBar(row);
-          // Refresh the played list immediately when the admin sets a new track
-          if (_pollLiveActive) pollLivePlaylist();
+          renderPlayedList(_liveTracksCache);
         }
       )
       .subscribe();
@@ -1639,10 +1695,14 @@
     if (typeof window.supabase === 'undefined') return;
     try {
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      let q = sb.from('now_playing').select('title,artist,image_url,spotify_url');
+      let q = sb.from('now_playing').select('track_id,title,artist,image_url,spotify_url');
       if (eventDate) q = q.eq('gig_date', eventDate);
       const { data } = await q.order('updated_at', { ascending: false }).limit(1).maybeSingle();
-      if (data?.title) showNowPlayingBar(data);
+      if (data?.title) {
+        _currentNpTrackId = data.track_id || null;
+        showNowPlayingBar(data);
+        renderPlayedList(_liveTracksCache); // Filtrer dès que le NP est connu
+      }
     } catch { /* non-blocking */ }
   }
 
@@ -1758,56 +1818,16 @@
       const { tracks, session } = await res.json();
       const allTracks = tracks || [];
 
-      // Serato assigns the highest numeric id to the most recently played track.
-      const mostRecentTrack = allTracks.length
-        ? allTracks.reduce((best, t) => {
-            const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
-            const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
-            return nt > nb ? t : best;
-          })
-        : null;
-
       const sig = allTracks.map(t => t.id).sort().join(',');
-      if (sig === lastTrackSig && session === liveSessionSlug) {
-        if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
-        return;
-      }
+      if (sig === lastTrackSig && session === liveSessionSlug) return;
       lastTrackSig    = sig;
       liveSessionSlug = session;
 
-      if (mostRecentTrack) updateNowPlayingBar(mostRecentTrack);
+      // Mettre à jour le cache Serato — renderPlayedList filtre selon l'état NP
+      _liveTracksCache = allTracks;
+      renderPlayedList(_liveTracksCache);
 
-      const list      = document.getElementById('played-list');
-      const emptyEl   = document.getElementById('played-empty');
-      if (allTracks.length === 0) {
-        if (emptyEl) emptyEl.style.display = '';
-      } else {
-        if (emptyEl) emptyEl.style.display = 'none';
-        // Remove all non-empty cards
-        Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
-
-        // Sort descending by numeric id: highest id = most recently played (top).
-        const displayTracks = [...allTracks].sort((a, b) => {
-          const numA = parseInt((a.id || '').replace(/\D/g, '')) || 0;
-          const numB = parseInt((b.id || '').replace(/\D/g, '')) || 0;
-          return numB - numA;
-        });
-        for (const t of displayTracks) {
-          const cleanArtist    = decodeHtml(t.artist);
-          const cleanTitle     = decodeHtml(t.title);
-          const cached         = artworkCache[artworkKey(cleanArtist, cleanTitle)];
-          const resolvedTitle  = cached?.title  || cleanTitle;
-          const resolvedArtist = cached?.artist || cleanArtist;
-          const isRequested    = !!findMatchingRequest(resolvedTitle, resolvedArtist);
-          list.appendChild(buildPlayedCard(
-            resolvedArtist, resolvedTitle,
-            cached?.image || '', cached?.spotifyUrl || '',
-            t.id, isRequested
-          ));
-        }
-      }
-
-      // Artwork fetch in background (iTunes → Deezer → Spotify)
+      // Recherche d'artwork en arrière-plan (iTunes → Deezer → Spotify)
       if (allTracks.length) {
         (async () => {
           let spotifyToken = null;
@@ -1816,8 +1836,8 @@
             catch (e) { console.warn('[Momo] Spotify token error:', e); }
           }
           try {
+            const list = document.getElementById('played-list');
             for (const t of allTracks) {
-              // Decode HTML entities (e.g. &amp; from Serato) before searching
               const cleanArtist = decodeHtml(t.artist);
               const cleanTitle  = decodeHtml(t.title);
               const cKey = artworkKey(cleanArtist, cleanTitle);
@@ -1839,10 +1859,10 @@
                 try {
                   if (info) {
                     artworkCache[cKey] = info;
-                    const card = list.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
+                    // Patcher la carte si elle est visible dans la liste Jouées
+                    const card = list?.querySelector(`[data-track-id="${CSS.escape(t.id)}"]`);
                     if (card) {
                       if (info.image) {
-                        // Insert <img> only if not already present
                         let img = card.querySelector('.song-art');
                         if (!img) {
                           img = document.createElement('img');
@@ -1866,7 +1886,14 @@
                         reqCol.remove();
                       }
                     }
-                    if (mostRecentTrack?.id === t.id) updateNowPlayingBar(mostRecentTrack);
+                    // Si c'est la piste "en cours", mettre à jour le footer avec l'artwork trouvé
+                    if (t.id === _currentNpTrackId) {
+                      showNowPlayingBar({
+                        title:     info.title  || cleanTitle,
+                        artist:    info.artist || cleanArtist,
+                        image_url: info.image  || null,
+                      });
+                    }
                   }
                 } catch (e) { console.warn('[Momo] Artwork patch failed:', t.artist, t.title, e); }
               }
