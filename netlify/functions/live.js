@@ -281,42 +281,8 @@ exports.handler = async (event) => {
       };
     }
 
-    // 3. Push the current (most recent) track to Supabase so Realtime can
-    //    broadcast it instantly to all connected gig pages.
-    // Serato assigns the highest numeric id to the most recently played track.
-    const nowTrack = tracks.length
-      ? tracks.reduce((best, t) => {
-          const nb = parseInt((best.id || '').replace(/\D/g, '')) || 0;
-          const nt = parseInt((t.id    || '').replace(/\D/g, '')) || 0;
-          return nt > nb ? t : best;
-        })
-      : null;
-    if (nowTrack) {
-      const sbUrl    = process.env.SUPABASE_URL;
-      const sbKey    = process.env.SUPABASE_ANON_KEY;
-      const sbSecret = process.env.SUPABASE_NP_SECRET;
-      if (sbUrl && sbKey && sbSecret) {
-        try {
-          await fetch(`${sbUrl}/rest/v1/rpc/update_now_playing_track`, {
-            method: 'POST',
-            headers: {
-              'apikey': sbKey,
-              'Authorization': `Bearer ${sbKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              p_secret:      sbSecret,
-              p_gig_date:    targetDate || '',
-              p_track_id:    nowTrack.id,
-              p_artist:      nowTrack.artist,
-              p_title:       nowTrack.title,
-              p_spotify_url: null,
-              p_image_url:   null,
-            }),
-          });
-        } catch { /* non-blocking — don't fail the response if Supabase is unreachable */ }
-      }
-    }
+    // Le now_playing Supabase est mis à jour uniquement par l'admin
+    // via /api/now-playing — jamais automatiquement ici.
 
     return {
       statusCode: 200,
