@@ -3607,20 +3607,24 @@
       footerInner.innerHTML = `<button class="btn-dark" id="ev-save-btn" data-i18n="btn.save">${t('btn.save')}</button>`;
     } else if (name === 'playing') {
       const todayStr = new Date().toISOString().slice(0, 10);
-      const hasPastTracks = ev && ev.date <= todayStr; // today or any past date
-      if (isLive || hasPastTracks) {
+      const isToday  = ev && ev.date === todayStr;
+      const hasTracks = ev && ev.date <= todayStr; // today or past event
+      if (isLive || hasTracks) {
         _trackPaneEl   = document.getElementById('ev-playing-pane');
         reqEventIdx    = currentEventDetailIdx;
-        reqEventIsLive = isLive; // buttons only enabled during live
+        // Enable identify-as-playing buttons for any event on today's date,
+        // not just when strictly within the start_time–end_time window.
+        reqEventIsLive = isLive || isToday;
         liveActiveTab  = 'played';
         if (isLive) {
+          // Live polling + refresh button only during the active window
           footerInner.innerHTML = `<button class="btn-dark" id="ev-playing-refresh-btn">${t('btn.refresh')}</button>`;
           setTimeout(() => {
             const btn = document.getElementById('ev-playing-refresh-btn');
             if (btn) btn.addEventListener('click', loadPlayedTracks);
           }, 0);
         } else {
-          footerInner.innerHTML = ''; // no refresh button for past events
+          footerInner.innerHTML = ''; // no refresh button for past/ended events
         }
         loadPlayedTracks(); // startLivePolling() called inside if reqEventIsLive
       } else {
