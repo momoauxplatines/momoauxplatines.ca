@@ -1074,6 +1074,9 @@
         // the admin can set a track manually regardless of the event's time window.
         startNowPlayingRealtime(ev.date || null);
         fetchCurrentNowPlaying(ev.date || null);
+        // Liste Jouées — bascule à l'éjection (table played_tracks)
+        startPlayedTracksRealtime(ev.date || null);
+        fetchPlayedTracks(ev.date || null);
         initMarquee();
 
         if (checkEventLive(ev)) {
@@ -1118,6 +1121,9 @@
   } else {
     // No event slug — general live page
     showTab(localStorage.getItem(TAB_KEY) || 'played');
+    // Liste Jouées — bascule à l'éjection (date du jour)
+    startPlayedTracksRealtime(null);
+    fetchPlayedTracks(null);
     pollLivePlaylist();
     setInterval(pollLivePlaylist, 30_000);
   }
@@ -1603,8 +1609,9 @@
   }
 
   // ─────────────────────────────────────────────
-  // Jouées list — pilotée par l'ID Supabase now-playing
-  // N'affiche que les pistes antérieures à celle identifiée par l'admin.
+  // Jouées list (LEGACY) — pilotée par l'ID Supabase now-playing.
+  // Remplacée par la table played_tracks (bascule à l'éjection) —
+  // conservée comme référence, plus appelée.
   // ─────────────────────────────────────────────
   function renderPlayedList(allTracks) {
     const list    = document.getElementById('played-list');
@@ -1656,6 +1663,74 @@
   }
 
   // ─────────────────────────────────────────────
+  // Jouées list — pilotée par la table Supabase played_tracks
+  // (bascule à l'éjection — alimentée par serato_played_watcher.py)
+  // ─────────────────────────────────────────────
+  let _playedRowsCache = [];
+
+  function renderPlayedFromSupabase(rows) {
+    const list    = document.getElementById('played-list');
+    const emptyEl = document.getElementById('played-empty');
+    const introEl = document.getElementById('played-intro');
+    if (!list) return;
+
+    // Vider les cartes existantes
+    Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
+
+    if (!rows.length) {
+      if (emptyEl) emptyEl.style.display = '';
+      if (introEl) introEl.style.display = 'none';
+      return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    for (const r of rows) {
+      const cleanArtist = decodeHtml(r.artist || '');
+      const cleanTitle  = decodeHtml(r.title  || '');
+      const cached      = artworkCache[artworkKey(cleanArtist, cleanTitle)];
+      const image       = r.image_url   || cached?.image      || '';
+      const spotifyUrl  = r.spotify_url || cached?.spotifyUrl || '';
+      const isRequested = !!findMatchingRequest(cleanTitle, cleanArtist);
+      list.appendChild(buildPlayedCard(
+        cleanArtist, cleanTitle, image, spotifyUrl, `pt-${r.id}`, isRequested
+      ));
+    }
+    if (introEl) introEl.style.display = '';
+  }
+
+  async function fetchPlayedTracks(eventDate) {
+    if (typeof window.supabase === 'undefined') return;
+    const day = eventDate || new Date().toISOString().slice(0, 10);
+    try {
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      const { data } = await sb
+        .from('played_tracks')
+        .select('id,artist,title,spotify_url,image_url,played_at')
+        .eq('gig_date', day)
+        .order('played_at', { ascending: false });
+      _playedRowsCache = data || [];
+      renderPlayedFromSupabase(_playedRowsCache);
+    } catch { /* non-blocking */ }
+  }
+
+  let _playedChannel = null;
+  function startPlayedTracksRealtime(eventDate) {
+    if (_playedChannel) return;
+    if (typeof window.supabase === 'undefined') return;
+    const day = eventDate || new Date().toISOString().slice(0, 10);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    _playedChannel = sb
+      .channel('played-tracks-broadcast')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'played_tracks',
+          filter: `gig_date=eq.${day}` },
+        () => fetchPlayedTracks(eventDate)
+      )
+      .subscribe();
+  }
+
+  // ─────────────────────────────────────────────
   // Supabase Realtime — instant now-playing updates
   // ─────────────────────────────────────────────
   let _supabaseChannel  = null;
@@ -1675,10 +1750,10 @@
           if (eventDate && row.gig_date !== eventDate) return;
           // N'afficher la barre que si l'admin a explicitement identifié une chanson
           if (!row.admin_confirmed) return;
-          // Mettre à jour l'ID de la piste en cours, le footer, et la liste Jouées
+          // Mettre à jour l'ID de la piste en cours et le footer
+          // (la liste Jouées est désormais pilotée par played_tracks)
           _currentNpTrackId = row.track_id || null;
           showNowPlayingBar(row);
-          renderPlayedList(_liveTracksCache);
         }
       )
       .subscribe();
@@ -1699,7 +1774,6 @@
       if (data?.title && data?.admin_confirmed) {
         _currentNpTrackId = data.track_id || null;
         showNowPlayingBar(data);
-        renderPlayedList(_liveTracksCache); // Filtrer dès que le NP est connu
       }
     } catch { /* non-blocking */ }
   }
@@ -1821,9 +1895,9 @@
       lastTrackSig    = sig;
       liveSessionSlug = session;
 
-      // Mettre à jour le cache Serato — renderPlayedList filtre selon l'état NP
+      // Mettre à jour le cache Serato (artwork du footer now-playing) —
+      // la liste Jouées est désormais pilotée par played_tracks
       _liveTracksCache = allTracks;
-      renderPlayedList(_liveTracksCache);
 
       // Recherche d'artwork en arrière-plan (iTunes → Deezer → Spotify)
       if (allTracks.length) {
