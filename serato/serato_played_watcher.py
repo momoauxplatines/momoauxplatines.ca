@@ -2,41 +2,42 @@
 """
 Serato "bascule à l'éjection" → Supabase played_tracks
 ------------------------------------------------------
-Surveille le fichier de session live de Serato DJ. Quand une piste est
-éjectée (ou remplacée sur un deck) ET qu'elle a joué au moins
-MIN_PLAYTIME secondes, elle est ajoutée à la table `played_tracks`,
-enrichie via l'API Spotify (lien + pochette).
+Lit l'historique moderne de Serato DJ (base SQLite
+~/Library/Application Support/Serato/Library/master.sqlite).
+
+Une piste est « jouée » quand elle est remplacée sur son deck (éjection)
+et qu'elle a joué au moins MIN_PLAYTIME secondes. Elle est alors insérée
+dans la table Supabase `played_tracks`, enrichie via Spotify (lien) et
+iTunes (pochette en repli).
 
 Dépendances : aucune (Python 3.9+, stdlib seulement).
 
 Configuration : variables d'environnement ou fichier .env à côté du script.
-  SUPABASE_URL              ex. https://rxypcvyvgzdercoxvqsk.supabase.co
-  SUPABASE_SERVICE_KEY      clé service_role (Dashboard > Settings > API)
-  SPOTIFY_CLIENT_ID         (optionnel — sans ça, pas d'enrichissement)
+  SUPABASE_URL              ex. https://xxxx.supabase.co
+  SUPABASE_SERVICE_KEY      clé secrète (sb_secret_… ou service_role legacy)
+  SPOTIFY_CLIENT_ID         (optionnel)
   SPOTIFY_CLIENT_SECRET     (optionnel)
-  GIG_DATE                  défaut : date du jour (YYYY-MM-DD)
+  GIG_DATE                  fixe la date (défaut : date de fin de lecture,
+                            moins 6 h — l'après-minuit reste sur la veille)
   MIN_PLAYTIME              défaut : 30 (secondes)
-  SERATO_DIR                défaut : ~/Music/_Serato_
+  SERATO_LIBRARY_DB         défaut : ~/Library/Application Support/Serato/
+                            Library/master.sqlite
   POLL_SECONDS              défaut : 3
-
-Lancement :  python3 serato_played_watcher.py
-Arrêt     :  Ctrl+C
 """
 
 import json
 import os
-import struct
+import sqlite3
 import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import date
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # Journal : chaque ligne est horodatée
 _print = print
 def print(*args, **kwargs):  # noqa: A001
-    from datetime import datetime
     _print(datetime.now().strftime("[%Y-%m-%d %H:%M:%S]"), *args, **kwargs)
 
 # ---------------------------------------------------------------- config
@@ -56,100 +57,54 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID", "")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
-GIG_DATE_OVERRIDE = os.environ.get("GIG_DATE")  # fixe si défini dans .env
-
-def current_gig_date():
-    """Date de l'évènement, calculée au moment de l'insertion (le watcher
-    tourne en permanence). Les pistes jouées avant 6 h du matin restent
-    rattachées à la soirée de la veille."""
-    if GIG_DATE_OVERRIDE:
-        return GIG_DATE_OVERRIDE
-    from datetime import datetime, timedelta
-    return (datetime.now() - timedelta(hours=6)).date().isoformat()
+GIG_DATE_OVERRIDE = os.environ.get("GIG_DATE")
 MIN_PLAYTIME = int(os.environ.get("MIN_PLAYTIME", "30"))
-SERATO_DIR = Path(os.environ.get("SERATO_DIR", str(Path.home() / "Music" / "_Serato_")))
 POLL_SECONDS = float(os.environ.get("POLL_SECONDS", "3"))
-
-SESSIONS_DIR = SERATO_DIR / "History" / "Sessions"
+LIBRARY_DB = Path(os.environ.get(
+    "SERATO_LIBRARY_DB",
+    str(Path.home() / "Library" / "Application Support" / "Serato"
+        / "Library" / "master.sqlite")))
 
 if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
     sys.exit("Config manquante: SUPABASE_URL et SUPABASE_SERVICE_KEY sont requis (.env).")
 
-# ------------------------------------------------- parseur .session Serato
-# Format: suite de chunks [tag 4 octets][longueur u32 BE][payload].
-# Les entrées de piste sont des chunks 'oent' contenant un chunk 'adat'.
-# 'adat' = suite de champs [id u32 BE][longueur u32 BE][valeur].
-# Les chaînes sont en UTF-16 big-endian.
+def gig_date_for(end_epoch):
+    """Date de l'évènement pour une piste terminée à `end_epoch`.
+    Avant 6 h du matin, la piste reste rattachée à la soirée de la veille."""
+    if GIG_DATE_OVERRIDE:
+        return GIG_DATE_OVERRIDE
+    return (datetime.fromtimestamp(end_epoch) - timedelta(hours=6)).date().isoformat()
 
-FIELD_ROW_ID = 1
-FIELD_TITLE = 6
-FIELD_ARTIST = 7
-FIELD_START = 28   # unix timestamp (u32)
-FIELD_END = 29     # unix timestamp (u32)
-FIELD_DECK = 31
-FIELD_PLAYTIME = 45  # secondes (u32)
-FIELD_PLAYED = 50    # bool (u8)
+# ------------------------------------------------- historique Serato (SQLite)
 
-def _u32(b):
-    return struct.unpack(">I", b)[0] if len(b) == 4 else None
+def open_library():
+    uri = f"file:{urllib.parse.quote(str(LIBRARY_DB))}?mode=ro"
+    con = sqlite3.connect(uri, uri=True, timeout=2)
+    con.row_factory = sqlite3.Row
+    return con
 
-def _text(b):
-    try:
-        return b.decode("utf-16-be").rstrip("\x00").strip()
-    except UnicodeDecodeError:
-        return b.decode("latin-1", errors="replace").strip()
+def latest_session(cur):
+    row = cur.execute(
+        "select id, name from history_session order by id desc limit 1").fetchone()
+    return (row["id"], row["name"]) if row else (None, None)
 
-def parse_adat(payload):
-    fields, i = {}, 0
-    while i + 8 <= len(payload):
-        fid = struct.unpack(">I", payload[i:i + 4])[0]
-        ln = struct.unpack(">I", payload[i + 4:i + 8])[0]
-        val = payload[i + 8:i + 8 + ln]
-        i += 8 + ln
-        fields[fid] = val
-    return fields
-
-def parse_session(data):
-    """Retourne {row_id: entry_dict}, les occurrences tardives écrasent."""
-    rows, i = {}, 0
-    while i + 8 <= len(data):
-        tag = data[i:i + 4]
-        ln = struct.unpack(">I", data[i + 4:i + 8])[0]
-        payload = data[i + 8:i + 8 + ln]
-        i += 8 + ln
-        if tag != b"oent":
-            continue
-        # oent contient un chunk adat
-        if len(payload) >= 8 and payload[0:4] == b"adat":
-            adat_len = struct.unpack(">I", payload[4:8])[0]
-            f = parse_adat(payload[8:8 + adat_len])
-        else:
-            f = parse_adat(payload)
-        row_id = _u32(f.get(FIELD_ROW_ID, b""))
-        if row_id is None:
-            continue
-        entry = rows.setdefault(row_id, {})
-        if FIELD_TITLE in f:
-            entry["title"] = _text(f[FIELD_TITLE])
-        if FIELD_ARTIST in f:
-            entry["artist"] = _text(f[FIELD_ARTIST])
-        if FIELD_START in f:
-            entry["start"] = _u32(f[FIELD_START])
-        if FIELD_END in f:
-            entry["end"] = _u32(f[FIELD_END])
-        if FIELD_DECK in f:
-            entry["deck"] = _u32(f[FIELD_DECK])
-        if FIELD_PLAYTIME in f:
-            entry["playtime"] = _u32(f[FIELD_PLAYTIME])
-        if FIELD_PLAYED in f and len(f[FIELD_PLAYED]) >= 1:
-            entry["played"] = bool(f[FIELD_PLAYED][0])
-    return rows
-
-def latest_session_file():
-    if not SESSIONS_DIR.exists():
-        return None
-    files = sorted(SESSIONS_DIR.glob("*.session"), key=lambda p: p.stat().st_mtime)
-    return files[-1] if files else None
+def ejected_entries(cur, session_id, now_epoch):
+    """Pistes remplacées sur leur deck (éjectées), terminées, assez jouées.
+    Une entrée est « éjectée » quand une entrée plus récente existe sur le
+    même deck — la dernière piste de chaque deck reste en attente."""
+    return cur.execute("""
+        select e.id, e.artist, e.name, e.start_time, e.end_time, e.deck
+        from history_entry e
+        where e.session_id = :sid
+          and e.played = 1
+          and e.end_time > e.start_time
+          and e.end_time <= :now
+          and exists (
+            select 1 from history_entry n
+            where n.session_id = e.session_id
+              and n.deck = e.deck and n.id > e.id)
+        order by e.end_time
+    """, {"sid": session_id, "now": now_epoch}).fetchall()
 
 # --------------------------------------------------------------- Spotify
 
@@ -209,7 +164,7 @@ def itunes_image(artist, title):
         with urllib.request.urlopen(req, timeout=10) as r:
             d = json.load(r)
         results = d.get("results", [])
-        low = title.lower()
+        low = (title or "").lower()
         track = next((t for t in results
                       if low in (t.get("trackName") or "").lower()), None) \
             or (results[0] if results else None)
@@ -255,7 +210,6 @@ def supabase_insert(row):
         return False
 
 def already_inserted_ids(session_name):
-    """Au démarrage, récupère les row_ids déjà insérés pour cette session."""
     q = urllib.parse.urlencode({
         "select": "serato_row_id",
         "session_name": f"eq.{session_name}",
@@ -271,69 +225,66 @@ def already_inserted_ids(session_name):
 
 # ------------------------------------------------------------------ boucle
 
-def is_ejected(entry):
-    """Une piste compte comme « jouée » quand elle est éjectée/remplacée
-    (end présent) et qu'elle a joué assez longtemps."""
-    if "end" not in entry or not entry.get("end"):
-        return False
-    playtime = entry.get("playtime")
-    if playtime is None and entry.get("start"):
-        playtime = entry["end"] - entry["start"]
-    entry["_playtime"] = playtime or 0
-    return (playtime or 0) >= MIN_PLAYTIME
-
 def main():
-    print(f"Watcher Serato — seuil {MIN_PLAYTIME}s — gig {current_gig_date()}")
-    print(f"Dossier sessions : {SESSIONS_DIR}")
-    current_file, done = None, set()
+    print(f"Watcher Serato (bibliothèque SQLite) — seuil {MIN_PLAYTIME}s")
+    print(f"Base : {LIBRARY_DB}")
+    current_sid, done = None, set()
 
     while True:
-        f = latest_session_file()
-        if f is None:
-            print("Aucun fichier .session — en attente d'une session Serato…")
-            time.sleep(10)
+        if not LIBRARY_DB.exists():
+            print("Base Serato introuvable — en attente…")
+            time.sleep(15)
             continue
-        if f != current_file:
-            current_file = f
-            done = already_inserted_ids(f.name)
-            print(f"Session active : {f.name} ({len(done)} piste(s) déjà envoyée(s))")
-
         try:
-            rows = parse_session(f.read_bytes())
-        except Exception as e:
-            print(f"  ! parse: {e}")
+            con = open_library()
+            cur = con.cursor()
+            sid, sname = latest_session(cur)
+            if sid is None:
+                con.close()
+                time.sleep(POLL_SECONDS)
+                continue
+            if sid != current_sid:
+                current_sid = sid
+                done = already_inserted_ids(f"sql-{sid}")
+                print(f"Session active : {sid} ({sname}) — "
+                      f"{len(done)} piste(s) déjà envoyée(s)")
+
+            now = int(time.time())
+            entries = ejected_entries(cur, sid, now)
+            con.close()
+        except sqlite3.Error as e:
+            print(f"  ! SQLite: {e}")
             time.sleep(POLL_SECONDS)
             continue
 
-        for row_id, entry in sorted(rows.items()):
-            if row_id in done or not is_ejected(entry):
+        for e in entries:
+            if e["id"] in done:
                 continue
-            artist = entry.get("artist") or ""
-            title = entry.get("title") or ""
+            playtime = e["end_time"] - e["start_time"]
+            if playtime < MIN_PLAYTIME:
+                done.add(e["id"])
+                continue
+            artist = (e["artist"] or "").strip()
+            title = (e["name"] or "").strip()
             if not title:
-                done.add(row_id)
+                done.add(e["id"])
                 continue
             spotify_url, image_url = enrich(artist, title)
-            # Heure réelle de fin de lecture (timestamp Serato)
-            ended_at = None
-            if entry.get("end"):
-                from datetime import datetime, timezone
-                ended_at = datetime.fromtimestamp(
-                    entry["end"], tz=timezone.utc).isoformat()
             row = {
-                "gig_date": current_gig_date(),
+                "gig_date": gig_date_for(e["end_time"]),
                 "artist": artist,
                 "title": title,
                 "spotify_url": spotify_url,
                 "image_url": image_url,
-                "playtime_seconds": entry["_playtime"],
-                "ended_at": ended_at,
-                "session_name": f.name,
-                "serato_row_id": row_id,
+                "playtime_seconds": playtime,
+                "ended_at": datetime.fromtimestamp(
+                    e["end_time"], tz=timezone.utc).isoformat(),
+                "session_name": f"sql-{current_sid}",
+                "serato_row_id": e["id"],
             }
             if supabase_insert(row):
-                done.add(row_id)
-                print(f"  ✓ Jouée : {artist} – {title} ({entry['_playtime']}s)")
+                done.add(e["id"])
+                print(f"  ✓ Jouée : {artist} – {title} ({playtime}s, deck {e['deck']})")
 
         time.sleep(POLL_SECONDS)
 
