@@ -50,7 +50,16 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID", "")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
-GIG_DATE = os.environ.get("GIG_DATE") or date.today().isoformat()
+GIG_DATE_OVERRIDE = os.environ.get("GIG_DATE")  # fixe si défini dans .env
+
+def current_gig_date():
+    """Date de l'évènement, calculée au moment de l'insertion (le watcher
+    tourne en permanence). Les pistes jouées avant 6 h du matin restent
+    rattachées à la soirée de la veille."""
+    if GIG_DATE_OVERRIDE:
+        return GIG_DATE_OVERRIDE
+    from datetime import datetime, timedelta
+    return (datetime.now() - timedelta(hours=6)).date().isoformat()
 MIN_PLAYTIME = int(os.environ.get("MIN_PLAYTIME", "30"))
 SERATO_DIR = Path(os.environ.get("SERATO_DIR", str(Path.home() / "Music" / "_Serato_")))
 POLL_SECONDS = float(os.environ.get("POLL_SECONDS", "3"))
@@ -268,7 +277,7 @@ def is_ejected(entry):
     return (playtime or 0) >= MIN_PLAYTIME
 
 def main():
-    print(f"Watcher Serato — seuil {MIN_PLAYTIME}s — gig {GIG_DATE}")
+    print(f"Watcher Serato — seuil {MIN_PLAYTIME}s — gig {current_gig_date()}")
     print(f"Dossier sessions : {SESSIONS_DIR}")
     current_file, done = None, set()
 
@@ -306,7 +315,7 @@ def main():
                 ended_at = datetime.fromtimestamp(
                     entry["end"], tz=timezone.utc).isoformat()
             row = {
-                "gig_date": GIG_DATE,
+                "gig_date": current_gig_date(),
                 "artist": artist,
                 "title": title,
                 "spotify_url": spotify_url,
