@@ -214,13 +214,20 @@ def enrich(artist, title):
 
 # --------------------------------------------------------------- Supabase
 
+def _sb_headers():
+    """Nouvelles clés sb_secret_… : en-tête apikey seul.
+    Clés JWT legacy (eyJ…) : apikey + Authorization Bearer."""
+    h = {"apikey": SUPABASE_SERVICE_KEY}
+    if not SUPABASE_SERVICE_KEY.startswith("sb_"):
+        h["Authorization"] = f"Bearer {SUPABASE_SERVICE_KEY}"
+    return h
+
 def supabase_insert(row):
     req = urllib.request.Request(
         f"{SUPABASE_URL}/rest/v1/played_tracks",
         data=json.dumps(row).encode(),
         headers={
-            "apikey": SUPABASE_SERVICE_KEY,
-            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+            **_sb_headers(),
             "Content-Type": "application/json",
             # ignore les doublons (unique session_name + serato_row_id)
             "Prefer": "resolution=ignore-duplicates",
@@ -240,8 +247,7 @@ def already_inserted_ids(session_name):
     })
     req = urllib.request.Request(
         f"{SUPABASE_URL}/rest/v1/played_tracks?{q}",
-        headers={"apikey": SUPABASE_SERVICE_KEY,
-                 "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"})
+        headers=_sb_headers())
     try:
         with urllib.request.urlopen(req, timeout=10) as r:
             return {row["serato_row_id"] for row in json.load(r)}
