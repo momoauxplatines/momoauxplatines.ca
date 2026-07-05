@@ -173,10 +173,10 @@
     .msg-textarea-wrap { display: flex; flex-direction: column; gap: 8px; }
     .msg-textarea   {
       width: 100%; resize: none; overflow: hidden;
-      height: 58px; min-height: 58px;
+      height: 48px; min-height: 48px;
       background: var(--brand-100); color: var(--brand-00);
       border: 1px solid var(--brand-90); border-radius: 8px;
-      padding: 16px 20px; font-family: 'Kanit', sans-serif; font-size: 18px;
+      padding: 10px 20px; font-family: 'Kanit', sans-serif; font-size: 18px;
       line-height: 26px; outline: none; box-sizing: border-box;
       transition: border-color 0.15s;
     }
@@ -1394,7 +1394,7 @@
 
   function autoResizeMsgInput() {
     msgInput.style.height = 'auto';
-    msgInput.style.height = Math.max(58, msgInput.scrollHeight) + 'px';
+    msgInput.style.height = Math.max(48, msgInput.scrollHeight) + 'px';
   }
 
   msgInput.addEventListener('input', () => {
