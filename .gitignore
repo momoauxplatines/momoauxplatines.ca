@@ -11,6 +11,7 @@ videos/
 # Local env
 .env
 serato/watcher.log
+serato/__pycache__/
 
 # Figma source files (trop lourds pour git)
 *.fig

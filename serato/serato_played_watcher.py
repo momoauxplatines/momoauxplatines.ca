@@ -185,6 +185,33 @@ def spotify_enrich(artist, title):
         print(f"  ! Spotify search: {e}")
         return None, None
 
+def itunes_image(artist, title):
+    """Repli pochette via iTunes (gratuit, sans auth) quand Spotify échoue."""
+    term = urllib.parse.quote(f"{title} {artist}".strip())
+    req = urllib.request.Request(
+        f"https://itunes.apple.com/search?term={term}&media=music&entity=song&limit=5")
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            d = json.load(r)
+        results = d.get("results", [])
+        low = title.lower()
+        track = next((t for t in results
+                      if low in (t.get("trackName") or "").lower()), None) \
+            or (results[0] if results else None)
+        if not track:
+            return None
+        art = track.get("artworkUrl100") or ""
+        return art.replace("100x100bb", "400x400bb") or None
+    except Exception as e:
+        print(f"  ! iTunes search: {e}")
+        return None
+
+def enrich(artist, title):
+    spotify_url, image_url = spotify_enrich(artist, title)
+    if not image_url:
+        image_url = itunes_image(artist, title)
+    return spotify_url, image_url
+
 # --------------------------------------------------------------- Supabase
 
 def supabase_insert(row):
@@ -265,7 +292,7 @@ def main():
             if not title:
                 done.add(row_id)
                 continue
-            spotify_url, image_url = spotify_enrich(artist, title)
+            spotify_url, image_url = enrich(artist, title)
             row = {
                 "gig_date": GIG_DATE,
                 "artist": artist,
