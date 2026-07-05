@@ -33,6 +33,12 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+# Journal : chaque ligne est horodatée
+_print = print
+def print(*args, **kwargs):  # noqa: A001
+    from datetime import datetime
+    _print(datetime.now().strftime("[%Y-%m-%d %H:%M:%S]"), *args, **kwargs)
+
 # ---------------------------------------------------------------- config
 
 def load_dotenv():

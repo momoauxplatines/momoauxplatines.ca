@@ -14,6 +14,13 @@
   <key>WorkingDirectory</key>
   <string>/Users/francoisgauthier/Websites/Momo/serato</string>
 
+  <!-- Écrit le journal immédiatement (pas de mise en tampon) -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PYTHONUNBUFFERED</key>
+    <string>1</string>
+  </dict>
+
   <!-- Démarre à l'ouverture de session et reste actif en permanence.
        Le script attend sagement quand Serato est fermé. -->
   <key>RunAtLoad</key>
