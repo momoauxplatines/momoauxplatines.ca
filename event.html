@@ -1074,7 +1074,9 @@
         // the admin can set a track manually regardless of the event's time window.
         startNowPlayingRealtime(ev.date || null);
         fetchCurrentNowPlaying(ev.date || null);
-        // Liste Jouées — bascule à l'éjection (table played_tracks)
+        // Liste Jouées — bascule à l'éjection (table played_tracks),
+        // limitée à la fenêtre start_time → end_time de l'évènement
+        _eventWindow = buildEventWindow(ev);
         startPlayedTracksRealtime(ev.date || null);
         fetchPlayedTracks(ev.date || null);
         initMarquee();
@@ -1667,6 +1669,25 @@
   // (bascule à l'éjection — alimentée par serato_played_watcher.py)
   // ─────────────────────────────────────────────
   let _playedRowsCache = [];
+  let _eventWindow     = null; // { start: Date, end: Date } — fenêtre de l'évènement
+
+  function buildEventWindow(ev) {
+    if (!ev || !ev.date || !ev.start_time || !ev.end_time) return null;
+    const start = new Date(`${ev.date}T${ev.start_time}:00`);
+    let end     = new Date(`${ev.date}T${ev.end_time}:00`);
+    if (isNaN(start) || isNaN(end)) return null;
+    if (end <= start) end = new Date(end.getTime() + 24 * 3600 * 1000); // passe minuit
+    return { start, end };
+  }
+
+  // Une piste compte si sa période de lecture chevauche la fenêtre de l'évènement
+  function inEventWindow(r) {
+    if (!_eventWindow) return true;
+    const ended   = new Date(r.ended_at || r.played_at);
+    if (isNaN(ended)) return true;
+    const started = new Date(ended.getTime() - (r.playtime_seconds || 0) * 1000);
+    return started <= _eventWindow.end && ended >= _eventWindow.start;
+  }
 
   function renderPlayedFromSupabase(rows) {
     const list    = document.getElementById('played-list');
@@ -1705,11 +1726,11 @@
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
       const { data } = await sb
         .from('played_tracks')
-        .select('id,artist,title,spotify_url,image_url,played_at,ended_at')
+        .select('id,artist,title,spotify_url,image_url,played_at,ended_at,playtime_seconds')
         .eq('gig_date', day)
         .order('ended_at', { ascending: false, nullsFirst: false })
         .order('played_at', { ascending: false });
-      _playedRowsCache = data || [];
+      _playedRowsCache = (data || []).filter(inEventWindow);
       renderPlayedFromSupabase(_playedRowsCache);
     } catch { /* non-blocking */ }
   }
