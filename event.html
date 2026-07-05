@@ -1695,6 +1695,16 @@
     const introEl = document.getElementById('played-intro');
     if (!list) return;
 
+    // Dédoublonnage artiste+titre — les lignes arrivent triées de la plus
+    // récente à la plus ancienne, on garde donc l'occurrence la plus récente
+    const seen = new Set();
+    rows = rows.filter(r => {
+      const k = `${(r.artist || '').toLowerCase().trim()}|${(r.title || '').toLowerCase().trim()}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+
     // Vider les cartes existantes
     Array.from(list.children).forEach(c => { if (c !== emptyEl) c.remove(); });
 
