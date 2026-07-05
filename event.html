@@ -1705,8 +1705,9 @@
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
       const { data } = await sb
         .from('played_tracks')
-        .select('id,artist,title,spotify_url,image_url,played_at')
+        .select('id,artist,title,spotify_url,image_url,played_at,ended_at')
         .eq('gig_date', day)
+        .order('ended_at', { ascending: false, nullsFirst: false })
         .order('played_at', { ascending: false });
       _playedRowsCache = data || [];
       renderPlayedFromSupabase(_playedRowsCache);

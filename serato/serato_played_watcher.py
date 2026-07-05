@@ -299,6 +299,12 @@ def main():
                 done.add(row_id)
                 continue
             spotify_url, image_url = enrich(artist, title)
+            # Heure réelle de fin de lecture (timestamp Serato)
+            ended_at = None
+            if entry.get("end"):
+                from datetime import datetime, timezone
+                ended_at = datetime.fromtimestamp(
+                    entry["end"], tz=timezone.utc).isoformat()
             row = {
                 "gig_date": GIG_DATE,
                 "artist": artist,
@@ -306,6 +312,7 @@ def main():
                 "spotify_url": spotify_url,
                 "image_url": image_url,
                 "playtime_seconds": entry["_playtime"],
+                "ended_at": ended_at,
                 "session_name": f.name,
                 "serato_row_id": row_id,
             }
