@@ -50,15 +50,17 @@
   to = "/events"
   status = 301
 
+# Demandes spéciales — désormais gérées via l'onglet Demandes de chaque événement.
+# Anciennes URLs redirigées vers la liste des événements.
 [[redirects]]
   from = "/demandesspeciales"
-  to = "/demandespeciale.html"
-  status = 200
+  to = "/events"
+  status = 301
 
 [[redirects]]
   from = "/demandespeciale"
-  to = "/demandespeciale.html"
-  status = 200
+  to = "/events"
+  status = 301
 
 # Nouvelles URLs simplifiées — /:name_slug/:date_slug (ex: /pepouzeenterrasse/7juillet2026)
 # Doit venir après toutes les routes spécifiques
