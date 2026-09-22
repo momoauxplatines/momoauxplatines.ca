@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Site map — Momo Aux Platines</title>
+<style>
+  :root{
+    --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+    --surface-0:#ffffff;--surface-1:#FAFAF7;--surface-2:#F1EFE8;
+    --border:#D3D1C7;--font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  body{margin:0;padding:32px 24px;background:#F1EFE8;font-family:system-ui,-apple-system,sans-serif;color:var(--text-primary)}
+  .smap{max-width:1080px;margin:0 auto}
+  .smap *{box-sizing:border-box}
+  h1{font-size:20px;margin:0 0 4px;text-align:center}
+  .subtitle{text-align:center;color:var(--text-muted);font-size:13px;margin:0 0 24px}
+  .smap-root{display:inline-block;padding:9px 20px;border-radius:12px;background:var(--text-primary);color:#fff;font-weight:600;font-size:15px}
+  .smap-root small{opacity:.6;font-weight:400}
+  .smap-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+  @media(max-width:720px){.smap-cols{grid-template-columns:1fr}}
+  .zone{border:1px solid var(--border);border-radius:14px;padding:14px;background:var(--surface-1)}
+  .zone-h{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:12px}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .z-pub .dot{background:#7F77DD}.z-adm .dot{background:#D85A30}.z-api .dot{background:#378ADD}
+  .z-pub{border-top:3px solid #7F77DD}.z-adm{border-top:3px solid #D85A30}.z-api{border-top:3px solid #378ADD}
+  .z-note{font-size:11px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;margin-left:auto}
+  .node{border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:8px;background:var(--surface-0)}
+  .node:last-child{margin-bottom:0}
+  .path{font-family:var(--font-mono);font-size:12.5px;font-weight:600}
+  .desc{font-size:11.5px;color:var(--text-secondary);margin-top:2px;line-height:1.35}
+  .desc code{font-family:var(--font-mono);font-size:11px}
+  .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .tab{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--surface-2);color:var(--text-secondary);border:1px solid var(--border)}
+  .sub{margin-left:12px;border-left:2px solid var(--border);padding-left:9px}
+  .meth{display:inline-block;font-family:var(--font-mono);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;margin-right:4px}
+  .g{background:#E1F5EE;color:#0F6E56}.p{background:#FAECE7;color:#993C1D}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:11.5px;color:var(--text-secondary);justify-content:center}
+  .legend span{display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<div class="smap">
+  <h1>Site map — Momo Aux Platines</h1>
+  <p class="subtitle">momoauxplatines.ca · pages publiques, back-office admin et API</p>
+  <div style="text-align:center"><div class="smap-root">momoauxplatines.ca &nbsp;<small>· DJ event platform</small></div></div>
+
+  <div class="smap-cols">
+
+    <div class="zone z-pub">
+      <div class="zone-h"><span class="dot"></span>Public</div>
+      <div class="node"><div class="path">/</div><div class="desc">Accueil — liste des événements à venir + LIVE</div></div>
+      <div class="node"><div class="path">/events/:slug</div><div class="desc">Page événement · <code>/:eventslug/:dateslug</code></div>
+        <div class="tabs"><span class="tab">Info</span><span class="tab">Played</span><span class="tab">Request</span><span class="tab">Message</span><span class="tab">Battle</span></div>
+      </div>
+      <div class="node"><div class="path">/contact</div><div class="desc">Formulaire de contact · /en · /fr</div></div>
+      <div class="node" style="border-style:dashed"><div class="path">/requests → 301</div><div class="desc">Ancienne URL, redirige vers /events</div></div>
+      <div class="node" style="border-style:dashed"><div class="path">/demandespeciale → 301</div><div class="desc">Obsolète — demandes gérées dans l'onglet Demandes des événements</div></div>
+    </div>
+
+    <div class="zone z-adm">
+      <div class="zone-h"><span class="dot"></span>Admin<span class="z-note">noindex</span></div>
+      <div class="node"><div class="path">/admin</div><div class="desc">Panneau de contrôle des événements</div></div>
+      <div class="node sub"><div class="path">/admin/:eventslug/:dateslug</div><div class="desc">Régie d'un événement en direct</div>
+        <div class="tabs"><span class="tab">Info</span><span class="tab">Playing</span><span class="tab">Requests</span><span class="tab">Messages</span><span class="tab">Battle</span></div>
+      </div>
+      <div class="node"><div class="path">/admin/config.yml</div><div class="desc">Decap CMS (git-gateway) → édite events.json</div></div>
+    </div>
+
+    <div class="zone z-api">
+      <div class="zone-h"><span class="dot"></span>API<span class="z-note">/api/* → functions</span></div>
+      <div class="node"><div class="path">/api/events</div><div class="desc"><span class="meth g">GET</span><span class="meth p">POST</span>Liste / MAJ des événements</div></div>
+      <div class="node"><div class="path">/api/requests</div><div class="desc"><span class="meth g">GET</span><span class="meth p">POST</span>Demandes par événement</div></div>
+      <div class="node"><div class="path">/api/messages</div><div class="desc"><span class="meth g">GET</span><span class="meth p">POST</span>Messages du public</div></div>
+      <div class="node"><div class="path">/api/battles</div><div class="desc"><span class="meth g">GET</span><span class="meth p">POST</span>Battles de morceaux</div></div>
+      <div class="node"><div class="path">/api/now-playing</div><div class="desc"><span class="meth p">POST</span>Morceau en cours (Serato)</div></div>
+      <div class="node"><div class="path">/api/copy</div><div class="desc"><span class="meth g">GET</span>Textes du site (i18n)</div></div>
+      <div class="node"><div class="path">/api/images</div><div class="desc"><span class="meth g">GET</span>Images d'événements</div></div>
+      <div class="node"><div class="path">/api/live</div><div class="desc">État du live</div></div>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#7F77DD"></span>Visiteur / public</span>
+    <span><span class="dot" style="background:#D85A30"></span>DJ / admin (protégé)</span>
+    <span><span class="dot" style="background:#378ADD"></span>Backend Netlify</span>
+    <span><span class="meth g" style="margin:0">GET</span>lecture</span>
+    <span><span class="meth p" style="margin:0">POST</span>écriture</span>
+  </div>
+</div>
+</body>
+</html>
