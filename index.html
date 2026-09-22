@@ -52,6 +52,7 @@
       --black: #000000;
       /* ── Radius ── */
       --radius-0:  0px;
+      --radius-2:  2px;
       --radius-4:  4px;
       --radius-8:  8px;
       --radius-16: 16px;
@@ -65,6 +66,7 @@
       --gap-20: 20px;
       --gap-24: 24px;
       --gap-32: 32px;
+      --gap-56: 56px;
       --gap-80: 80px;
       /* ── Stroke ── */
       --stroke-0: 0px;
@@ -675,7 +677,7 @@
     <section class="timeline-section timeline-mobile">
       <h2 class="section-heading">Timeline</h2>
 
-      <div class="decade">
+      <div class="decade" data-decade="1990">
         <p class="decade-title" data-key="timeline.1990s" data-en="1990s" data-fr="Années 1990">1990s</p>
         <div class="scroll-row">
           <div class="timeline-card">
@@ -707,7 +709,7 @@
         </div>
       </div>
 
-      <div class="decade">
+      <div class="decade" data-decade="2000">
         <p class="decade-title" data-key="timeline.2000s" data-en="2000s" data-fr="Années 2000">2000s</p>
         <div class="scroll-row">
           <div class="timeline-card">
@@ -751,7 +753,7 @@
         </div>
       </div>
 
-      <div class="decade">
+      <div class="decade" data-decade="2010">
         <p class="decade-title" data-key="timeline.2010s" data-en="2010s" data-fr="Années 2010">2010s</p>
         <div class="scroll-row">
           <div class="timeline-card">
@@ -769,7 +771,7 @@
         </div>
       </div>
 
-      <div class="decade">
+      <div class="decade" data-decade="2020">
         <p class="decade-title" data-key="timeline.2020s" data-en="2020s" data-fr="Années 2020">2020s</p>
         <div class="scroll-row">
           <div class="timeline-card">
@@ -1311,6 +1313,7 @@
         COPY[msg.lang] = msg.data;
         renderDynamicDemos(currentLang);
         renderDynamicReviews(currentLang);
+        renderDynamicTimeline(currentLang);
       }
     };
   } catch (_) {}
@@ -1326,6 +1329,7 @@
       if (fr) COPY.fr = fr;
       renderDynamicDemos(currentLang);
       renderDynamicReviews(currentLang);
+      renderDynamicTimeline(currentLang);
     });
   });
 
@@ -1357,6 +1361,7 @@
     currentLang = lang;
     renderDynamicReviews(lang);
     renderDynamicDemos(lang);
+    renderDynamicTimeline(lang);
   }
 
   function renderDynamicReviews(lang) {
@@ -1452,6 +1457,126 @@
         }, { once: true });
       }
       container.appendChild(card);
+    });
+  }
+
+  function renderDynamicTimeline(lang) {
+    const copy = COPY[lang] || COPY.en || {};
+    const decades = ['2020', '2010', '2000', '1990'];
+
+    // Extract the start year from a dates string like "2023–2025" or "2021-2023"
+    function startYear(datesStr) {
+      const m = (datesStr || '').match(/(\d{4})/);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+
+    // Guess a short link label from a URL
+    function linkLabel(url) {
+      if (!url) return '';
+      if (/instagram\.com/i.test(url)) return 'Instagram';
+      if (/twitch\.tv/i.test(url)) return 'Twitch';
+      if (/youtube\.com|youtu\.be/i.test(url)) return 'YouTube';
+      if (/tiktok\.com/i.test(url)) return 'TikTok';
+      if (/facebook\.com/i.test(url)) return 'Facebook';
+      try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'Link'; }
+    }
+
+    // Insert a card before the first existing card whose start year is strictly less than newYear,
+    // so cards stay sorted newest-first (leftmost). Appends if no such card is found.
+    function insertSorted(row, card, newYear, datesSelector) {
+      const siblings = Array.from(row.children);
+      const anchor = siblings.find(el => {
+        const datesEl = el.querySelector(datesSelector);
+        return datesEl && startYear(datesEl.textContent) < newYear;
+      });
+      if (anchor) row.insertBefore(card, anchor);
+      else row.appendChild(card);
+    }
+
+    decades.forEach(decade => {
+      const registry = (copy[`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
+      if (!registry.length) return;
+
+      // ── Mobile: .decade[data-decade] .scroll-row ──
+      const mobileDecade = document.querySelector(`.timeline-mobile .decade[data-decade="${decade}"]`);
+      if (mobileDecade) {
+        const row = mobileDecade.querySelector('.scroll-row');
+        if (row) {
+          // Collect already-rendered IDs (hardcoded via data-key, or dynamic via data-timeline-id)
+          const existingIds = new Set();
+          row.querySelectorAll('[data-key]').forEach(el => {
+            const m = el.dataset.key && el.dataset.key.match(/^timeline\.(.+)\.desc$/);
+            if (m) existingIds.add(m[1]);
+          });
+          row.querySelectorAll('[data-timeline-id]').forEach(el => existingIds.add(el.dataset.timelineId));
+
+          registry.forEach(id => {
+            if (existingIds.has(id)) return;
+            const name  = copy[`timeline.${id}.name`]      || id;
+            const desc  = copy[`timeline.${id}.desc`]      || '';
+            const dates = copy[`timeline.${id}.dates`]     || '';
+            const avatar= copy[`timeline.${id}.avatar`]    || '';
+            const link  = copy[`timeline.${id}.instagram`] || '';
+            const label = linkLabel(link);
+            const card  = document.createElement('div');
+            card.className = 'timeline-card';
+            card.dataset.timelineId = id;
+            card.innerHTML = `
+              <div class="timeline-card-header">
+                ${avatar ? `<div class="timeline-thumb"><img src="${avatar}" alt="${name}"></div>` : ''}
+                <p class="timeline-card-title">${name}</p>
+              </div>
+              <div class="timeline-card-body">
+                <div class="timeline-card-copy">
+                  <p class="timeline-card-desc">${desc}</p>
+                  <p class="timeline-card-dates">${dates}</p>
+                </div>
+                ${link ? `<a class="card-link" target="_blank" rel="noopener" href="${link}">${label}</a>` : ''}
+              </div>`;
+            insertSorted(row, card, startYear(dates), '.timeline-card-dates');
+            existingIds.add(id);
+          });
+        }
+      }
+
+      // ── Desktop: .timeline-decade-col[data-decade] .timeline-cards-row ──
+      const desktopDecade = document.querySelector(`.timeline-desktop .timeline-decade-col[data-decade="${decade}"]`);
+      if (desktopDecade) {
+        const row = desktopDecade.querySelector('.timeline-cards-row');
+        if (row) {
+          const existingIds = new Set();
+          row.querySelectorAll('[data-key]').forEach(el => {
+            const m = el.dataset.key && el.dataset.key.match(/^timeline\.(.+)\.desc$/);
+            if (m) existingIds.add(m[1]);
+          });
+          row.querySelectorAll('[data-timeline-id]').forEach(el => existingIds.add(el.dataset.timelineId));
+
+          registry.forEach(id => {
+            if (existingIds.has(id)) return;
+            const name  = copy[`timeline.${id}.name`]      || id;
+            const desc  = copy[`timeline.${id}.desc`]      || '';
+            const dates = copy[`timeline.${id}.dates`]     || '';
+            const avatar= copy[`timeline.${id}.avatar`]    || '';
+            const link  = copy[`timeline.${id}.instagram`] || '';
+            const label = linkLabel(link);
+            const card  = document.createElement('div');
+            card.className = 'timeline-card-lg';
+            card.dataset.timelineId = id;
+            card.innerHTML = `
+              ${avatar ? `<div class="timeline-thumb-lg"><img src="${avatar}" alt="${name}"></div>` : ''}
+              <div class="timeline-card-lg-body">
+                <div class="timeline-card-lg-copy">
+                  <p class="timeline-card-lg-title">${name}</p>
+                  <p class="timeline-card-lg-desc">${desc}</p>
+                  <p class="timeline-card-lg-dates">${dates}</p>
+                </div>
+                ${link ? `<a class="card-link" target="_blank" rel="noopener" href="${link}">${label}</a>` : ''}
+              </div>`;
+            insertSorted(row, card, startYear(dates), '.timeline-card-lg-dates');
+            existingIds.add(id);
+          });
+        }
+      }
     });
   }
 
