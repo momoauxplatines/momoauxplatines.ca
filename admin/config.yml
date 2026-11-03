@@ -21,16 +21,27 @@ collections:
             label: Events
             label_singular: Event
             widget: list
-            summary: "{{fields.venue}} — {{fields.hours}}"
+            summary: "{{fields.title}} — {{fields.venue}}"
             fields:
+              - name: title
+                label: "Title / Titre"
+                widget: string
+                hint: "Nom de l'événement — affiché en gros sur la carte (ex. Old School hip hop happy hour)"
+
               - name: venue
                 label: "Venue / Lieu"
                 widget: string
-                hint: "Displayed in uppercase on the card"
+                hint: "Nom du lieu — affiché en bas de la carte (ex. 132 Bar Vintage)"
 
               - name: address
                 label: "Address / Adresse"
                 widget: string
+
+              - name: description
+                label: "Description"
+                widget: text
+                required: false
+                hint: "Court texte affiché sous le titre sur la carte"
 
               - name: date
                 label: "Date"
@@ -60,3 +71,10 @@ collections:
                 widget: image
                 required: false
                 hint: "Square image recommended — will be displayed at 48×48px"
+
+              - name: show
+                label: "Show on live site / Afficher sur le site"
+                widget: boolean
+                default: true
+                required: false
+                hint: "Décocher pour masquer l'événement du site public"

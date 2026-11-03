@@ -51,6 +51,7 @@
       --gap-80: 80px;
       /* ── Stroke ── */
       --stroke-0: 0px;
+      --stroke-05: 0.5px;
       --stroke-1: 1px;
       /* ── Avatars ── */
       --avatar-header:     40px;
@@ -598,8 +599,12 @@
     <div class="event-pane active" data-pane="info">
       <div class="event-form">
         <div class="edit-field">
+          <label class="edit-label" data-i18n="form.gig.title.label">Title*</label>
+          <input class="edit-input" type="text" id="ev-title" placeholder="Old School hip hop happy hour">
+        </div>
+        <div class="edit-field">
           <label class="edit-label" data-i18n="form.gig.venue.label">Venue*</label>
-          <input class="edit-input" type="text" id="ev-venue" placeholder="Buvette Chez Simone">
+          <input class="edit-input" type="text" id="ev-venue" placeholder="132 Bar Vintage">
         </div>
         <div class="edit-field">
           <label class="edit-label" data-i18n="form.gig.address.label">Venue*</label>
@@ -802,6 +807,7 @@
       'form.timeline.link.label': 'Link',
       'form.gig.add.title': 'Add Gig',
       'form.gig.edit.title': 'Edit Gig',
+      'form.gig.title.label': 'Title*',
       'form.gig.venue.label': 'Venue*',
       'form.gig.desc.label': 'Description',
       'form.gig.address.label': 'Venue*',
@@ -936,6 +942,7 @@
       'form.timeline.link.label': 'Lien',
       'form.gig.add.title': 'Ajouter un gig',
       'form.gig.edit.title': 'Modifier le gig',
+      'form.gig.title.label': 'Titre*',
       'form.gig.venue.label': 'Lieu*',
       'form.gig.desc.label': 'Description',
       'form.gig.address.label': 'Lieu*',
@@ -1416,7 +1423,7 @@
             <img src="${liveEvent.image ? '../' + liveEvent.image.replace(/^\//, '') : ''}" alt="${esc(liveEvent.venue)}" onerror="this.style.opacity='0'">
           </div>
           <div class="gig-card-copy">
-            <p class="gig-card-name">${esc(liveEvent.venue || '—')}</p>
+            <p class="gig-card-name">${esc(liveEvent.title || liveEvent.venue || '—')}</p>
             <p class="gig-card-meta">${esc(liveEvent.date || '')}</p>
             <p class="gig-card-meta">${esc(liveEvent.start_time || '')}–${esc(liveEvent.end_time || '')}</p>
           </div>
@@ -1473,7 +1480,7 @@
           <img src="${imgSrc}" alt="${esc(ev.venue)}" onerror="this.style.opacity='0'">
         </div>
         <div class="gig-card-copy">
-          <p class="gig-card-name">${esc(ev.venue || '—')}</p>
+          <p class="gig-card-name">${esc(ev.title || ev.venue || '—')}</p>
           <p class="gig-card-meta">${esc(ev.date || '')}</p>
           <p class="gig-card-meta">${esc(ev.start_time || '')}–${esc(ev.end_time || '')}</p>
         </div>
@@ -1859,8 +1866,12 @@
       editBody.innerHTML = `
         <input type="hidden" id="ef-gig-index" value="${idx}">
         <div class="edit-field">
+          <label class="edit-label">${t('form.gig.title.label')}</label>
+          <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-gig-title" value="${esc(ev?.title || '')}" placeholder="Old School hip hop happy hour">
+        </div>
+        <div class="edit-field">
           <label class="edit-label">${t('form.gig.venue.label')}</label>
-          <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-venue" value="${esc(ev?.venue || '')}" placeholder="Buvette Chez Simone">
+          <input class="edit-input ${ev ? '' : 'empty'}" type="text" id="ef-venue" value="${esc(ev?.venue || '')}" placeholder="132 Bar Vintage">
         </div>
         <div class="edit-field">
           <label class="edit-label">${t('form.gig.desc.label')}</label>
@@ -2267,6 +2278,7 @@
         const ev = {
           slug,
           name_slug: nSlug,
+          title:       document.getElementById('ef-gig-title')?.value.trim() || '',
           venue,
           description: document.getElementById('ef-desc')?.value.trim() || '',
           address:    document.getElementById('ef-address')?.value.trim() || '',
@@ -3554,6 +3566,7 @@
     if (!ev) return;
 
     // Populate fields
+    document.getElementById('ev-title').value       = ev.title       || '';
     document.getElementById('ev-venue').value       = ev.venue       || '';
     document.getElementById('ev-address').value    = ev.address     || '';
     document.getElementById('ev-description').value = ev.description || '';
@@ -3855,6 +3868,7 @@
       }
 
       const ev = currentEvents[currentEventDetailIdx];
+      ev.title       = document.getElementById('ev-title').value.trim();
       ev.venue       = venue;
       ev.name_slug   = ev.name_slug || nameSlug(venue);
       ev.address     = document.getElementById('ev-address').value.trim();
