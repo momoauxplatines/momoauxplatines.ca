@@ -4,31 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Momo Aux Platines</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="canonical" href="https://momoauxplatines.ca/">
+  <link rel="icon" href="favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 
   <!-- Social sharing -->
-  <meta name="description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
   <meta property="og:title" content="Momo Aux Platines">
-  <meta property="og:description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
-  <meta property="og:image" content="images/og-image.png">
-  <meta property="og:image:width" content="1750">
-  <meta property="og:image:height" content="1750">
+  <meta property="og:description" content="DJ · Montréal — gigs, demos, school, curator.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://momoauxplatines.ca">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Momo Aux Platines">
-  <meta name="twitter:description" content="DJ & Turntablist based in Québec. Scratching, mixing, and sharing the culture.">
-  <meta name="twitter:image" content="images/og-image.png">
+  <meta property="og:url" content="https://momoauxplatines.ca/">
 
   <!-- Netlify Identity — handles admin invite redirects -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
+  <!-- Fonts: Kanit (live card) + Kalnia (display) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <style>
     :root {
       /* ── Brand Colors — Figma: Collection "Momo" ── */
       --brand-00:  #fafbf9;
@@ -70,6 +64,7 @@
       --gap-80: 80px;
       /* ── Stroke ── */
       --stroke-0: 0px;
+      --stroke-05: 0.5px;
       --stroke-1: 1px;
       /* ── Avatars ── */
       --avatar-header:     40px;
@@ -80,1259 +75,217 @@
       --avatar-home:       80px;
       /* ── Effects ── */
       --shadow-blur-fields: 4px;
+      /* ── Fonts (Google Fonts — hors Figma variables) ── */
+      --font-display: 'Kalnia', serif;
+      --font-ui: 'Kanit', sans-serif;
     }
 
-    html { background: var(--bg); overflow-x: clip; }
-    body { background: var(--bg); overflow-x: clip; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ─── Page wrapper ─── */
-    .page { max-width: 390px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
-
-    /* ─── Header ─── */
-    .site-header {
-      position: sticky; top: 0; z-index: 100;
-      width: 100%; padding: 16px; pointer-events: none;
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
-    }
-    .site-header.header-hidden { transform: translateY(-100%); opacity: 0; }
-
-    .header-pill {
-      display: flex; align-items: center; justify-content: space-between;
+    html, body {
       background: var(--bg);
-      border: 1px solid var(--brand-95);
-      border-radius: 72px;
-      padding: 16px 24px;
+      color: #fff;
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .home {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
       width: 100%;
     }
 
-    /* Live header pill */
-    .header-live-link {
-      display: none; align-items: center; gap: 4px;
-      text-decoration: none; pointer-events: auto;
-      background: var(--brand-100); border-radius: var(--radius-72);
-      padding: 4px 12px; flex-shrink: 0;
+    /* ── Logo (fixed at top; click = toggle language) ── */
+    .home-logo {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: flex-end;   /* right-aligned when logo is narrower than the screen */
+      padding: var(--gap-32);
+      background: var(--bg);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .site-header.has-live .header-live-link { display: flex; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .home-logo img {
+      height: 132px;
+      width: auto;
+      max-width: 100%;
+      display: block;
     }
-    .header-live-dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--red); flex-shrink: 0;
-      animation: pulse 1.4s ease-in-out infinite;
+
+    /* ── Intro: live card (top) + copy (bottom) ── */
+    .home-intro {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;   /* copy stays glued to the nav at the bottom */
+      gap: var(--gap-32);
+      padding: 0 var(--gap-32) var(--gap-32);
     }
-    .header-live-label {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 18px; line-height: 26px;
-      color: var(--red); text-transform: uppercase;
+
+    .live-card {
+      display: none;               /* shown by JS only when a gig is live */
+      margin-bottom: auto;         /* when live, card sits at top; copy stays bottom */
+      align-items: center;
+      gap: var(--gap-16);
+      width: 100%;
+      background: var(--brand-100);
+      border-radius: var(--radius-8);
+      padding: var(--gap-16) var(--gap-24);
+      text-decoration: none;
+    }
+    .live-card.is-live { display: flex; }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--gap-4);
+      flex-shrink: 0;
+    }
+    .live-dot {
+      width: 12px; height: 12px;
+      border-radius: var(--radius-72);
+      background: var(--red);
+      flex-shrink: 0;
+    }
+    .live-label {
+      font-family: var(--font-ui);
+      font-weight: 900;
+      font-size: 20px;
+      line-height: 26px;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .live-venue {
+      flex: 1 1 0;
+      min-width: 0;
+      text-align: center;
+      font-family: var(--font-ui);
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 22px;
+      color: var(--brand-30);
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .header-logo {
-      width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;
+    .home-copy {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 40px;
+      text-transform: uppercase;
+      color: #fff;
     }
+    .home-copy p { margin: 0; }
 
-    .header-school {
-      display: none; /* hidden everywhere */
-      pointer-events: auto;
-      background: var(--brand-100);
-      border: 1px solid var(--brand-30);
-      padding: 4px 16px; border-radius: 8px;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 16px;
-      color: var(--brand-00); line-height: 31px; cursor: pointer;
-      text-decoration: none;
-    }
-
-    .lang-toggle {
-      pointer-events: auto;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--brand-105);
-      height: 40px; padding: 0 16px; border-radius: 72px;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
-      color: var(--brand-00); line-height: 26px; cursor: pointer;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .lang-toggle:hover { background: var(--brand-100); }
-
-    /* ─── Page Content ─── */
-    .page-content { padding: 0 32px 0; display: flex; flex-direction: column; gap: 80px; }
-
-    /* ─── Stamp Section ─── */
-    .stamp-section {
-      min-height: calc(100svh - 121px); position: relative;
-      display: flex; align-items: center; justify-content: center;
-      margin-left: -32px; margin-right: -32px;
-      touch-action: pan-y;
-    }
-    .stamp-container {
-      /* Mobile: 326×160px — matches logo-momoauxplatines-pen.svg aspect ratio */
-      width: 326px; height: 160px;
-      flex-shrink: 0; z-index: 1;
-      pointer-events: auto; touch-action: pan-y;
-      cursor: default; user-select: none; -webkit-user-select: none;
-    }
-    .stamp-logo { width: 100%; height: auto; display: block; }
-
-    /* ─── Horizontal Scroll Row ─── */
-    .scroll-row {
-      display: flex; gap: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; margin: 0 -32px; padding: 0 32px;
-    }
-    .scroll-row::-webkit-scrollbar { display: none; }
-
-    /* ─── Event Cards ─── */
-    /* ── Events section wrapper ── */
-    .events-section {
-      display: flex; flex-direction: column;
-      align-items: flex-start; gap: 16px;
-    }
-    .live-section-heading {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 28px; line-height: 31px;
-      color: var(--brand-50); text-transform: uppercase; width: 100%;
-    }
-
-    /* Card — full width on mobile */
-    .event-card-home {
-      width: 100%;
-      background: var(--brand-100);
-      border-radius: var(--radius-8); padding: 16px;
-      display: flex; flex-direction: column; gap: 16px;
-    }
-
-    /* Top row: venue image left, live indicator right */
-    .event-card-home-top {
-      display: flex; align-items: center;
-      justify-content: space-between;
-    }
-    .event-card-home-img {
-      width: 80px; height: 80px; border-radius: 8px;
-      object-fit: cover; flex-shrink: 0;
-      border: 1px solid var(--brand-100);
-      background: var(--brand-90);
-    }
-    .ev-live-status { display: flex; align-items: center; gap: 4px; background: var(--brand-100); border-radius: 72px; padding: 4px 12px; }
-    .ev-live-dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--red); flex-shrink: 0;
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-    .ev-live-label {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 18px; line-height: 26px;
-      color: var(--red); text-transform: uppercase;
-    }
-
-    /* "Go to event page" button — black bg */
-    .ev-go-btn {
-      background: var(--brand-90); border: none; border-radius: var(--radius-8);
-      color: var(--brand-00); font-family: 'Kanit', sans-serif;
-      font-weight: 900; font-size: 18px; text-transform: uppercase;
-      height: 56px; width: 100%; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; transition: opacity 0.15s;
-    }
-    .ev-go-btn:hover { opacity: 0.85; }
-
-    /* Content */
-    .ev-copy { display: flex; flex-direction: column; gap: 12px; }
-    .ev-venue-name {
-      font-family: inherit; font-weight: 1000;
-      font-size: 24px; line-height: normal;
-      color: var(--brand-30);
-    }
-    .ev-description {
-      font-size: 20px; font-weight: 274; line-height: 22px;
-      color: var(--brand-10);
-    }
-    .ev-content { display: flex; flex-direction: column; gap: 8px; }
-    .ev-address {
-      font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-30);
-    }
-    .ev-hours {
-      font-size: 16px; font-weight: 300; line-height: 20px;
-      color: var(--brand-30);
-    }
-    .ev-ig {
-      font-size: 18px; font-weight: 300; line-height: 26px;
-      color: var(--brand-40); text-decoration: underline;
-      text-decoration-color: var(--brand-40);
-    }
-
-    /* Date badge — blue Kanit Black */
-    .ev-next-label {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--brand-100); border-radius: 72px; padding: 4px 12px;
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 18px; line-height: 26px;
-      color: var(--blue); text-transform: uppercase;
-    }
-
-    /* Détails toggle button — home cards */
-    .ev-details-btn {
-      display: flex; align-items: center; gap: 8px;
-      background: none; border: none; cursor: pointer;
-      color: var(--brand-50); font-size: 16px; font-weight: 300;
-      font-family: inherit; flex-shrink: 0; padding: 0;
-    }
-    .ev-details-caret {
-      width: 8px; height: auto; flex-shrink: 0;
-    }
-    /* Expanded details — hidden by default */
-    .ev-expanded {
-      display: none; flex-direction: column; gap: 16px;
-    }
-    .ev-expanded.visible { display: flex; }
-    /* Extra bottom padding when expanded */
-    .event-card-home:has(.ev-expanded.visible) { padding-bottom: 20px; }
-
-    /* Next Events section — below intro */
-    .next-events-section {
-      display: flex; flex-direction: column;
-      gap: 40px;
-    }
-    .next-events-heading {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 44px; line-height: 48px;
-      color: var(--brand-70); text-transform: uppercase;
-      width: 100%;
-    }
-    .next-events-list {
-      display: flex; flex-direction: row;
-      gap: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      margin: 0 -32px; padding: 0 32px;
-      align-items: stretch;
-    }
-    .next-events-list::-webkit-scrollbar { display: none; }
-    .next-events-list .event-card-home { width: 312px; flex-shrink: 0; }
-
-    /* Tablet: max 400px */
-    @media (min-width: 640px) {
-      .next-events-list { margin: 0 -56px; padding: 0 56px; }
-    }
-    /* Desktop: cartes un peu plus larges dans le scroll row */
-    @media (min-width: 1024px) {
-      .next-events-list .event-card-home { width: 352px; }
-    }
-
-    /* ─── Section Heading ─── */
-    .section-heading {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 44px; line-height: 48px;
-      color: var(--brand-70); text-transform: uppercase;
-    }
-
-    /* ─── Intro ─── */
-    .intro { display: flex; flex-direction: column; gap: 32px; }
-    .avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .intro-info { display: flex; flex-direction: column; gap: 24px; }
-    .intro-name {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 48px; line-height: 48px;
-      color: var(--brand-00); text-transform: uppercase;
-    }
-    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
-    .tag {
-      background: var(--brand-105); border: 1px solid var(--brand-95); padding: 8px 16px; border-radius: 8px;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
-      color: var(--brand-00); line-height: 26px; white-space: nowrap; text-transform: uppercase;
-    }
-    .bio { font-weight: 300; font-size: 24px; line-height: 32px; color: var(--brand-00); }
-    .bio p + p { margin-top: 24px; }
-
-    /* Responsive visibility */
-    .mobile-only { display: flex; flex-direction: column; gap: 32px; }
-    .tablet-up   { display: none; }
-
-    .ctas { display: flex; flex-direction: column; gap: 16px; }
-    .intro-ctas { width: 100%; }
-    .btn {
-      display: flex; align-items: center; justify-content: center;
-      height: 56px; width: 100%; padding: 0 16px;
-      background: var(--brand-20); color: var(--brand-100);
-      border: none; border-radius: 8px; outline: none;
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 18px; line-height: 26px; text-transform: uppercase;
-      text-decoration: none; cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn:hover { background: var(--brand-00); }
-    .btn:disabled, .btn[disabled] { background: var(--brand-90); color: var(--brand-100); cursor: not-allowed; }
-
-    /* ─── Card Link ─── */
-    .card-link {
-      font-weight: 300; font-size: 18px; line-height: 26px;
-      color: var(--brand-30); text-decoration: underline;
-      text-decoration-color: var(--brand-30); cursor: pointer;
-      flex-shrink: 0;
-    }
-    .card-link-soon { color: #d71a1a; cursor: default; }
-
-    /* ─── Reviews ─── */
-    .reviews { display: flex; flex-direction: column; gap: 40px; }
-    #reviews-dynamic { display: contents; }
-    .review-card {
-      flex-shrink: 0; width: 320px; height: 336px;
-      background: var(--brand-105);
-      border-radius: 8px; padding: 16px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-    .review-card-header { display: flex; align-items: center; justify-content: space-between; height: 80px; width: 100%; }
-    .review-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-    .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .review-info { display: flex; flex-direction: column; gap: 4px; width: 182px; }
-    .review-name { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; color: var(--brand-30); text-transform: uppercase; }
-    .review-subtitle { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-50); }
-    .review-text { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-10); width: 278px; flex: 1; }
-
-    /* ─── Demos ─── */
-    .demos { display: flex; flex-direction: column; gap: 32px; }
-
-    /* Video card */
-    .video-card {
-      flex-shrink: 0; width: 320px; height: 400px;
-      background: var(--brand-105);
-      border-radius: 8px; display: flex; flex-direction: column;
-      gap: 20px; padding: 16px;
-    }
-    .video-thumb-wrapper { display: block; position: relative; width: 100%; height: 171px; flex-shrink: 0; background: #000; border-radius: 8px; overflow: hidden; text-decoration: none; }
-    .video-thumb-wrapper[data-ytid] { cursor: pointer; }
-    .video-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 46px; pointer-events: none; transition: opacity 0.15s; }
-    .video-thumb-wrapper:hover .play-btn { opacity: 0.8; }
-    .video-thumb-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-    .video-content { display: flex; flex-direction: column; flex: 1; gap: 16px; }
-    .video-info { display: flex; flex-direction: column; gap: 16px; color: var(--brand-30); }
-    .video-title { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 32px; line-height: 34px; text-transform: uppercase; color: var(--brand-30); }
-    .video-desc  { font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30); }
-
-    /* ─── Timeline Mobile ─── */
-    .timeline-section { display: flex; flex-direction: column; gap: 40px; }
-    .timeline-desktop { display: none; }
-
-    .decade { display: flex; flex-direction: column; gap: 16px; }
-    .decade-title { font-weight: 300; font-size: 24px; line-height: normal; color: #dfdfdf; }
-
-    /* Mobile timeline card (80px thumb, side-by-side header) */
-    .timeline-card {
-      flex-shrink: 0; width: 320px;
-      background: var(--brand-105);
-      border-radius: 8px; padding: 16px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-    .timeline-thumb { width: 80px; height: 80px; overflow: hidden; flex-shrink: 0; }
-    .timeline-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .timeline-card-title {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 32px; line-height: 34px;
-      color: var(--brand-30); text-transform: uppercase;
-    }
-    .timeline-card-body { display: flex; flex-direction: column; gap: 20px; }
-    .timeline-card-copy { display: flex; flex-direction: column; gap: 8px; }
-    .timeline-card-desc  { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
-    .timeline-card-dates { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50); }
-
-    /* ─── Timeline Desktop (tablet+) ─── */
-    .timeline-all-scroll {
-      display: flex; gap: 40px; overflow-x: auto;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
-      margin: 0 -56px; padding: 0 56px;
-    }
-    .timeline-all-scroll::-webkit-scrollbar { display: none; }
-
-    .timeline-decade-col { display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; }
-    .timeline-cards-row  { display: flex; gap: 16px; }
-
-    /* Large timeline card (80px thumb, stacked) */
-    .timeline-card-lg {
-      flex-shrink: 0; width: 320px; height: 416px;
-      background: var(--brand-105);
-      border-radius: 8px; padding: 16px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-    .timeline-thumb-lg { width: 80px; height: 80px; overflow: hidden; flex-shrink: 0; }
-    .timeline-thumb-lg img { width: 100%; height: 100%; object-fit: cover; }
-    .timeline-card-lg-title {
-      font-family: 'Kanit', sans-serif; font-weight: 900;
-      font-size: 32px; line-height: 34px;
-      color: var(--brand-30); text-transform: uppercase;
-    }
-    .timeline-card-lg-body { display: flex; flex-direction: column; gap: 20px; flex: 1; }
-    .timeline-card-lg-copy { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .timeline-card-lg-desc  { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
-    .timeline-card-lg-dates { font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-50); }
-
-    /* ─── Footer ─── */
-    .site-footer {
+    /* ── Nav links ── */
+    .home-nav { display: flex; flex-direction: column; width: 100%; }
+    .home-link {
       display: flex;
-      background: var(--bg);
-      margin: 0 -32px -80px; padding: 80px 32px;
-      flex-direction: column; align-items: center; justify-content: center;
-      gap: 24px;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-32);
+      height: 80px;
+      padding: var(--gap-8) var(--gap-32);
+      border-top: 0.5px solid var(--brand-80);
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 27px;
+      line-height: 31px;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
     }
-    .footer-links { display: flex; flex-direction: column; gap: 14px; align-items: center; }
-    .footer-links-row { display: flex; gap: 8px; }
-    .footer-btn {
-      background: var(--brand-90); border: none; border-radius: 8px;
-      padding: 0 16px; height: 40px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 18px;
-      color: var(--brand-50); text-transform: uppercase; text-decoration: none;
-      cursor: pointer; white-space: nowrap; line-height: 26px;
-      transition: opacity 0.15s;
+    .home-link:last-child { border-bottom: 0.5px solid var(--brand-80); }
+    .home-link:hover { background: var(--brand-105); }
+
+    /* Up-right arrow glyph (nav + live card) */
+    .arrow {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
-    .footer-btn:hover { opacity: 0.75; }
-    .footer-copy  { font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-80); text-align: center; }
+    .live-card .arrow { color: var(--brand-30); }
 
-    /* ─── Booking Overlay ─── */
-    /* ================================================================
-       TABLET  (≥ 640px)
-    ================================================================ */
-    @media (min-width: 640px) {
-
-      .page { max-width: 834px; }
-      .site-header { max-width: 834px; }
-      .header-school { display: none; }
-      .intro-ctas { width: 326px; }
-
-      .page-content { padding: 0 56px 0; }
-      .stamp-section { margin-left: -56px; margin-right: -56px; }
-      .stamp-container { width: 489px; height: 240px; }
-
-      .scroll-row  { margin: 0 -56px; padding: 0 56px; }
-      .site-footer { margin: 0 -56px 0; padding: 80px 56px; }
-      .footer-links { flex-direction: row; gap: 8px; }
-      .footer-links-row { display: contents; }
-
-      .section-heading { font-size: 44px; line-height: 48px; }
-      .intro-name      { font-size: 52px; line-height: 52px; }
-
-      /* Show/hide mobile vs tablet content */
-      .mobile-only { display: none; }
-      .tablet-up   { display: flex; flex-direction: column; gap: 32px; }
-
-      /* Reviews: flat flex row, no scroll */
-      .reviews-row {
-        flex-wrap: nowrap;
-      }
-      .reviews-row .review-card {
-        flex: 0 0 310px; width: 310px; height: 336px;
-        flex-direction: column; justify-content: space-between;
-      }
-      .reviews-row .review-card-header { width: auto; }
-      .reviews-row .review-text { width: auto; }
-
-      /* Timeline: hide mobile, show desktop */
-      .timeline-mobile  { display: none; }
-      .timeline-desktop { display: flex; }
-
+    /* ── Tablet / desktop ── */
+    @media (min-width: 768px) {
+      .home-logo { justify-content: flex-end; padding: var(--gap-32) var(--gap-32) 0; }
+      .home-logo img { height: 160px; }
+      .home-intro { padding: var(--gap-32) var(--gap-32) var(--gap-32); }
+      .live-venue { text-align: left; }
+      .home-copy { font-size: 40px; line-height: 52px; }
+      .home-link { font-size: 32px; line-height: 36px; }
     }
-
-    /* ================================================================
-       DESKTOP  (≥ 1100px)
-    ================================================================ */
-    @media (min-width: 1100px) {
-      .page { max-width: 1440px; }
-      .site-header { max-width: 1440px; }
-      .stamp-container { width: 540px; height: 265px; }
+    @media (min-width: 1024px) {
+      .home-copy { font-size: 48px; line-height: 60px; }
     }
   </style>
 </head>
 <body>
-<div class="page">
+  <main class="home" id="home">
 
-  <!-- ── Fixed Header ── -->
-  <header class="site-header" id="site-header">
-    <div class="header-pill">
-      <img class="header-logo" src="images/og-image.png" alt="Momo Aux Platines">
-      <a class="header-school">SCHOOL</a>
-      <a class="header-live-link" id="header-live-link" href="#events-section"
-         aria-label="Live event — scroll to card">
-        <div class="header-live-dot"></div>
-        <span class="header-live-label" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+    <!-- Logo — click/tap toggles language FR ↔ EN -->
+    <div class="home-logo" id="logo-toggle" role="button" tabindex="0"
+         aria-label="Switch language / Changer de langue" title="FR / EN">
+      <img src="images/logo-momo-new.svg" alt="Momo Aux Platines">
+    </div>
+
+    <div class="home-intro">
+      <!-- Live gig card (populated + shown by JS when a gig is live) -->
+      <a class="live-card" id="live-card" href="#">
+        <span class="live-pill">
+          <span class="live-dot"></span>
+          <span class="live-label" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
+        </span>
+        <span class="live-venue" id="live-venue"></span>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
       </a>
-      <div class="lang-toggle" id="lang-btn">FR</div>
-    </div>
-  </header>
 
-  <div class="page-content">
-
-    <!-- ══════════════════════════════════════════════
-         HERO / STAMP
-    ══════════════════════════════════════════════ -->
-    <div class="stamp-section">
-      <div class="stamp-container">
-        <img class="stamp-logo" src="images/logo-momoauxplatines-pen.svg" alt="Momo Aux Platines">
+      <div class="home-copy">
+        <p data-key="home.copy.1" data-en="he’s kind"        data-fr="il est chaleureux">he’s kind</p>
+        <p data-key="home.copy.2" data-en="loves music"      data-fr="il aime la musique">loves music</p>
+        <p data-key="home.copy.3" data-en="shows how to dj"  data-fr="il montre à mixer">shows how to dj</p>
+        <p data-key="home.copy.4" data-en="puts the vibe on" data-fr="il met l’ambiance">puts the vibe on</p>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         INTRO
-    ══════════════════════════════════════════════ -->
-    <!-- ══════════════════════════════════════════════
-         EVENTS  (rendered from events.json via JS)
-    ══════════════════════════════════════════════ -->
-    <div id="events-section" class="events-section" style="display:none"></div>
+    <nav class="home-nav">
+      <a class="home-link" href="/jecours-tudonnes-onaide">
+        <span data-key="home.nav.fundraise" data-en="fund raising now" data-fr="collecte en cours">fund raising now</span>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+      <a class="home-link" href="/dj">
+        <span data-key="home.nav.dj" data-en="dj" data-fr="dj">dj</span>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+      <a class="home-link" href="/school">
+        <span data-key="home.nav.school" data-en="school" data-fr="école">school</span>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+      <a class="home-link" href="/curator">
+        <span data-key="home.nav.curator" data-en="curator" data-fr="curateur">curator</span>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+    </nav>
 
-    <section class="intro">
-      <div class="avatar">
-        <img id="intro-avatar" src="images/profile.jpg" alt="Momo">
-      </div>
-      <div class="intro-info">
-        <h1 class="intro-name" data-key="intro.title">Momo Aux Platines</h1>
-      </div>
+  </main>
 
-      <!-- Tags (all viewports) -->
-      <div class="tags" id="intro-tags" style="flex-direction:row; flex-wrap:wrap; gap:8px;">
-        <span class="tag">DJ</span>
-        <span class="tag">TURNTABLIST</span>
-        <span class="tag">RADIO HOST</span>
-      </div>
-
-      <!-- Bio -->
-      <p class="bio" data-key="intro.bio" data-en="Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec." data-fr="Plusieurs décennies derrière les platines. Scratch avec des groupes de rap et des DJ tout azimuts, mixant toutes sortes de styles dans des bars branchés, des clubs à mode et dans lors d'événements spéciaux à travers le Québec.">Couple decades behind the turntables. Scratching with rap groups and DJs of all kinds, mixing all sorts of styles in trendy bars, fashionable buvettes and at special events across Quebec.</p>
-
-      <!-- CTA -->
-      <div class="ctas intro-ctas" style="flex-direction:column; gap:16px;">
-        <a class="btn" id="book-btn" href="/en/contact" data-key="intro.btn.book" data-en="Let's talk" data-fr="Parlons-en">Let's talk</a>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         NEXT EVENTS  (rendered from events.json via JS)
-    ══════════════════════════════════════════════ -->
-    <div id="next-events-section" class="next-events-section" style="display:none">
-      <h2 class="next-events-heading" data-key="next-events.heading" data-en="Upcoming" data-fr="À venir">Upcoming</h2>
-      <div class="next-events-list" id="next-events-list"></div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════
-         REVIEWS
-    ══════════════════════════════════════════════ -->
-    <section class="reviews">
-      <h2 class="section-heading" data-key="reviews.heading" data-en="Reviews" data-fr="Avis">Reviews</h2>
-      <div class="scroll-row reviews-row">
-
-        <div id="reviews-dynamic"></div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="review-avatar">
-              <img src="images/review-simone.png" alt="Simone">
-            </div>
-            <div class="review-info">
-              <p class="review-name">Simone</p>
-              <div class="review-subtitle"><p>La Buvette</p><p>chez Simone</p></div>
-            </div>
-          </div>
-          <p class="review-text" data-key="reviews.simone.text" data-en="Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us." data-fr="Du Groove placé aux bons moments grâce à son écoute en phase avec l'ambiance. Toujours à l'affût de nous partager des petites perles musicales.">Groove placed at just the right moments thanks to his keen ear for the atmosphere. Always on the lookout to share little musical gems with us.</p>
-          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="review-avatar">
-              <img src="images/review-tmo.png" alt="TMO">
-            </div>
-            <div class="review-info">
-              <p class="review-name">TMO</p>
-              <p class="review-subtitle">Taktika</p>
-            </div>
-          </div>
-          <p class="review-text" data-key="reviews.tmo.text" data-en="A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices." data-fr="Un chic type, avec un humour unique, et un DJ redoutable, capable d'être technique, mais aussi d'animer la foule et de faire les bons choix musicaux.">A great guy, with a unique sense of humour, and a formidable DJ, capable of being technically skilled, but also of animating the crowd and making the right musical choices.</p>
-          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/taktika_officiel">Instagram</a>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="review-avatar">
-              <img src="images/review-jessie.png" alt="Jessie">
-            </div>
-            <div class="review-info">
-              <p class="review-name">Jessie</p>
-              <p class="review-subtitle">Le Birdie</p>
-            </div>
-          </div>
-          <p class="review-text" data-key="reviews.jessie.text" data-en="We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!" data-fr="On l'a engagé pour notre ouverture au Birdie et il a livré la marchandise haut la main. Ambiance parfaite, super personnalité. Un vrai pro!">We hired him for our opening at Le Birdie and he delivered top-notch. Perfect atmosphere, great personality. A true pro!</p>
-          <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/lebirdiemontreal">Instagram</a>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         DEMOS
-    ══════════════════════════════════════════════ -->
-    <section class="demos">
-      <h2 class="section-heading" data-key="section.mixes" data-en="Mixes" data-fr="Mixes">Mixes</h2>
-      <div class="scroll-row" id="demos-scroll-row"></div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         TIMELINE — Mobile (stacked decades)
-    ══════════════════════════════════════════════ -->
-    <section class="timeline-section timeline-mobile">
-      <h2 class="section-heading">Timeline</h2>
-
-      <div class="decade" data-decade="1990">
-        <p class="decade-title" data-key="timeline.1990s" data-en="1990s" data-fr="Années 1990">1990s</p>
-        <div class="scroll-row">
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-la-constellation.jpg" alt="La Constellation"></div>
-              <p class="timeline-card-title">La Constellation</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
-                <p class="timeline-card-dates">1998–1999</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-ast-du-son.png" alt="AST du Son"></div>
-              <p class="timeline-card-title">AST du Son</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
-                <p class="timeline-card-dates">1998–2002</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="decade" data-decade="2000">
-        <p class="decade-title" data-key="timeline.2000s" data-en="2000s" data-fr="Années 2000">2000s</p>
-        <div class="scroll-row">
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-taktika.jpg" alt="Taktika"></div>
-              <p class="timeline-card-title">Taktika</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
-                <p class="timeline-card-dates">2000–2012</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://taktika.ca/">Taktika Website</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-83.jpg" alt="83"></div>
-              <p class="timeline-card-title">83</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
-                <p class="timeline-card-dates">2002–2009</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/artist/3668374/u">Tidal</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-club-dj.jpg" alt="Club DJ"></div>
-              <p class="timeline-card-title">Club DJ</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
-                <p class="timeline-card-dates">2000–2006</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="decade" data-decade="2010">
-        <p class="decade-title" data-key="timeline.2010s" data-en="2010s" data-fr="Années 2010">2010s</p>
-        <div class="scroll-row">
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-focus.png" alt="Focus on the two monsters"></div>
-              <p class="timeline-card-title">Focus on the two monsters</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.focus.desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
-                <p class="timeline-card-dates">2010–2020</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="decade" data-decade="2020">
-        <p class="decade-title" data-key="timeline.2020s" data-en="2020s" data-fr="Années 2020">2020s</p>
-        <div class="scroll-row">
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-buvette-simone.jpg" alt="La buvette chez Simone"></div>
-              <p class="timeline-card-title">La buvette chez Simone</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
-                <p class="timeline-card-dates">2023–2025</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-twitch.png" alt="Twitch"></div>
-              <p class="timeline-card-title">Twitch</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
-                <p class="timeline-card-dates">2021–2023</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-demain.png" alt="Demain c'est loin"></div>
-              <p class="timeline-card-title">Demain c'est loin</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
-                <p class="timeline-card-dates">2021–2023</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
-            </div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div class="timeline-thumb"><img src="images/timeline-les-yeux-bleus.png" alt="Les Yeux Bleus"></div>
-              <p class="timeline-card-title">Les Yeux Bleus</p>
-            </div>
-            <div class="timeline-card-body">
-              <div class="timeline-card-copy">
-                <p class="timeline-card-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
-                <p class="timeline-card-dates">2022–2023</p>
-              </div>
-              <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         TIMELINE — Tablet+ (tabs + combined scroll)
-    ══════════════════════════════════════════════ -->
-    <section class="timeline-section timeline-desktop">
-      <h2 class="section-heading">Timeline</h2>
-      <div class="timeline-all-scroll">
-
-        <!-- 2020s -->
-        <div class="timeline-decade-col" data-decade="2020">
-          <p class="decade-title" data-key="timeline.2020s" data-en="2020s" data-fr="Années 2020">2020s</p>
-          <div class="timeline-cards-row">
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-buvette-simone.jpg" alt="La buvette chez Simone"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">La buvette chez Simone</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.buvette-simone.desc" data-en="DJ ambianceur" data-fr="DJ ambianceur">DJ ambianceur</p>
-                  <p class="timeline-card-lg-dates">2023–2025</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/labuvettechezsimone">Instagram</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-twitch.png" alt="Twitch"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Twitch</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.twitch.desc" data-en="Weekly Friday happy hour streamer. Raid train and all." data-fr="Streamer hebdomadaire du vendredi 5@7.">Weekly Friday happy hour streamer. Raid train and all.</p>
-                  <p class="timeline-card-lg-dates">2021–2023</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://www.twitch.tv/muhammadalias/about">Twitch</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-demain.png" alt="Demain c'est loin"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Demain c'est loin</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.demain.desc" data-en="Host and DJ of a hip-hop radio show at CJMD." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a hip-hop radio show at CJMD.</p>
-                  <p class="timeline-card-lg-dates">2021–2023</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique">CJMD Website</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-les-yeux-bleus.png" alt="Les Yeux Bleus"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Les Yeux Bleus</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.les-yeux-bleus.desc" data-en='Série "Le get down" et sets de terrasse roots reggae.' data-fr='Série "Le get down" et sets de terrasse roots reggae.'>Série "Le get down" et sets de terrasse roots reggae.</p>
-                  <p class="timeline-card-lg-dates">2022–2023</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://www.instagram.com/barlesyeuxbleus/" target="_blank" rel="noopener">Instagram</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2010s -->
-        <div class="timeline-decade-col" data-decade="2010">
-          <p class="decade-title" data-key="timeline.2010s" data-en="2010s" data-fr="Années 2010">2010s</p>
-          <div class="timeline-cards-row">
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-focus.png" alt="Focus on the two monsters"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Focus on the two monsters</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.focus.desc" data-en="Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too." data-fr="A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi.">Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.</p>
-                  <p class="timeline-card-lg-dates">2010–2020</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2000s -->
-        <div class="timeline-decade-col" data-decade="2000">
-          <p class="decade-title" data-key="timeline.2000s" data-en="2000s" data-fr="Années 2000">2000s</p>
-          <div class="timeline-cards-row">
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-taktika.jpg" alt="Taktika"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Taktika</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.taktika.desc" data-en="Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community." data-fr="DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop.">Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.</p>
-                  <p class="timeline-card-lg-dates">2000–2012</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://taktika.ca/">Taktika Website</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-club-dj.jpg" alt="Club DJ"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Club DJ</p>
-                  <p class="timeline-card-lg-desc">Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…</p>
-                  <p class="timeline-card-lg-dates">2000–2006</p>
-                </div>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-quebec-kebs.png" alt="Quebec Kebs"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Quebec Kebs</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.quebec-kebs.desc" data-en="DJ for the ABA professional basketball team." data-fr="DJ pour l'équipe de basketball professionnelle de la ABA.">DJ for the ABA professional basketball team.</p>
-                  <p class="timeline-card-lg-dates">2006–2009</p>
-                </div>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-83.jpg" alt="83"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">83</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.83.desc" data-en="Studio recorded scratches and live shows with the iconic band from the Explicit Productions label." data-fr="Scratches en studio et shows avec le groupe emblématique du label Explicit Productions.">Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.</p>
-                  <p class="timeline-card-lg-dates">2002–2009</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/artist/3668374/u">Tidal</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-source.png" alt="Source"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Source @ CHYZ 94.3 FM</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.source.desc" data-en="Host and DJ of a mixed weekly hip-hop radio show." data-fr="Animateur et DJ d'un show de radio hip-hop hebdomadaire.">Host and DJ of a mixed weekly hip-hop radio show.</p>
-                  <p class="timeline-card-lg-dates">2002–2009</p>
-                </div>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-red-bull.png" alt="Red Bull"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Red Bull</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.red-bull.desc" data-en="Event DJ for extreme sports activities sponsored by the company." data-fr="DJ événementiel pour les activités de sports extrêmes commanditées par la compagnie.">Event DJ for extreme sports activities sponsored by the company.</p>
-                  <p class="timeline-card-lg-dates">2003–2007</p>
-                </div>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-pagail.jpg" alt="Pagail"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">Pagail</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.pagail.desc" data-en='Studio recorded scratches on the one and only album "C\'est pour les miens".' data-fr='Scratches sur le seul et unique album "C\'est pour les miens".'>Studio recorded scratches on the one and only album "C'est pour les miens".</p>
-                  <p class="timeline-card-lg-dates">2002</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://tidal.com/album/189830926/u">Tidal</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1990s -->
-        <div class="timeline-decade-col" data-decade="1990">
-          <p class="decade-title" data-key="timeline.1990s" data-en="1990s" data-fr="Années 1990">1990s</p>
-          <div class="timeline-cards-row">
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-la-constellation.jpg" alt="La Constellation"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">La Constellation</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.la-constellation.desc" data-en="Touring across Quebec with this popular rap group signed to a major record label." data-fr="En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques.">Touring across Quebec with this popular rap group signed to a major record label.</p>
-                  <p class="timeline-card-lg-dates">1998–1999</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=IkPuf9plNyA">YouTube</a>
-              </div>
-            </div>
-            <div class="timeline-card-lg">
-              <div class="timeline-thumb-lg"><img src="images/timeline-ast-du-son.png" alt="AST du Son"></div>
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">AST du Son</p>
-                  <p class="timeline-card-lg-desc" data-key="timeline.ast-du-son.desc" data-en="DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap." data-fr="DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français.">DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.</p>
-                  <p class="timeline-card-lg-dates">1998–2002</p>
-                </div>
-                <a class="card-link" target="_blank" rel="noopener" href="https://chyz.ca/emission/les-arshitechs-du-son/">CHYZ</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         FOOTER
-    ══════════════════════════════════════════════ -->
-    <footer class="site-footer">
-      <div class="footer-stamp">
-        <img src="images/og-image.png" alt="Momo Aux Platines" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
-      </div>
-      <div class="footer-links">
-        <div class="footer-links-row">
-          <a class="footer-btn" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">Instagram</a>
-          <a class="footer-btn" href="https://www.twitch.tv/momoauxplatines/about" target="_blank" rel="noopener">Twitch</a>
-        </div>
-        <a class="footer-btn" href="https://tidal.com/@momoauxplatines" target="_blank" rel="noopener">Tidal</a>
-      </div>
-      <p class="footer-copy" data-key="footer.copy" data-en="© 2026 Momo aux platines. All rights reserved." data-fr="© 2026 Momo aux platines. Tous droits réservés.">© 2026 Momo aux platines. All rights reserved.</p>
-    </footer>
-
-  </div><!-- /page-content -->
-
-  <!-- ── Booking Overlay ── -->
-</div><!-- /page -->
-
-<script>
-
-  // ── Header auto-hide ──
-  const header = document.querySelector('.site-header');
-  let lastScrollY = window.scrollY;
-  let scrollUpDelta = 0;
-
-  window.addEventListener('scroll', () => {
-    const currentY = window.scrollY;
-    const diff = lastScrollY - currentY;
-    if (currentY <= 0) {
-      scrollUpDelta = 0;
-      header.classList.remove('header-hidden');
-    } else if (diff < 0) {
-      scrollUpDelta = 0;
-      header.classList.add('header-hidden');
-    } else {
-      scrollUpDelta += diff;
-      if (scrollUpDelta >= 200) header.classList.remove('header-hidden');
-    }
-    lastScrollY = currentY;
-  }, { passive: true });
-
-  // ── Events ──
-
-  // Returns true if current local time falls within the event's hours window.
-  // hours format: "19:00 – 01:00" or "19:00 - 01:00" (handles overnight spans).
-  // If no hours field is set, the card is always visible.
-  // Parse "HH:MM" → total minutes
-  function parseMins(t) {
-    if (!t) return null;
-    const p = t.match(/(\d{1,2}):(\d{2})/);
-    return p ? parseInt(p[1]) * 60 + parseInt(p[2]) : null;
-  }
-
-  // "2026-04-05" → Date at midnight local
-  function parseDate(s) { return s ? new Date(s + 'T00:00:00') : null; }
-
-  // Strip postal/zip code from address (Canadian A1A 1A1 or A1A1A1, US 12345)
-  function stripPostalCode(addr) {
-    return (addr || '')
-      .replace(/,?\s*[A-Z]\d[A-Z]\s*\d[A-Z]\d\b/i, '') // Canadian
-      .replace(/,?\s*\b\d{5}(-\d{4})?\b/, '')            // US zip
-      .replace(/,\s*$/, '').trim();
-  }
-
-  // "2026-04-15" → "APR. 15"
-  function formatShortDate(dateStr) {
-    const months = ['JAN.','FEB.','MAR.','APR.','MAY','JUN.','JUL.','AUG.','SEP.','OCT.','NOV.','DEC.'];
-    const d = parseDate(dateStr);
-    if (!d) return dateStr;
-    return `${months[d.getMonth()]} ${d.getDate()}`;
-  }
-
-  function todayStr() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
-  // Is the event happening RIGHT NOW?
-  function eventIsLive(ev) {
-    if (ev.show === false) return false;
-    if (!ev.date || !ev.start_time) return false;
-    const now = new Date();
-    const nowMins = now.getHours() * 60 + now.getMinutes();
-    const today = todayStr();
-    const start = parseMins(ev.start_time);
-    const end   = parseMins(ev.end_time);
-    if (end === null) return ev.date === today && nowMins >= start;
-    const overnight = start > end; // e.g. 19:00 – 01:00
-    if (overnight) {
-      // Live on start-date after start, OR on next day before end
-      const nextDay = new Date(ev.date + 'T00:00:00');
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayStr = nextDay.toISOString().slice(0,10);
-      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
-    }
-    return ev.date === today && nowMins >= start && nowMins < end;
-  }
-
-  // Is the event upcoming (not yet live, not yet past)?
-  function eventIsNext(ev) {
-    if (ev.show === false) return false;
-    if (!ev.date) return false;
-    const today = todayStr();
-    if (ev.date > today) return true;
-    if (ev.date < today) return false;
-    // Same day — before start?
-    const start = parseMins(ev.start_time);
-    if (start === null) return false;
-    const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
-    return nowMins < start;
-  }
-
-  // Format "2026-04-05" → "April 5th"
-  function formatEventDate(dateStr) {
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const d = parseDate(dateStr);
-    if (!d) return dateStr;
-    const day = d.getDate();
-    const suf = [,'st','nd','rd'][day % 10 > 3 || Math.floor(day/10) === 1 ? 0 : day % 10] || 'th';
-    return `${months[d.getMonth()]} ${day}${suf}`;
-  }
-
-  // Format hours string "19:00 – 01:00" from start_time / end_time
-  function formatHours(ev) {
-    if (ev.start_time && ev.end_time) return `${ev.start_time} – ${ev.end_time}`;
-    if (ev.start_time) return ev.start_time;
-    return ev.hours || '';
-  }
-
-  function getLinkLabel(url) {
-    if (!url) return 'Link';
-    try {
-      const host = new URL(url).hostname.replace(/^www\./, '');
-      if (host.includes('instagram.com'))       return 'Instagram';
-      if (host.includes('facebook.com') || host.includes('fb.com')) return 'Facebook';
-      if (host.includes('youtube.com') || host.includes('youtu.be')) return 'YouTube';
-      if (host.includes('tiktok.com'))          return 'TikTok';
-      if (host.includes('twitter.com') || host.includes('x.com')) return 'X';
-      if (host.includes('soundcloud.com'))      return 'SoundCloud';
-      if (host.includes('spotify.com'))         return 'Spotify';
-      if (host.includes('twitch.tv'))           return 'Twitch';
-      if (host.includes('residentadvisor.net') || host.includes('ra.co')) return 'Resident Advisor';
-      if (host.includes('ticketmaster.com'))    return 'Ticketmaster';
-      if (host.includes('eventbrite.com'))      return 'Eventbrite';
-      return 'Link';
-    } catch { return 'Link'; }
-  }
-
-  function setHeaderLive(isLive) {
-    const hdr  = document.getElementById('site-header');
-    const link = document.getElementById('header-live-link');
-    if (!hdr || !link) return;
-    hdr.classList.toggle('has-live', isLive);
-  }
-
-  // Construit l'URL d'un événement dans le nouveau format /:name_slug/:date_slug
-  const _IDX_FM = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
-  const _IDX_EM = ['january','february','march','april','may','june','july','august','september','october','november','december'];
-  function buildEventUrl(ev, lang) {
-    if (ev.name_slug && ev.date) {
-      const p   = ev.date.split('-');
-      const day = parseInt(p[2]);
-      const mi  = parseInt(p[1]) - 1;
-      const yr  = p[0];
-      const dp  = lang === 'fr' ? `${day}${_IDX_FM[mi]}${yr}` : `${_IDX_EM[mi]}${day}${yr}`;
-      return `/${ev.name_slug}/${dp}`;
-    }
-    return ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events';
-  }
-
-  function renderEvents() {
-    const all  = window.MOMO_EVENTS || [];
-    const live = all.filter(eventIsLive);
-    const next = all.filter(eventIsNext).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-
-    // ── Live events section (between hero and intro) ──
-    const liveSection = document.getElementById('events-section');
-    if (liveSection) {
-      if (!live.length) {
-        liveSection.style.display = 'none';
-      } else {
-        liveSection.style.display = 'flex';
-        liveSection.innerHTML = '<p class="live-section-heading" data-key="nav.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</p>';
-        live.forEach(ev => {
-          const card = document.createElement('div');
-          card.className = 'event-card-home';
-          card.innerHTML = `
-            <div class="event-card-home-top">
-              <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
-                   onerror="this.style.background='var(--brand-90)'">
-              <div class="ev-live-status">
-                <div class="ev-live-dot"></div>
-                <span class="ev-live-label" data-key="next-events.live" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-              </div>
-            </div>
-            <div class="ev-copy">
-              <p class="ev-venue-name">${ev.venue}</p>
-              ${ev.description ? `<p class="ev-description">${ev.description}</p>` : ''}
-              <div class="ev-content">
-                ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
-                ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-                ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
-              </div>
-            </div>
-            <a class="ev-go-btn" href="${buildEventUrl(ev, currentLang)}"
-               data-key="next-events.btn.go" data-en="Come on in" data-fr="Allez entre">Come on in</a>`;
-          liveSection.appendChild(card);
-        });
-      }
-      setHeaderLive(live.length > 0);
-    }
-
-    // ── Next events section (below intro) ──
-    const nextSection = document.getElementById('next-events-section');
-    const nextList    = document.getElementById('next-events-list');
-    if (nextSection && nextList) {
-      if (!next.length) {
-        nextSection.style.display = 'none';
-      } else {
-        nextSection.style.display = 'flex';
-        nextList.innerHTML = '';
-        next.forEach(ev => {
-          const card = document.createElement('div');
-          card.className = 'event-card-home';
-          card.innerHTML = `
-            <div class="event-card-home-top">
-              <img class="event-card-home-img" src="${ev.image || ''}" alt="${ev.venue}"
-                   onerror="this.style.background='var(--brand-90)'">
-              <span class="ev-next-label">${formatShortDate(ev.date)}</span>
-            </div>
-            <div class="ev-copy">
-              <p class="ev-venue-name">${ev.venue}</p>
-              ${ev.description ? `<p class="ev-description">${ev.description}</p>` : ''}
-              <div class="ev-content">
-                ${ev.address ? `<p class="ev-address">${stripPostalCode(ev.address)}</p>` : ''}
-                ${formatHours(ev) ? `<p class="ev-hours">${formatHours(ev)}</p>` : ''}
-                ${(ev.instagram || ev.link) ? `<a class="ev-ig" href="${ev.instagram || ev.link}" target="_blank" rel="noopener">${getLinkLabel(ev.instagram || ev.link)}</a>` : ''}
-              </div>
-            </div>`;
-          nextList.appendChild(card);
-        });
-      }
-    }
-
-    if (typeof applyLang === 'function') applyLang(currentLang);
-  }
-
-  // Re-check visibility every minute (card auto-hides when window closes)
-  setInterval(renderEvents, 60_000);
-
-  // ── Toggle expand/collapse for home event cards ──
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.ev-details-btn');
-    if (!btn) return;
-    const card     = btn.closest('.event-card-home');
-    if (!card) return;
-    const expanded = card.querySelector('.ev-expanded');
-    const caret    = btn.querySelector('.ev-details-caret');
-    if (!expanded) return;
-    const isOpen = expanded.classList.toggle('visible');
-    if (caret) caret.src = isOpen ? 'images/caret-up.png' : 'images/caret-down.png';
-  });
-
-  // ── Language toggle ──
-  let currentLang = 'en';
-  const langBtn = document.getElementById('lang-btn');
+  <script>
+  // ── Language ──
+  let currentLang = (() => {
+    try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; }
+  })();
   const COPY = { en: {}, fr: {} };
-
-  // Load copy: try the API first, fall back to the static JSON file
-  async function fetchCopy(lang) {
-    try {
-      const r = await fetch(`/api/copy?lang=${lang}`);
-      if (r.ok) { const d = await r.json(); if (d && d['demos.registry']) return d; }
-    } catch {}
-    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
-    return {};
-  }
-
-  // Load both copy files in parallel; re-apply once loaded
-  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
-    COPY.en = en; COPY.fr = fr;
-    applyLang(currentLang);
-  });
-
-  // Live-sync: admin broadcasts copy changes to open tabs instantly
-  try {
-    new BroadcastChannel('momo-copy').onmessage = ({ data: msg }) => {
-      if (msg.lang && msg.data) {
-        COPY[msg.lang] = msg.data;
-        renderDynamicDemos(currentLang);
-        renderDynamicReviews(currentLang);
-        renderDynamicTimeline(currentLang);
-      }
-    };
-  } catch (_) {}
-
-  // Re-fetch copy when tab becomes visible (always fresh from Blob store)
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) return;
-    Promise.all([
-      fetch('/api/copy?lang=en').then(r => r.json()).catch(() => null),
-      fetch('/api/copy?lang=fr').then(r => r.json()).catch(() => null)
-    ]).then(([en, fr]) => {
-      if (en) COPY.en = en;
-      if (fr) COPY.fr = fr;
-      renderDynamicDemos(currentLang);
-      renderDynamicReviews(currentLang);
-      renderDynamicTimeline(currentLang);
-    });
-  });
 
   function applyLang(lang) {
     const copy = COPY[lang] || {};
@@ -1342,384 +295,101 @@
         : lang === 'fr' ? (el.dataset.fr || el.textContent)
         : (el.dataset.en || el.textContent);
     });
-    // Fallback for any elements without data-key
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
     });
-    // Update profile photo if overridden via Blob store
-    const introAvatar = document.getElementById('intro-avatar');
-    if (introAvatar && copy['intro.avatar']) introAvatar.src = copy['intro.avatar'];
-    // Render intro tags from pipe-separated copy key
-    const tagsContainer = document.getElementById('intro-tags');
-    if (tagsContainer && copy['intro.tags']) {
-      tagsContainer.innerHTML = copy['intro.tags'].split('|')
-        .map(t => `<span class="tag">${t.trim()}</span>`).join('');
-    }
-    langBtn.textContent = lang === 'fr' ? 'EN' : 'FR';
-    // Update contact link to match language
-    const bookBtn = document.getElementById('book-btn');
-    if (bookBtn) bookBtn.href = lang === 'fr' ? '/fr/contact' : '/en/contact';
+    document.documentElement.lang = lang;
     currentLang = lang;
-    renderDynamicReviews(lang);
-    renderDynamicDemos(lang);
-    renderDynamicTimeline(lang);
+    try { localStorage.setItem('momo-lang', lang); } catch {}
+    renderLive();
   }
 
-  function renderDynamicReviews(lang) {
-    const container = document.getElementById('reviews-dynamic');
-    if (!container) return;
-    const copy = COPY[lang] || COPY.en || {};
-    const registry = (copy['reviews.registry'] || '').split('|').filter(Boolean);
-    // Newest first
-    const sorted = [...registry].reverse();
-    container.innerHTML = '';
-    sorted.forEach(id => {
-      const name      = copy[`reviews.${id}.name`]      || id;
-      const venue     = copy[`reviews.${id}.venue`]     || '';
-      const instagram = copy[`reviews.${id}.instagram`] || '';
-      const avatar    = copy[`reviews.${id}.avatar`]    || '';
-      const text      = copy[`reviews.${id}.text`]      || '';
-      const card = document.createElement('div');
-      card.className = 'review-card';
-      card.innerHTML = `
-        <div class="review-card-header">
-          <div class="review-avatar">
-            <img src="${avatar}" alt="${name}" onerror="this.style.background='var(--brand-90)'">
-          </div>
-          <div class="review-info">
-            <p class="review-name">${name}</p>
-            ${venue ? `<p class="review-subtitle">${venue}</p>` : ''}
-          </div>
-        </div>
-        <p class="review-text">${text}</p>
-        ${instagram ? `<a class="card-link" target="_blank" rel="noopener" href="${instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}`;
-      container.appendChild(card);
-    });
+  // Load copy overrides (admin-managed), then re-apply
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
   }
-
-  function renderDynamicDemos(lang) {
-    const container = document.getElementById('demos-scroll-row');
-    if (!container) return;
-    // Don't re-render while a video is playing — it would destroy the iframe
-    if (container.querySelector('iframe')) return;
-    const copy = COPY[lang] || COPY.en || {};
-    const enCopy = COPY.en || {};
-    const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
-    // Respect admin position order if set; otherwise fall back to legacy sort
-    const orderStr = copy['demos.order'];
-    let sorted;
-    if (orderStr) {
-      const ordered = orderStr.split('|').filter(id => registry.includes(id));
-      const rest = registry.filter(id => !ordered.includes(id));
-      sorted = [...ordered, ...rest];
-    } else {
-      const available = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
-      const comingSoon = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
-      sorted = [...available.slice().reverse(), ...comingSoon];
-    }
-    container.innerHTML = '';
-    sorted.forEach(id => {
-      const title  = copy[`demos.${id}.title`]  || id;
-      const desc   = copy[`demos.${id}.desc`]   || enCopy[`demos.${id}.desc`] || '';
-      const avatar = copy[`demos.${id}.avatar`] || '';
-      const link   = copy[`demos.${id}.link`]   || '';
-      const soon   = copy[`demos.${id}.coming-soon`] === 'true';
-      // Extract YouTube ID from full URL or short URL
-      let ytId = '';
-      const ytMatch = link.match(/[?&]v=([^&]+)/) || link.match(/youtu\.be\/([^?&/]+)/);
-      if (ytMatch) ytId = ytMatch[1];
-      const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '';
-      const thumbSrc = ytThumb || avatar;
-      const thumbHtml = thumbSrc
-        ? `<img class="video-thumb" src="${thumbSrc}" alt="${title}">`
-        : `<div class="video-thumb" style="background:var(--brand-90)"></div>`;
-      const playHtml  = (!soon && ytId) ? `<img class="play-btn" src="images/video-play-btn.png" alt="">` : '';
-      const ytAttr    = (!soon && ytId) ? ` data-ytid="${ytId}"` : '';
-      const linkHtml  = soon
-        ? `<span class="card-link-soon">${lang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
-        : '';
-      const card = document.createElement('div');
-      card.className = 'video-card';
-      card.innerHTML = `
-        <div class="video-thumb-wrapper"${ytAttr}>${thumbHtml}${playHtml}</div>
-        <div class="video-content">
-          <div class="video-info">
-            <p class="video-title">${title}</p>
-            ${desc ? `<p class="video-desc">${desc}</p>` : ''}
-          </div>
-          ${linkHtml}
-        </div>`;
-      // Click-to-embed: swap thumbnail for inline YouTube iframe
-      const wrapper = card.querySelector('.video-thumb-wrapper[data-ytid]');
-      if (wrapper) {
-        wrapper.addEventListener('click', () => {
-          const id = wrapper.dataset.ytid;
-          wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
-        }, { once: true });
-      }
-      container.appendChild(card);
-    });
-  }
-
-  function renderDynamicTimeline(lang) {
-    const copy = COPY[lang] || COPY.en || {};
-    const decades = ['2020', '2010', '2000', '1990'];
-
-    // Extract the start year from a dates string like "2023–2025" or "2021-2023"
-    function startYear(datesStr) {
-      const m = (datesStr || '').match(/(\d{4})/);
-      return m ? parseInt(m[1], 10) : 0;
-    }
-
-    // Guess a short link label from a URL
-    function linkLabel(url) {
-      if (!url) return '';
-      if (/instagram\.com/i.test(url)) return 'Instagram';
-      if (/twitch\.tv/i.test(url)) return 'Twitch';
-      if (/youtube\.com|youtu\.be/i.test(url)) return 'YouTube';
-      if (/tiktok\.com/i.test(url)) return 'TikTok';
-      if (/facebook\.com/i.test(url)) return 'Facebook';
-      try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'Link'; }
-    }
-
-    // Insert a card before the first existing card whose start year is strictly less than newYear,
-    // so cards stay sorted newest-first (leftmost). Appends if no such card is found.
-    function insertSorted(row, card, newYear, datesSelector) {
-      const siblings = Array.from(row.children);
-      const anchor = siblings.find(el => {
-        const datesEl = el.querySelector(datesSelector);
-        return datesEl && startYear(datesEl.textContent) < newYear;
-      });
-      if (anchor) row.insertBefore(card, anchor);
-      else row.appendChild(card);
-    }
-
-    decades.forEach(decade => {
-      const registry = (copy[`timeline.${decade}.registry`] || '').split('|').filter(Boolean);
-      if (!registry.length) return;
-
-      // ── Mobile: .decade[data-decade] .scroll-row ──
-      const mobileDecade = document.querySelector(`.timeline-mobile .decade[data-decade="${decade}"]`);
-      if (mobileDecade) {
-        const row = mobileDecade.querySelector('.scroll-row');
-        if (row) {
-          // Collect already-rendered IDs (hardcoded via data-key, or dynamic via data-timeline-id)
-          const existingIds = new Set();
-          row.querySelectorAll('[data-key]').forEach(el => {
-            const m = el.dataset.key && el.dataset.key.match(/^timeline\.(.+)\.desc$/);
-            if (m) existingIds.add(m[1]);
-          });
-          row.querySelectorAll('[data-timeline-id]').forEach(el => existingIds.add(el.dataset.timelineId));
-
-          registry.forEach(id => {
-            if (existingIds.has(id)) return;
-            const name  = copy[`timeline.${id}.name`]      || id;
-            const desc  = copy[`timeline.${id}.desc`]      || '';
-            const dates = copy[`timeline.${id}.dates`]     || '';
-            const avatar= copy[`timeline.${id}.avatar`]    || '';
-            const link  = copy[`timeline.${id}.instagram`] || '';
-            const label = linkLabel(link);
-            const card  = document.createElement('div');
-            card.className = 'timeline-card';
-            card.dataset.timelineId = id;
-            card.innerHTML = `
-              <div class="timeline-card-header">
-                ${avatar ? `<div class="timeline-thumb"><img src="${avatar}" alt="${name}"></div>` : ''}
-                <p class="timeline-card-title">${name}</p>
-              </div>
-              <div class="timeline-card-body">
-                <div class="timeline-card-copy">
-                  <p class="timeline-card-desc">${desc}</p>
-                  <p class="timeline-card-dates">${dates}</p>
-                </div>
-                ${link ? `<a class="card-link" target="_blank" rel="noopener" href="${link}">${label}</a>` : ''}
-              </div>`;
-            insertSorted(row, card, startYear(dates), '.timeline-card-dates');
-            existingIds.add(id);
-          });
-        }
-      }
-
-      // ── Desktop: .timeline-decade-col[data-decade] .timeline-cards-row ──
-      const desktopDecade = document.querySelector(`.timeline-desktop .timeline-decade-col[data-decade="${decade}"]`);
-      if (desktopDecade) {
-        const row = desktopDecade.querySelector('.timeline-cards-row');
-        if (row) {
-          const existingIds = new Set();
-          row.querySelectorAll('[data-key]').forEach(el => {
-            const m = el.dataset.key && el.dataset.key.match(/^timeline\.(.+)\.desc$/);
-            if (m) existingIds.add(m[1]);
-          });
-          row.querySelectorAll('[data-timeline-id]').forEach(el => existingIds.add(el.dataset.timelineId));
-
-          registry.forEach(id => {
-            if (existingIds.has(id)) return;
-            const name  = copy[`timeline.${id}.name`]      || id;
-            const desc  = copy[`timeline.${id}.desc`]      || '';
-            const dates = copy[`timeline.${id}.dates`]     || '';
-            const avatar= copy[`timeline.${id}.avatar`]    || '';
-            const link  = copy[`timeline.${id}.instagram`] || '';
-            const label = linkLabel(link);
-            const card  = document.createElement('div');
-            card.className = 'timeline-card-lg';
-            card.dataset.timelineId = id;
-            card.innerHTML = `
-              ${avatar ? `<div class="timeline-thumb-lg"><img src="${avatar}" alt="${name}"></div>` : ''}
-              <div class="timeline-card-lg-body">
-                <div class="timeline-card-lg-copy">
-                  <p class="timeline-card-lg-title">${name}</p>
-                  <p class="timeline-card-lg-desc">${desc}</p>
-                  <p class="timeline-card-lg-dates">${dates}</p>
-                </div>
-                ${link ? `<a class="card-link" target="_blank" rel="noopener" href="${link}">${label}</a>` : ''}
-              </div>`;
-            insertSorted(row, card, startYear(dates), '.timeline-card-lg-dates');
-            existingIds.add(id);
-          });
-        }
-      }
-    });
-  }
-
-  langBtn.addEventListener('click', () => {
-    applyLang(currentLang === 'en' ? 'fr' : 'en');
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
+    COPY.en = en || {}; COPY.fr = fr || {};
+    applyLang(currentLang);
   });
 
+  // Logo toggles language
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); }
+  });
 
-  // Netlify Identity — redirect to admin after login via invite link
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on('init', user => {
-      if (!user) {
-        window.netlifyIdentity.on('login', () => {
-          document.location.href = '/admin/';
-        });
-      }
-    });
+  // ── Live gig detection (reused from the events system) ──
+  function parseMins(t) {
+    if (!t) return null;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + (m || 0);
+  }
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function eventIsLive(ev) {
+    if (ev.show === false) return false;
+    if (!ev.date || !ev.start_time) return false;
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const today = todayStr();
+    const start = parseMins(ev.start_time);
+    const end   = parseMins(ev.end_time);
+    if (end === null) return ev.date === today && nowMins >= start;
+    const overnight = start > end;
+    if (overnight) {
+      const nextDay = new Date(ev.date + 'T00:00:00');
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().slice(0,10);
+      return (ev.date === today && nowMins >= start) || (nextDayStr === today && nowMins < end);
+    }
+    return ev.date === today && nowMins >= start && nowMins < end;
   }
 
-  // ─────────────────────────────────────────────
-  // Stamp scroll-to-scratch interaction
-  // Scroll/swipe down over logo → scratch-forth sound
-  // Scroll/swipe up over logo   → scratch-back sound
-  // Logo is static — no rotation, sounds only.
-  // ─────────────────────────────────────────────
-  (function () {
-    const container = document.querySelector('.stamp-section .stamp-container');
-    if (!container) return;
-
-    let lastDirection = 0; // 1 = down, -1 = up
-    let scrollTimeout = null;
-
-    // ── Audio (Web Audio API — mobile-compatible lazy init) ──
-    // Pre-fetch raw ArrayBuffers eagerly so decoding is instant on first touch,
-    // but create AudioContext only inside a user gesture (required by iOS/Android).
-    let audioCtx     = null;
-    let buffers      = { forth: null, back: null };
-    let activeSource = null;
-    let audioReady   = false;
-    let audioPriming = false;
-
-    const rawAudio = { forth: null, back: null };
-    (async () => {
-      try {
-        const [f, b] = await Promise.all([
-          fetch('/audio/scratch-forth.mp3').then(r => r.arrayBuffer()),
-          fetch('/audio/scratch-back.mp3').then(r => r.arrayBuffer()),
-        ]);
-        rawAudio.forth = f;
-        rawAudio.back  = b;
-      } catch (_) {}
-    })();
-
-    // Must be called synchronously inside a user-gesture handler so the AudioContext
-    // is created within a user-gesture context — the only way iOS/Android allow audio.
-    function primeAudio() {
-      if (audioReady || audioPriming) return;
-      audioPriming = true;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const resume = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
-      resume.then(() => {
-        const decode = key =>
-          rawAudio[key]
-            ? audioCtx.decodeAudioData(rawAudio[key].slice(0))
-            : Promise.resolve(null);
-        return Promise.all([decode('forth'), decode('back')]);
-      }).then(([forth, back]) => {
-        buffers.forth = forth;
-        buffers.back  = back;
-        audioReady    = true;
-      }).catch(() => {});
+  const _EM = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  const _FM = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  function buildEventUrl(ev, lang) {
+    if (ev.name_slug && ev.date) {
+      const p = ev.date.split('-');
+      const day = parseInt(p[2]); const mi = parseInt(p[1]) - 1; const yr = p[0];
+      const dp = lang === 'fr' ? `${day}${_FM[mi]}${yr}` : `${_EM[mi]}${day}${yr}`;
+      return `/${ev.name_slug}/${dp}`;
     }
+    return ev.slug ? '/events/' + encodeURIComponent(ev.slug) : '/events';
+  }
 
-    function playSound(key) {
-      if (!audioReady) return;
-      const buf = buffers[key];
-      if (!buf) return;
-      stopSound();
-      const src = audioCtx.createBufferSource();
-      src.buffer = buf;
-      src.connect(audioCtx.destination);
-      src.start(0);
-      activeSource = src;
-    }
+  function renderLive() {
+    const all  = window.MOMO_EVENTS || [];
+    const live = all.filter(eventIsLive);
+    const card = document.getElementById('live-card');
+    if (!card) return;
+    if (!live.length) { card.classList.remove('is-live'); return; }
+    const ev = live[0];
+    document.getElementById('live-venue').textContent = ev.venue || '';
+    card.href = buildEventUrl(ev, currentLang);
+    card.classList.add('is-live');
+  }
 
-    function stopSound() {
-      if (!activeSource) return;
-      try { activeSource.stop(); } catch (_) {}
-      activeSource = null;
-    }
-
-    // Called on each scroll tick — plays sound on direction change,
-    // stops sound after a short idle.
-    function onScroll(dir) {
-      if (dir !== lastDirection) {
-        lastDirection = dir;
-        playSound(dir > 0 ? 'forth' : 'back');
-      }
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        stopSound();
-        lastDirection = 0;
-      }, 150);
-    }
-
-    // ── Desktop: wheel event on the container ──
-    container.addEventListener('wheel', e => {
-      primeAudio();
-      onScroll(e.deltaY > 0 ? 1 : -1);
-    }, { passive: true });
-
-    // ── Mobile: touch swipe on the container ──
-    let lastTouchY = 0;
-
-    container.addEventListener('touchstart', e => {
-      primeAudio(); // passive:true still runs synchronously — safe for AudioContext unlock
-      lastTouchY    = e.touches[0].clientY;
-      lastDirection = 0;
-    }, { passive: true });
-
-    container.addEventListener('touchmove', e => {
-      const y     = e.touches[0].clientY;
-      const delta = y - lastTouchY;
-      if (delta !== 0) onScroll(delta > 0 ? 1 : -1);
-      lastTouchY = y;
-    }, { passive: true });
-
-    container.addEventListener('touchend', () => {
-      stopSound();
-      lastDirection = 0;
-      clearTimeout(scrollTimeout);
-    });
-  })();
-
-  // Load events from Blob store (always fresh, no deploy needed)
   fetch('/api/events')
     .then(r => r.json())
-    .then(data => {
-      window.MOMO_EVENTS = Array.isArray(data) ? data : (data.events || []);
-      renderEvents();
-    })
-    .catch(() => renderEvents());
-</script>
+    .then(data => { window.MOMO_EVENTS = Array.isArray(data) ? data : (data.events || []); renderLive(); })
+    .catch(() => renderLive());
+
+  // Re-check every minute (card auto-hides when the window closes)
+  setInterval(renderLive, 60000);
+
+  // ── Netlify Identity — redirect to admin after login via invite link ──
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', user => {
+      if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; });
+    });
+  }
+  </script>
 </body>
 </html>
