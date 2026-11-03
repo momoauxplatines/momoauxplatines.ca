@@ -62,6 +62,42 @@
   to = "/events"
   status = 301
 
+# Section DJ
+[[redirects]]
+  from = "/dj/gigs"
+  to = "/dj-gigs.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj/bio/:decade"
+  to = "/dj-bio-decade.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj/bio"
+  to = "/dj-bio.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj/reviews"
+  to = "/dj-reviews.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj/demos"
+  to = "/dj-demos.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj/contact"
+  to = "/dj-contact.html"
+  status = 200
+
+[[redirects]]
+  from = "/dj"
+  to = "/dj.html"
+  status = 200
+
 # Nouvelles URLs simplifiées — /:name_slug/:date_slug (ex: /pepouzeenterrasse/7juillet2026)
 # Doit venir après toutes les routes spécifiques
 [[redirects]]
