@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demos — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/dj/demos">
+  <link rel="icon" href="favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+  <meta property="og:title" content="Momo — Demos">
+  <meta property="og:description" content="Quelques mixes et styles de Momo.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://momoauxplatines.ca/dj/demos">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #000000;
+      --brand-00:  #fafbf9;
+      --brand-30:  #dee4da;
+      --brand-50:  #c9d3c0;
+      --brand-80:  #51534e;
+      --brand-100: #141513;
+      --brand-105: #111210;
+      --gap-8:  8px;
+      --gap-20: 20px;
+      --gap-32: 32px;
+      --gap-56: 56px;
+      --font-display: 'Kalnia', serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+    .arrow-sm { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .dm-intro { display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .dm-title { font-family: var(--font-display); font-weight: 700; font-size: 39px; line-height: 39px; text-transform: uppercase; color: #fff; }
+    .dm-sub { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .dm-sub p { margin: 0; }
+
+    .dm-list { flex: 1 1 auto; display: grid; grid-template-columns: 1fr; }
+    .dm-card { display: flex; flex-direction: column; gap: var(--gap-20); padding: var(--gap-32); border-top: 0.5px solid var(--brand-80); margin-bottom: -0.5px; }
+    .dm-thumb { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; display: block; cursor: pointer; overflow: hidden; }
+    .dm-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .dm-thumb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .dm-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; border: 0; background: none; padding: 0; cursor: pointer; }
+    .dm-thumb.no-play { cursor: default; }
+    .dm-copy { display: flex; flex-direction: column; gap: var(--gap-8); color: var(--brand-30); }
+    .dm-name { font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: 34px; text-transform: uppercase; }
+    .dm-desc { font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 22px; }
+    .dm-bottom { display: flex; align-items: center; justify-content: flex-end; }
+    .dm-link { display: inline-flex; align-items: center; gap: var(--gap-8); color: var(--brand-00); text-decoration: none; font-family: var(--font-body); font-weight: 300; font-size: 18px; white-space: nowrap; }
+    .dm-soon { font-family: var(--font-body); font-weight: 300; font-size: 18px; color: var(--brand-50); }
+    .dm-empty { padding: var(--gap-32); font-family: var(--font-body); font-weight: 300; font-size: 19px; color: var(--brand-00); border-top: 0.5px solid var(--brand-80); }
+
+    .dm-contact {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32);
+      height: 80px; padding: var(--gap-8) var(--gap-32);
+      border-top: 0.5px solid var(--brand-80); border-bottom: 0.5px solid var(--brand-80);
+      font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px;
+      text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease;
+    }
+    .dm-contact:hover { background: var(--brand-105); }
+
+    @media (min-width: 768px) {
+      .dm-list { grid-template-columns: 1fr 1fr; }
+      .dm-card:nth-child(odd) { border-right: 0.5px solid var(--brand-80); }
+      .dm-title { font-size: 48px; line-height: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a class="hdr-back" href="/dj" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <section class="dm-intro">
+      <div class="dm-title" data-key="demos.title" data-en="demos" data-fr="demos">demos</div>
+      <div class="dm-sub">
+        <p data-key="demos.sub.1" data-en="a few styles"     data-fr="quelques styles">a few styles</p>
+        <p data-key="demos.sub.2" data-en="a few techniques" data-fr="quelques techniques">a few techniques</p>
+        <p data-key="demos.sub.3" data-en="a lot of fun"     data-fr="beaucoup de plaisir">a lot of fun</p>
+      </div>
+    </section>
+
+    <main class="dm-list" id="dm-list"></main>
+
+    <a class="dm-contact" href="/dj/contact">
+      <span data-key="demos.contact" data-en="contact" data-fr="contact">contact</span>
+      <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+    </a>
+
+  </div>
+
+  <script>
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  const COPY = { en: {}, fr: {} };
+
+  function applyLang(lang) {
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val : lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent);
+    });
+    document.documentElement.lang = lang; currentLang = lang;
+    try { localStorage.setItem('momo-lang', lang); } catch {}
+    renderDemos();
+  }
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang); });
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  function escapeHtml(s) { return (s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function ytIdFrom(url) {
+    if (!url) return '';
+    const m = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&/]+)/) || url.match(/youtube\.com\/embed\/([^?&/]+)/);
+    return m ? m[1] : '';
+  }
+  const ARROW_SM = '<svg class="icon arrow-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>';
+  const PLAY_BTN = '<svg class="dm-play-svg" viewBox="0 0 68 48" width="68" height="48" aria-hidden="true"><path d="M66.52 7.74a8 8 0 0 0-5.63-5.67C55.79 1 34 1 34 1S12.21 1 7.11 2.07A8 8 0 0 0 1.48 7.74 83.3 83.3 0 0 0 0 24a83.3 83.3 0 0 0 1.48 16.26 8 8 0 0 0 5.63 5.67C12.21 47 34 47 34 47s21.79 0 26.89-1.07a8 8 0 0 0 5.63-5.67A83.3 83.3 0 0 0 68 24a83.3 83.3 0 0 0-1.48-16.26Z" fill="#f00"/><path d="M27 34l18-10-18-10Z" fill="#fff"/></svg>';
+
+  function renderDemos() {
+    const copy = COPY[currentLang] || COPY.en || {};
+    const enCopy = COPY.en || {};
+    const list = document.getElementById('dm-list');
+    const registry = (copy['demos.registry'] || '').split('|').filter(Boolean);
+    // Order: admin order if set; else available (newest first) then coming-soon
+    let order;
+    const orderStr = copy['demos.order'];
+    if (orderStr) {
+      const ordered = orderStr.split('|').filter(id => registry.includes(id));
+      order = [...ordered, ...registry.filter(id => !ordered.includes(id))];
+    } else {
+      const avail = registry.filter(id => copy[`demos.${id}.coming-soon`] !== 'true');
+      const soon  = registry.filter(id => copy[`demos.${id}.coming-soon`] === 'true');
+      order = [...avail.slice().reverse(), ...soon];
+    }
+    if (!order.length) {
+      list.innerHTML = `<p class="dm-empty">${currentLang === 'fr' ? 'Pas encore de démos.' : 'No demos yet.'}</p>`;
+      return;
+    }
+    list.innerHTML = '';
+    order.forEach(id => {
+      const title  = copy[`demos.${id}.title`]  || id;
+      const desc   = copy[`demos.${id}.desc`]   || enCopy[`demos.${id}.desc`] || '';
+      const avatar = copy[`demos.${id}.avatar`] || '';
+      const link   = copy[`demos.${id}.link`]   || '';
+      const soon   = copy[`demos.${id}.coming-soon`] === 'true';
+      const ytId   = soon ? '' : ytIdFrom(link);
+      const thumb  = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : avatar;
+
+      const card = document.createElement('article');
+      card.className = 'dm-card';
+      card.innerHTML = `
+        <div class="dm-thumb ${ytId ? '' : 'no-play'}" ${ytId ? `data-ytid="${escapeHtml(ytId)}"` : ''}>
+          ${thumb ? `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(title)}" onerror="this.style.visibility='hidden'">` : ''}
+          ${ytId ? `<button class="dm-play" aria-label="Play">${PLAY_BTN}</button>` : ''}
+        </div>
+        <div class="dm-copy">
+          <p class="dm-name">${escapeHtml(title)}</p>
+          ${desc ? `<p class="dm-desc">${escapeHtml(desc)}</p>` : ''}
+        </div>
+        <div class="dm-bottom">
+          ${soon ? `<span class="dm-soon">${currentLang === 'fr' ? 'À venir' : 'Coming soon'}</span>`
+                 : (link ? `<a class="dm-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">YouTube${ARROW_SM}</a>` : '')}
+        </div>`;
+
+      const thumbEl = card.querySelector('.dm-thumb[data-ytid]');
+      if (thumbEl) {
+        thumbEl.addEventListener('click', () => {
+          const yt = thumbEl.dataset.ytid;
+          thumbEl.innerHTML = `<iframe src="https://www.youtube.com/embed/${yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+        }, { once: true });
+      }
+      list.appendChild(card);
+    });
+  }
+
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+</script>
+</body>
+</html>
