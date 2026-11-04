@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runs — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/jecours-tudonnes-onaide/runs">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#000; --lime:#c5ff55; --strava:#fc4c02;
+      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-70:#797f73; --brand-90:#282a27; --brand-100:#141513;
+      --gap-4:4px; --gap-8:8px; --gap-16:16px; --gap-24:24px; --gap-32:32px; --radius-8:8px;
+      --font-ui:'Kanit',sans-serif;
+      --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html,body { background:var(--bg); color:#fff; overflow-x:clip; -webkit-font-smoothing:antialiased; }
+    .page { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+
+    .site-header { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; height:112px; padding:var(--gap-32); background:var(--bg); }
+    .hdr-back { display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:#fff; }
+    .hdr-logo { cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+    .hdr-logo img { height:48px; width:auto; display:block; }
+    .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    .icon-back { width:28px; height:28px; }
+
+    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
+    .fr-head { font-family:var(--font-ui); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
+    .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
+
+    .run-card { border:1px solid var(--brand-90); display:flex; flex-direction:column; gap:var(--gap-8); overflow:hidden; background:var(--bg); }
+    .run-top { display:flex; align-items:center; }
+    .run-map { width:80px; height:80px; flex-shrink:0; }
+    .run-map svg { width:100%; height:100%; display:block; }
+    .run-head { display:flex; flex-direction:column; gap:var(--gap-4); justify-content:center; padding:0 var(--gap-8); min-width:0; }
+    .run-name { font-family:var(--font-ui); font-weight:700; font-size:20px; line-height:26px; text-transform:uppercase; color:var(--brand-10); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .run-date { font-family:var(--font-body); font-weight:300; font-size:14px; line-height:18px; color:var(--brand-60); }
+    .run-bodyb { display:flex; flex-direction:column; gap:var(--gap-16); padding:0 var(--gap-16) var(--gap-16); }
+    .run-stats { display:flex; gap:var(--gap-8); }
+    .run-stat { flex:1 1 0; min-width:0; padding:0 var(--gap-8); }
+    .run-stat .val { display:flex; gap:2px; align-items:baseline; }
+    .run-stat .num { font-family:var(--font-ui); font-weight:500; font-size:17px; line-height:26px; color:var(--brand-00); }
+    .run-stat .unit { font-family:var(--font-ui); font-weight:300; font-size:14px; line-height:18px; color:var(--brand-60); }
+    .run-stat .lbl { font-family:var(--font-body); font-weight:300; font-size:12px; line-height:16px; color:var(--brand-70); }
+    .run-footer { display:flex; align-items:center; justify-content:space-between; padding:0 var(--gap-8); }
+    .run-badge { font-family:var(--font-body); font-weight:300; font-size:13px; line-height:16px; color:var(--brand-60); }
+    .run-powered { font-family:var(--font-body); font-weight:300; font-size:12px; line-height:16px; color:var(--brand-70); }
+    .run-powered b { font-weight:600; color:var(--strava); }
+
+    .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); }
+
+    @media (min-width:768px) { .fr-body { max-width:720px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/jecours-tudonnes-onaide" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <main class="fr-body">
+      <div class="fr-head" id="fr-head">— / 500 km</div>
+      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
+         data-en="donate" data-fr="faire un don">donate</a>
+      <div id="runs-list"></div>
+    </main>
+  </div>
+
+  <script>
+  const KM_GOAL = 500;
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  function applyLang(lang) {
+    document.querySelectorAll('[data-en]').forEach(el => { el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent); });
+    document.documentElement.lang = lang; currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {}
+    renderHead();
+  }
+  const logo = document.getElementById('logo-toggle');
+  logo.addEventListener('click', () => applyLang(currentLang === 'fr' ? 'en' : 'fr'));
+  logo.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyLang(currentLang === 'fr' ? 'en' : 'fr'); } });
+
+  let STRAVA = null;
+  function fmtInt(n){ return Math.round(n).toLocaleString('fr-CA').replace(/ /g,' '); }
+  function renderHead(){
+    const head = document.getElementById('fr-head');
+    const km = STRAVA && typeof STRAVA.total_km === 'number' ? fmtInt(STRAVA.total_km) : '—';
+    head.textContent = currentLang === 'fr' ? `${km} / ${KM_GOAL} km parcourus` : `${km} / ${KM_GOAL} km ran so far`;
+  }
+
+  // Decode a Google/Strava encoded polyline into [[lat,lng],...]
+  function decodePolyline(str){
+    if(!str) return [];
+    let index=0, lat=0, lng=0, coords=[];
+    while(index < str.length){
+      let b, shift=0, result=0;
+      do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+      lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+      shift=0; result=0;
+      do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+      lng += (result & 1) ? ~(result >> 1) : (result >> 1);
+      coords.push([lat/1e5, lng/1e5]);
+    }
+    return coords;
+  }
+  function mapSvg(polyline){
+    const pts = decodePolyline(polyline);
+    if(pts.length < 2) return '';
+    let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;
+    pts.forEach(([la,lo])=>{ minLat=Math.min(minLat,la); maxLat=Math.max(maxLat,la); minLng=Math.min(minLng,lo); maxLng=Math.max(maxLng,lo); });
+    const S=80, P=10, w=maxLng-minLng||1e-6, h=maxLat-minLat||1e-6, sc=Math.min((S-2*P)/w,(S-2*P)/h);
+    const ox=(S-w*sc)/2, oy=(S-h*sc)/2;
+    const d = pts.map(([la,lo],i)=>{ const x=ox+(lo-minLng)*sc; const y=S-(oy+(la-minLat)*sc); return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1); }).join(' ');
+    return `<svg viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg"><path d="${d}" fill="none" stroke="#fc4c02" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+  function fmtDate(iso){
+    const d = new Date(iso); if(isNaN(d)) return '';
+    const date = new Intl.DateTimeFormat('fr-CA',{weekday:'short',day:'numeric',month:'short'}).format(d).replace(/\.$/,'');
+    const h = d.getHours(), m = String(d.getMinutes()).padStart(2,'0');
+    return `${date} · ${h} h ${m}`;
+  }
+  function fmtDuration(s){ const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60);
+    return h>=1 ? {num:`${h}:${String(m).padStart(2,'0')}`, unit:'h'} : {num:`${m}:${String(sec).padStart(2,'0')}`, unit:'min'}; }
+  function fmtPace(sPerKm){ if(!sPerKm) return {num:'—',unit:'/km'}; const m=Math.floor(sPerKm/60), s=Math.round(sPerKm%60); return {num:`${m}:${String(s).padStart(2,'0')}`, unit:'/km'}; }
+  function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function renderRuns(){
+    const list = document.getElementById('runs-list');
+    const runs = (STRAVA && Array.isArray(STRAVA.runs)) ? STRAVA.runs.slice() : [];
+    if(!runs.length){
+      list.innerHTML = `<p class="fr-empty">${currentLang==='fr'?'Aucune course pour le moment.':'No runs yet.'}</p>`;
+      return;
+    }
+    // Oldest -> newest for numbering + cumulative
+    const asc = runs.slice().sort((a,b)=> new Date(a.start_date_local||a.start_date) - new Date(b.start_date_local||b.start_date));
+    let cum=0; const meta = new Map();
+    asc.forEach((r,i)=>{ cum += Number(r.distance_km)||0; meta.set(r.id ?? i, {n:i+1, cum}); });
+    const desc = asc.slice().reverse();
+    list.innerHTML = '';
+    list.style.display='flex'; list.style.flexDirection='column'; list.style.gap='24px';
+    desc.forEach((r,i)=>{
+      const m = meta.get(r.id ?? (asc.length-1-i)) || {n:'',cum:0};
+      const dur = fmtDuration(Number(r.moving_time_s)||0);
+      const pace = fmtPace(Number(r.pace_s_per_km)||0);
+      const dist = (Number(r.distance_km)||0).toFixed(1).replace('.',',');
+      const map = mapSvg(r.polyline);
+      const card = document.createElement('article');
+      card.className='run-card';
+      card.innerHTML = `
+        <div class="run-top">
+          <div class="run-map">${map || ''}</div>
+          <div class="run-head">
+            <p class="run-name">${esc(r.name||'Course')}</p>
+            <p class="run-date">${esc(fmtDate(r.start_date_local||r.start_date))}</p>
+          </div>
+        </div>
+        <div class="run-bodyb">
+          <div class="run-stats">
+            <div class="run-stat"><div class="val"><span class="num">${dist}</span><span class="unit">km</span></div><p class="lbl">Distance</p></div>
+            <div class="run-stat"><div class="val"><span class="num">${dur.num}</span><span class="unit">${dur.unit}</span></div><p class="lbl">Durée</p></div>
+            <div class="run-stat"><div class="val"><span class="num">${pace.num}</span><span class="unit">${pace.unit}</span></div><p class="lbl">Allure</p></div>
+          </div>
+          <div class="run-footer">
+            <span class="run-badge">Course ${m.n} · ${fmtInt(m.cum)} / ${KM_GOAL} km</span>
+            <span class="run-powered">Powered by <b>Strava</b></span>
+          </div>
+        </div>`;
+      list.appendChild(card);
+    });
+  }
+
+  applyLang(currentLang);
+  fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => { STRAVA = d; renderHead(); renderRuns(); }).catch(() => { renderRuns(); });
+
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+  </script>
+</body>
+</html>

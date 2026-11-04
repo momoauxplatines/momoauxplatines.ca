@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/jecours-tudonnes-onaide/why">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;900&family=Kalnia:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#000; --lime:#c5ff55;
+      --brand-30:#dee4da; --brand-80:#51534e; --brand-100:#141513;
+      --gap-8:8px; --gap-16:16px; --gap-32:32px; --gap-56:56px;
+      --font-display:'Kalnia',serif; --font-ui:'Kanit',sans-serif;
+      --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html,body { background:var(--bg); color:#fff; overflow-x:clip; -webkit-font-smoothing:antialiased; }
+    .page { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+    .site-header { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; height:112px; padding:var(--gap-32); background:var(--bg); }
+    .hdr-back { display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:#fff; }
+    .hdr-logo { cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+    .hdr-logo img { height:48px; width:auto; display:block; }
+    .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    .icon-back { width:28px; height:28px; }
+
+    .why-body { flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; gap:var(--gap-56); padding:var(--gap-32); }
+    .why-title { font-family:var(--font-display); font-weight:700; font-size:39px; line-height:39px; text-transform:uppercase; }
+    .why-copy { font-family:var(--font-body); font-weight:300; font-size:18px; line-height:26px; color:var(--brand-30); display:flex; flex-direction:column; gap:var(--gap-16); }
+    .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
+    @media (min-width:768px) { .why-body { max-width:720px; } .why-title { font-size:48px; line-height:48px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/jecours-tudonnes-onaide" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <main class="why-body">
+      <div style="display:flex;flex-direction:column;gap:var(--gap-56);">
+        <h1 class="why-title" data-en="why?" data-fr="pourquoi?">why?</h1>
+        <div class="why-copy">
+          <!-- PLACEHOLDER — à remplacer par le vrai texte de Momo -->
+          <p data-en="Every November, I lace up and run 500 km in one month." data-fr="Chaque novembre, je chausse mes espadrilles et je cours 500 km en un mois.">Every November, I lace up and run 500 km in one month.</p>
+          <p data-en="Every kilometre is a reason to give to cancer research." data-fr="Chaque kilomètre est une raison de donner à la recherche contre le cancer.">Every kilometre is a reason to give to cancer research.</p>
+          <p data-en="Follow the runs, watch the total climb, and chip in if you can — every dollar counts." data-fr="Suis les courses, regarde le total grimper, et participe si tu peux — chaque dollar compte.">Follow the runs, watch the total climb, and chip in if you can — every dollar counts.</p>
+        </div>
+      </div>
+      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener" data-en="donate" data-fr="faire un don">donate</a>
+    </main>
+  </div>
+
+  <script>
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  function applyLang(lang){ document.querySelectorAll('[data-en]').forEach(el => { el.textContent = lang==='fr' ? (el.dataset.fr||el.textContent) : (el.dataset.en||el.textContent); }); document.documentElement.lang=lang; currentLang=lang; try{localStorage.setItem('momo-lang',lang);}catch{} }
+  applyLang(currentLang);
+  const logo = document.getElementById('logo-toggle');
+  logo.addEventListener('click', () => applyLang(currentLang==='fr'?'en':'fr'));
+  logo.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyLang(currentLang==='fr'?'en':'fr'); } });
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+  </script>
+</body>
+</html>

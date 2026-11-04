@@ -93,6 +93,27 @@
   to = "/dj-contact.html"
   status = 200
 
+# Fund raise — parcours caritatif (Je cours. Tu donnes. On aide.)
+[[redirects]]
+  from = "/jecours-tudonnes-onaide/runs"
+  to = "/fund-raise-runs.html"
+  status = 200
+
+[[redirects]]
+  from = "/jecours-tudonnes-onaide/donations"
+  to = "/fund-raise-donations.html"
+  status = 200
+
+[[redirects]]
+  from = "/jecours-tudonnes-onaide/why"
+  to = "/fund-raise-why.html"
+  status = 200
+
+[[redirects]]
+  from = "/jecours-tudonnes-onaide"
+  to = "/fund-raise.html"
+  status = 200
+
 [[redirects]]
   from = "/dj"
   to = "/dj.html"

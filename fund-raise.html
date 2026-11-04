@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund raise — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/jecours-tudonnes-onaide">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <meta property="og:title" content="Je cours. Tu donnes. On aide.">
+  <meta property="og:description" content="500 km en novembre pour la recherche contre le cancer.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://momoauxplatines.ca/jecours-tudonnes-onaide">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #000000;
+      --lime:      #c5ff55;
+      --brand-30:  #dee4da;
+      --brand-60:  #a2a89b;
+      --brand-80:  #51534e;
+      --brand-90:  #282a27;
+      --brand-100: #141513;
+      --brand-105: #111210;
+      --gap-8:  8px;
+      --gap-12: 12px;
+      --gap-16: 16px;
+      --gap-32: 32px;
+      --gap-56: 56px;
+      --radius-72: 72px;
+      --font-display: 'Kalnia', serif;
+      --font-ui: 'Kanit', sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .fr-intro { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .fr-image { display: flex; justify-content: center; }
+    .fr-image picture { display: contents; }
+    .fr-image img { width: 160px; height: 320px; object-fit: cover; object-position: bottom; display: block; background: var(--brand-100); }
+    .fr-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .fr-copy p { margin: 0; }
+
+    .fr-badges { display: flex; gap: var(--gap-8); align-items: center; }
+    .fr-badge {
+      display: inline-flex; align-items: center;
+      background: var(--brand-100); border: 1px solid var(--brand-90);
+      border-radius: var(--radius-72); padding: 6px var(--gap-12);
+      font-family: var(--font-body); font-weight: 300; font-size: 13px; line-height: 16px;
+      color: var(--brand-60); white-space: nowrap;
+    }
+
+    .btn-donate {
+      display: flex; align-items: center; justify-content: center;
+      height: 56px; width: 100%; background: var(--lime); color: var(--brand-100);
+      font-family: var(--font-ui); font-weight: 900; font-size: 20px; line-height: 26px;
+      text-transform: uppercase; text-decoration: none;
+    }
+
+    .fr-nav { display: flex; flex-direction: column; width: 100%; }
+    .fr-link {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32);
+      height: 80px; padding: var(--gap-8) var(--gap-32);
+      border-top: 0.5px solid var(--brand-80);
+      font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px;
+      text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease;
+    }
+    .fr-link:last-child { border-bottom: 0.5px solid var(--brand-80); }
+    .fr-link:hover { background: var(--brand-105); }
+
+    @media (min-width: 768px) {
+      .fr-image img { width: 320px; height: 540px; }
+      .fr-copy { font-size: 30px; line-height: 40px; }
+      .fr-link { font-size: 32px; line-height: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a class="hdr-back" href="/" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <main class="fr-intro">
+      <div class="fr-image">
+        <picture>
+          <source media="(min-width: 768px)" srcset="/images/fundraise.png">
+          <img src="/images/fundraise-mobile.png" alt="Momo en course" width="160" height="320">
+        </picture>
+      </div>
+      <div class="fr-copy">
+        <p data-key="fr.copy.1" data-en="During november"         data-fr="En novembre">During november</p>
+        <p data-key="fr.copy.2" data-en="run 500km (or more)"      data-fr="courir 500 km (ou plus)">run 500km (or more)</p>
+        <p data-key="fr.copy.3" data-en="raise 10,000$ (or more)"  data-fr="amasser 10 000 $ (ou plus)">raise 10,000$ (or more)</p>
+        <p data-key="fr.copy.4" data-en="help cancer research"     data-fr="pour la recherche contre le cancer">help cancer research</p>
+      </div>
+      <div class="fr-badges">
+        <span class="fr-badge" id="badge-km">— / 500 km</span>
+        <span class="fr-badge" id="badge-dollar">0 $</span>
+      </div>
+      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
+         data-key="fr.donate" data-en="donate" data-fr="faire un don">donate</a>
+    </main>
+
+    <nav class="fr-nav">
+      <a class="fr-link" href="/jecours-tudonnes-onaide/why">
+        <span data-key="fr.nav.why" data-en="why?" data-fr="pourquoi?">why?</span>
+        <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+      <a class="fr-link" href="/jecours-tudonnes-onaide/runs">
+        <span data-key="fr.nav.runs" data-en="runs" data-fr="courses">runs</span>
+        <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+      <a class="fr-link" href="/jecours-tudonnes-onaide/donations">
+        <span data-key="fr.nav.donations" data-en="donations" data-fr="dons">donations</span>
+        <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+  const KM_GOAL = 500;
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+
+  function applyLang(lang) {
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent);
+    });
+    document.documentElement.lang = lang; currentLang = lang;
+    try { localStorage.setItem('momo-lang', lang); } catch {}
+  }
+  applyLang(currentLang);
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  function fmtInt(n) { return Math.round(n).toLocaleString('fr-CA').replace(/ /g, ' '); }
+
+  // km badge from Strava
+  fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
+    if (d && typeof d.total_km === 'number') {
+      document.getElementById('badge-km').textContent = `${fmtInt(d.total_km)} / ${KM_GOAL} km`;
+    }
+  }).catch(() => {});
+
+  // $ badge from GoFundMe donations (sum of amounts)
+  fetch('/api/dons').then(r => r.ok ? r.json() : null).then(d => {
+    if (d && Array.isArray(d.donations)) {
+      const total = d.donations.reduce((s, x) => s + (Number(x.amount) || 0), 0);
+      document.getElementById('badge-dollar').textContent = `${fmtInt(total)} $`;
+    }
+  }).catch(() => {});
+
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+  </script>
+</body>
+</html>
