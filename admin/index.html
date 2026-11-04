@@ -1054,12 +1054,14 @@
 
   async function migrateBioToStore() {
     const btn = document.getElementById('migrate-bio-btn');
-    // Safety: never run before the store content is loaded (would wipe other copy).
-    if (!copyData.en || Object.keys(copyData.en).length < 5 || !copyData.fr || Object.keys(copyData.fr).length < 5) {
-      showToast('Contenu non chargé — connecte-toi et attends le chargement avant de migrer.', 'error');
+    if (!confirm('Importer les 14 fiches de bio du site live dans le store éditable ?\nCela définit le registre et les clés (nom, dates, description FR/EN, lien, image) pour chaque décennie.')) return;
+    // Load the full copy first (it is lazy-loaded) so we never overwrite other keys.
+    try { if (!copyData.en || !copyData.fr) await loadAllCopy(); } catch (e) {}
+    // Safety: abort if the store content still isn't loaded (would wipe other copy).
+    if (!copyData.en || !copyData.fr || Object.keys(copyData.en).length < 5 || Object.keys(copyData.fr).length < 5) {
+      showToast('Contenu non chargé — connecte-toi et réessaie.', 'error');
       return;
     }
-    if (!confirm('Importer les 14 fiches de bio du site live dans le store éditable ?\nCela définit le registre et les clés (nom, dates, description FR/EN, lien, image) pour chaque décennie.')) return;
     if (btn) { btn.disabled = true; btn.textContent = 'Migration…'; }
     try {
       for (const lang of ['en', 'fr']) {
