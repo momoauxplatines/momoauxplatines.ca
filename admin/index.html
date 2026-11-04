@@ -472,7 +472,6 @@
     <!-- ── TIMELINE ── -->
     <section class="admin-section" id="timeline-section">
       <h2 class="section-heading" data-i18n="section.timeline">Timeline</h2>
-      <button class="btn-admin" id="migrate-bio-btn" style="align-self:flex-start;margin-bottom:12px;">Migrer la bio vers le store</button>
 
       <div style="display:flex;flex-direction:column;gap:24px;" id="decade-2020">
         <div class="decade-title-row">
@@ -1005,89 +1004,10 @@
     { id: 'sunday-brunch-mnsuri1b',   title: 'Sunday Brunch',    thumb: '/images/demos/sunday-brunch-mnsuri1b.jpg',            ytId: 'Dc_TQ0Wi0xg', descKey: 'demos.sunday-brunch-mnsuri1b.desc' },
   ];
 
-  const TIMELINE = {
-    '2020': [
-      { id: 'buvette-simone', name: 'La Buvette chez Simone', dates: '2023–2025', instagram: 'https://www.instagram.com/labuvettechezsimone', avatar: '../images/timeline-buvette-simone.jpg', roleKey: 'timeline.buvette-simone.desc' },
-      { id: 'twitch',         name: 'Twitch',                  dates: '2021–2023', instagram: 'https://www.twitch.tv/muhammadalias/about',     avatar: '../images/timeline-twitch.png',         roleKey: 'timeline.twitch.desc'         },
-      { id: 'demain',         name: "Demain c'est loin",       dates: '2021–2023', instagram: 'https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique', avatar: '../images/timeline-demain.png', roleKey: 'timeline.demain.desc' },
-      { id: 'les-yeux-bleus', name: 'Les Yeux Bleus',          dates: '2022–2023', instagram: 'https://www.instagram.com/barlesyeuxbleus/', avatar: '../images/timeline-les-yeux-bleus.png', roleKey: 'timeline.les-yeux-bleus.desc' },
-    ],
-    '2010': [
-      { id: 'focus', name: 'Focus on the two monsters', dates: '2010–2020', instagram: '', avatar: '../images/timeline-focus.png', roleKey: 'timeline.focus.desc' },
-    ],
-    '2000': [
-      { id: 'taktika',  name: 'Taktika',  dates: '2000–2012', instagram: 'https://taktika.ca/', avatar: '../images/timeline-taktika.jpg', roleKey: 'timeline.taktika.desc' },
-      { id: '83',       name: '83',       dates: '2002–2009', instagram: 'https://tidal.com/artist/3668374/u', avatar: '../images/timeline-83.jpg', roleKey: 'timeline.83.desc' },
-      { id: 'club-dj',  name: 'Club DJ',  dates: '2000–2006', instagram: '', avatar: '../images/timeline-club-dj.jpg', roleKey: null },
-    ],
-    '1990': [
-      { id: 'la-constellation', name: 'La Constellation', dates: '1998–1999', instagram: 'https://www.youtube.com/watch?v=IkPuf9plNyA', avatar: '../images/timeline-la-constellation.jpg', roleKey: 'timeline.la-constellation.desc' },
-      { id: 'ast-du-son',       name: 'AST du Son',       dates: '1998–2002', instagram: 'https://chyz.ca/emission/les-arshitechs-du-son/', avatar: '../images/timeline-ast-du-son.png', roleKey: 'timeline.ast-du-son.desc' },
-    ],
-  };
+  // Timeline/bio entries live entirely in the editable store (copyData). The admin
+  // reads them from the per-decade registry; no hardcoded defaults.
+  const TIMELINE = { '2020': [], '2010': [], '2000': [], '1990': [] };
 
-  // ── Bio migration (one-time seed of the live timeline into the editable store) ──
-  const BIO_SEED = {
-    '1990': [
-      { id: "la-constellation", name: "La Constellation", dates: "1998–1999", link: "https://www.youtube.com/watch?v=IkPuf9plNyA", avatar: "/images/timeline-la-constellation.jpg", desc_en: "Touring across Quebec with this popular rap group signed to a major record label.", desc_fr: "En tournée à travers le Québec avec ce groupe de rap populaire signé sur une grande maison de disques." },
-      { id: "ast-du-son", name: "AST du Son", dates: "1998–2002", link: "https://chyz.ca/emission/les-arshitechs-du-son/", avatar: "/images/timeline-ast-du-son.png", desc_en: "DJ and host collaborating on the radio show specializing in French-language rap featuring Quebec and French rap.", desc_fr: "DJ et animateur collaborateur de l'émission de radio spécialisée en rap francophone mettant en vedette le rap québécois et français." },
-    ],
-    '2000': [
-      { id: "taktika", name: "Taktika", dates: "2000–2012", link: "https://taktika.ca/", avatar: "/images/timeline-taktika.jpg", desc_en: "Touring DJ with one of the pioneering Quebec rap groups across the Canadian Francophonie who has collaborated with the entire hip-hop community.", desc_fr: "DJ de tournée avec un des groupes pionniers du rap québécois à travers la francophonie canadienne qui a collaboré avec toute la communauté hip-hop." },
-      { id: "club-dj", name: "Club DJ", dates: "2000–2006", link: "", avatar: "/images/timeline-club-dj.jpg", desc_en: "Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…", desc_fr: "Liquid, Dagobert, Frankie's, Fixion, Maurice, Boudoir, Cercle, Sinclair, Cube After hours…" },
-      { id: "83", name: "83", dates: "2002–2009", link: "https://tidal.com/artist/3668374/u", avatar: "/images/timeline-83.jpg", desc_en: "Studio recorded scratches and live shows with the iconic band from the Explicit Productions label.", desc_fr: "Scratches en studio et shows avec le groupe emblématique du label Explicit Productions." },
-      { id: "source", name: "Source @ CHYZ 94.3 FM", dates: "2002–2009", link: "", avatar: "/images/timeline-source.png", desc_en: "Host and DJ of a mixed weekly hip-hop radio show.", desc_fr: "Animateur et DJ d'un show de radio hip-hop hebdomadaire." },
-      { id: "pagail", name: "Pagail", dates: "2002", link: "https://tidal.com/album/189830926/u", avatar: "/images/timeline-pagail.jpg", desc_en: "Studio recorded scratches on the one and only album \"C'est pour les miens\".", desc_fr: "Scratches sur le seul et unique album \"C'est pour les miens\"." },
-      { id: "red-bull", name: "Red Bull", dates: "2003–2007", link: "", avatar: "/images/timeline-red-bull.png", desc_en: "Event DJ for extreme sports activities sponsored by the company.", desc_fr: "DJ événementiel pour les activités de sports extrêmes commanditées par la compagnie." },
-      { id: "quebec-kebs", name: "Quebec Kebs", dates: "2006–2009", link: "", avatar: "/images/timeline-quebec-kebs.png", desc_en: "DJ for the ABA professional basketball team.", desc_fr: "DJ pour l'équipe de basketball professionnelle de la ABA." },
-    ],
-    '2010': [
-      { id: "focus", name: "Focus on the two monsters", dates: "2010–2020", link: "", avatar: "/images/timeline-focus.png", desc_en: "Took a lot of time out of the dj business but still did it for fun at the house and at friends'. Some show with Taktika too.", desc_fr: "A consacré beaucoup de temps hors de l'industrie DJ mais a continué pour le plaisir à la maison. Quelques shows avec Taktika aussi." },
-    ],
-    '2020': [
-      { id: "twitch", name: "Twitch", dates: "2021–2023", link: "https://www.twitch.tv/muhammadalias/about", avatar: "/images/timeline-twitch.png", desc_en: "Weekly Friday happy hour streamer. Raid train and all.", desc_fr: "Streamer hebdomadaire du vendredi 5@7." },
-      { id: "demain", name: "Demain c'est loin", dates: "2021–2023", link: "https://baladoquebec.ca/demain-cest-loin-cjmd-969-fm-levis-lalternative-radiophonique", avatar: "/images/timeline-demain.png", desc_en: "Host and DJ of a hip-hop radio show at CJMD.", desc_fr: "Animateur et DJ d'un show de radio hip-hop hebdomadaire." },
-      { id: "les-yeux-bleus", name: "Les Yeux Bleus", dates: "2022–2023", link: "", avatar: "/images/timeline-les-yeux-bleus.png", desc_en: "Série \"Le get down\" et sets de terrasse roots reggae.", desc_fr: "Série \"Le get down\" et sets de terrasse roots reggae." },
-      { id: "buvette-simone", name: "La buvette chez Simone", dates: "2023–2025", link: "https://www.instagram.com/labuvettechezsimone", avatar: "/images/timeline-buvette-simone.jpg", desc_en: "DJ ambianceur", desc_fr: "DJ ambianceur" },
-    ],
-  };
-
-  async function migrateBioToStore() {
-    const btn = document.getElementById('migrate-bio-btn');
-    if (!confirm('Importer les 14 fiches de bio du site live dans le store éditable ?\nCela définit le registre et les clés (nom, dates, description FR/EN, lien, image) pour chaque décennie.')) return;
-    // Load the full copy first (it is lazy-loaded) so we never overwrite other keys.
-    try { if (!copyData.en || !copyData.fr) await loadAllCopy(); } catch (e) {}
-    // Safety: abort if the store content still isn't loaded (would wipe other copy).
-    if (!copyData.en || !copyData.fr || Object.keys(copyData.en).length < 5 || Object.keys(copyData.fr).length < 5) {
-      showToast('Contenu non chargé — connecte-toi et réessaie.', 'error');
-      return;
-    }
-    if (btn) { btn.disabled = true; btn.textContent = 'Migration…'; }
-    try {
-      for (const lang of ['en', 'fr']) {
-        if (!copyData[lang]) copyData[lang] = {};
-        for (const dec of ['1990', '2000', '2010', '2020']) {
-          const entries = BIO_SEED[dec] || [];
-          copyData[lang][`timeline.${dec}.registry`] = entries.map(e => e.id).join('|');
-          entries.forEach(e => {
-            copyData[lang][`timeline.${e.id}.name`]      = e.name;
-            copyData[lang][`timeline.${e.id}.dates`]     = e.dates;
-            copyData[lang][`timeline.${e.id}.instagram`] = e.link;
-            copyData[lang][`timeline.${e.id}.avatar`]    = e.avatar;
-            copyData[lang][`timeline.${e.id}.desc`]      = (lang === 'fr') ? e.desc_fr : e.desc_en;
-          });
-        }
-        await saveCopy(lang, `Migrate bio timeline to store (${lang})`);
-      }
-      showToast('Bio migrée dans le store ✓', 'success');
-      if (typeof renderTimeline === 'function') renderTimeline();
-    } catch (e) {
-      showToast('Échec de la migration: ' + e.message, 'error');
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Migrer la bio vers le store'; }
-    }
-  }
-  document.getElementById('migrate-bio-btn')?.addEventListener('click', migrateBioToStore);
 
   // ── State ──────────────────────────────────────────────────────────────────
   let token = localStorage.getItem('momo_admin_token') || '';
@@ -1683,6 +1603,28 @@
     });
   }
 
+  async function deleteTimeline(id, decade) {
+    if (!id || !decade) return;
+    const item = TIMELINE[decade]?.find(x => x.id === id);
+    if (!confirm(`${t('form.gig.delete')} — "${item?.name || id}" ?`)) return;
+    closeForm();
+    if (TIMELINE[decade]) { const i = TIMELINE[decade].findIndex(x => x.id === id); if (i >= 0) TIMELINE[decade].splice(i, 1); }
+    renderTimeline();
+    try {
+      for (const lang of ['en', 'fr']) {
+        if (!copyData[lang]) continue;
+        copyData[lang][`timeline.${decade}.registry`] = (copyData[lang][`timeline.${decade}.registry`] || '')
+          .split('|').filter(Boolean).filter(x => x !== id).join('|');
+        Object.keys(copyData[lang]).forEach(k => { if (k.startsWith(`timeline.${id}.`)) delete copyData[lang][k]; });
+        await saveCopy(lang, `Delete timeline: ${id} (${lang})`);
+      }
+      showToast(`"${item?.name || id}" ${t('toast.deleted')}`, 'success');
+    } catch (e) {
+      showToast(t('toast.delete.failed') + e.message, 'error');
+      loadAllCopy().then(() => renderTimeline());
+    }
+  }
+
   // ── Delegated click handler ───────────────────────────────────────────────────
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
@@ -1693,6 +1635,7 @@
     if (action === 'edit-demo')     openForm('demo',     DEMOS.find(d => d.id === id));
     if (action === 'delete-demo')   deleteDemo(id);
     if (action === 'edit-timeline') openForm('timeline', { item: TIMELINE[decade]?.find(x => x.id === id), decade });
+    if (action === 'delete-timeline') deleteTimeline(id, decade);
     if (action === 'edit-gig')      openEventDetail(parseInt(index));
     if (action === 'delete-gig')    deleteGig(parseInt(index));
     if (action === 'open-requests') openEventDetail(parseInt(index));
@@ -1915,7 +1858,8 @@
         <div class="edit-field">
           <label class="edit-label">${t('form.timeline.link.label')}</label>
           <input class="edit-input ${isNew ? 'empty' : ''}" type="url" id="ef-link" value="${isNew ? '' : esc(copy('timeline.' + item.id + '.instagram') || item.instagram)}" placeholder="https://...">
-        </div>`;
+        </div>
+        ${!isNew ? `<button class="btn-delete-gig" data-action="delete-timeline" data-id="${item.id}" data-decade="${meta.decade}">${t('form.gig.delete')}</button>` : ''}`;
       const imgInput = document.getElementById('ef-img-input');
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
