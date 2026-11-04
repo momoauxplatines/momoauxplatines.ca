@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donations — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/jecours-tudonnes-onaide/donations">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#000; --lime:#c5ff55; --strava:#fc4c02;
+      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-90:#282a27; --brand-100:#141513;
+      --gap-4:4px; --gap-8:8px; --gap-12:12px; --gap-16:16px; --gap-24:24px; --gap-32:32px; --radius-72:72px;
+      --font-ui:'Kanit',sans-serif;
+      --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html,body { background:var(--bg); color:#fff; overflow-x:clip; -webkit-font-smoothing:antialiased; }
+    .page { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+
+    .site-header { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; height:112px; padding:var(--gap-32); background:var(--bg); }
+    .hdr-back { display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:#fff; }
+    .hdr-logo { cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+    .hdr-logo img { height:48px; width:auto; display:block; }
+    .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    .icon-back { width:28px; height:28px; }
+
+    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
+    .fr-head { font-family:var(--font-ui); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
+    .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
+
+    .don-list { display:flex; flex-direction:column; gap:var(--gap-24); }
+    .don-card { display:flex; gap:var(--gap-12); align-items:center; height:72px; padding:var(--gap-16); }
+    .don-info { flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:var(--gap-4); }
+    .don-name-row { display:flex; gap:var(--gap-8); align-items:center; }
+    .don-name { font-family:var(--font-ui); font-weight:500; font-size:17px; line-height:22px; color:var(--brand-10); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .don-new { background:rgba(252,76,2,0.15); color:var(--strava); border-radius:var(--radius-72); padding:2px var(--gap-8); font-family:var(--font-body); font-weight:300; font-size:11px; line-height:14px; white-space:nowrap; flex-shrink:0; }
+    .don-date { font-family:var(--font-body); font-weight:300; font-size:14px; line-height:18px; color:var(--brand-60); }
+    .don-amount { font-family:var(--font-ui); font-weight:700; font-size:22px; line-height:26px; color:var(--brand-00); white-space:nowrap; }
+
+    @keyframes don-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+    .don-card.enter { animation:don-in 0.4s ease; }
+
+    .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); }
+    @media (min-width:768px) { .fr-body { max-width:720px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/jecours-tudonnes-onaide" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <main class="fr-body">
+      <div class="fr-head" id="fr-head">— $</div>
+      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
+         data-en="donate" data-fr="faire un don">donate</a>
+      <div class="don-list" id="don-list"></div>
+    </main>
+  </div>
+
+  <script>
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  function applyLang(lang) {
+    document.querySelectorAll('[data-en]').forEach(el => { el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent); });
+    document.documentElement.lang = lang; currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {}
+    renderHead(); renderDons(false);
+  }
+  const logo = document.getElementById('logo-toggle');
+  logo.addEventListener('click', () => applyLang(currentLang === 'fr' ? 'en' : 'fr'));
+  logo.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyLang(currentLang === 'fr' ? 'en' : 'fr'); } });
+
+  let DONS = null;
+  let seenIds = new Set();
+  function fmtInt(n){ return Math.round(n).toLocaleString('fr-CA').replace(/ /g,' '); }
+  function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function donationsTotal(){ return (DONS && Array.isArray(DONS.donations)) ? DONS.donations.reduce((s,x)=>s+(Number(x.amount)||0),0) : 0; }
+  function renderHead(){
+    const h = document.getElementById('fr-head');
+    const t = fmtInt(donationsTotal());
+    h.textContent = currentLang === 'fr' ? `${t} $ amassés jusqu'ici` : `${t} $ collected so far`;
+  }
+  function fmtDate(iso){
+    const d = new Date(iso); if(isNaN(d)) return '';
+    const date = new Intl.DateTimeFormat('fr-CA',{weekday:'short',day:'numeric',month:'short'}).format(d).replace(/\.$/,'');
+    return `${date} · ${d.getHours()} h ${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  function isRecent(iso){ const d=new Date(iso); return !isNaN(d) && (Date.now()-d.getTime()) < 3600*1000; }
+
+  function renderDons(animateNew){
+    const list = document.getElementById('don-list');
+    const dons = (DONS && Array.isArray(DONS.donations)) ? DONS.donations.slice() : [];
+    if(!dons.length){
+      list.innerHTML = `<p class="fr-empty">${currentLang==='fr'?'Aucun don pour le moment — sois le premier !':'No donations yet — be the first!'}</p>`;
+      return;
+    }
+    list.innerHTML = '';
+    dons.forEach(x => {
+      const id = x.id ?? (x.name + x.created_at);
+      const isNew = (x.is_new === true) || isRecent(x.created_at);
+      const name = x.anonymous ? (currentLang==='fr'?'Anonyme':'Anonymous') : (x.name || (currentLang==='fr'?'Anonyme':'Anonymous'));
+      const card = document.createElement('div');
+      card.className = 'don-card' + (animateNew && !seenIds.has(id) ? ' enter' : '');
+      card.innerHTML = `
+        <div class="don-info">
+          <div class="don-name-row">
+            <span class="don-name">${esc(name)}</span>
+            ${isNew ? `<span class="don-new">${currentLang==='fr'?'Nouveau':'New'}</span>` : ''}
+          </div>
+          <span class="don-date">${esc(fmtDate(x.created_at))}</span>
+        </div>
+        <span class="don-amount">${fmtInt(Number(x.amount)||0)} $</span>`;
+      list.appendChild(card);
+      seenIds.add(id);
+    });
+  }
+
+  function load(animateNew){
+    fetch('/api/dons').then(r => r.ok ? r.json() : null).then(d => { if(d){ DONS = d; renderHead(); renderDons(animateNew); } }).catch(() => renderDons(false));
+  }
+  applyLang(currentLang);
+  load(false);
+  // New donations arriving while viewing slide in at the top.
+  setInterval(() => load(true), 60000);
+
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+  </script>
+</body>
+</html>
