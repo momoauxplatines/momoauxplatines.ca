@@ -12,19 +12,21 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;900&family=Kalnia:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --bg:#000; --lime:#c5ff55;
-      --brand-30:#dee4da; --brand-80:#51534e; --brand-100:#141513;
-      --gap-8:8px; --gap-16:16px; --gap-32:32px; --gap-56:56px;
-      --font-display:'Kalnia',serif; --font-ui:'Kanit',sans-serif;
+      --brand-80:#51534e; --brand-100:#141513;
+      --gap-8:8px; --gap-32:32px; --gap-56:56px;
+      --font-display:'Kalnia',serif;
+      --font-ui:'Kanit',sans-serif;
       --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
     }
     * { box-sizing:border-box; margin:0; padding:0; }
     html,body { background:var(--bg); color:#fff; overflow-x:clip; -webkit-font-smoothing:antialiased; }
     .page { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+
     .site-header { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; height:112px; padding:var(--gap-32); background:var(--bg); }
     .hdr-back { display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:#fff; }
     .hdr-logo { cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
@@ -32,11 +34,33 @@
     .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
     .icon-back { width:28px; height:28px; }
 
-    .why-body { flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; gap:var(--gap-56); padding:var(--gap-32); }
+    .why-intro { display:flex; flex-direction:column; gap:var(--gap-56); padding:var(--gap-32); }
     .why-title { font-family:var(--font-display); font-weight:700; font-size:39px; line-height:39px; text-transform:uppercase; }
-    .why-copy { font-family:var(--font-body); font-weight:300; font-size:18px; line-height:26px; color:var(--brand-30); display:flex; flex-direction:column; gap:var(--gap-16); }
-    .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
-    @media (min-width:768px) { .why-body { max-width:720px; } .why-title { font-size:48px; line-height:48px; } }
+    .why-sub { font-family:var(--font-display); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; }
+    .why-sub p { margin:0; }
+
+    .why-list { display:grid; grid-template-columns:1fr; border-top:0.5px solid var(--brand-80); }
+    .why-card {
+      display:flex; flex-direction:column; gap:var(--gap-8);
+      padding:var(--gap-32);
+      border-bottom:0.5px solid var(--brand-80);
+    }
+    .why-card h2 { font-family:var(--font-display); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
+    .why-card p { font-family:var(--font-body); font-weight:300; font-size:19px; line-height:28px; color:#fff; }
+
+    .why-donate {
+      display:flex; align-items:center; justify-content:center; height:56px;
+      margin:var(--gap-32);
+      background:var(--lime); color:var(--brand-100);
+      font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px;
+      text-transform:uppercase; text-decoration:none;
+    }
+
+    @media (min-width:768px) {
+      .why-title { font-size:48px; line-height:48px; }
+      .why-list { grid-template-columns:1fr 1fr; }
+      .why-card:nth-child(odd) { border-right:0.5px solid var(--brand-80); }
+    }
   </style>
 </head>
 <body>
@@ -50,18 +74,40 @@
       </div>
     </header>
 
-    <main class="why-body">
-      <div style="display:flex;flex-direction:column;gap:var(--gap-56);">
-        <h1 class="why-title" data-en="why?" data-fr="pourquoi?">why?</h1>
-        <div class="why-copy">
-          <!-- PLACEHOLDER — à remplacer par le vrai texte de Momo -->
-          <p data-en="Every November, I lace up and run 500 km in one month." data-fr="Chaque novembre, je chausse mes espadrilles et je cours 500 km en un mois.">Every November, I lace up and run 500 km in one month.</p>
-          <p data-en="Every kilometre is a reason to give to cancer research." data-fr="Chaque kilomètre est une raison de donner à la recherche contre le cancer.">Every kilometre is a reason to give to cancer research.</p>
-          <p data-en="Follow the runs, watch the total climb, and chip in if you can — every dollar counts." data-fr="Suis les courses, regarde le total grimper, et participe si tu peux — chaque dollar compte.">Follow the runs, watch the total climb, and chip in if you can — every dollar counts.</p>
-        </div>
+    <section class="why-intro">
+      <h1 class="why-title" data-en="why" data-fr="pourquoi">why</h1>
+      <div class="why-sub">
+        <p data-en="goals are productive" data-fr="les objectifs, ça aide">goals are productive</p>
+        <p data-en="people need a hand"   data-fr="on a tous besoin d'un coup de main">people need a hand</p>
+        <p data-en="science helps a lot"  data-fr="la science aide beaucoup">science helps a lot</p>
+        <p data-en="care and inspire"      data-fr="prendre soin et inspirer">care and inspire</p>
       </div>
-      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener" data-en="donate" data-fr="faire un don">donate</a>
+    </section>
+
+    <main class="why-list">
+      <article class="why-card">
+        <h2 data-en="goals are productive" data-fr="les objectifs, ça aide">goals are productive</h2>
+        <p data-en="Setting yourself a goal limits the time spent doubting. And since time is precious, we should spend most of it doing good things."
+           data-fr="Se fixer un objectif réduit le temps passé à douter. Et comme le temps est précieux, autant en passer le plus possible à faire du bien.">Setting yourself a goal limits the time spent doubting. And since time is precious, we should spend most of it doing good things.</p>
+      </article>
+      <article class="why-card">
+        <h2 data-en="people need a hand" data-fr="on a tous besoin d'un coup de main">people need a hand</h2>
+        <p data-en="I needed a hand this past year. I was lucky to meet the right people at the right time, and to benefit instantly from my family's, friends' and community's support. But not everybody has the same chance, at the right moment or at all. So let's be there for them."
+           data-fr="J'ai eu besoin d'un coup de main cette dernière année. J'ai eu la chance de rencontrer les bonnes personnes au bon moment et de recevoir aussitôt le soutien de ma famille, de mes amis et de ma communauté. Mais tout le monde n'a pas cette chance, au bon moment ou tout court. Alors soyons là pour eux.">I needed a hand this past year. I was lucky to meet the right people at the right time, and to benefit instantly from my family's, friends' and community's support. But not everybody has the same chance, at the right moment or at all. So let's be there for them.</p>
+      </article>
+      <article class="why-card">
+        <h2 data-en="science helps a lot" data-fr="la science aide beaucoup">science helps a lot</h2>
+        <p data-en="To battle cancer, science shows up. It did for me and for all of us battling this beast every day — helping to spot it fast and precisely, to get the cancer out efficiently, and to minimise the aftershock so people can go back to their life in a flash."
+           data-fr="Contre le cancer, la science répond présente. Elle l'a fait pour moi et pour nous tous qui affrontons cette bête chaque jour — en aidant à le dépister vite et avec précision, à l'enlever efficacement, et à adoucir l'après pour que les gens retrouvent leur vie au plus vite.">To battle cancer, science shows up. It did for me and for all of us battling this beast every day — helping to spot it fast and precisely, to get the cancer out efficiently, and to minimise the aftershock so people can go back to their life in a flash.</p>
+      </article>
+      <article class="why-card">
+        <h2 data-en="care and inspire" data-fr="prendre soin et inspirer">care and inspire</h2>
+        <p data-en="Just like the Quebec Cancer Foundation, I'd like you to join the fundraiser to give back to the people who need extra help while facing this challenging situation — providing someone to talk to, shelter, therapy and many other game-changing services to cancer fighters across Quebec."
+           data-fr="Comme la Fondation québécoise du cancer, j'aimerais que tu te joignes à la collecte pour redonner aux personnes qui ont besoin d'aide supplémentaire face à cette épreuve — en offrant une oreille, un hébergement, de la thérapie et bien d'autres services déterminants aux personnes touchées partout au Québec.">Just like the Quebec Cancer Foundation, I'd like you to join the fundraiser to give back to the people who need extra help while facing this challenging situation — providing someone to talk to, shelter, therapy and many other game-changing services to cancer fighters across Quebec.</p>
+      </article>
     </main>
+
+    <a class="why-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener" data-en="donate" data-fr="faire un don">donate</a>
   </div>
 
   <script>
