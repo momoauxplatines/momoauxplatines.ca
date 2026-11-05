@@ -17,7 +17,7 @@
   <style>
     :root {
       --bg:#000; --lime:#c5ff55; --strava:#fc4c02;
-      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-90:#282a27; --brand-100:#141513;
+      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-80:#51534e; --brand-90:#282a27; --brand-100:#141513;
       --gap-4:4px; --gap-8:8px; --gap-12:12px; --gap-16:16px; --gap-24:24px; --gap-32:32px; --radius-72:72px;
       --font-ui:'Kanit',sans-serif;
       --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
@@ -33,12 +33,13 @@
     .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
     .icon-back { width:28px; height:28px; }
 
-    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
+    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; }
+    .fr-top { display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
     .fr-head { font-family:var(--font-ui); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
     .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
 
-    .don-list { display:flex; flex-direction:column; gap:var(--gap-24); }
-    .don-card { display:flex; gap:var(--gap-12); align-items:center; height:72px; padding:var(--gap-16); }
+    .don-list { display:grid; grid-template-columns:1fr; border-top:0.5px solid var(--brand-80); }
+    .don-card { display:flex; gap:var(--gap-12); align-items:center; padding:var(--gap-32); border-bottom:0.5px solid var(--brand-80); }
     .don-info { flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:var(--gap-4); }
     .don-name-row { display:flex; gap:var(--gap-8); align-items:center; }
     .don-name { font-family:var(--font-ui); font-weight:500; font-size:17px; line-height:22px; color:var(--brand-10); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -49,8 +50,19 @@
     @keyframes don-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
     .don-card.enter { animation:don-in 0.4s ease; }
 
-    .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); }
-    @media (min-width:768px) { .fr-body { max-width:720px; } }
+    .fr-empty { grid-column:1 / -1; font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); padding:0 var(--gap-32); }
+    /* Tablette portrait : 2 colonnes */
+    @media (min-width:768px) {
+      .don-list { grid-template-columns:1fr 1fr; }
+      .don-card { border-right:0.5px solid var(--brand-80); }
+      .don-card:nth-child(2n) { border-right:none; }
+    }
+    /* Tablette paysage + desktop : 3 colonnes */
+    @media (min-width:1024px) {
+      .don-list { grid-template-columns:1fr 1fr 1fr; }
+      .don-card:nth-child(2n) { border-right:0.5px solid var(--brand-80); }
+      .don-card:nth-child(3n) { border-right:none; }
+    }
   </style>
 </head>
 <body>
@@ -65,9 +77,11 @@
     </header>
 
     <main class="fr-body">
-      <div class="fr-head" id="fr-head">— $</div>
-      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
-         data-en="donate" data-fr="faire un don">donate</a>
+      <div class="fr-top">
+        <div class="fr-head" id="fr-head">— $</div>
+        <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
+           data-en="donate" data-fr="faire un don">donate</a>
+      </div>
       <div class="don-list" id="don-list"></div>
     </main>
   </div>
