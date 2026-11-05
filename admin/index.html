@@ -120,6 +120,7 @@
     .sch-mini { height: 30px; padding: 0 12px; font-size: 14px; border-radius: 8px; }
     .sch-del { color: var(--red, #d34242); }
     .sch-add { align-self: flex-start; height: 32px; padding: 0 14px; font-size: 14px; margin-top: 4px; }
+    .sch-hidden > .sch-row > .sch-lbl, .sch-hidden.sch-row > .sch-lbl { opacity: 0.4; text-decoration: line-through; }
     .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-30); text-transform: uppercase; line-height: 31px; }
     .decade-title-row { display: flex; align-items: center; justify-content: space-between; }
     .decade-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; line-height: 26px; }
@@ -1669,34 +1670,67 @@
     if (!root) return;
     const sections = schoolReg('school');
     if (!sections.length) { root.innerHTML = `<div class="empty-state">${t('no.entries')}</div>`; return; }
+    const eye = hidden => hidden ? '👁 Afficher' : '🚫 Masquer';
     root.innerHTML = sections.map(sec => {
       const sTitle = copy(`school.${sec}.title`) || sec;
-      const articles = schoolReg(`school.${sec}`);
-      const artHtml = articles.map(a => {
-        const aTitle = copy(`school.${sec}.${a}.title`) || a;
-        const blocks = schoolBlocks(`school.${sec}.${a}`);
-        const blkHtml = blocks.map(b => {
-          const bTitle = copy(`school.${sec}.${a}.${b}.title`) || b;
-          return `<div class="sch-row sch-l3"><span class="sch-lbl">${esc(bTitle)}</span>
-            <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">${t('btn.edit')}</button>
-            <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">✕</button></span></div>`;
+      const sHidden = copy(`school.${sec}.hidden`) === 'true';
+      let inner;
+      if (sec === 'reviews') {
+        // Section "reviews" = cartes d'avis (pas d'articles)
+        const cards = schoolReg('school.reviews');
+        const cardHtml = cards.map(id => {
+          const nm = copy(`school.reviews.${id}.name`) || id;
+          const h = copy(`school.reviews.${id}.hidden`) === 'true';
+          return `<div class="sch-row sch-l3 ${h ? 'sch-hidden' : ''}"><span class="sch-lbl">${esc(nm)}</span>
+            <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="toggle-school-review" data-id="${id}">${eye(h)}</button>
+            <button class="btn-card-edit sch-mini" data-action="edit-school-review" data-id="${id}">${t('btn.edit')}</button>
+            <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-review" data-id="${id}">✕</button></span></div>`;
         }).join('');
-        return `<div class="sch-group sch-l2">
-          <div class="sch-row"><span class="sch-lbl">${esc(aTitle)}</span>
-            <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-article" data-section="${sec}" data-id="${a}">${t('btn.edit')}</button>
-            <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-article" data-section="${sec}" data-id="${a}">✕</button></span></div>
-          ${blkHtml}
-          <button class="btn-admin sch-add" data-action="add-school-block" data-section="${sec}" data-article="${a}">+ Bloc</button>
-        </div>`;
-      }).join('');
-      return `<div class="sch-group sch-l1">
+        inner = `${cardHtml}<button class="btn-admin sch-add" data-action="add-school-review">+ Avis</button>`;
+      } else {
+        const articles = schoolReg(`school.${sec}`);
+        inner = articles.map(a => {
+          const aTitle = copy(`school.${sec}.${a}.title`) || a;
+          const aHidden = copy(`school.${sec}.${a}.hidden`) === 'true';
+          const blocks = schoolBlocks(`school.${sec}.${a}`);
+          const blkHtml = blocks.map(b => {
+            const bTitle = copy(`school.${sec}.${a}.${b}.title`) || b;
+            return `<div class="sch-row sch-l3"><span class="sch-lbl">${esc(bTitle)}</span>
+              <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">${t('btn.edit')}</button>
+              <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">✕</button></span></div>`;
+          }).join('');
+          return `<div class="sch-group sch-l2 ${aHidden ? 'sch-hidden' : ''}">
+            <div class="sch-row"><span class="sch-lbl">${esc(aTitle)}</span>
+              <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="toggle-school-article" data-section="${sec}" data-id="${a}">${eye(aHidden)}</button>
+              <button class="btn-card-edit sch-mini" data-action="edit-school-article" data-section="${sec}" data-id="${a}">${t('btn.edit')}</button>
+              <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-article" data-section="${sec}" data-id="${a}">✕</button></span></div>
+            ${blkHtml}
+            <button class="btn-admin sch-add" data-action="add-school-block" data-section="${sec}" data-article="${a}">+ Bloc</button>
+          </div>`;
+        }).join('');
+        inner += `<button class="btn-admin sch-add" data-action="add-school-article" data-section="${sec}">+ Article</button>`;
+      }
+      return `<div class="sch-group sch-l1 ${sHidden ? 'sch-hidden' : ''}">
         <div class="sch-row sch-sec"><span class="sch-lbl">${esc(sTitle)}</span>
-          <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-section" data-id="${sec}">${t('btn.edit')}</button>
+          <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="toggle-school-section" data-id="${sec}">${eye(sHidden)}</button>
+          <button class="btn-card-edit sch-mini" data-action="edit-school-section" data-id="${sec}">${t('btn.edit')}</button>
           <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-section" data-id="${sec}">✕</button></span></div>
-        ${artHtml}
-        <button class="btn-admin sch-add" data-action="add-school-article" data-section="${sec}">+ Article</button>
+        ${inner}
       </div>`;
     }).join('');
+  }
+
+  async function toggleSchoolHidden(baseKey) {
+    const now = copy(`${baseKey}.hidden`) === 'true';
+    try {
+      for (const lang of ['en', 'fr']) {
+        if (!copyData[lang]) continue;
+        copyData[lang][`${baseKey}.hidden`] = now ? 'false' : 'true';
+        await saveCopy(lang, `Toggle hidden ${baseKey} (${lang})`);
+      }
+      renderSchool();
+      showToast(now ? t('toast.entry.saved') : t('toast.entry.saved'), 'success');
+    } catch (e) { showToast(t('toast.delete.failed') + e.message, 'error'); loadAllCopy().then(renderSchool); }
   }
 
   function renderCurator() {
@@ -1740,6 +1774,12 @@
     if (action === 'edit-school-article')   openForm('school-article', { section, slug: id });
     if (action === 'add-school-block')      openForm('school-block',   { section, article });
     if (action === 'edit-school-block')     openForm('school-block',   { section, article, id });
+    if (action === 'toggle-school-section') toggleSchoolHidden(`school.${id}`);
+    if (action === 'toggle-school-article') toggleSchoolHidden(`school.${section}.${id}`);
+    if (action === 'toggle-school-review')  toggleSchoolHidden(`school.reviews.${id}`);
+    if (action === 'add-school-review')     openForm('school-review', {});
+    if (action === 'edit-school-review')    openForm('school-review', { id });
+    if (action === 'delete-school-review')  deleteSchoolNode(`school.reviews.${id}`, 'school.reviews.registry', id, copy(`school.reviews.${id}.name`) || id);
     if (action === 'delete-school-section') deleteSchoolNode(`school.${id}`, 'school.registry', id, copy(`school.${id}.title`) || id);
     if (action === 'delete-school-article') deleteSchoolNode(`school.${section}.${id}`, `school.${section}.registry`, id, copy(`school.${section}.${id}.title`) || id);
     if (action === 'delete-school-block')   deleteSchoolNode(`school.${section}.${article}.${id}`, `school.${section}.${article}.blocks`, id, copy(`school.${section}.${article}.${id}.title`) || id);
@@ -2044,6 +2084,42 @@
           <label class="edit-label">Texte</label>
           <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-sc-body" rows="5">${isNew ? '' : esc(copy(`${base}.body`))}</textarea>
         </div>`;
+    }
+
+    if (type === 'school-review') {
+      const isNew = !meta || !meta.id;
+      const rid = isNew ? '' : meta.id;
+      const base = isNew ? '' : `school.reviews.${rid}`;
+      editTitle.textContent = (isNew ? 'Ajouter ' : 'Modifier ') + 'avis';
+      editSub.textContent = '';
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="image-row">
+          <div class="image-preview square">
+            <img id="ef-img-preview" src="${isNew ? '' : esc(copy(`${base}.avatar`))}" alt="" style="${isNew || !copy(`${base}.avatar`) ? 'display:none' : 'border-radius:8px;'}">
+          </div>
+          <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Nom</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-rv-name" value="${isNew ? '' : esc(copy(`${base}.name`))}" placeholder="Mathieu">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Sous-titre</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-rv-role" value="${isNew ? '' : esc(copy(`${base}.role`))}" placeholder="Mix & Scratch (Digital)">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Avis</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-rv-text" rows="5">${isNew ? '' : esc(copy(`${base}.text`))}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Instagram (URL)</label>
+          <input class="edit-input" type="url" id="ef-rv-ig" value="${isNew ? '' : esc(copy(`${base}.instagram`))}" placeholder="https://www.instagram.com/...">
+        </div>`;
+      const imgInput = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
     }
 
     if (type === 'curator') {
@@ -2520,6 +2596,36 @@
             copyData[lang][`${base}.body`]  = bodyVal;
           }
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} school block: ${id} (${lang})`);
+        }
+        renderSchool();
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (editFormType === 'school-review') {
+        const isNew = !editFormMeta || !editFormMeta.id;
+        const name = document.getElementById('ef-rv-name')?.value.trim();
+        if (!name) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        const id = isNew ? slugify(name) : editFormMeta.id;
+        const base = `school.reviews.${id}`;
+        const imgInput = document.getElementById('ef-img-input');
+        let blobUrl = null;
+        if (imgInput?.files[0]) blobUrl = await uploadImageToBlob(imgInput.files[0], `school-reviews/${id}.jpg`);
+        const roleVal = document.getElementById('ef-rv-role')?.value ?? '';
+        const textVal = document.getElementById('ef-rv-text')?.value ?? '';
+        const igVal   = document.getElementById('ef-rv-ig')?.value ?? '';
+        const existingAvatar = isNew ? (blobUrl || '') : (blobUrl || copy(`${base}.avatar`) || '');
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang]['school.reviews.registry'] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang]['school.reviews.registry'] = [...reg, id].join('|');
+          }
+          copyData[lang][`${base}.avatar`] = existingAvatar;
+          copyData[lang][`${base}.name`] = name;
+          copyData[lang][`${base}.role`] = roleVal;
+          copyData[lang][`${base}.instagram`] = igVal;
+          if (isNew || lang === currentLang) copyData[lang][`${base}.text`] = textVal;
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} school review: ${id} (${lang})`);
         }
         renderSchool();
         showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');

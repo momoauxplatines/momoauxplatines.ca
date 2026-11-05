@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/school/reviews">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000000; --brand-00: #fafbf9; --brand-10: #f4f6f3; --brand-30: #dee4da; --brand-80: #51534e; --brand-100: #141513; --brand-105: #111210;
+      --gap-8: 8px; --gap-20: 20px; --gap-32: 32px; --gap-56: 56px;
+      --font-display: 'Kalnia', serif; --font-ui: 'Kanit', sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+    .arrow-sm { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .rv-intro { display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .rv-title { font-family: var(--font-display); font-weight: 700; font-size: 39px; line-height: 39px; text-transform: uppercase; }
+    .rv-sub { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; }
+    .rv-sub p { margin: 0; }
+
+    .rv-list { display: flex; flex-direction: column; }
+    .rv-card { display: flex; flex-direction: column; gap: var(--gap-20); padding: var(--gap-32); border-top: 0.5px solid var(--brand-80); border-bottom: 0.5px solid var(--brand-80); margin-bottom: -0.5px; }
+    .rv-avatar { width: 80px; height: 80px; flex-shrink: 0; object-fit: cover; display: block; background: var(--brand-105); }
+    .rv-copy { display: flex; flex-direction: column; gap: var(--gap-8); color: var(--brand-30); }
+    .rv-name { font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: 34px; text-transform: uppercase; }
+    .rv-role { font-family: var(--font-body); font-weight: 700; font-size: 18px; line-height: normal; }
+    .rv-text { font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-10); }
+    .rv-ig { display: inline-flex; align-items: center; gap: var(--gap-8); color: var(--brand-00); text-decoration: none; font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 22px; align-self: flex-start; }
+    .rv-ig:hover { text-decoration: underline; }
+
+    .rv-contact { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32); height: 80px; padding: var(--gap-8) var(--gap-32); border-top: 0.5px solid var(--brand-80); border-bottom: 0.5px solid var(--brand-80); font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px; text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease; }
+    .rv-contact:hover { background: var(--brand-105); }
+
+    .rv-empty { padding: var(--gap-32); font-family: var(--font-body); font-weight: 300; font-size: 16px; color: var(--brand-80); }
+
+    @media (min-width: 768px) {
+      .rv-title { font-size: 48px; line-height: 48px; }
+      .rv-list { max-width: 720px; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/school" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <section class="rv-intro">
+      <h1 class="rv-title" id="rv-title"></h1>
+      <div class="rv-sub" id="rv-sub"></div>
+    </section>
+
+    <main class="rv-list" id="rv-list"></main>
+
+    <a class="rv-contact" id="rv-contact" href="/school/contact"><span>contact</span>
+      <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+    </a>
+  </div>
+
+  <script>
+  const BASE = 'school.reviews';
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  const COPY = { en: {}, fr: {} };
+  const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);
+  const igSvg = '<svg class="icon arrow-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>';
+
+  function render() {
+    const copy = COPY[currentLang] || COPY.en || {};
+    document.getElementById('rv-title').textContent = copy[`${BASE}.title`] || 'reviews';
+    document.title = (copy[`${BASE}.title`] || 'reviews') + ' — Momo Aux Platines';
+    document.getElementById('rv-sub').innerHTML = lines(copy[`${BASE}.intro`]).map(l => `<p>${esc(l)}</p>`).join('');
+    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean)
+      .filter(id => copy[`${BASE}.${id}.hidden`] !== 'true');
+    const list = document.getElementById('rv-list');
+    if (!reg.length) { list.innerHTML = `<p class="rv-empty">${currentLang==='fr'?'Aucun avis pour le moment.':'No reviews yet.'}</p>`; }
+    else list.innerHTML = reg.map(id => {
+      const name = copy[`${BASE}.${id}.name`] || '';
+      const role = copy[`${BASE}.${id}.role`] || '';
+      const text = copy[`${BASE}.${id}.text`] || '';
+      const avatar = copy[`${BASE}.${id}.avatar`] || '';
+      const ig = copy[`${BASE}.${id}.instagram`] || '';
+      return `<article class="rv-card">
+        ${avatar ? `<img class="rv-avatar" src="${esc(avatar)}" alt="${esc(name)}" onerror="this.style.display='none'">` : `<div class="rv-avatar"></div>`}
+        <div class="rv-copy">
+          ${name ? `<p class="rv-name">${esc(name)}</p>` : ''}
+          ${role ? `<p class="rv-role">${esc(role)}</p>` : ''}
+          ${text ? `<p class="rv-text">${esc(text)}</p>` : ''}
+        </div>
+        ${ig ? `<a class="rv-ig" href="${esc(ig)}" target="_blank" rel="noopener">Instagram ${igSvg}</a>` : ''}
+      </article>`;
+    }).join('');
+    document.getElementById('rv-contact').querySelector('span').textContent = copy['school.contact.title'] || 'contact';
+    document.documentElement.lang = currentLang;
+  }
+  function applyLang(lang) { currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {} render(); }
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; render(); });
+  render();
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); });
+  }
+  </script>
+</body>
+</html>

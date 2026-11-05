@@ -96,7 +96,8 @@
     // intro copy
     document.getElementById('sch-copy').innerHTML = lines(copy[`${BASE}.intro`]).map(l => `<p>${esc(l)}</p>`).join('');
     // nav: sections from registry + fixed contact
-    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean);
+    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean)
+      .filter(slug => copy[`${BASE}.${slug}.hidden`] !== 'true');
     let html = reg.map(slug => {
       const label = copy[`${BASE}.${slug}.title`] || slug;
       return `<a class="sch-link" href="${PATH}/${slug}"><span>${esc(label)}</span>${arrowSvg}</a>`;

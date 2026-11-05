@@ -91,7 +91,8 @@
     document.getElementById('sch-image').innerHTML = img
       ? `<img src="${esc(img)}" alt="" width="160" height="320" onerror="this.closest('.sch-image').style.display='none'">` : '';
     document.getElementById('sch-copy').innerHTML = lines(copy[`${BASE}.intro`]).map(l => `<p>${esc(l)}</p>`).join('');
-    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean);
+    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean)
+      .filter(slug => copy[`${BASE}.${slug}.hidden`] !== 'true');
     const nav = document.getElementById('sch-nav');
     if (!reg.length) { nav.innerHTML = ''; document.documentElement.lang = currentLang; return; }
     nav.innerHTML = reg.map((slug, i) => {
