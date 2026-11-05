@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School — Momo Aux Platines</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000000; --brand-30: #dee4da; --brand-80: #51534e; --brand-100: #141513; --brand-105: #111210;
+      --gap-8: 8px; --gap-32: 32px; --gap-56: 56px;
+      --font-display: 'Kalnia', serif; --font-ui: 'Kanit', sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .art-head { display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .art-title { font-family: var(--font-display); font-weight: 700; font-size: 39px; line-height: 39px; text-transform: uppercase; }
+    .art-sub { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; }
+    .art-sub p { margin: 0; }
+
+    .art-list { display: grid; grid-template-columns: 1fr; border-top: 0.5px solid var(--brand-80); }
+    .art-card { display: flex; flex-direction: column; gap: var(--gap-8); padding: var(--gap-32); border-bottom: 0.5px solid var(--brand-80); }
+    .art-card h2 { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .art-card p { font-family: var(--font-body); font-weight: 300; font-size: 19px; line-height: 28px; color: #fff; }
+
+    .art-link { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32); height: 80px; padding: var(--gap-8) var(--gap-32); border-bottom: 0.5px solid var(--brand-80); font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px; text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease; }
+    .art-link:hover { background: var(--brand-105); }
+
+    @media (min-width: 768px) {
+      .art-title { font-size: 48px; line-height: 48px; }
+      .art-list { grid-template-columns: 1fr 1fr; }
+      .art-card:nth-child(odd) { border-right: 0.5px solid var(--brand-80); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/school" id="back-link" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <section class="art-head">
+      <h1 class="art-title" id="art-title"></h1>
+      <div class="art-sub" id="art-sub"></div>
+    </section>
+
+    <main class="art-list" id="art-list"></main>
+
+    <a class="art-link" id="art-contact" href="/school/contact"><span>contact</span>
+      <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+    </a>
+  </div>
+
+  <script>
+  // /school/:section/:article
+  const seg = location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+  const SECTION = (seg[1] || '').toLowerCase();
+  const ARTICLE = (seg[2] || '').toLowerCase();
+  const BASE = `school.${SECTION}.${ARTICLE}`;
+  document.getElementById('back-link').href = `/school/${SECTION}`;
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  const COPY = { en: {}, fr: {} };
+  const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);
+
+  function render() {
+    const copy = COPY[currentLang] || COPY.en || {};
+    const title = copy[`${BASE}.title`] || ARTICLE;
+    document.title = `${title} — Momo Aux Platines`;
+    document.getElementById('art-title').textContent = title;
+    document.getElementById('art-sub').innerHTML = lines(copy[`${BASE}.intro`]).map(l => `<p>${esc(l)}</p>`).join('');
+    const reg = (copy[`${BASE}.blocks`] || '').split('|').map(s => s.trim()).filter(Boolean);
+    document.getElementById('art-list').innerHTML = reg.map(id => {
+      const t = copy[`${BASE}.${id}.title`] || '';
+      const b = copy[`${BASE}.${id}.body`] || '';
+      return `<article class="art-card">${t ? `<h2>${esc(t)}</h2>` : ''}${b ? `<p>${esc(b)}</p>` : ''}</article>`;
+    }).join('');
+    document.getElementById('art-contact').querySelector('span').textContent = copy['school.contact.title'] || 'contact';
+    document.documentElement.lang = currentLang;
+  }
+
+  function applyLang(lang) { currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {} render(); }
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; render(); });
+  render();
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); });
+  }
+  </script>
+</body>
+</html>

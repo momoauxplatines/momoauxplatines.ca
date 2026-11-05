@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Momo Aux Platines</title>
+  <link rel="canonical" href="https://momoauxplatines.ca/school/contact">
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <meta property="og:title" content="Momo — School Contact">
+  <meta property="og:description" content="Wanna learn? Fill this form or DM me on Insta.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://momoauxplatines.ca/school/contact">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000000; --lime: #c5ff55; --red: #d34242;
+      --brand-30: #dee4da; --brand-60: #a2a89b; --brand-80: #51534e; --brand-90: #282a27; --brand-100: #141513; --brand-105: #111210;
+      --gap-8: 8px; --gap-12: 12px; --gap-16: 16px; --gap-20: 20px; --gap-32: 32px; --gap-56: 56px;
+      --font-display: 'Kalnia', serif; --font-ui: 'Kanit', sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .ct-intro { display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .ct-title { font-family: var(--font-display); font-weight: 700; font-size: 39px; line-height: 39px; text-transform: uppercase; color: #fff; }
+    .ct-sub { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .ct-sub p { margin: 0; }
+
+    .ct-form { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--gap-16); padding: var(--gap-32); max-width: 834px; width: 100%; border-top: 0.5px solid var(--brand-80); }
+    .ct-field { display: flex; flex-direction: column; gap: var(--gap-8); }
+    .ct-label { font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
+    .ct-input {
+      width: 100%; background: var(--bg); color: #fff;
+      border: 0.5px solid var(--brand-60);
+      padding: var(--gap-16) var(--gap-20);
+      font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 26px;
+      border-radius: 0; outline: none;
+    }
+    .ct-input::placeholder { color: var(--brand-60); }
+    .ct-input:hover { border-color: var(--brand-30); }
+    .ct-input:focus { border-color: var(--lime); box-shadow: 0 0 0 1px var(--lime); }
+    .ct-input.filled { border-color: var(--brand-30); }
+    .ct-input.error { border-color: var(--red); box-shadow: none; }
+    .ct-input.error:focus { box-shadow: 0 0 0 1px var(--red); }
+    textarea.ct-input { resize: vertical; min-height: 58px; }
+
+    /* ── Radio groups ── */
+    .ct-group { display: flex; flex-direction: column; gap: var(--gap-12); }
+    .ct-radio {
+      display: flex; align-items: center; gap: var(--gap-16); cursor: pointer;
+      background: var(--bg); border: 0.5px solid var(--brand-60);
+      padding: var(--gap-16) var(--gap-20);
+      font-family: var(--font-body); font-weight: 300; font-size: 18px; line-height: 26px; color: var(--brand-30);
+      transition: border-color 0.15s ease;
+    }
+    .ct-radio:hover { border-color: var(--brand-30); }
+    .ct-radio input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .ct-dot { flex-shrink: 0; width: 24px; height: 24px; border-radius: 800px; background: var(--brand-100); border: 1px solid var(--brand-80); position: relative; transition: border-color 0.15s ease; }
+    .ct-radio input:checked + .ct-dot { border-color: var(--lime); }
+    .ct-radio input:checked + .ct-dot::after { content: ''; position: absolute; inset: 5px; border-radius: 800px; background: var(--lime); }
+    .ct-radio input:focus-visible + .ct-dot { box-shadow: 0 0 0 2px var(--lime); }
+    .ct-group.has-error .ct-radio { border-color: var(--red); }
+
+    .ct-error { display: none; font-family: var(--font-body); font-weight: 300; font-size: 14px; line-height: 18px; color: var(--red); }
+    .ct-field.has-error .ct-error, .ct-groupwrap.has-error .ct-error { display: block; }
+
+    .ct-send {
+      height: 56px; width: 100%; border: 0; cursor: pointer; margin-top: var(--gap-16);
+      background: var(--lime); color: var(--brand-100);
+      font-family: var(--font-ui); font-weight: 900; font-size: 20px; line-height: 26px; text-transform: uppercase; text-align: center;
+    }
+    .ct-send:disabled { background: var(--brand-90); color: var(--bg); cursor: not-allowed; }
+
+    .ct-confirm { flex: 1 1 auto; display: none; flex-direction: column; justify-content: center; gap: var(--gap-16); padding: var(--gap-32); }
+    .ct-confirm.visible { display: flex; }
+    .ct-confirm h2 { font-family: var(--font-display); font-weight: 700; font-size: 39px; text-transform: uppercase; }
+    .ct-confirm p { font-family: var(--font-body); font-weight: 300; font-size: 18px; color: var(--brand-30); }
+
+    .ct-insta { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32); height: 80px; padding: var(--gap-8) var(--gap-32); border-top: 0.5px solid var(--brand-80); border-bottom: 0.5px solid var(--brand-80); font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px; text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease; }
+    .ct-insta:hover { background: var(--brand-105); }
+
+    @media (min-width: 768px) {
+      .ct-title { font-size: 48px; line-height: 48px; }
+      .ct-form { align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/school" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <section class="ct-intro">
+      <div class="ct-title" data-key="school.contact.title" data-en="contact" data-fr="contact">contact</div>
+      <div class="ct-sub" id="ct-sub"></div>
+    </section>
+
+    <form class="ct-form" id="ct-form" novalidate>
+      <div class="ct-field">
+        <label class="ct-label" for="field-name" data-en="Name *" data-fr="Nom *">Name *</label>
+        <input class="ct-input" id="field-name" type="text" required autocomplete="name" aria-describedby="err-name"
+               data-ph data-ph-en="Your full name" data-ph-fr="Ton nom complet" placeholder="Your full name">
+        <span class="ct-error" id="err-name" data-en="Please enter your name." data-fr="Entre ton nom.">Please enter your name.</span>
+      </div>
+      <div class="ct-field">
+        <label class="ct-label" for="field-phone" data-en="Phone number *" data-fr="Téléphone *">Phone number *</label>
+        <input class="ct-input" id="field-phone" type="tel" required autocomplete="tel" aria-describedby="err-phone" placeholder="+1 (514) 222-2242">
+        <span class="ct-error" id="err-phone" data-en="Please enter a phone number." data-fr="Entre un numéro de téléphone.">Please enter a phone number.</span>
+      </div>
+      <div class="ct-field">
+        <label class="ct-label" for="field-email" data-en="Email *" data-fr="Courriel *">Email *</label>
+        <input class="ct-input" id="field-email" type="email" required autocomplete="email" aria-describedby="err-email" placeholder="name@domain.com">
+        <span class="ct-error" id="err-email" data-en="Please enter a valid email." data-fr="Entre un courriel valide.">Please enter a valid email.</span>
+      </div>
+
+      <div class="ct-groupwrap" data-group="learn">
+        <div class="ct-field"><label class="ct-label" data-en="What do you want to learn? *" data-fr="Qu'est-ce que tu veux apprendre ? *">What do you want to learn? *</label></div>
+        <div class="ct-group" id="group-learn" role="radiogroup" aria-label="What do you want to learn?">
+          <label class="ct-radio"><input type="radio" name="learn" value="Scratch"><span class="ct-dot"></span><span data-en="Scratch" data-fr="Scratch">Scratch</span></label>
+          <label class="ct-radio"><input type="radio" name="learn" value="Mix"><span class="ct-dot"></span><span data-en="Mix" data-fr="Mix">Mix</span></label>
+          <label class="ct-radio"><input type="radio" name="learn" value="Both"><span class="ct-dot"></span><span data-en="Both" data-fr="Les deux">Both</span></label>
+        </div>
+        <span class="ct-error" data-en="Please pick one." data-fr="Choisis une option.">Please pick one.</span>
+      </div>
+
+      <div class="ct-groupwrap" data-group="gear">
+        <div class="ct-field"><label class="ct-label" data-en="What type of equipment do you want to use? *" data-fr="Quel type d'équipement veux-tu utiliser ? *">What type of equipment do you want to use? *</label></div>
+        <div class="ct-group" id="group-gear" role="radiogroup" aria-label="Equipment">
+          <label class="ct-radio"><input type="radio" name="gear" value="Vinyl"><span class="ct-dot"></span><span data-en="Vinyl" data-fr="Vinyle">Vinyl</span></label>
+          <label class="ct-radio"><input type="radio" name="gear" value="Digital Turntables"><span class="ct-dot"></span><span data-en="Digital Turntables" data-fr="Platines numériques">Digital Turntables</span></label>
+          <label class="ct-radio"><input type="radio" name="gear" value="Controller"><span class="ct-dot"></span><span data-en="Controller" data-fr="Contrôleur">Controller</span></label>
+        </div>
+        <span class="ct-error" data-en="Please pick one." data-fr="Choisis une option.">Please pick one.</span>
+      </div>
+
+      <div class="ct-field">
+        <label class="ct-label" for="field-desc" data-en="Description *" data-fr="Description *">Description *</label>
+        <textarea class="ct-input" id="field-desc" rows="2" required aria-describedby="err-desc"
+                  data-ph data-ph-en="Tell me why you want to do this please." data-ph-fr="Dis-moi pourquoi tu veux apprendre." placeholder="Tell me why you want to do this please."></textarea>
+        <span class="ct-error" id="err-desc" data-en="Please add a short description." data-fr="Ajoute une courte description.">Please add a short description.</span>
+      </div>
+
+      <button class="ct-send" id="ct-send" type="button" data-en="send" data-fr="envoyer" disabled>send</button>
+    </form>
+
+    <div class="ct-confirm" id="ct-confirm">
+      <h2 data-en="Thanks!" data-fr="Merci!">Thanks!</h2>
+      <p data-en="Message received — I'll get back to you soon." data-fr="Message reçu — je te réponds bientôt.">Message received — I'll get back to you soon.</p>
+    </div>
+
+    <a class="ct-insta" href="https://www.instagram.com/djmomoauxplatines/" target="_blank" rel="noopener">
+      <span data-en="Insta" data-fr="Insta">Insta</span>
+      <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
+    </a>
+  </div>
+
+  <script>
+  const WEB3FORMS_KEY = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  const COPY = { en: {}, fr: {} };
+  const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);
+
+  function applyLang(lang) {
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = copy[el.dataset.key];
+      el.textContent = val !== undefined ? val : lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent);
+    });
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
+      el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
+    });
+    document.querySelectorAll('[data-ph]').forEach(el => {
+      el.placeholder = lang === 'fr' ? (el.dataset.phFr || el.placeholder) : (el.dataset.phEn || el.placeholder);
+    });
+    // store-driven subtitle
+    const sub = lines((copy['school.contact.intro']) || '');
+    if (sub.length) document.getElementById('ct-sub').innerHTML = sub.map(l => `<p>${esc(l)}</p>`).join('');
+    document.documentElement.lang = lang; currentLang = lang;
+    try { localStorage.setItem('momo-lang', lang); } catch {}
+  }
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  // seed subtitle immediately (fallback), then refresh from store
+  document.getElementById('ct-sub').innerHTML = (currentLang === 'fr'
+    ? ["envie d'apprendre ?", 'remplis ce formulaire', 'ou écris-moi sur insta']
+    : ['wanna learn?', 'fill this form', 'or dm me on insta']).map(l => `<p>${esc(l)}</p>`).join('');
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang); });
+  applyLang(currentLang);
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  // ── Form states & validation ──
+  const textInputs = ['field-name','field-phone','field-email','field-desc'];
+  const groups = ['learn','gear'];
+  const sendBtn = document.getElementById('ct-send');
+  const EMAIL_RE = /\S+@\S+\.\S+/;
+
+  function textValid(id) {
+    const v = document.getElementById(id).value.trim();
+    if (!v) return false;
+    if (id === 'field-email') return EMAIL_RE.test(v);
+    return true;
+  }
+  function groupValid(name) { return !!document.querySelector(`input[name="${name}"]:checked`); }
+  function refreshText(id, showError) {
+    const el = document.getElementById(id);
+    const field = el.closest('.ct-field');
+    const valid = textValid(id);
+    if (showError) field.classList.toggle('has-error', !valid);
+    el.classList.toggle('error', field.classList.contains('has-error'));
+    el.classList.toggle('filled', valid && !field.classList.contains('has-error'));
+  }
+  function validateForm() {
+    const ok = textInputs.every(textValid) && groups.every(groupValid);
+    sendBtn.disabled = !ok;
+    return ok;
+  }
+  textInputs.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('focus', () => { el.closest('.ct-field').classList.remove('has-error'); el.classList.remove('error'); });
+    el.addEventListener('blur',  () => refreshText(id, true));
+    el.addEventListener('input', () => { refreshText(id, false); validateForm(); });
+  });
+  groups.forEach(name => {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
+      inp.addEventListener('change', () => {
+        inp.closest('.ct-groupwrap').classList.remove('has-error');
+        validateForm();
+      });
+    });
+  });
+  const textarea = document.getElementById('field-desc');
+  textarea.addEventListener('input', () => { textarea.style.height = 'auto'; textarea.style.height = Math.min(textarea.scrollHeight, 240) + 'px'; });
+  validateForm();
+
+  sendBtn.addEventListener('click', async () => {
+    // surface any missing fields
+    textInputs.forEach(id => refreshText(id, true));
+    groups.forEach(name => { if (!groupValid(name)) document.querySelector(`[data-group="${name}"]`).classList.add('has-error'); });
+    if (!validateForm()) return;
+    const originalText = sendBtn.textContent;
+    sendBtn.textContent = '…'; sendBtn.disabled = true;
+    const data = {
+      access_key: WEB3FORMS_KEY,
+      subject: 'New School Request — Momo Aux Platines',
+      from_name: 'Momo Aux Platines Website',
+      name:  document.getElementById('field-name').value.trim(),
+      phone: document.getElementById('field-phone').value.trim(),
+      email: document.getElementById('field-email').value.trim(),
+      learn: (document.querySelector('input[name="learn"]:checked') || {}).value || '—',
+      equipment: (document.querySelector('input[name="gear"]:checked') || {}).value || '—',
+      description: document.getElementById('field-desc').value.trim(),
+    };
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Server error');
+      document.getElementById('ct-form').style.display = 'none';
+      document.getElementById('ct-confirm').classList.add('visible');
+      applyLang(currentLang);
+    } catch {
+      sendBtn.textContent = currentLang === 'fr' ? 'ERREUR — RÉESSAYER' : 'ERROR — TRY AGAIN';
+      sendBtn.disabled = false;
+      setTimeout(() => { sendBtn.textContent = originalText; validateForm(); }, 3000);
+    }
+  });
+
+  if (window.netlifyIdentity) { window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); }); }
+  </script>
+</body>
+</html>

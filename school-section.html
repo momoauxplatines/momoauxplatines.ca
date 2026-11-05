@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School — Momo Aux Platines</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Kalnia:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000000; --brand-30: #dee4da; --brand-80: #51534e; --brand-100: #141513; --brand-105: #111210;
+      --gap-8: 8px; --gap-32: 32px; --gap-56: 56px;
+      --font-display: 'Kalnia', serif; --font-ui: 'Kanit', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: #fff; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { cursor: pointer; user-select: none; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-back { width: 28px; height: 28px; }
+    .arrow { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .sch-intro { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
+    .sch-image { display: flex; justify-content: flex-end; }
+    .sch-image img { width: 160px; height: 320px; object-fit: cover; display: block; }
+    .sch-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .sch-copy p { margin: 0; }
+
+    .sch-nav { display: flex; flex-direction: column; width: 100%; }
+    .sch-link { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-32); height: 80px; padding: var(--gap-8) var(--gap-32); border-top: 0.5px solid var(--brand-80); font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 31px; text-transform: uppercase; color: #fff; text-decoration: none; transition: background-color 0.15s ease; }
+    .sch-link:last-child { border-bottom: 0.5px solid var(--brand-80); }
+    .sch-link:hover { background: var(--brand-105); }
+    .sch-link .lbl { display: flex; align-items: center; gap: var(--gap-32); min-width: 0; }
+    .sch-link .idx { color: #fff; }
+    .sch-empty { padding: var(--gap-32); font-family: var(--font-ui); font-weight: 300; font-size: 16px; color: var(--brand-80); }
+
+    @media (min-width: 768px) {
+      .sch-intro { flex-direction: row-reverse; align-items: center; gap: var(--gap-56); padding: var(--gap-56) var(--gap-32); }
+      .sch-image { justify-content: flex-end; flex: 0 0 auto; }
+      .sch-image img { width: 320px; height: 540px; }
+      .sch-copy { flex: 1 1 0; font-size: 34px; line-height: 44px; }
+      .sch-link { font-size: 32px; line-height: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="hdr-back" href="/school" id="back-link" aria-label="Back / Retour" title="Back / Retour">
+        <svg class="icon icon-back" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+      </a>
+      <div class="hdr-logo" id="logo-toggle" role="button" tabindex="0" aria-label="Switch language / Changer de langue" title="FR / EN">
+        <img src="/images/logo-momo-new.svg" alt="Momo Aux Platines">
+      </div>
+    </header>
+
+    <main class="sch-intro">
+      <div class="sch-image" id="sch-image"></div>
+      <div class="sch-copy" id="sch-copy"></div>
+    </main>
+
+    <nav class="sch-nav" id="sch-nav"></nav>
+  </div>
+
+  <script>
+  // /school/:section  →  section slug from the URL
+  const SECTION = (location.pathname.replace(/\/+$/, '').split('/').filter(Boolean)[1] || '').toLowerCase();
+  const BASE = `school.${SECTION}`;
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  const COPY = { en: {}, fr: {} };
+  const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);
+  const arrowSvg = '<svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>';
+
+  function render() {
+    const copy = COPY[currentLang] || COPY.en || {};
+    const title = copy[`${BASE}.title`] || SECTION;
+    document.title = `${title} — Momo Aux Platines`;
+    const img = copy[`${BASE}.image`];
+    document.getElementById('sch-image').innerHTML = img
+      ? `<img src="${esc(img)}" alt="" width="160" height="320" onerror="this.closest('.sch-image').style.display='none'">` : '';
+    document.getElementById('sch-copy').innerHTML = lines(copy[`${BASE}.intro`]).map(l => `<p>${esc(l)}</p>`).join('');
+    const reg = (copy[`${BASE}.registry`] || '').split('|').map(s => s.trim()).filter(Boolean);
+    const nav = document.getElementById('sch-nav');
+    if (!reg.length) { nav.innerHTML = ''; document.documentElement.lang = currentLang; return; }
+    nav.innerHTML = reg.map((slug, i) => {
+      const label = copy[`${BASE}.${slug}.title`] || slug;
+      const num = String(i + 1).padStart(2, '0');
+      return `<a class="sch-link" href="/school/${SECTION}/${slug}"><span class="lbl"><span class="idx">${num}</span><span>${esc(label)}</span></span>${arrowSvg}</a>`;
+    }).join('');
+    document.documentElement.lang = currentLang;
+  }
+
+  function applyLang(lang) { currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {} render(); }
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; render(); });
+  render();
+
+  const logoToggle = document.getElementById('logo-toggle');
+  function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
+  logoToggle.addEventListener('click', toggleLang);
+  logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
+
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', user => { if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; }); });
+  }
+  </script>
+</body>
+</html>

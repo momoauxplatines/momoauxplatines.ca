@@ -14,20 +14,21 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Ancien /contact → nouvelle page /dj/contact (redirection permanente)
 [[redirects]]
   from = "/en/contact"
-  to = "/contact.html"
-  status = 200
+  to = "/dj/contact"
+  status = 301
 
 [[redirects]]
   from = "/fr/contact"
-  to = "/contact.html"
-  status = 200
+  to = "/dj/contact"
+  status = 301
 
 [[redirects]]
   from = "/contact"
-  to = "/contact.html"
-  status = 200
+  to = "/dj/contact"
+  status = 301
 
 [[redirects]]
   from = "/events/:slug"
@@ -117,6 +118,34 @@
 [[redirects]]
   from = "/dj"
   to = "/dj.html"
+  status = 200
+
+# Section School — /school (hub), /school/:section (niveau 2), /school/:section/:article (niveau 3)
+# Les routes spécifiques (contact, article) doivent précéder les génériques.
+[[redirects]]
+  from = "/school/contact"
+  to = "/school-contact.html"
+  status = 200
+
+[[redirects]]
+  from = "/school/:section/:article"
+  to = "/school-article.html"
+  status = 200
+
+[[redirects]]
+  from = "/school/:section"
+  to = "/school-section.html"
+  status = 200
+
+[[redirects]]
+  from = "/school"
+  to = "/school.html"
+  status = 200
+
+# Section Curator — page « coming soon »
+[[redirects]]
+  from = "/curator"
+  to = "/curator.html"
   status = 200
 
 # Nouvelles URLs simplifiées — /:name_slug/:date_slug (ex: /pepouzeenterrasse/7juillet2026)

@@ -105,6 +105,21 @@
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
     .section-title-row { display: flex; align-items: center; justify-content: space-between; }
+
+    /* ── School tree ── */
+    #school-tree { display: flex; flex-direction: column; gap: 16px; }
+    .sch-group { display: flex; flex-direction: column; gap: 8px; }
+    .sch-l1 { border: 1px solid var(--brand-80); border-radius: 12px; padding: 16px; }
+    .sch-l2 { margin-left: 16px; border-left: 2px solid var(--brand-80); padding-left: 12px; }
+    .sch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 36px; }
+    .sch-sec .sch-lbl { font-weight: 700; text-transform: uppercase; }
+    .sch-l3 { margin-left: 16px; }
+    .sch-lbl { font-family: 'Kanit', sans-serif; font-size: 16px; color: var(--brand-00); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sch-l3 .sch-lbl { color: var(--brand-30); font-size: 15px; }
+    .sch-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .sch-mini { height: 30px; padding: 0 12px; font-size: 14px; border-radius: 8px; }
+    .sch-del { color: var(--red, #d34242); }
+    .sch-add { align-self: flex-start; height: 32px; padding: 0 14px; font-size: 14px; margin-top: 4px; }
     .section-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 28px; color: var(--brand-30); text-transform: uppercase; line-height: 31px; }
     .decade-title-row { display: flex; align-items: center; justify-content: space-between; }
     .decade-heading { font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; color: var(--brand-50); text-transform: uppercase; line-height: 26px; }
@@ -507,6 +522,24 @@
 
     </section>
 
+    <!-- ── SCHOOL ── -->
+    <section class="admin-section" id="school-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">School</h2>
+        <button class="btn-admin" id="school-intro-btn">Intro &amp; contact</button>
+      </div>
+      <div id="school-tree"><div class="empty-state">Loading…</div></div>
+      <div style="margin-top:16px;"><button class="btn-admin" id="school-add-section-btn">+ Section</button></div>
+    </section>
+
+    <!-- ── CURATOR ── -->
+    <section class="admin-section" id="curator-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Curator</h2>
+        <button class="btn-admin" id="curator-edit-btn">Edit</button>
+      </div>
+      <div id="curator-preview" class="empty-state"></div>
+    </section>
 
     <div style="height:48px;"></div>
 
@@ -1350,6 +1383,8 @@
     renderReviews();
     renderDemos();
     renderTimeline();
+    renderSchool();
+    renderCurator();
     scheduleGigRefresh();
     applyI18n();
   }
@@ -1625,11 +1660,89 @@
     }
   }
 
+  // ══ SCHOOL (niveau 1/2/3, piloté par le store copy) ═══════════════════════════
+  const schoolReg = (prefix) => (copy(`${prefix}.registry`) || '').split('|').map(s => s.trim()).filter(Boolean);
+  const schoolBlocks = (prefix) => (copy(`${prefix}.blocks`) || '').split('|').map(s => s.trim()).filter(Boolean);
+
+  function renderSchool() {
+    const root = document.getElementById('school-tree');
+    if (!root) return;
+    const sections = schoolReg('school');
+    if (!sections.length) { root.innerHTML = `<div class="empty-state">${t('no.entries')}</div>`; return; }
+    root.innerHTML = sections.map(sec => {
+      const sTitle = copy(`school.${sec}.title`) || sec;
+      const articles = schoolReg(`school.${sec}`);
+      const artHtml = articles.map(a => {
+        const aTitle = copy(`school.${sec}.${a}.title`) || a;
+        const blocks = schoolBlocks(`school.${sec}.${a}`);
+        const blkHtml = blocks.map(b => {
+          const bTitle = copy(`school.${sec}.${a}.${b}.title`) || b;
+          return `<div class="sch-row sch-l3"><span class="sch-lbl">${esc(bTitle)}</span>
+            <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">${t('btn.edit')}</button>
+            <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-block" data-section="${sec}" data-article="${a}" data-id="${b}">✕</button></span></div>`;
+        }).join('');
+        return `<div class="sch-group sch-l2">
+          <div class="sch-row"><span class="sch-lbl">${esc(aTitle)}</span>
+            <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-article" data-section="${sec}" data-id="${a}">${t('btn.edit')}</button>
+            <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-article" data-section="${sec}" data-id="${a}">✕</button></span></div>
+          ${blkHtml}
+          <button class="btn-admin sch-add" data-action="add-school-block" data-section="${sec}" data-article="${a}">+ Bloc</button>
+        </div>`;
+      }).join('');
+      return `<div class="sch-group sch-l1">
+        <div class="sch-row sch-sec"><span class="sch-lbl">${esc(sTitle)}</span>
+          <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-school-section" data-id="${sec}">${t('btn.edit')}</button>
+          <button class="btn-card-edit sch-mini sch-del" data-action="delete-school-section" data-id="${sec}">✕</button></span></div>
+        ${artHtml}
+        <button class="btn-admin sch-add" data-action="add-school-article" data-section="${sec}">+ Article</button>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCurator() {
+    const el = document.getElementById('curator-preview');
+    if (!el) return;
+    const intro = (copy('curator.intro') || '').split('|').filter(Boolean).join(' · ');
+    el.textContent = intro || '—';
+  }
+
+  // multiline <-> pipe helpers
+  const toLines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean).join('\n');
+  const toPipe  = s => (s || '').split('\n').map(x => x.trim()).filter(Boolean).join('|');
+
+  async function deleteSchoolNode(prefix, regKey, regId, label) {
+    if (!confirm(`${t('form.gig.delete')} — "${label}" ?`)) return;
+    closeForm();
+    try {
+      for (const lang of ['en', 'fr']) {
+        if (!copyData[lang]) continue;
+        if (regKey) {
+          copyData[lang][regKey] = (copyData[lang][regKey] || '').split('|').filter(Boolean).filter(x => x !== regId).join('|');
+        }
+        Object.keys(copyData[lang]).forEach(k => { if (k === prefix || k.startsWith(prefix + '.')) delete copyData[lang][k]; });
+        await saveCopy(lang, `Delete school node: ${prefix} (${lang})`);
+      }
+      renderSchool();
+      showToast(`"${label}" ${t('toast.deleted')}`, 'success');
+    } catch (e) {
+      showToast(t('toast.delete.failed') + e.message, 'error');
+      loadAllCopy().then(renderSchool);
+    }
+  }
+
   // ── Delegated click handler ───────────────────────────────────────────────────
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const { action, id, index, decade } = btn.dataset;
+    const { action, id, index, decade, section, article } = btn.dataset;
+    if (action === 'edit-school-section')   openForm('school-section', { slug: id });
+    if (action === 'add-school-article')    openForm('school-article', { section });
+    if (action === 'edit-school-article')   openForm('school-article', { section, slug: id });
+    if (action === 'add-school-block')      openForm('school-block',   { section, article });
+    if (action === 'edit-school-block')     openForm('school-block',   { section, article, id });
+    if (action === 'delete-school-section') deleteSchoolNode(`school.${id}`, 'school.registry', id, copy(`school.${id}.title`) || id);
+    if (action === 'delete-school-article') deleteSchoolNode(`school.${section}.${id}`, `school.${section}.registry`, id, copy(`school.${section}.${id}.title`) || id);
+    if (action === 'delete-school-block')   deleteSchoolNode(`school.${section}.${article}.${id}`, `school.${section}.${article}.blocks`, id, copy(`school.${section}.${article}.${id}.title`) || id);
     if (action === 'edit-intro')    openForm('intro');
     if (action === 'edit-review')   openForm('review',   REVIEWS.find(r => r.id === id));
     if (action === 'edit-demo')     openForm('demo',     DEMOS.find(d => d.id === id));
@@ -1655,6 +1768,9 @@
   document.querySelectorAll('[data-decade]').forEach(btn => {
     btn.addEventListener('click', () => openForm('timeline', { decade: btn.dataset.decade, item: null }));
   });
+  document.getElementById('school-intro-btn').addEventListener('click', () => openForm('school-intro'));
+  document.getElementById('school-add-section-btn').addEventListener('click', () => openForm('school-section', {}));
+  document.getElementById('curator-edit-btn').addEventListener('click', () => openForm('curator'));
 
   // ── Edit overlay ──────────────────────────────────────────────────────────────
   const overlay   = document.getElementById('edit-overlay');
@@ -1864,6 +1980,84 @@
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
       imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+    }
+
+    if (type === 'school-intro') {
+      editTitle.textContent = 'School — intro & contact';
+      editSub.textContent = '';
+      editBody.innerHTML = `
+        <div class="edit-field">
+          <label class="edit-label">Image (URL)</label>
+          <input class="edit-input" type="text" id="ef-sc-image" value="${esc(copy('school.image'))}" placeholder="/images/school.png">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Intro — une ligne par phrase</label>
+          <textarea class="edit-input" id="ef-sc-intro" rows="5" placeholder="learn what dj is&#10;mix vinyl or digital">${esc(toLines(copy('school.intro')))}</textarea>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Contact — titre</label>
+          <input class="edit-input" type="text" id="ef-sc-ctitle" value="${esc(copy('school.contact.title') || 'contact')}">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Contact — intro (une ligne par phrase)</label>
+          <textarea class="edit-input" id="ef-sc-cintro" rows="3">${esc(toLines(copy('school.contact.intro')))}</textarea>
+        </div>`;
+    }
+
+    if (type === 'school-section' || type === 'school-article') {
+      const isSection = type === 'school-section';
+      const isNew = !meta || !meta.slug;
+      const sec = meta ? meta.section : '';
+      const base = isSection ? (meta && meta.slug ? `school.${meta.slug}` : '') : (meta && meta.slug ? `school.${sec}.${meta.slug}` : '');
+      editTitle.textContent = (isNew ? 'Ajouter ' : 'Modifier ') + (isSection ? 'section' : 'article');
+      editSub.textContent = isSection ? '' : `Section : ${sec}`;
+      editBody.innerHTML = `
+        <div class="edit-field">
+          <label class="edit-label">Slug (URL)${isNew ? '' : ' — non modifiable'}</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-sc-slug" value="${isNew ? '' : (isSection ? meta.slug : meta.slug)}" placeholder="method" ${isNew ? '' : 'readonly style="opacity:.6;"'}>
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Titre</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-sc-title" value="${isNew ? '' : esc(copy(`${base}.title`))}" placeholder="method">
+        </div>
+        ${isSection ? `<div class="edit-field">
+          <label class="edit-label">Image (URL)</label>
+          <input class="edit-input" type="text" id="ef-sc-image" value="${isNew ? '' : esc(copy(`${base}.image`))}" placeholder="/images/school-method.png">
+        </div>` : ''}
+        <div class="edit-field">
+          <label class="edit-label">Intro — une ligne par phrase</label>
+          <textarea class="edit-input" id="ef-sc-intro" rows="5">${isNew ? '' : esc(toLines(copy(`${base}.intro`)))}</textarea>
+        </div>`;
+    }
+
+    if (type === 'school-block') {
+      const isNew = !meta.id;
+      const base = isNew ? '' : `school.${meta.section}.${meta.article}.${meta.id}`;
+      editTitle.textContent = (isNew ? 'Ajouter ' : 'Modifier ') + 'bloc';
+      editSub.textContent = `${meta.section} / ${meta.article}`;
+      editBody.innerHTML = `
+        <div class="edit-field">
+          <label class="edit-label">Titre</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-sc-title" value="${isNew ? '' : esc(copy(`${base}.title`))}" placeholder="early beginnings">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Texte</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-sc-body" rows="5">${isNew ? '' : esc(copy(`${base}.body`))}</textarea>
+        </div>`;
+    }
+
+    if (type === 'curator') {
+      editTitle.textContent = 'Curator';
+      editSub.textContent = '';
+      editBody.innerHTML = `
+        <div class="edit-field">
+          <label class="edit-label">Image (URL)</label>
+          <input class="edit-input" type="text" id="ef-cur-image" value="${esc(copy('curator.image'))}" placeholder="/images/curator.png">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Copy — une ligne par phrase</label>
+          <textarea class="edit-input" id="ef-cur-intro" rows="3" placeholder="coming soon">${esc(toLines(copy('curator.intro')))}</textarea>
+        </div>`;
     }
 
     if (type === 'gig') {
@@ -2256,6 +2450,92 @@
         }
         renderTimeline();
         showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (editFormType === 'school-intro') {
+        const image  = document.getElementById('ef-sc-image').value.trim();
+        const intro  = toPipe(document.getElementById('ef-sc-intro').value);
+        const ctitle = document.getElementById('ef-sc-ctitle').value.trim();
+        const cintro = toPipe(document.getElementById('ef-sc-cintro').value);
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          copyData[lang]['school.image'] = image;         // image: both langs
+          if (lang === currentLang) {
+            copyData[lang]['school.intro'] = intro;
+            copyData[lang]['school.contact.title'] = ctitle;
+            copyData[lang]['school.contact.intro'] = cintro;
+          }
+          await saveCopy(lang, `Update school intro/contact (${lang})`);
+        }
+        renderSchool();
+        showToast(t('toast.intro.saved'), 'success');
+      }
+
+      if (editFormType === 'school-section' || editFormType === 'school-article') {
+        const isSection = editFormType === 'school-section';
+        const isNew = !editFormMeta || !editFormMeta.slug;
+        const sec = editFormMeta ? editFormMeta.section : '';
+        const title = document.getElementById('ef-sc-title')?.value.trim();
+        if (!title) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        let slug = isNew ? slugify(document.getElementById('ef-sc-slug').value.trim() || title) : editFormMeta.slug;
+        if (!slug) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        const base   = isSection ? `school.${slug}` : `school.${sec}.${slug}`;
+        const regKey = isSection ? 'school.registry' : `school.${sec}.registry`;
+        const intro  = toPipe(document.getElementById('ef-sc-intro').value);
+        const image  = isSection ? document.getElementById('ef-sc-image').value.trim() : null;
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang][regKey] || '').split('|').filter(Boolean);
+            if (!reg.includes(slug)) copyData[lang][regKey] = [...reg, slug].join('|');
+          }
+          if (isSection) copyData[lang][`${base}.image`] = image;   // image: both langs
+          // title + intro: both langs on create (seed), current lang on edit
+          if (isNew || lang === currentLang) {
+            copyData[lang][`${base}.title`] = title;
+            copyData[lang][`${base}.intro`] = intro;
+          }
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} school ${isSection ? 'section' : 'article'}: ${slug} (${lang})`);
+        }
+        renderSchool();
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (editFormType === 'school-block') {
+        const isNew = !editFormMeta.id;
+        const title = document.getElementById('ef-sc-title')?.value.trim();
+        if (!title) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        const id = isNew ? slugify(title) : editFormMeta.id;
+        const bodyVal = document.getElementById('ef-sc-body').value.trim();
+        const regKey = `school.${editFormMeta.section}.${editFormMeta.article}.blocks`;
+        const base = `school.${editFormMeta.section}.${editFormMeta.article}.${id}`;
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang][regKey] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang][regKey] = [...reg, id].join('|');
+          }
+          if (isNew || lang === currentLang) {
+            copyData[lang][`${base}.title`] = title;
+            copyData[lang][`${base}.body`]  = bodyVal;
+          }
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} school block: ${id} (${lang})`);
+        }
+        renderSchool();
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (editFormType === 'curator') {
+        const image = document.getElementById('ef-cur-image').value.trim();
+        const intro = toPipe(document.getElementById('ef-cur-intro').value);
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          copyData[lang]['curator.image'] = image;          // image: both langs
+          if (lang === currentLang) copyData[lang]['curator.intro'] = intro;
+          await saveCopy(lang, `Update curator (${lang})`);
+        }
+        renderCurator();
+        showToast(t('toast.intro.saved'), 'success');
       }
 
       if (editFormType === 'gig') {
