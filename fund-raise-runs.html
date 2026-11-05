@@ -38,8 +38,8 @@
     .fr-head { font-family:var(--font-ui); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
     .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
 
-    .run-list { display:flex; flex-direction:column; gap:0; }
-    .run-card { border-top:0.5px solid var(--brand-80); border-bottom:0.5px solid var(--brand-80); display:flex; flex-direction:column; gap:var(--gap-8); overflow:hidden; background:var(--bg); padding:var(--gap-16); }
+    .run-list { display:grid; grid-template-columns:1fr; border-top:0.5px solid var(--brand-80); }
+    .run-card { border-bottom:0.5px solid var(--brand-80); display:flex; flex-direction:column; gap:var(--gap-8); overflow:hidden; background:var(--bg); padding:var(--gap-16); }
     .run-top { display:flex; align-items:center; }
     .run-map { width:80px; height:80px; flex-shrink:0; }
     .run-map svg { width:100%; height:100%; display:block; }
@@ -60,7 +60,11 @@
 
     .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); padding:0 var(--gap-32); }
 
-    @media (min-width:768px) { .fr-body { max-width:720px; } }
+    @media (min-width:768px) {
+      .fr-body { max-width:1024px; width:100%; margin:0 auto; }
+      .run-list { grid-template-columns:1fr 1fr; }
+      .run-card:nth-child(odd) { border-right:0.5px solid var(--brand-80); }
+    }
   </style>
 </head>
 <body>
@@ -153,7 +157,6 @@
     asc.forEach((r,i)=>{ cum += Number(r.distance_km)||0; meta.set(r.id ?? i, {n:i+1, cum}); });
     const desc = asc.slice().reverse();
     list.innerHTML = '';
-    list.style.display='flex'; list.style.flexDirection='column'; list.style.gap='24px';
     desc.forEach((r,i)=>{
       const m = meta.get(r.id ?? (asc.length-1-i)) || {n:'',cum:0};
       const dur = fmtDuration(Number(r.moving_time_s)||0);
