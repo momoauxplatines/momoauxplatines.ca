@@ -17,7 +17,7 @@
   <style>
     :root {
       --bg:#000; --lime:#c5ff55; --strava:#fc4c02;
-      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-70:#797f73; --brand-90:#282a27; --brand-100:#141513;
+      --brand-00:#fafbf9; --brand-10:#f4f6f3; --brand-60:#a2a89b; --brand-70:#797f73; --brand-80:#51534e; --brand-90:#282a27; --brand-100:#141513;
       --gap-4:4px; --gap-8:8px; --gap-16:16px; --gap-24:24px; --gap-32:32px; --radius-8:8px;
       --font-ui:'Kanit',sans-serif;
       --font-body:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Helvetica Neue',Arial,sans-serif;
@@ -33,18 +33,20 @@
     .icon { stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
     .icon-back { width:28px; height:28px; }
 
-    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
+    .fr-body { flex:1 1 auto; display:flex; flex-direction:column; }
+    .fr-top { display:flex; flex-direction:column; gap:var(--gap-24); padding:var(--gap-32); }
     .fr-head { font-family:var(--font-ui); font-weight:500; font-size:23px; line-height:31px; text-transform:uppercase; color:#fff; }
     .btn-donate { display:flex; align-items:center; justify-content:center; height:56px; width:100%; background:var(--lime); color:var(--brand-100); font-family:var(--font-ui); font-weight:900; font-size:20px; line-height:26px; text-transform:uppercase; text-decoration:none; }
 
-    .run-card { border:1px solid var(--brand-90); display:flex; flex-direction:column; gap:var(--gap-8); overflow:hidden; background:var(--bg); }
+    .run-list { display:flex; flex-direction:column; gap:0; }
+    .run-card { border-top:0.5px solid var(--brand-80); border-bottom:0.5px solid var(--brand-80); display:flex; flex-direction:column; gap:var(--gap-8); overflow:hidden; background:var(--bg); padding:var(--gap-16); }
     .run-top { display:flex; align-items:center; }
     .run-map { width:80px; height:80px; flex-shrink:0; }
     .run-map svg { width:100%; height:100%; display:block; }
     .run-head { display:flex; flex-direction:column; gap:var(--gap-4); justify-content:center; padding:0 var(--gap-8); min-width:0; }
     .run-name { font-family:var(--font-ui); font-weight:700; font-size:20px; line-height:26px; text-transform:uppercase; color:var(--brand-10); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .run-date { font-family:var(--font-body); font-weight:300; font-size:14px; line-height:18px; color:var(--brand-60); }
-    .run-bodyb { display:flex; flex-direction:column; gap:var(--gap-16); padding:0 var(--gap-16) var(--gap-16); }
+    .run-bodyb { display:flex; flex-direction:column; gap:var(--gap-16); padding:0; }
     .run-stats { display:flex; gap:var(--gap-8); }
     .run-stat { flex:1 1 0; min-width:0; padding:0 var(--gap-8); }
     .run-stat .val { display:flex; gap:2px; align-items:baseline; }
@@ -56,7 +58,7 @@
     .run-powered { font-family:var(--font-body); font-weight:300; font-size:12px; line-height:16px; color:var(--brand-70); }
     .run-powered b { font-weight:600; color:var(--strava); }
 
-    .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); }
+    .fr-empty { font-family:var(--font-body); font-weight:300; font-size:16px; color:var(--brand-60); padding:0 var(--gap-32); }
 
     @media (min-width:768px) { .fr-body { max-width:720px; } }
   </style>
@@ -73,10 +75,12 @@
     </header>
 
     <main class="fr-body">
-      <div class="fr-head" id="fr-head">— / 500 km</div>
-      <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
-         data-en="donate" data-fr="faire un don">donate</a>
-      <div id="runs-list"></div>
+      <div class="fr-top">
+        <div class="fr-head" id="fr-head">— / 500 km</div>
+        <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
+           data-en="donate" data-fr="faire un don">donate</a>
+      </div>
+      <div id="runs-list" class="run-list"></div>
     </main>
   </div>
 
