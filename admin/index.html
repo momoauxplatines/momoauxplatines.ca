@@ -533,6 +533,15 @@
       <div style="margin-top:16px;"><button class="btn-admin" id="school-add-section-btn">+ Section</button></div>
     </section>
 
+    <!-- ── FUND RAISE ── -->
+    <section class="admin-section" id="fundraise-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Fund Raise — média</h2>
+        <button class="btn-admin" id="fundraise-edit-btn">Edit</button>
+      </div>
+      <div id="fundraise-preview" class="empty-state"></div>
+    </section>
+
     <!-- ── CURATOR ── -->
     <section class="admin-section" id="curator-section">
       <div class="section-title-row">
@@ -1386,6 +1395,7 @@
     renderTimeline();
     renderSchool();
     renderCurator();
+    renderFundraise();
     scheduleGigRefresh();
     applyI18n();
   }
@@ -1740,6 +1750,12 @@
     el.textContent = intro || '—';
   }
 
+  function renderFundraise() {
+    const el = document.getElementById('fundraise-preview');
+    if (!el) return;
+    el.textContent = copy('fundraise.media') || '—';
+  }
+
   // multiline <-> pipe helpers
   const toLines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean).join('\n');
   const toPipe  = s => (s || '').split('\n').map(x => x.trim()).filter(Boolean).join('|');
@@ -1811,6 +1827,7 @@
   document.getElementById('school-intro-btn').addEventListener('click', () => openForm('school-intro'));
   document.getElementById('school-add-section-btn').addEventListener('click', () => openForm('school-section', {}));
   document.getElementById('curator-edit-btn').addEventListener('click', () => openForm('curator'));
+  document.getElementById('fundraise-edit-btn').addEventListener('click', () => openForm('fundraise'));
 
   // ── Edit overlay ──────────────────────────────────────────────────────────────
   const overlay   = document.getElementById('edit-overlay');
@@ -2120,6 +2137,29 @@
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
       imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+    }
+
+    if (type === 'fundraise') {
+      editTitle.textContent = 'Fund Raise — média';
+      editSub.textContent = 'Vidéo (.mov/.mp4/.webm) ou image. Les gros fichiers vont dans /images; ici on met le chemin.';
+      editBody.innerHTML = `
+        <input type="file" id="ef-img-input" accept="image/*" style="display:none">
+        <div class="edit-field">
+          <label class="edit-label">Média (URL) — vidéo ou image</label>
+          <input class="edit-input" type="text" id="ef-fr-media" value="${esc(copy('fundraise.media'))}" placeholder="/images/fundraise.MOV">
+        </div>
+        <div class="edit-field">
+          <label class="edit-label">Poster (image affichée avant la vidéo)</label>
+          <div class="image-row">
+            <div class="image-preview"><img id="ef-img-preview" src="${esc(copy('fundraise.poster'))}" alt="" style="${copy('fundraise.poster') ? '' : 'display:none'}"></div>
+            <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
+          </div>
+          <input class="edit-input" type="text" id="ef-fr-poster" value="${esc(copy('fundraise.poster'))}" placeholder="/images/fundraise.png" style="margin-top:8px;">
+        </div>`;
+      const imgInput = document.getElementById('ef-img-input');
+      const imgPreview = document.getElementById('ef-img-preview');
+      document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+      imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; } });
     }
 
     if (type === 'curator') {
@@ -2629,6 +2669,23 @@
         }
         renderSchool();
         showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (editFormType === 'fundraise') {
+        const imgInput = document.getElementById('ef-img-input');
+        let posterUrl = document.getElementById('ef-fr-poster').value.trim();
+        if (imgInput && imgInput.files[0]) {
+          posterUrl = await uploadImageToBlob(imgInput.files[0], 'fundraise/poster.jpg');
+        }
+        const media = document.getElementById('ef-fr-media').value.trim();
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          copyData[lang]['fundraise.media'] = media;
+          copyData[lang]['fundraise.poster'] = posterUrl;
+          await saveCopy(lang, `Update fund raise media (${lang})`);
+        }
+        renderFundraise();
+        showToast(t('toast.intro.saved'), 'success');
       }
 
       if (editFormType === 'curator') {

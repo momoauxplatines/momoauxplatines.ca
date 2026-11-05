@@ -4,6 +4,10 @@
 
 # Videos (too large for git — host separately)
 videos/
+# Fichiers vidéo source lourds (ex. images/fundraise.MOV, 193 Mo > limite 100 Mo GitHub).
+# On versionne seulement la version web compressée (fundraise-web.mp4).
+*.MOV
+*.mov
 
 # Local Netlify folder
 .netlify

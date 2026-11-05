@@ -52,9 +52,9 @@
     .arrow { width: 22px; height: 22px; flex-shrink: 0; }
 
     .fr-intro { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); }
-    .fr-image { display: flex; justify-content: center; }
+    .fr-image { display: flex; justify-content: flex-end; }
     .fr-image picture { display: contents; }
-    .fr-image img { width: 160px; height: 320px; object-fit: cover; object-position: bottom; display: block; background: var(--brand-100); }
+    .fr-image img, .fr-image video { width: 160px; height: 320px; object-fit: cover; object-position: bottom; display: block; background: var(--brand-100); }
     .fr-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
     .fr-copy p { margin: 0; }
 
@@ -86,7 +86,7 @@
     .fr-link:hover { background: var(--brand-105); }
 
     @media (min-width: 768px) {
-      .fr-image img { width: 320px; height: 540px; }
+      .fr-image img, .fr-image video { width: 320px; height: 540px; }
       .fr-copy { font-size: 30px; line-height: 40px; }
       .fr-link { font-size: 32px; line-height: 36px; }
     }
@@ -105,11 +105,10 @@
     </header>
 
     <main class="fr-intro">
-      <div class="fr-image">
-        <picture>
-          <source media="(min-width: 768px)" srcset="/images/fundraise.png">
-          <img src="/images/fundraise-mobile.png" alt="Momo en course" width="160" height="320">
-        </picture>
+      <div class="fr-image" id="fr-media">
+        <video class="fr-video" controls playsinline preload="metadata" poster="/images/fundraise-poster.jpg">
+          <source src="/images/fundraise-web.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="fr-copy">
         <p data-key="fr.copy.1" data-en="During november"         data-fr="En novembre">During november</p>
@@ -127,7 +126,7 @@
 
     <nav class="fr-nav">
       <a class="fr-link" href="/jecours-tudonnes-onaide/why">
-        <span data-key="fr.nav.why" data-en="why?" data-fr="pourquoi?">why?</span>
+        <span data-key="fr.nav.why" data-en="why" data-fr="pourquoi">why</span>
         <svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
       </a>
       <a class="fr-link" href="/jecours-tudonnes-onaide/runs">
@@ -161,6 +160,24 @@
   logoToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLang(); } });
 
   function fmtInt(n) { return Math.round(n).toLocaleString('fr-CA').replace(/ /g, ' '); }
+
+  // ── Média d'intro (vidéo ou image), éditable depuis l'admin via /api/copy ──
+  const escAttr = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const VIDEO_TYPES = { mov:'video/quicktime', mp4:'video/mp4', m4v:'video/mp4', webm:'video/webm', ogg:'video/ogg' };
+  function renderMedia(media, poster) {
+    const el = document.getElementById('fr-media');
+    if (!el || !media) return;
+    const ext = (media.split('.').pop() || '').toLowerCase();
+    if (VIDEO_TYPES[ext]) {
+      el.innerHTML = `<video class="fr-video" controls playsinline preload="metadata" ${poster ? `poster="${escAttr(poster)}"` : ''}><source src="${escAttr(media)}" type="${VIDEO_TYPES[ext]}"></video>`;
+    } else {
+      const mob = media.replace(/(\.[a-z0-9]+)$/i, '-mobile$1');
+      el.innerHTML = `<picture><source media="(min-width:768px)" srcset="${escAttr(media)}"><img src="${escAttr(mob)}" alt="Momo en course" width="160" height="320" onerror="this.src='${escAttr(media)}'"></picture>`;
+    }
+  }
+  fetch('/api/copy?lang=' + currentLang).then(r => r.ok ? r.json() : null).then(c => {
+    if (c && c['fundraise.media']) renderMedia(c['fundraise.media'], c['fundraise.poster']);
+  }).catch(() => {});
 
   // km badge from Strava
   fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
