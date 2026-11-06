@@ -1193,6 +1193,13 @@
     if (_sessionTimer) clearTimeout(_sessionTimer);
     _sessionTimer = setTimeout(doLogout, SESSION_MS);
     await Promise.all([loadAllCopy(), loadEvents()]);
+    // Auto-réparation : retirer les gigs orphelins (date vide) qui n'apparaissent
+    // nulle part dans l'admin mais restent visibles sur le site. Ne tourne qu'une fois.
+    const _validEvents = (currentEvents || []).filter(ev => ev && (ev.date || '').trim());
+    if (_validEvents.length !== (currentEvents || []).length) {
+      currentEvents = _validEvents;
+      try { await saveEvents('Clean up gigs with empty date'); } catch (e) { /* non bloquant */ }
+    }
     loadRegistries();
     renderAll();
     // Nouveau format : /admin/:nameslug/:dateslug
