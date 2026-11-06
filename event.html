@@ -12,7 +12,7 @@
   <meta property="og:url" content="https://momoauxplatines.ca/request">
   <link rel="canonical" href="https://momoauxplatines.ca/request">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&family=Kalnia:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
@@ -628,114 +628,97 @@
       color: var(--brand-50); text-align: center;
       margin-bottom: 8px;
     }
+
+    /* ══ Nouvelle page événement (maquette 1344-3253) ══ */
+    body { background: var(--bg); color: #fff; }
+    .page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
+    .ev-font-display { font-family: 'Kalnia', serif; }
+    .ev-body-font { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif; }
+
+    .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 112px; padding: var(--gap-32); background: var(--bg); }
+    .hdr-back { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: #fff; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .hdr-logo { flex-shrink: 0; }
+    .hdr-logo img { height: 48px; width: auto; display: block; }
+    .ev-icon { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; width: 28px; height: 28px; }
+
+    .ev-body { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--gap-56); padding: var(--gap-32); max-width: 770px; width: 100%; }
+
+    .ev-image { display: flex; justify-content: flex-end; }
+    .ev-image img { width: 160px; height: 160px; object-fit: cover; display: block; mix-blend-mode: luminosity; background: var(--brand-100); }
+
+    .ev-info { display: flex; flex-direction: column; gap: var(--gap-24); }
+    .ev-name { font-family: 'Kalnia', serif; font-weight: 600; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
+    .ev-venue-link { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 23px; line-height: 31px; color: var(--blue); text-decoration: underline; width: fit-content; }
+    .ev-details { display: flex; flex-direction: column; }
+    .ev-detail { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 23px; line-height: 31px; color: #fff; text-decoration: none; }
+    a.ev-detail:hover { text-decoration: underline; }
+    .ev-desc { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 18px; line-height: 24px; color: var(--brand-30); }
+
+    .ev-request { display: flex; flex-direction: column; gap: var(--gap-8); }
+    .ev-req-label { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
+    .ev-submit { margin-top: var(--gap-8); height: 56px; width: 100%; border: 0; cursor: pointer; background: var(--brand-90); color: var(--bg); font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; line-height: 26px; text-transform: uppercase; }
+    .ev-submit.ready { background: var(--brand-00); color: var(--brand-100); }
+    .ev-submit:disabled { cursor: not-allowed; }
+    .ev-success { display: none; align-items: center; gap: var(--gap-8); margin-top: var(--gap-8); }
+    .ev-success.visible { display: flex; }
+
+    .ev-played { display: flex; flex-direction: column; gap: var(--gap-4); }
+    .played-label { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
+    .ev-played .song-list { display: flex; flex-direction: column; }
+    .ev-played .song-card { display: flex; align-items: flex-start; gap: var(--gap-16); padding: var(--gap-12) 0; background: transparent; }
+    .ev-played .song-art { width: 40px; height: 40px; flex-shrink: 0; object-fit: cover; display: block; border-radius: 0; }
+    .ev-played .song-info { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+    .ev-played .song-title { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 700; font-size: 18px; line-height: normal; color: var(--brand-30); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ev-played .song-artist { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 16px; line-height: 20px; color: var(--brand-40); }
+    .ev-played .song-link { font-family: -apple-system, system-ui, sans-serif; font-weight: 300; font-size: 14px; color: var(--brand-60); text-decoration: none; }
+    .ev-played .empty-state { color: var(--brand-60); font-family: -apple-system, system-ui, sans-serif; font-weight: 300; font-size: 16px; padding: var(--gap-12) 0; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div class="page">
 
-  <!-- ── Sticky Top ── -->
-  <div class="sticky-top">
+  <header class="site-header">
+    <a class="hdr-back" href="/dj/gigs" aria-label="Back / Retour" title="Back / Retour">
+      <svg class="ev-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H5 M12 5 L5 12 L12 19"/></svg>
+    </a>
+    <a class="hdr-logo" href="/"><img src="/images/logo-momo-new.svg" alt="Momo Aux Platines"></a>
+  </header>
 
-    <header class="req-header">
-      <a href="/"><img class="header-logo" src="/images/og-image.png" alt="Momo Aux Platines"></a>
-      <div class="req-header-badge badge-live" id="req-header-live">
-        <div class="req-live-dot"></div>
-        <span class="req-badge-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span>
-      </div>
-      <div class="req-header-badge badge-next" id="req-header-next" style="display:none">
-        <span class="req-badge-label" data-en="NEXT" data-fr="PROCHAIN">NEXT</span>
-      </div>
-      <!-- Event image — populated dynamically from event data -->
-      <img class="header-event-img" id="header-event-img" src="" alt="" style="display:none">
-    </header>
+  <main class="ev-body">
 
-    <!-- 4 Tabs — always visible -->
-    <div class="tabs-row" id="tabs-row">
-      <button class="tab-btn active"   id="tab-info"     data-key="tab.info"     data-en="Info"     data-fr="Info">Info</button>
-      <button class="tab-btn inactive" id="tab-battle"   data-key="tab.battle"   data-en="Battle"   data-fr="Battle" style="display:none">Battle</button>
-      <button class="tab-btn inactive" id="tab-played"   data-key="tab.played"   data-en="Played"   data-fr="Jouées">Played</button>
-      <button class="tab-btn inactive" id="tab-requests" data-key="tab.requests" data-en="Request"  data-fr="Demandes">Request</button>
-      <button class="tab-btn inactive" id="tab-message"  data-key="tab.message"  data-en="Message" data-fr="Message">Message</button>
+    <!-- Image de l'événement -->
+    <div class="ev-image">
+      <img id="info-cover-img" src="" alt="" onerror="this.closest('.ev-image').style.display='none'">
     </div>
 
-  </div><!-- /sticky-top -->
-
-  <!-- ── Info Panel ── -->
-  <div class="tab-panel active" id="panel-info">
-    <div class="info-body">
-      <div class="info-top-row">
-        <img class="info-event-thumb" id="info-cover-img" src="" alt="">
+    <!-- Infos (100% depuis l'événement admin) -->
+    <section class="ev-info">
+      <h1 class="ev-name" id="info-venue-name"></h1>
+      <a class="ev-venue-link" id="info-ig-link" href="" target="_blank" rel="noopener" style="display:none"></a>
+      <div class="ev-details">
+        <a class="ev-detail ev-address" id="info-address" href="" target="_blank" rel="noopener" style="display:none"></a>
+        <p class="ev-detail" id="info-date"  style="display:none"></p>
+        <p class="ev-detail" id="info-hours" style="display:none"></p>
       </div>
-      <div class="info-copy">
-        <div class="info-top">
-          <h1 class="info-venue-name" id="info-venue-name"></h1>
-          <p class="info-description" id="info-description" style="display:none"></p>
-        </div>
-        <div class="info-details">
-          <a class="info-address" id="info-address" href="" target="_blank" rel="noopener" style="display:none"></a>
-          <p class="info-date"  id="info-date"  style="display:none"></p>
-          <p class="info-hours" id="info-hours" style="display:none"></p>
-        </div>
-      </div>
-      <div class="info-links" id="info-links">
-        <a class="info-link-btn" id="info-ig-link" href="" target="_blank" rel="noopener" style="display:none">Instagram</a>
-        <a class="info-link-btn" id="info-twitch-link" href="" target="_blank" rel="noopener" style="display:none">Twitch</a>
-      </div>
-    </div>
-  </div>
+      <p class="ev-desc" id="info-description" style="display:none"></p>
+    </section>
 
-  <!-- ── Battle Panel ── -->
-  <div class="tab-panel" id="panel-battle" style="display:none">
-    <div class="song-list" id="battle-list"></div>
-    <div class="req-tab-footer" id="battle-footer" style="display:none"></div>
-  </div>
-
-  <!-- ── Played Panel ── -->
-  <div class="tab-panel" id="panel-played">
-    <div class="empty-state" id="played-next-message" style="display:none">
-      <img src="/images/illustration.empty.playing.png" alt="" width="170" height="135">
-      <p data-key="played.next"
-         data-en="Songs played will be listed here."
-         data-fr="Les chansons jouées seront listées ici.">Songs played will be listed here.</p>
-    </div>
-    <div class="song-list" id="played-list">
-      <div class="empty-state" id="played-empty">
-        <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
+    <!-- Champ de demande (lien Spotify) -->
+    <section class="ev-request">
+      <label class="ev-req-label" for="spotify-url"
+             data-key="req.tab.field.label" data-en="Request a song" data-fr="Demander une chanson">Request a song</label>
+      <div class="spotify-input-wrapper" id="spotify-input-wrapper">
+        <input class="form-input" type="url" id="spotify-url"
+               data-placeholder-en="Copy Spotify mobile share link"
+               data-placeholder-fr="Colle le lien de partage Spotify"
+               placeholder="Copy Spotify mobile share link"
+               autocomplete="off" autocorrect="off" spellcheck="false">
       </div>
-    </div>
-    <p class="played-intro" id="played-intro" style="display:none"
-       data-key="played.intro"
-       data-en="That's what's been going on so far. Want to make a request? Hit the tab or come and chat at the booth."
-       data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande.">Songs played so far today. You can also make a request.</p>
-  </div>
+      <p class="fetch-status" id="fetch-status"></p>
 
-  <!-- ── Requests Panel (inline form) ── -->
-  <div class="tab-panel" id="panel-requests">
-    <div class="req-tab-body">
-      <div class="form-field">
-        <label class="form-label" for="spotify-url"
-               data-key="req.tab.field.label"
-               data-en="Spotify share link *"
-               data-fr="Lien de partage Spotify *">Spotify share link *</label>
-        <div class="spotify-input-wrapper" id="spotify-input-wrapper">
-          <input class="form-input" type="url" id="spotify-url"
-                 data-placeholder-en="Copy mobile app link here"
-                 data-placeholder-fr="Copiez le lien de l'app mobile ici"
-                 placeholder="Copy mobile app link here"
-                 autocomplete="off" autocorrect="off" spellcheck="false">
-        </div>
-        <p class="fetch-status" id="fetch-status"></p>
-      </div>
-      <p class="req-tab-intro"
-         data-key="req.tab.hint"
-         data-en="Open your Spotify mobile app.&#10;Copy the link to the song.&#10;Paste it above."
-         data-fr="Ouvre l&#39;app Spotify sur ton mobile.&#10;Copie le lien de la chanson.&#10;Colle-le ci-dessus.">Open your Spotify mobile app.<br>Copy the link to the song.<br>Paste it above.</p>
-
-      <!-- Song preview card — appears once a valid Spotify URL is detected -->
       <div class="song-card song-preview" id="song-preview">
-        <img class="song-art" id="preview-art" src="" alt=""
-             onerror="this.style.background='var(--brand-90)'">
+        <img class="song-art" id="preview-art" src="" alt="" onerror="this.style.background='var(--brand-90)'">
         <div class="preview-content">
           <p class="song-title" id="preview-title"></p>
           <p class="song-artist" id="preview-artist"></p>
@@ -749,77 +732,49 @@
         </div>
       </div>
 
-      <!-- Inline success state — shown for 5 s after submit -->
-      <div class="req-success" id="req-success">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="12" r="12" fill="#34C759"/>
-          <path d="M7 12.5L10.5 16L17 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <p class="req-success-text" data-key="req.tab.thanks" data-en="Thank you!" data-fr="Merci !">Thank you!</p>
-      </div>
-    </div>
-
-    <!-- Sticky submit button -->
-    <div class="req-tab-footer">
-      <button class="req-submit-btn" id="req-submit-btn" disabled
+      <button class="req-submit-btn ev-submit" id="req-submit-btn" disabled
               data-key="req.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
-    </div>
-  </div>
 
-  <!-- ── Message Panel ── -->
-  <div class="tab-panel" id="panel-message">
-    <div class="msg-tab-body">
-      <div class="msg-textarea-wrap">
-        <label class="form-label" for="msg-input"
-               data-key="msg.tab.label"
-               data-en="Want to send a message to Momo?"
-               data-fr="Tu veux envoyer un message à Momo ?">Want to send a message to Momo?</label>
-        <textarea class="msg-textarea" id="msg-input"
-                  data-placeholder-en="Ideally positive and respectful"
-                  data-placeholder-fr="Idéalement positif et respectueux"
-                  placeholder="Type your message here"
-                  maxlength="1000"></textarea>
-      </div>
-
-      <!-- Success state -->
-      <div class="msg-success" id="msg-success">
+      <div class="req-success ev-success" id="req-success">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="12" fill="#34C759"/>
           <path d="M7 12.5L10.5 16L17 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <p class="msg-success-text"
-           data-key="msg.tab.thanks"
-           data-en="Your message has been sent. Thank you!"
-           data-fr="Ton message a été envoyé. Merci !">Your message has been sent. Thank you!</p>
+        <p class="req-success-text" data-key="req.tab.thanks" data-en="Request received — thank you!" data-fr="Demande reçue — merci !">Request received — thank you!</p>
       </div>
-    </div>
+    </section>
 
-    <!-- Sticky submit button -->
-    <div class="req-tab-footer">
-      <button class="req-submit-btn" id="msg-submit-btn" disabled
-              data-key="msg.tab.submit" data-en="SUBMIT" data-fr="ENVOYER">SUBMIT</button>
-    </div>
-  </div>
-
-  <!-- ── Now Playing Footer ── -->
-  <div class="now-playing-bar" id="now-playing-bar" style="display:none">
-    <div class="now-playing-card">
-      <img class="now-playing-art" id="now-playing-art" src="" alt=""
-           onerror="this.style.background='var(--brand-90)'">
-      <div class="now-playing-info">
-        <div class="now-playing-info-inner" id="now-playing-info-inner">
-          <svg class="now-playing-triangle" width="12" height="14" viewBox="0 0 8 10" fill="none">
-            <path d="M1 1L7 5L1 9V1Z" fill="#34C759"/>
-          </svg>
-          <p class="now-playing-title"  id="now-playing-title"></p>
-          <span class="now-playing-sep"> - </span>
-          <p class="now-playing-artist" id="now-playing-artist"></p>
+    <!-- Chansons jouées (live via Supabase) -->
+    <section class="ev-played">
+      <p class="played-label" data-key="played.heading" data-en="Songs played so far" data-fr="Chansons jouées jusqu'ici">Songs played so far</p>
+      <div class="song-list" id="played-list">
+        <div class="empty-state" id="played-empty">
+          <span data-key="played.empty" data-en="Nothing played yet. Songs appear here as the DJ adds them." data-fr="Rien de joué encore. Les chansons apparaissent ici au fur et à mesure.">Nothing played yet. Songs appear here as the DJ adds them.</span>
         </div>
       </div>
-      <div class="now-playing-request-col" id="now-playing-request-col">
-        <img class="now-playing-request-icon" src="/images/request-played-icon.svg" alt="">
+      <p class="played-intro" id="played-intro" style="display:none"
+         data-key="played.intro"
+         data-en="Songs played so far today. You can also make a request above."
+         data-fr="Les chansons jouées jusqu'ici. Vous pouvez aussi faire une demande ci-dessus."></p>
+      <div class="empty-state" id="played-next-message" style="display:none">
+        <p data-key="played.next" data-en="Songs played will be listed here." data-fr="Les chansons jouées seront listées ici.">Songs played will be listed here.</p>
       </div>
+    </section>
+
+  </main>
+
+  <!-- Stubs cachés : éléments référencés par le JS mais absents de la maquette (onglets, battle, message, now-playing). Gardés pour ne pas casser la logique live. -->
+  <div class="ev-hidden-stubs" aria-hidden="true" style="display:none !important">
+    <div id="req-header-live"><span class="req-badge-label" data-en="LIVE" data-fr="EN DIRECT">LIVE</span></div>
+    <div id="req-header-next"></div>
+    <img id="header-event-img" src="" alt="">
+    <div id="tabs-row">
+      <button id="tab-info"></button><button id="tab-battle"></button><button id="tab-played"></button><button id="tab-requests"></button><button id="tab-message"></button>
     </div>
+    <div id="panel-info"></div><div id="panel-battle"></div><div id="panel-played"></div><div id="panel-requests"></div><div id="panel-message"></div>
+    <div id="battle-list"></div><div id="battle-footer"></div>
+    <textarea id="msg-input"></textarea><button id="msg-submit-btn"></button><div id="msg-success"></div>
+    <div id="now-playing-bar"><img id="now-playing-art" src="" alt=""><div id="now-playing-info-inner"></div><p id="now-playing-title"></p><span class="now-playing-sep"></span><p id="now-playing-artist"></p><div id="now-playing-request-col"></div></div>
   </div>
 
 </div><!-- /page -->
@@ -992,9 +947,22 @@
       headerImg.alt = ev.venue || '';
       headerImg.style.display = '';
     }
-    // Venue name
+    // Nom de l'événement (titre du gig, sinon le lieu)
     const venueName = document.getElementById('info-venue-name');
-    if (venueName) venueName.textContent = ev.venue || '';
+    if (venueName) venueName.textContent = ev.title || ev.venue || '';
+
+    // Ligne « lieu » = nom du lieu, lien bleu vers l'Instagram de l'événement
+    const venueLink = document.getElementById('info-ig-link');
+    if (venueLink) {
+      if (ev.venue) {
+        venueLink.textContent = ev.venue;
+        if (ev.instagram) { venueLink.href = ev.instagram; venueLink.removeAttribute('aria-disabled'); venueLink.style.pointerEvents = ''; }
+        else { venueLink.removeAttribute('href'); venueLink.style.pointerEvents = 'none'; }
+        venueLink.style.display = '';
+      } else {
+        venueLink.style.display = 'none';
+      }
+    }
 
     // Description
     const descEl = document.getElementById('info-description');
@@ -1017,9 +985,8 @@
     // Date — only for upcoming events
     const dateEl  = document.getElementById('info-date');
     const hoursEl = document.getElementById('info-hours');
-    const isFuture = !checkEventLive(ev) && !checkEventPast(ev);
     if (dateEl) {
-      if (isFuture && ev.date) { dateEl.textContent = ev.date; dateEl.style.display = ''; }
+      if (ev.date) { dateEl.textContent = ev.date; dateEl.style.display = ''; }
       else dateEl.style.display = 'none';
     }
     // Hours — always shown if available
@@ -1029,18 +996,6 @@
       else hoursEl.style.display = 'none';
     }
 
-    // Instagram
-    const igLink = document.getElementById('info-ig-link');
-    if (igLink) {
-      if (ev.instagram) { igLink.href = ev.instagram; igLink.style.display = ''; }
-      else igLink.style.display = 'none';
-    }
-    // Twitch — Info tab only
-    const twitchLink = document.getElementById('info-twitch-link');
-    if (twitchLink) {
-      if (ev.twitch) { twitchLink.href = ev.twitch; twitchLink.style.display = ''; }
-      else twitchLink.style.display = 'none';
-    }
   }
 
   if (EVENT_SLUG || _pendingNameSlug) {
@@ -1381,10 +1336,10 @@
     // Refresh requests cache for icon matching
     if (EVENT_SLUG) fetchRequests();
 
-    // Auto-reset after 5 s
+    // Confirmation affichée 3 secondes
     successTimer = setTimeout(() => {
       successEl.classList.remove('visible');
-    }, 5000);
+    }, 3000);
   });
 
   // ─────────────────────────────────────────────
