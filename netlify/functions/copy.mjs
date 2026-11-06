@@ -79,6 +79,16 @@ export default async (req) => {
       merged['demos.order'] = rawOrder.split('|').filter(id => finalRegSet.has(id)).join('|');
     }
 
+    // Same union merge for reviews.registry (avis codés en dur + ajoutés via l'admin).
+    // Statiques d'abord (ordre de l'admin), puis les ids présents seulement dans le blob.
+    const rStaticIds = (staticData['reviews.registry'] || '').split('|').filter(Boolean);
+    const rBlobIds   = (blobData['reviews.registry']   || '').split('|').filter(Boolean);
+    const rIsDead = (id) => merged[`reviews.${id}.deleted`] === 'true';
+    merged['reviews.registry'] = [
+      ...rStaticIds.filter(id => !rIsDead(id)),
+      ...rBlobIds.filter(id => !rStaticIds.includes(id) && !rIsDead(id)),
+    ].join('|');
+
     // Translation guard: if a demos.*.desc in the blob is identical to the English
     // original, it was never translated. Prefer the static translation if one exists.
     if (lang !== 'en') {

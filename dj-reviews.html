@@ -141,7 +141,7 @@
   function renderReviews() {
     const copy = COPY[currentLang] || COPY.en || {};
     const list = document.getElementById('rv-list');
-    const registry = (copy['reviews.registry'] || '').split('|').filter(Boolean).reverse(); // newest first
+    const registry = (copy['reviews.registry'] || '').split('|').filter(Boolean); // ordre de l'admin
     if (!registry.length) {
       list.innerHTML = `<p class="rv-empty">${currentLang === 'fr' ? 'Pas encore d’avis.' : 'No reviews yet.'}</p>`;
       return;

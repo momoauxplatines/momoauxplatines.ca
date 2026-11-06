@@ -185,5 +185,18 @@
   "home.intro": "he’s kind|loves music|shows how to dj|puts the vibe on",
   "dj.intro": "dj since the 90s|hip-hop roots|versatile|turntablist|friendly and pro",
   "bio.intro": "several decades|evolving dj|same old guy",
-  "fr.intro": "During november|run 500km (or more)|raise 10,000$ (or more)|help cancer research"
+  "fr.intro": "During november|run 500km (or more)|raise 10,000$ (or more)|help cancer research",
+  "reviews.registry": "simone|tmo|jessie",
+  "reviews.simone.name": "Simone",
+  "reviews.simone.venue": "La Buvette chez Simone",
+  "reviews.simone.instagram": "https://www.instagram.com/labuvettechezsimone",
+  "reviews.simone.avatar": "/images/review-simone.png",
+  "reviews.tmo.name": "TMO",
+  "reviews.tmo.venue": "",
+  "reviews.tmo.instagram": "https://www.instagram.com/taktika_officiel",
+  "reviews.tmo.avatar": "/images/review-tmo.png",
+  "reviews.jessie.name": "Jessie",
+  "reviews.jessie.venue": "Le Birdie",
+  "reviews.jessie.instagram": "https://www.instagram.com/lebirdiemontreal",
+  "reviews.jessie.avatar": "/images/review-jessie.png"
 }
