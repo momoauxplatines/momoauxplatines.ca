@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aperçu vignette course</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-00:#fafbf9;--brand-10:#f4f6f3;--brand-50:#c9d3c0;--brand-60:#a2a89b;--brand-70:#797f73;
+    --brand-80:#51534e;--brand-90:#282a27;--brand-95:#20221f;--brand-100:#141513;--brand-105:#111210;
+    --bg:#000;--radius-8:8px;--radius-72:72px;--strava:#fc4c02;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;color:var(--brand-10);
+       display:flex;flex-direction:column;align-items:center;gap:24px;padding:40px 16px}
+  .label{font-size:13px;color:var(--brand-70);letter-spacing:.04em;text-transform:uppercase}
+  .page{width:100%;max-width:390px;display:flex;flex-direction:column;gap:16px}
+
+  .run{background:var(--brand-105);border:1px solid var(--brand-90);border-radius:var(--radius-8);overflow:hidden}
+  .run-map{position:relative;aspect-ratio:16/10;background:
+      radial-gradient(circle at 1px 1px,var(--brand-90) 1px,transparent 0) 0 0/16px 16px,var(--brand-100)}
+  .run-map svg{position:absolute;inset:0;width:100%;height:100%}
+  .run-badge{position:absolute;top:12px;left:12px;background:var(--brand-100);border:1px solid var(--brand-90);
+      border-radius:var(--radius-72);padding:6px 12px;font-size:13px;color:var(--brand-50)}
+  .run-body{padding:16px;display:flex;flex-direction:column;gap:16px}
+  .run-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .run-title{font-family:'Kanit',sans-serif;font-weight:600;font-size:20px;line-height:26px;color:var(--brand-10)}
+  .run-date{font-size:14px;color:var(--brand-60);white-space:nowrap}
+  .run-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat{background:var(--brand-100);border-radius:var(--radius-8);padding:12px}
+  .stat-val{font-family:'Kanit',sans-serif;font-weight:700;font-size:22px;line-height:26px;color:var(--brand-00)}
+  .stat-val small{font-weight:300;font-size:14px;color:var(--brand-60);margin-left:2px}
+  .stat-lbl{font-size:12px;color:var(--brand-70);margin-top:4px}
+  .run-foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--brand-70)}
+  .run-foot b{color:var(--strava);font-weight:600}
+</style>
+</head>
+<body>
+  <p class="label">Aperçu — données fictives</p>
+  <div class="page">
+    <article class="run">
+      <div class="run-map">
+        <span class="run-badge">Course 12 / 500 km</span>
+        <svg viewBox="0 0 320 200" id="route" aria-label="Tracé de la course"></svg>
+      </div>
+      <div class="run-body">
+        <div class="run-head">
+          <h3 class="run-title">Tour de la montagne</h3>
+          <span class="run-date">sam. 14 nov. · 7 h 42</span>
+        </div>
+        <div class="run-stats">
+          <div class="stat"><div class="stat-val">12,4<small>km</small></div><div class="stat-lbl">Distance</div></div>
+          <div class="stat"><div class="stat-val">1:08<small>h</small></div><div class="stat-lbl">Durée</div></div>
+          <div class="stat"><div class="stat-val">172<small>ppm</small></div><div class="stat-lbl">Cadence</div></div>
+        </div>
+        <div class="run-foot"><span>Allure moy. 5:29 /km</span><span>Powered by <b>Strava</b></span></div>
+      </div>
+    </article>
+  </div>
+<script>
+  // Tracé fictif autour du Mont-Royal (lat, lng)
+  const pts=[[45.5150,-73.5785],[45.5172,-73.5810],[45.5196,-73.5842],[45.5221,-73.5880],[45.5240,-73.5921],
+    [45.5226,-73.5968],[45.5198,-73.6012],[45.5162,-73.6040],[45.5121,-73.6031],[45.5082,-73.6001],
+    [45.5051,-73.5960],[45.5032,-73.5912],[45.5040,-73.5866],[45.5066,-73.5829],[45.5098,-73.5801],[45.5150,-73.5785]];
+  const W=320,H=200,P=28,la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
+  const k=Math.cos(45.51*Math.PI/180),minX=Math.min(...lo)*k,maxX=Math.max(...lo)*k,minY=Math.min(...la),maxY=Math.max(...la);
+  const s=Math.min((W-2*P)/(maxX-minX),(H-2*P)/(maxY-minY)),ox=(W-(maxX-minX)*s)/2,oy=(H-(maxY-minY)*s)/2;
+  const xy=pts.map(([a,b])=>[ox+(b*k-minX)*s,H-(oy+(a-minY)*s)]);
+  const d=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const [sx,sy]=xy[0];
+  document.getElementById('route').innerHTML=
+    `<path d="${d}" fill="none" stroke="#fc4c02" stroke-opacity=".25" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+     <path d="${d}" fill="none" stroke="#fc4c02" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+     <circle cx="${sx}" cy="${sy}" r="6" fill="#fafbf9" stroke="#141513" stroke-width="2"/>`;
+</script>
+</body>
+</html>

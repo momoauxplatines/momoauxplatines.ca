@@ -143,18 +143,14 @@
     </header>
 
     <main class="dj-intro">
-      <div class="dj-image">
+      <div class="dj-image" id="dj-image">
         <picture>
           <source media="(min-width: 768px)" srcset="/images/dj.png">
           <img src="/images/dj-mobile.png" alt="Momo, enfant" width="160" height="320">
         </picture>
       </div>
-      <div class="dj-copy">
-        <p data-key="dj.copy.1" data-en="dj since the 90s" data-fr="dj depuis les années 90">dj since the 90s</p>
-        <p data-key="dj.copy.2" data-en="hip-hop roots"    data-fr="racines hip-hop">hip-hop roots</p>
-        <p data-key="dj.copy.3" data-en="versatile"        data-fr="polyvalent">versatile</p>
-        <p data-key="dj.copy.4" data-en="turntablist"      data-fr="turntablist">turntablist</p>
-        <p data-key="dj.copy.5" data-en="friendly and pro" data-fr="sympa et pro">friendly and pro</p>
+      <div class="dj-copy" id="dj-copy">
+        <p>dj since the 90s</p><p>hip-hop roots</p><p>versatile</p><p>turntablist</p><p>friendly and pro</p>
       </div>
     </main>
 
@@ -198,6 +194,9 @@
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
     });
+    const dc = document.getElementById('dj-copy');
+    const introLines = (copy['dj.intro'] || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (dc && introLines.length) dc.innerHTML = introLines.map(l => `<p>${l.replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]))}</p>`).join('');
     document.documentElement.lang = lang;
     currentLang = lang;
     try { localStorage.setItem('momo-lang', lang); } catch {}
@@ -208,8 +207,16 @@
     try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
     return {};
   }
+  function renderIntroImage(img) {
+    if (!img) return;
+    const el = document.getElementById('dj-image'); if (!el) return;
+    const esc = s => (s || '').replace(/"/g, '&quot;');
+    const mob = img.replace(/(\.[a-z0-9]+)$/i, '-mobile$1');
+    el.innerHTML = `<picture><source media="(min-width:768px)" srcset="${esc(img)}"><img src="${esc(mob)}" alt="Momo, enfant" width="160" height="320" onerror="this.src='${esc(img)}'"></picture>`;
+  }
   Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
     COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang);
+    renderIntroImage((COPY.en || {})['dj.image']);
   });
   applyLang(currentLang);
 

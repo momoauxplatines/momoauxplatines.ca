@@ -75,45 +75,38 @@
     </header>
 
     <section class="why-intro">
-      <h1 class="why-title" data-en="why" data-fr="pourquoi">why</h1>
-      <div class="why-sub">
-        <p data-en="goals are productive" data-fr="les objectifs, ça aide">goals are productive</p>
-        <p data-en="people need a hand"   data-fr="on a tous besoin d'un coup de main">people need a hand</p>
-        <p data-en="science helps a lot"  data-fr="la science aide beaucoup">science helps a lot</p>
-        <p data-en="care and inspire"      data-fr="prendre soin et inspirer">care and inspire</p>
-      </div>
+      <h1 class="why-title" id="why-title"></h1>
+      <div class="why-sub" id="why-sub"></div>
     </section>
 
-    <main class="why-list">
-      <article class="why-card">
-        <h2 data-en="goals are productive" data-fr="les objectifs, ça aide">goals are productive</h2>
-        <p data-en="Setting yourself a goal limits the time spent doubting. And since time is precious, we should spend most of it doing good things."
-           data-fr="Se fixer un objectif réduit le temps passé à douter. Et comme le temps est précieux, autant en passer le plus possible à faire du bien.">Setting yourself a goal limits the time spent doubting. And since time is precious, we should spend most of it doing good things.</p>
-      </article>
-      <article class="why-card">
-        <h2 data-en="people need a hand" data-fr="on a tous besoin d'un coup de main">people need a hand</h2>
-        <p data-en="I needed a hand this past year. I was lucky to meet the right people at the right time, and to benefit instantly from my family's, friends' and community's support. But not everybody has the same chance, at the right moment or at all. So let's be there for them."
-           data-fr="J'ai eu besoin d'un coup de main cette dernière année. J'ai eu la chance de rencontrer les bonnes personnes au bon moment et de recevoir aussitôt le soutien de ma famille, de mes amis et de ma communauté. Mais tout le monde n'a pas cette chance, au bon moment ou tout court. Alors soyons là pour eux.">I needed a hand this past year. I was lucky to meet the right people at the right time, and to benefit instantly from my family's, friends' and community's support. But not everybody has the same chance, at the right moment or at all. So let's be there for them.</p>
-      </article>
-      <article class="why-card">
-        <h2 data-en="science helps a lot" data-fr="la science aide beaucoup">science helps a lot</h2>
-        <p data-en="To battle cancer, science shows up. It did for me and for all of us battling this beast every day — helping to spot it fast and precisely, to get the cancer out efficiently, and to minimise the aftershock so people can go back to their life in a flash."
-           data-fr="Contre le cancer, la science répond présente. Elle l'a fait pour moi et pour nous tous qui affrontons cette bête chaque jour — en aidant à le dépister vite et avec précision, à l'enlever efficacement, et à adoucir l'après pour que les gens retrouvent leur vie au plus vite.">To battle cancer, science shows up. It did for me and for all of us battling this beast every day — helping to spot it fast and precisely, to get the cancer out efficiently, and to minimise the aftershock so people can go back to their life in a flash.</p>
-      </article>
-      <article class="why-card">
-        <h2 data-en="care and inspire" data-fr="prendre soin et inspirer">care and inspire</h2>
-        <p data-en="Just like the Quebec Cancer Foundation, I'd like you to join the fundraiser to give back to the people who need extra help while facing this challenging situation — providing someone to talk to, shelter, therapy and many other game-changing services to cancer fighters across Quebec."
-           data-fr="Comme la Fondation québécoise du cancer, j'aimerais que tu te joignes à la collecte pour redonner aux personnes qui ont besoin d'aide supplémentaire face à cette épreuve — en offrant une oreille, un hébergement, de la thérapie et bien d'autres services déterminants aux personnes touchées partout au Québec.">Just like the Quebec Cancer Foundation, I'd like you to join the fundraiser to give back to the people who need extra help while facing this challenging situation — providing someone to talk to, shelter, therapy and many other game-changing services to cancer fighters across Quebec.</p>
-      </article>
-    </main>
+    <main class="why-list" id="why-list"></main>
 
-    <a class="why-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener" data-en="donate" data-fr="faire un don">donate</a>
+    <a class="why-donate" id="why-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener">donate</a>
   </div>
 
   <script>
   let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
-  function applyLang(lang){ document.querySelectorAll('[data-en]').forEach(el => { el.textContent = lang==='fr' ? (el.dataset.fr||el.textContent) : (el.dataset.en||el.textContent); }); document.documentElement.lang=lang; currentLang=lang; try{localStorage.setItem('momo-lang',lang);}catch{} }
-  applyLang(currentLang);
+  const COPY = { en: {}, fr: {} };
+  const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);
+  function render() {
+    const copy = COPY[currentLang] || COPY.en || {};
+    const title = copy['why.title'] || 'why';
+    document.getElementById('why-title').textContent = title;
+    document.title = title + ' — Momo Aux Platines';
+    document.getElementById('why-sub').innerHTML = lines(copy['why.intro']).map(l => `<p>${esc(l)}</p>`).join('');
+    const reg = (copy['why.blocks'] || '').split('|').map(s => s.trim()).filter(Boolean).filter(id => copy['why.' + id + '.hidden'] !== 'true');
+    document.getElementById('why-list').innerHTML = reg.map(id => {
+      const t = copy['why.' + id + '.title'] || ''; const b = copy['why.' + id + '.body'] || '';
+      return `<article class="why-card">${t ? `<h2>${esc(t)}</h2>` : ''}${b ? `<p>${esc(b)}</p>` : ''}</article>`;
+    }).join('');
+    document.getElementById('why-donate').textContent = copy['why.donate'] || 'donate';
+    document.documentElement.lang = currentLang;
+  }
+  function applyLang(lang){ currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {} render(); }
+  async function fetchCopy(lang){ try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {} try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {} return {}; }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; render(); });
+  render();
   const logo = document.getElementById('logo-toggle');
   logo.addEventListener('click', () => applyLang(currentLang==='fr'?'en':'fr'));
   logo.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyLang(currentLang==='fr'?'en':'fr'); } });

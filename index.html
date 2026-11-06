@@ -251,11 +251,8 @@
         <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 L17 7 M8 7 H17 V16"/></svg>
       </a>
 
-      <div class="home-copy">
-        <p data-key="home.copy.1" data-en="he’s kind"        data-fr="il est chaleureux">he’s kind</p>
-        <p data-key="home.copy.2" data-en="loves music"      data-fr="il aime la musique">loves music</p>
-        <p data-key="home.copy.3" data-en="shows how to dj"  data-fr="il montre à mixer">shows how to dj</p>
-        <p data-key="home.copy.4" data-en="puts the vibe on" data-fr="il met l’ambiance">puts the vibe on</p>
+      <div class="home-copy" id="home-copy">
+        <p>he’s kind</p><p>loves music</p><p>shows how to dj</p><p>puts the vibe on</p>
       </div>
     </div>
 
@@ -298,6 +295,9 @@
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
       el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
     });
+    const hc = document.getElementById('home-copy');
+    const introLines = (copy['home.intro'] || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (hc && introLines.length) hc.innerHTML = introLines.map(l => `<p>${l.replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]))}</p>`).join('');
     document.documentElement.lang = lang;
     currentLang = lang;
     try { localStorage.setItem('momo-lang', lang); } catch {}

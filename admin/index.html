@@ -104,6 +104,13 @@
 
     /* ── Sections ── */
     .admin-section { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* Rubriques de l'admin, alignées sur l'architecture du site (repliables) */
+    .admin-group { border-top: 1px solid var(--brand-80, #51534e); }
+    .admin-group > summary { cursor: pointer; list-style: none; font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 22px; line-height: 1.2; text-transform: uppercase; color: var(--brand-00, #fafbf9); padding: 28px 24px 4px; -webkit-tap-highlight-color: transparent; }
+    .admin-group > summary::-webkit-details-marker { display: none; }
+    .admin-group > summary::before { content: '▸'; display: inline-block; width: 1em; color: var(--brand-60, #a2a89b); }
+    .admin-group[open] > summary::before { content: '▾'; }
     .section-title-row { display: flex; align-items: center; justify-content: space-between; }
 
     /* ── School tree ── */
@@ -434,6 +441,8 @@
 
   <div class="admin-content">
 
+    <details class="admin-group" open><summary>Accueil</summary>
+
     <!-- ── LIVE ── -->
     <section class="admin-section">
       <div class="section-title-row">
@@ -448,6 +457,37 @@
       <div class="admin-card" id="intro-card">
         <div class="empty-state" style="height:auto">Loading…</div>
       </div>
+    </section>
+
+    <!-- ── ACCUEIL (hub : textes + liens) ── -->
+    <section class="admin-section" id="home-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Accueil — textes &amp; liens</h2>
+        <button class="btn-admin" id="home-edit-btn">Edit</button>
+      </div>
+      <div id="home-preview" class="empty-state"></div>
+    </section>
+
+    </details><!-- /Accueil -->
+
+    <details class="admin-group" open><summary>DJ</summary>
+
+    <!-- ── DJ (page : textes + liens) ── -->
+    <section class="admin-section" id="djpage-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">DJ — texte &amp; image</h2>
+        <button class="btn-admin" id="djpage-edit-btn">Edit</button>
+      </div>
+      <div id="djpage-preview" class="empty-state"></div>
+    </section>
+
+    <!-- ── BIO (intro : texte + image) ── -->
+    <section class="admin-section" id="bio-intro-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Bio — intro (texte &amp; image)</h2>
+        <button class="btn-admin" id="bio-edit-btn">Edit</button>
+      </div>
+      <div id="bio-section-preview" class="empty-state"></div>
     </section>
 
     <!-- ── NEXT GIGS ── -->
@@ -523,6 +563,10 @@
 
     </section>
 
+    </details><!-- /DJ -->
+
+    <details class="admin-group" open><summary>School</summary>
+
     <!-- ── SCHOOL ── -->
     <section class="admin-section" id="school-section">
       <div class="section-title-row">
@@ -533,6 +577,10 @@
       <div style="margin-top:16px;"><button class="btn-admin" id="school-add-section-btn">+ Section</button></div>
     </section>
 
+    </details><!-- /School -->
+
+    <details class="admin-group" open><summary>Fund Raise</summary>
+
     <!-- ── FUND RAISE ── -->
     <section class="admin-section" id="fundraise-section">
       <div class="section-title-row">
@@ -542,6 +590,28 @@
       <div id="fundraise-preview" class="empty-state"></div>
     </section>
 
+    <!-- ── FUND RAISE — textes & liens ── -->
+    <section class="admin-section" id="fr-text-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Fund Raise — textes &amp; liens</h2>
+        <button class="btn-admin" id="fr-text-edit-btn">Edit</button>
+      </div>
+      <div id="fr-text-preview" class="empty-state"></div>
+    </section>
+
+    <!-- ── FUND RAISE — Why (intro + blocs éditables) ── -->
+    <section class="admin-section" id="why-section">
+      <div class="section-title-row">
+        <h2 class="section-heading">Fund Raise — Why</h2>
+        <button class="btn-admin" id="why-intro-btn">Intro</button>
+      </div>
+      <div id="why-tree"><div class="empty-state">Loading…</div></div>
+    </section>
+
+    </details><!-- /Fund Raise -->
+
+    <details class="admin-group" open><summary>Curator</summary>
+
     <!-- ── CURATOR ── -->
     <section class="admin-section" id="curator-section">
       <div class="section-title-row">
@@ -550,6 +620,8 @@
       </div>
       <div id="curator-preview" class="empty-state"></div>
     </section>
+
+    </details><!-- /Curator -->
 
     <div style="height:48px;"></div>
 
@@ -1396,6 +1468,11 @@
     renderSchool();
     renderCurator();
     renderFundraise();
+    renderHome();
+    renderDjPage();
+    renderBio();
+    renderFundraiseText();
+    renderWhy();
     scheduleGigRefresh();
     applyI18n();
   }
@@ -1756,6 +1833,50 @@
     el.textContent = copy('fundraise.media') || '—';
   }
 
+  // ── Éditeurs de textes simples (clés fixes) : Accueil (hub) + page DJ ──
+  // Liens fixes (hors copy, qui est désormais un texte multiligne à lignes variables)
+  const HOME_FIELDS = [
+    { key:'home.nav.fundraise', label:'Lien — Fund Raise' }, { key:'home.nav.dj', label:'Lien — DJ' },
+    { key:'home.nav.school', label:'Lien — School' }, { key:'home.nav.curator', label:'Lien — Curator' },
+  ];
+  const DJPAGE_FIELDS = [
+    { key:'dj.nav.gigs', label:'Lien — Gigs' }, { key:'dj.nav.bio', label:'Lien — Bio' },
+    { key:'dj.nav.reviews', label:'Lien — Reviews' }, { key:'dj.nav.demos', label:'Lien — Demos' },
+    { key:'dj.nav.contact', label:'Lien — Contact' },
+  ];
+  const BIO_FIELDS = [];
+  const FR_FIELDS = [
+    { key:'fr.donate', label:'Bouton — Donate' },
+    { key:'fr.nav.why', label:'Lien — Why' }, { key:'fr.nav.runs', label:'Lien — Runs' }, { key:'fr.nav.donations', label:'Lien — Donations' },
+  ];
+  // Éditeurs ayant une image d'intro (commune aux 2 langues)
+  const EDITOR_IMG = { djpage: 'dj.image', bio: 'bio.image' };
+  // intro = texte multiligne (une ligne par phrase, nb de lignes libre)
+  const EDITOR_CFG = {
+    home:         { intro: 'home.intro', fields: HOME_FIELDS,   title: 'Accueil — texte & liens' },
+    djpage:       { intro: 'dj.intro',   fields: DJPAGE_FIELDS, title: 'DJ — texte, liens & image' },
+    bio:          { intro: 'bio.intro',  fields: BIO_FIELDS,    title: 'Bio — intro (texte & image)' },
+    fundraisetext:{ intro: 'fr.intro',   fields: FR_FIELDS,     title: 'Fund Raise — texte & liens' },
+  };
+  const introPreview = key => (copy(key) || '').split('|').map(s => s.trim()).filter(Boolean).join(' · ') || '—';
+  function renderHome() { const el = document.getElementById('home-preview'); if (el) el.textContent = introPreview('home.intro'); }
+  function renderDjPage() { const el = document.getElementById('djpage-preview'); if (el) el.textContent = introPreview('dj.intro'); }
+  function renderBio() { const el = document.getElementById('bio-section-preview'); if (el) el.textContent = introPreview('bio.intro'); }
+  function renderFundraiseText() { const el = document.getElementById('fr-text-preview'); if (el) el.textContent = introPreview('fr.intro'); }
+  function renderWhy() {
+    const root = document.getElementById('why-tree'); if (!root) return;
+    const blocks = (copy('why.blocks') || '').split('|').map(s => s.trim()).filter(Boolean);
+    const list = blocks.map(id => {
+      const bTitle = copy(`why.${id}.title`) || id;
+      const h = copy(`why.${id}.hidden`) === 'true';
+      return `<div class="sch-row sch-l3 ${h ? 'sch-hidden' : ''}"><span class="sch-lbl">${esc(bTitle)}</span>
+        <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="toggle-why-block" data-id="${id}">${h ? '👁 Afficher' : '🚫 Masquer'}</button>
+        <button class="btn-card-edit sch-mini" data-action="edit-why-block" data-id="${id}">${t('btn.edit')}</button>
+        <button class="btn-card-edit sch-mini sch-del" data-action="delete-why-block" data-id="${id}">✕</button></span></div>`;
+    }).join('');
+    root.innerHTML = list + `<button class="btn-admin sch-add" data-action="add-why-block">+ Bloc</button>`;
+  }
+
   // multiline <-> pipe helpers
   const toLines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean).join('\n');
   const toPipe  = s => (s || '').split('\n').map(x => x.trim()).filter(Boolean).join('|');
@@ -1793,6 +1914,10 @@
     if (action === 'toggle-school-section') toggleSchoolHidden(`school.${id}`);
     if (action === 'toggle-school-article') toggleSchoolHidden(`school.${section}.${id}`);
     if (action === 'toggle-school-review')  toggleSchoolHidden(`school.reviews.${id}`);
+    if (action === 'add-why-block')         openForm('why-block', {});
+    if (action === 'edit-why-block')        openForm('why-block', { id });
+    if (action === 'toggle-why-block')      toggleSchoolHidden(`why.${id}`);
+    if (action === 'delete-why-block')      deleteSchoolNode(`why.${id}`, 'why.blocks', id, copy(`why.${id}.title`) || id);
     if (action === 'add-school-review')     openForm('school-review', {});
     if (action === 'edit-school-review')    openForm('school-review', { id });
     if (action === 'delete-school-review')  deleteSchoolNode(`school.reviews.${id}`, 'school.reviews.registry', id, copy(`school.reviews.${id}.name`) || id);
@@ -1828,6 +1953,11 @@
   document.getElementById('school-add-section-btn').addEventListener('click', () => openForm('school-section', {}));
   document.getElementById('curator-edit-btn').addEventListener('click', () => openForm('curator'));
   document.getElementById('fundraise-edit-btn').addEventListener('click', () => openForm('fundraise'));
+  document.getElementById('home-edit-btn').addEventListener('click', () => openForm('home'));
+  document.getElementById('djpage-edit-btn').addEventListener('click', () => openForm('djpage'));
+  document.getElementById('bio-edit-btn').addEventListener('click', () => openForm('bio'));
+  document.getElementById('fr-text-edit-btn').addEventListener('click', () => openForm('fundraisetext'));
+  document.getElementById('why-intro-btn').addEventListener('click', () => openForm('why-intro'));
 
   // ── Edit overlay ──────────────────────────────────────────────────────────────
   const overlay   = document.getElementById('edit-overlay');
@@ -2137,6 +2267,63 @@
       const imgPreview = document.getElementById('ef-img-preview');
       document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
       imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; imgPreview.style.borderRadius = '8px'; } });
+    }
+
+    if (EDITOR_CFG[type]) {
+      const cfg = EDITOR_CFG[type];
+      const imgKey = EDITOR_IMG[type];
+      editTitle.textContent = cfg.title;
+      editSub.textContent = `Langue : ${currentLang.toUpperCase()} (textes)` + (imgKey ? ' · image commune aux 2 langues' : '');
+      let html = '';
+      if (cfg.intro) {
+        html += `<div class="edit-field"><label class="edit-label">Texte — une ligne par phrase (ajoute ou retire des lignes librement)</label>
+          <textarea class="edit-input" id="ef-intro" rows="5">${esc(toLines(copy(cfg.intro)))}</textarea></div>`;
+      }
+      if (imgKey) {
+        html += `<input type="file" id="ef-img-input" accept="image/*" style="display:none">
+          <div class="image-row">
+            <div class="image-preview"><img id="ef-img-preview" src="${esc(copy(imgKey))}" alt="" style="${copy(imgKey) ? '' : 'display:none'}"></div>
+            <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
+          </div>
+          <div class="edit-field"><label class="edit-label">Image (URL)</label>
+            <input class="edit-input" type="text" id="ef-img-url" value="${esc(copy(imgKey))}" placeholder="/images/dj.png"></div>`;
+      }
+      html += cfg.fields.map((f, i) =>
+        `<div class="edit-field"><label class="edit-label">${f.label}</label>
+         <input class="edit-input" type="text" id="ef-f-${i}" value="${esc(copy(f.key))}"></div>`).join('');
+      editBody.innerHTML = html;
+      if (imgKey) {
+        const imgInput = document.getElementById('ef-img-input');
+        const imgPreview = document.getElementById('ef-img-preview');
+        const urlInput = document.getElementById('ef-img-url');
+        document.getElementById('ef-img-btn').addEventListener('click', () => imgInput.click());
+        imgInput.addEventListener('change', () => { const f = imgInput.files[0]; if (f) { imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = ''; } });
+        urlInput.addEventListener('input', () => { if (urlInput.value) { imgPreview.src = urlInput.value; imgPreview.style.display = ''; } });
+      }
+    }
+
+    if (type === 'why-intro') {
+      editTitle.textContent = 'Why — intro';
+      editSub.textContent = `Langue : ${currentLang.toUpperCase()}`;
+      editBody.innerHTML = `
+        <div class="edit-field"><label class="edit-label">Titre</label>
+          <input class="edit-input" type="text" id="ef-why-title" value="${esc(copy('why.title'))}" placeholder="why"></div>
+        <div class="edit-field"><label class="edit-label">Sous-titre — une ligne par phrase</label>
+          <textarea class="edit-input" id="ef-why-intro" rows="4">${esc(toLines(copy('why.intro')))}</textarea></div>
+        <div class="edit-field"><label class="edit-label">Bouton — Donate</label>
+          <input class="edit-input" type="text" id="ef-why-donate" value="${esc(copy('why.donate'))}" placeholder="donate"></div>`;
+    }
+
+    if (type === 'why-block') {
+      const isNew = !meta || !meta.id;
+      const base = isNew ? '' : `why.${meta.id}`;
+      editTitle.textContent = (isNew ? 'Ajouter ' : 'Modifier ') + 'bloc Why';
+      editSub.textContent = `Langue : ${currentLang.toUpperCase()}`;
+      editBody.innerHTML = `
+        <div class="edit-field"><label class="edit-label">Titre</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-why-btitle" value="${isNew ? '' : esc(copy(`${base}.title`))}" placeholder="goals are productive"></div>
+        <div class="edit-field"><label class="edit-label">Texte</label>
+          <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-why-bbody" rows="5">${isNew ? '' : esc(copy(`${base}.body`))}</textarea></div>`;
     }
 
     if (type === 'fundraise') {
@@ -2668,6 +2855,63 @@
           await saveCopy(lang, `${isNew ? 'Add' : 'Update'} school review: ${id} (${lang})`);
         }
         renderSchool();
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
+      }
+
+      if (EDITOR_CFG[editFormType]) {
+        const cfg = EDITOR_CFG[editFormType];
+        const imgKey = EDITOR_IMG[editFormType];
+        if (cfg.intro && copyData[currentLang]) copyData[currentLang][cfg.intro] = toPipe(document.getElementById('ef-intro').value);
+        cfg.fields.forEach((f, i) => {
+          const v = document.getElementById('ef-f-' + i).value;
+          if (copyData[currentLang]) copyData[currentLang][f.key] = v;
+        });
+        if (imgKey) {
+          let url = document.getElementById('ef-img-url').value.trim();
+          const imgInput = document.getElementById('ef-img-input');
+          if (imgInput && imgInput.files[0]) url = await uploadImageToBlob(imgInput.files[0], `${editFormType}/intro.jpg`);
+          for (const lang of ['en', 'fr']) { if (copyData[lang]) copyData[lang][imgKey] = url; }
+        }
+        // image is shared across langs → persist both; otherwise only active lang
+        const langs = imgKey ? ['en', 'fr'] : [currentLang];
+        for (const lang of langs) { if (copyData[lang]) await saveCopy(lang, `Update ${editFormType} (${lang})`); }
+        renderHome(); renderDjPage(); renderBio(); renderFundraiseText();
+        showToast(t('toast.intro.saved'), 'success');
+      }
+
+      if (editFormType === 'why-intro') {
+        const title = document.getElementById('ef-why-title').value.trim();
+        const intro = toPipe(document.getElementById('ef-why-intro').value);
+        const donate = document.getElementById('ef-why-donate').value.trim();
+        if (copyData[currentLang]) {
+          copyData[currentLang]['why.title'] = title;
+          copyData[currentLang]['why.intro'] = intro;
+          copyData[currentLang]['why.donate'] = donate;
+        }
+        await saveCopy(currentLang, `Update why intro (${currentLang})`);
+        renderWhy();
+        showToast(t('toast.intro.saved'), 'success');
+      }
+
+      if (editFormType === 'why-block') {
+        const isNew = !editFormMeta || !editFormMeta.id;
+        const title = document.getElementById('ef-why-btitle').value.trim();
+        if (!title) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        const id = isNew ? slugify(title) : editFormMeta.id;
+        const bodyVal = document.getElementById('ef-why-bbody').value.trim();
+        for (const lang of ['en', 'fr']) {
+          if (!copyData[lang]) continue;
+          if (isNew) {
+            const reg = (copyData[lang]['why.blocks'] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang]['why.blocks'] = [...reg, id].join('|');
+          }
+          if (isNew || lang === currentLang) {
+            copyData[lang][`why.${id}.title`] = title;
+            copyData[lang][`why.${id}.body`] = bodyVal;
+          }
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} why block: ${id} (${lang})`);
+        }
+        renderWhy();
         showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
       }
 

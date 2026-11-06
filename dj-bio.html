@@ -82,14 +82,11 @@
     </header>
 
     <main class="bio-intro">
-      <div class="bio-image">
-        <!-- Placeholder — remplacer par la vraie photo bio exportée de Figma (160×320 / 320×540) -->
+      <div class="bio-image" id="bio-image">
         <img src="/images/profile.jpg" alt="Momo">
       </div>
-      <div class="bio-copy">
-        <p data-key="bio.copy.1" data-en="several decades" data-fr="plusieurs décennies">several decades</p>
-        <p data-key="bio.copy.2" data-en="evolving dj"     data-fr="un dj qui évolue">evolving dj</p>
-        <p data-key="bio.copy.3" data-en="same old guy"    data-fr="toujours le même gars">same old guy</p>
+      <div class="bio-copy" id="bio-copy">
+        <p>several decades</p><p>evolving dj</p><p>same old guy</p>
       </div>
     </main>
 
@@ -112,6 +109,9 @@
       el.textContent = val !== undefined ? val : lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent);
     });
     document.querySelectorAll('[data-en]:not([data-key])').forEach(el => { el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en; });
+    const bc = document.getElementById('bio-copy');
+    const introLines = (copy['bio.intro'] || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (bc && introLines.length) bc.innerHTML = introLines.map(l => `<p>${l.replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]))}</p>`).join('');
     document.documentElement.lang = lang; currentLang = lang;
     try { localStorage.setItem('momo-lang', lang); } catch {}
   }
@@ -120,7 +120,13 @@
     try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
     return {};
   }
-  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang); });
+  function renderBioImage(img) {
+    if (!img) return;
+    const el = document.getElementById('bio-image'); if (!el) return;
+    const esc = s => (s || '').replace(/"/g, '&quot;');
+    el.innerHTML = `<img src="${esc(img)}" alt="Momo" onerror="this.style.visibility='hidden'">`;
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => { COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang); renderBioImage((COPY.en || {})['bio.image']); });
   applyLang(currentLang);
   const logoToggle = document.getElementById('logo-toggle');
   function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }

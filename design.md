@@ -17,6 +17,7 @@ Format : `[ ] node-id — description` → `[x]` quand appliqué → retiré au 
 [x] 70:1019 — Carte événement publique : champ description (SF Pro Light 20px/22px brand-10) dans les deux états live et next ; form admin ef-desc + ev.description dans save logic ; image 48px → 80px
 [x] 879:4256 — Header admin unifié : flex justify-between tous breakpoints, logo gauche, tabs droite (gap 16px), Sign out et header-left retirés du HTML, padding-top content 96px
 [x] 982:5911 — Cartes événements admin : bg brand-105, border brand-90, radius 8px, top gap 16px, live pill brand-100/radius-72, retrait bouton Edit, Copy URL text-transform:none
+[ ] Sync 2026-09-23 — Page `design-system` (`1:2`) : les composantes ont divergé des noms documentés ici. `Button` (Type=Primary/Secondary/…) → maintenant séparé en `button.public.primary`, `button.spublic.secondary` (typo à corriger côté Figma), `button.public.tertiary`, `button.admin.big`, `button.admin.big.delete`, `button.admin.small`, `button.admin.tag`, `button.language`, `button.close`, `button.details`, `button.back`. `Header` → `header.index`, `header.index.new.menu`, `header.admin`, `header.event.admin`, `header.event.public`, `header.form`. `Card / Web / Event` → `public.event` (Name=live/next). `Card / Admin` (gig) → `admin-event` (Type=live/next) ; `admin.content` regroupe card.intro/timeline/review/demo.admin. `tab-new` → séparé en `tab.admin` / `tab.public`. Sections Buttons/Fixed Header/Cards/Tabs de ce doc à réécrire pour matcher — non fait automatiquement (nécessite relecture des specs par composante). 210 composantes au total sur la page, 185 nœuds avec couleur hardcodée détectés (non liée à une variable Momo) — majoritairement des vecteurs du logo `og-image`/`logo-momoauxplatines-pen` + `card.index.timeline.date`.
 
 <!--
 Appliqués 2026-06-06 :
@@ -43,6 +44,7 @@ Appliqués 2026-06-08 :
 |------------|----|---------|
 | `_` | `522:4072` | Couverture du fichier |
 | `home-dj` | `0:1` | Portfolio DJ principal |
+| `new site` | `1270:1918` | Portfolio DJ — nouvelle version en cours (Home, Bio, Timeline, School — mobile) |
 | `event-public-live` | `857:2830` | Event live — vue publique |
 | `event-public-next` | `978:4986` | Event next — vue publique |
 | `admin-dj` | `473:3188` | Panel admin DJ |
@@ -52,6 +54,8 @@ Appliqués 2026-06-08 :
 | `home-school` | `51:970` | Portfolio École |
 | `forms` | `653:3319` | Formulaires (booking, contact, request) |
 | `design-system` | `1:2` | Design system — composantes, tokens, couleurs |
+| `strava` | `1348:2` | Page Strava |
+| `gofundme` | `1353:2` | Page GoFundMe |
 
 ---
 
@@ -529,7 +533,7 @@ Composante Figma : `Logo/DJ`, `Logo/School` · Page `_System`
 
 ---
 
-## Live Page (request.html)
+## Live Page (event.html)
 
 Separate page, active when an event is live.
 
@@ -647,6 +651,9 @@ Separate admin UI. Max content width: `800px`, centred.
 | Avatar — Admin Gig | `72px` | Event Avatar |
 | Avatar — Home Page | `80px` | Home Page Avatars |
 | Avatar — Intro | `112px` | — |
+| Radius — xs | `2px` | Radius/2 (`--radius-2`) |
+| Gap — XL | `56px` | Gap/56 (`--gap-56`) |
+| Stroke — hairline | `0.5px` | Stroke/05 (`--stroke-05`) |
 | Border radius — cards | `16px` | — |
 | Border radius — buttons | `8px` | — |
 | Border radius — inputs | `12px` | — |
@@ -655,6 +662,6 @@ Separate admin UI. Max content width: `800px`, centred.
 
 ---
 
-_Dernière sync Figma : 2026-09-22 — tokens ✓ · pages ✓ · composantes ✓ · --bg = Background (alias Event/Black) ✓ · footer ✓_
+_Dernière sync Figma : 2026-11-05 — tokens ✓ · pages ✓ · composantes ⚠ voir Pending · --bg = Background (alias Event/Black) ✓ · footer ✓_
 
 _Hiérarchie heading mise à jour le 2026-04-20 : H1 → Brand/00, H2 → Brand/30, H3 → Brand/50. **À répercuter côté Figma** : repeindre le texte des instances Name (H1), tous les titres de section (H2), les card titles Review/Demo/Timeline et les titres modaux Contact/Request (H3)._

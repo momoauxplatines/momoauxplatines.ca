@@ -110,11 +110,8 @@
           <source src="/images/fundraise-web.mp4" type="video/mp4">
         </video>
       </div>
-      <div class="fr-copy">
-        <p data-key="fr.copy.1" data-en="During november"         data-fr="En novembre">During november</p>
-        <p data-key="fr.copy.2" data-en="run 500km (or more)"      data-fr="courir 500 km (ou plus)">run 500km (or more)</p>
-        <p data-key="fr.copy.3" data-en="raise 10,000$ (or more)"  data-fr="amasser 10 000 $ (ou plus)">raise 10,000$ (or more)</p>
-        <p data-key="fr.copy.4" data-en="help cancer research"     data-fr="pour la recherche contre le cancer">help cancer research</p>
+      <div class="fr-copy" id="fr-copy">
+        <p>During november</p><p>run 500km (or more)</p><p>raise 10,000$ (or more)</p><p>help cancer research</p>
       </div>
       <div class="fr-badges">
         <span class="fr-badge" id="badge-km">— / 500 km</span>
@@ -145,10 +142,19 @@
   const KM_GOAL = 500;
   let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
 
+  const COPY = { en: {}, fr: {} };
   function applyLang(lang) {
-    document.querySelectorAll('[data-en]').forEach(el => {
-      el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent);
+    const copy = COPY[lang] || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const v = copy[el.dataset.key];
+      el.textContent = v !== undefined ? v : (lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent));
     });
+    document.querySelectorAll('[data-en]:not([data-key])').forEach(el => {
+      el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : el.dataset.en;
+    });
+    const fc = document.getElementById('fr-copy');
+    const introLines = (copy['fr.intro'] || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (fc && introLines.length) fc.innerHTML = introLines.map(l => `<p>${l.replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]))}</p>`).join('');
     document.documentElement.lang = lang; currentLang = lang;
     try { localStorage.setItem('momo-lang', lang); } catch {}
   }
@@ -175,9 +181,16 @@
       el.innerHTML = `<picture><source media="(min-width:768px)" srcset="${escAttr(media)}"><img src="${escAttr(mob)}" alt="Momo en course" width="160" height="320" onerror="this.src='${escAttr(media)}'"></picture>`;
     }
   }
-  fetch('/api/copy?lang=' + currentLang).then(r => r.ok ? r.json() : null).then(c => {
-    if (c && c['fundraise.media']) renderMedia(c['fundraise.media'], c['fundraise.poster']);
-  }).catch(() => {});
+  async function fetchCopy(lang) {
+    try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
+    try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
+    return {};
+  }
+  Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
+    COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang);
+    const c = COPY[currentLang] || {};
+    if (c['fundraise.media']) renderMedia(c['fundraise.media'], c['fundraise.poster']);
+  });
 
   // km badge from Strava
   fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
