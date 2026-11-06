@@ -37,6 +37,7 @@
       --blue:  #007aff;
       --green: #34c759;
       --black: #000000;
+      --lime:  #c5ff55;
       /* ── Radius ── */
       --radius-0:  0px;
       --radius-2:  2px;
@@ -469,17 +470,21 @@
     }
     .spotify-input-wrapper {
       display: flex; align-items: center; gap: 12px;
-      background: var(--brand-95); border: 1px solid var(--brand-90);
-      border-radius: 8px; padding: 12px 20px;
-      transition: border-color 0.2s, background 0.2s;
+      background: var(--bg); border: 0.5px solid var(--brand-60);
+      border-radius: 0; padding: var(--gap-16) var(--gap-20);
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .spotify-input-wrapper:focus-within { background: var(--brand-100); border-color: var(--brand-80); }
-    .spotify-input-wrapper.invalid { border-color: var(--red); }
+    .spotify-input-wrapper:hover { border-color: var(--brand-30); }
+    .spotify-input-wrapper:focus-within { background: var(--bg); border-color: var(--lime); box-shadow: 0 0 0 1px var(--lime); }
+    .spotify-input-wrapper.filled { border-color: var(--brand-30); }
+    .spotify-input-wrapper.invalid { border-color: var(--red); box-shadow: none; }
+    .spotify-input-wrapper.invalid:focus-within { box-shadow: 0 0 0 1px var(--red); }
     .spotify-input-icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--brand-70); }
     .form-input {
       flex: 1; background: transparent; border: none;
-      font-family: inherit; font-weight: 300; font-size: 16px; line-height: 22px;
-      color: var(--brand-00); outline: none; min-width: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+      font-weight: 300; font-size: 18px; line-height: 26px;
+      color: #fff; outline: none; min-width: 0;
       -webkit-appearance: none;
     }
     .form-input::placeholder { color: var(--brand-60); }
@@ -648,7 +653,7 @@
 
     .ev-info { display: flex; flex-direction: column; gap: var(--gap-24); }
     .ev-name { font-family: 'Kalnia', serif; font-weight: 600; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
-    .ev-venue-link { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 23px; line-height: 31px; color: var(--blue); text-decoration: underline; width: fit-content; }
+    .ev-venue-link { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 23px; line-height: 31px; color: var(--blue); text-decoration: none; width: fit-content; }
     .ev-details { display: flex; flex-direction: column; }
     .ev-detail { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 23px; line-height: 31px; color: #fff; text-decoration: none; }
     a.ev-detail:hover { text-decoration: underline; }
@@ -656,9 +661,7 @@
 
     .ev-request { display: flex; flex-direction: column; gap: var(--gap-8); }
     .ev-req-label { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-weight: 300; font-size: 18px; line-height: 22px; color: var(--brand-30); }
-    .ev-submit { margin-top: var(--gap-8); height: 56px; width: 100%; border: 0; cursor: pointer; background: var(--brand-90); color: var(--bg); font-family: 'Kanit', sans-serif; font-weight: 900; font-size: 20px; line-height: 26px; text-transform: uppercase; }
-    .ev-submit.ready { background: var(--brand-00); color: var(--brand-100); }
-    .ev-submit:disabled { cursor: not-allowed; }
+    .ev-submit { display: none !important; }
     .ev-success { display: none; align-items: center; gap: var(--gap-8); margin-top: var(--gap-8); }
     .ev-success.visible { display: flex; }
 
@@ -1222,6 +1225,7 @@
     fetchStatus.className = 'fetch-status';
     submitBtn.disabled = true;
     submitBtn.classList.remove('ready');
+    inputWrapper.classList.remove('filled', 'invalid');
     currentTrack = null;
   }
 
@@ -1233,6 +1237,7 @@
     fetchStatus.className = 'fetch-status';
     submitBtn.disabled = true;
     submitBtn.classList.remove('ready');
+    inputWrapper.classList.remove('filled', 'invalid');
     currentTrack = null;
     setTimeout(() => urlInput.focus(), 50);
   });
@@ -1247,6 +1252,7 @@
       fetchStatus.textContent = '';
       submitBtn.disabled = true;
       submitBtn.classList.remove('ready');
+      inputWrapper.classList.remove('filled', 'invalid');
       currentTrack = null;
       return;
     }
@@ -1258,9 +1264,12 @@
       fetchStatus.className = 'fetch-status error';
       submitBtn.disabled = true;
       submitBtn.classList.remove('ready');
+      inputWrapper.classList.remove('filled');
+      inputWrapper.classList.add('invalid');
       currentTrack = null;
       return;
     }
+    inputWrapper.classList.remove('invalid');
     fetchStatus.textContent = currentLang === 'fr' ? 'Récupération…' : 'Fetching…';
     fetchStatus.className = 'fetch-status';
     fetchTimer = setTimeout(async () => {
@@ -1275,6 +1284,7 @@
         fetchStatus.textContent = '';
         submitBtn.disabled = false;
         submitBtn.classList.add('ready');
+        inputWrapper.classList.add('filled');
       } catch {
         preview.classList.remove('visible');
         fetchStatus.textContent = currentLang === 'fr'
@@ -1283,16 +1293,27 @@
         fetchStatus.className = 'fetch-status error';
         submitBtn.disabled = true;
         submitBtn.classList.remove('ready');
+        inputWrapper.classList.remove('filled');
+        inputWrapper.classList.add('invalid');
         currentTrack = null;
       }
     }, 600);
   });
 
+  // Soumission au Enter du clavier (pas de bouton, pas de saut de ligne)
+  urlInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentTrack && !submitBtn.disabled) submitRequest();
+    }
+  });
+
   // Submit
-  submitBtn.addEventListener('click', async () => {
-    if (!currentTrack || submitBtn.disabled) return;
+  submitBtn.addEventListener('click', () => { if (currentTrack && !submitBtn.disabled) submitRequest(); });
+  async function submitRequest() {
     submitBtn.disabled = true;
     submitBtn.classList.remove('ready');
+    inputWrapper.classList.remove('filled');
 
     let requestId = null;
     try {
@@ -1340,7 +1361,7 @@
     successTimer = setTimeout(() => {
       successEl.classList.remove('visible');
     }, 3000);
-  });
+  }
 
   // ─────────────────────────────────────────────
   // Message tab
