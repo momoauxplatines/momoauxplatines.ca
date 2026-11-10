@@ -112,7 +112,7 @@
   document.getElementById('bio-decade').textContent = DECADE;
   document.title = `Bio ${DECADE} — Momo Aux Platines`;
 
-  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en'); } catch { return 'en'; } })();
   const COPY = { en: {}, fr: {} };
 
   function applyLang(lang) {

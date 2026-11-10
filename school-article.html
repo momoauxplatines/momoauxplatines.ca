@@ -82,7 +82,7 @@
   const ARTICLE = (seg[2] || '').toLowerCase();
   const BASE = `school.${SECTION}.${ARTICLE}`;
   document.getElementById('back-link').href = `/school/${SECTION}`;
-  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en'); } catch { return 'en'; } })();
   const COPY = { en: {}, fr: {} };
   const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
   const lines = s => (s || '').split('|').map(x => x.trim()).filter(Boolean);

@@ -89,7 +89,7 @@
 
   <script>
   const KM_GOAL = 500;
-  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en'); } catch { return 'en'; } })();
   function applyLang(lang) {
     document.querySelectorAll('[data-en]').forEach(el => { el.textContent = lang === 'fr' ? (el.dataset.fr || el.textContent) : (el.dataset.en || el.textContent); });
     document.documentElement.lang = lang; currentLang = lang; try { localStorage.setItem('momo-lang', lang); } catch {}

@@ -823,11 +823,11 @@
       const _ym = _datePart.match(/(\d{4})$/);
       if (_dm && _ym) _pendingDate = `${_ym[1]}-${String(_mi).padStart(2,'0')}-${String(parseInt(_dm[1])).padStart(2,'0')}`;
     } else {
-      currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+      currentLang = params.get('lang') === 'fr' ? 'fr' : (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en');
     }
     _pendingNameSlug = _namePart;
   } else {
-    currentLang = params.get('lang') === 'fr' ? 'fr' : 'en';
+    currentLang = params.get('lang') === 'fr' ? 'fr' : (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en');
   }
 
   const _pathSlug = _newFmt ? '' : ((window.location.pathname.match(/^\/(?:requests|events)\/([^/]+)$/) || [])[1] || '');

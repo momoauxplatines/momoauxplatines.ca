@@ -184,7 +184,7 @@
   <script>
   const WEB3FORMS_KEY = '70b2dab3-9415-4d56-8e31-f1dfa353454a';
 
-  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || 'en'; } catch { return 'en'; } })();
+  let currentLang = (() => { try { return localStorage.getItem('momo-lang') || (/^fr/i.test((navigator.languages&&navigator.languages[0])||navigator.language||'')?'fr':'en'); } catch { return 'en'; } })();
   const COPY = { en: {}, fr: {} };
 
   function applyLang(lang) {
