@@ -576,10 +576,10 @@
     <!-- ── FUND RAISE ── -->
     <section class="admin-section" id="fundraise-section">
       <div class="section-title-row">
-        <h2 class="section-heading">Fund Raise — média</h2>
-        <button class="btn-admin" id="fundraise-edit-btn">Edit</button>
+        <h2 class="section-heading">Fund Raise — vidéos</h2>
       </div>
-      <div id="fundraise-preview" class="empty-state"></div>
+      <p class="empty-state" style="margin-bottom:8px;">La plus récente est en haut (affichée en premier sur le site). Les autres passent dans le carrousel.</p>
+      <div id="fr-video-tree"></div>
     </section>
 
     <!-- ── FUND RAISE — textes & liens ── -->
@@ -1826,9 +1826,17 @@
   }
 
   function renderFundraise() {
-    const el = document.getElementById('fundraise-preview');
-    if (!el) return;
-    el.textContent = copy('fundraise.media') || '—';
+    const root = document.getElementById('fr-video-tree'); if (!root) return;
+    const ids = (copy('fundraise.videos.registry') || '').split('|').map(s => s.trim()).filter(Boolean);
+    const rows = ids.map((id, i) => {
+      const src = copy(`fundraise.video.${id}.src`) || '';
+      const name = (src.split('/').pop() || id);
+      const tag = i === 0 ? ' · récente' : '';
+      return `<div class="sch-row sch-l3"><span class="sch-lbl">${i + 1}. ${esc(name)}${tag}</span>
+        <span class="sch-btns"><button class="btn-card-edit sch-mini" data-action="edit-fr-video" data-id="${id}">${t('btn.edit')}</button>
+        <button class="btn-card-edit sch-mini sch-del" data-action="delete-fr-video" data-id="${id}">✕</button></span></div>`;
+    }).join('');
+    root.innerHTML = (rows || '<div class="empty-state">—</div>') + `<button class="btn-admin sch-add" data-action="add-fr-video">+ Vidéo</button>`;
   }
 
   // ── Éditeurs de textes simples (clés fixes) : Accueil (hub) + page DJ ──
@@ -1892,6 +1900,8 @@
         await saveCopy(lang, `Delete school node: ${prefix} (${lang})`);
       }
       renderSchool();
+      if (typeof renderWhy === 'function') renderWhy();
+      if (typeof renderFundraise === 'function') renderFundraise();
       showToast(`"${label}" ${t('toast.deleted')}`, 'success');
     } catch (e) {
       showToast(t('toast.delete.failed') + e.message, 'error');
@@ -1916,6 +1926,9 @@
     if (action === 'edit-why-block')        openForm('why-block', { id });
     if (action === 'toggle-why-block')      toggleSchoolHidden(`why.${id}`);
     if (action === 'delete-why-block')      deleteSchoolNode(`why.${id}`, 'why.blocks', id, copy(`why.${id}.title`) || id);
+    if (action === 'add-fr-video')          openForm('fr-video', {});
+    if (action === 'edit-fr-video')         openForm('fr-video', { id });
+    if (action === 'delete-fr-video')       deleteSchoolNode(`fundraise.video.${id}`, 'fundraise.videos.registry', id, (copy(`fundraise.video.${id}.src`) || id).split('/').pop());
     if (action === 'add-school-review')     openForm('school-review', {});
     if (action === 'edit-school-review')    openForm('school-review', { id });
     if (action === 'delete-school-review')  deleteSchoolNode(`school.reviews.${id}`, 'school.reviews.registry', id, copy(`school.reviews.${id}.name`) || id);
@@ -1950,7 +1963,6 @@
   document.getElementById('school-intro-btn').addEventListener('click', () => openForm('school-intro'));
   document.getElementById('school-add-section-btn').addEventListener('click', () => openForm('school-section', {}));
   document.getElementById('curator-edit-btn').addEventListener('click', () => openForm('curator'));
-  document.getElementById('fundraise-edit-btn').addEventListener('click', () => openForm('fundraise'));
   document.getElementById('home-edit-btn').addEventListener('click', () => openForm('home'));
   document.getElementById('djpage-edit-btn').addEventListener('click', () => openForm('djpage'));
   document.getElementById('bio-edit-btn').addEventListener('click', () => openForm('bio'));
@@ -2324,22 +2336,24 @@
           <textarea class="edit-input ${isNew ? 'empty' : ''}" id="ef-why-bbody" rows="5">${isNew ? '' : esc(copy(`${base}.body`))}</textarea></div>`;
     }
 
-    if (type === 'fundraise') {
-      editTitle.textContent = 'Fund Raise — média';
-      editSub.textContent = 'Vidéo (.mov/.mp4/.webm) ou image. Les gros fichiers vont dans /images; ici on met le chemin.';
+    if (type === 'fr-video') {
+      const isNew = !meta || !meta.id;
+      const base = isNew ? '' : `fundraise.video.${meta.id}`;
+      editTitle.textContent = (isNew ? 'Ajouter ' : 'Modifier ') + 'une vidéo';
+      editSub.textContent = 'Vidéo web (.mp4/.webm). Les gros fichiers vont dans /images; ici on met le chemin. La nouvelle vidéo s’affiche en premier.';
       editBody.innerHTML = `
         <input type="file" id="ef-img-input" accept="image/*" style="display:none">
         <div class="edit-field">
-          <label class="edit-label">Média (URL) — vidéo ou image</label>
-          <input class="edit-input" type="text" id="ef-fr-media" value="${esc(copy('fundraise.media'))}" placeholder="/images/fundraise.MOV">
+          <label class="edit-label">Vidéo (URL)</label>
+          <input class="edit-input ${isNew ? 'empty' : ''}" type="text" id="ef-frv-src" value="${isNew ? '' : esc(copy(`${base}.src`))}" placeholder="/images/ma-video.mp4">
         </div>
         <div class="edit-field">
           <label class="edit-label">Poster (image affichée avant la vidéo)</label>
           <div class="image-row">
-            <div class="image-preview"><img id="ef-img-preview" src="${esc(copy('fundraise.poster'))}" alt="" style="${copy('fundraise.poster') ? '' : 'display:none'}"></div>
+            <div class="image-preview"><img id="ef-img-preview" src="${isNew ? '' : esc(copy(`${base}.poster`))}" alt="" style="${!isNew && copy(`${base}.poster`) ? '' : 'display:none'}"></div>
             <button type="button" id="ef-img-btn" style="height:40px;padding:0 16px;background:var(--brand-90);border:1px solid var(--brand-80);border-radius:8px;color:var(--brand-00);font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;">${t('btn.change.image')}</button>
           </div>
-          <input class="edit-input" type="text" id="ef-fr-poster" value="${esc(copy('fundraise.poster'))}" placeholder="/images/fundraise.png" style="margin-top:8px;">
+          <input class="edit-input" type="text" id="ef-frv-poster" value="${isNew ? '' : esc(copy(`${base}.poster`))}" placeholder="/images/mon-poster.jpg" style="margin-top:8px;">
         </div>`;
       const imgInput = document.getElementById('ef-img-input');
       const imgPreview = document.getElementById('ef-img-preview');
@@ -2913,21 +2927,28 @@
         showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
       }
 
-      if (editFormType === 'fundraise') {
+      if (editFormType === 'fr-video') {
+        const isNew = !editFormMeta || !editFormMeta.id;
+        const src = document.getElementById('ef-frv-src').value.trim();
+        if (!src) { showToast(t('toast.title.required'), 'error'); saveBtn.disabled = false; saveBtn.textContent = t('btn.save'); return; }
+        const id = isNew ? ('v' + Date.now().toString(36)) : editFormMeta.id;
         const imgInput = document.getElementById('ef-img-input');
-        let posterUrl = document.getElementById('ef-fr-poster').value.trim();
+        let posterUrl = document.getElementById('ef-frv-poster').value.trim();
         if (imgInput && imgInput.files[0]) {
-          posterUrl = await uploadImageToBlob(imgInput.files[0], 'fundraise/poster.jpg');
+          posterUrl = await uploadImageToBlob(imgInput.files[0], `fundraise/${id}-poster.jpg`);
         }
-        const media = document.getElementById('ef-fr-media').value.trim();
         for (const lang of ['en', 'fr']) {
           if (!copyData[lang]) continue;
-          copyData[lang]['fundraise.media'] = media;
-          copyData[lang]['fundraise.poster'] = posterUrl;
-          await saveCopy(lang, `Update fund raise media (${lang})`);
+          if (isNew) {
+            const reg = (copyData[lang]['fundraise.videos.registry'] || '').split('|').filter(Boolean);
+            if (!reg.includes(id)) copyData[lang]['fundraise.videos.registry'] = [id, ...reg].join('|'); // le plus récent en premier
+          }
+          copyData[lang][`fundraise.video.${id}.src`] = src;
+          copyData[lang][`fundraise.video.${id}.poster`] = posterUrl;
+          await saveCopy(lang, `${isNew ? 'Add' : 'Update'} fund raise video: ${id} (${lang})`);
         }
         renderFundraise();
-        showToast(t('toast.intro.saved'), 'success');
+        showToast(isNew ? t('toast.entry.added') : t('toast.entry.saved'), 'success');
       }
 
       if (editFormType === 'curator') {

@@ -55,6 +55,12 @@
     .fr-image { display: flex; justify-content: flex-end; }
     .fr-image picture { display: contents; }
     .fr-image img, .fr-image video { width: 160px; height: 320px; object-fit: cover; object-position: bottom; display: block; background: var(--brand-100); }
+    .fr-carousel { display: flex; flex-direction: column; gap: var(--gap-8); }
+    .fr-cnav { display: flex; align-items: center; justify-content: space-between; }
+    .fr-cbtn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: 0; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .fr-cbtn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .fr-cbtn:hover { color: var(--lime); }
+    .fr-ccount { font-family: var(--font-body); font-weight: 300; font-size: 15px; line-height: 1; color: var(--brand-30); font-variant-numeric: tabular-nums; }
     .fr-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
     .fr-copy p { margin: 0; }
 
@@ -106,9 +112,22 @@
 
     <main class="fr-intro">
       <div class="fr-image" id="fr-media">
-        <video class="fr-video" controls playsinline preload="metadata" poster="/images/fundraise-poster.jpg">
-          <source src="/images/fundraise-web.mp4" type="video/mp4">
-        </video>
+        <div class="fr-carousel" id="fr-carousel">
+          <div class="fr-cmedia" id="fr-cmedia">
+            <video class="fr-video" controls playsinline preload="metadata" poster="/images/fundraise-poster-2.jpg">
+              <source src="/images/fundraise-web-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="fr-cnav" id="fr-cnav" hidden>
+            <button class="fr-cbtn" id="fr-prev" type="button" aria-label="Vidéo précédente / Previous video">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg>
+            </button>
+            <span class="fr-ccount" id="fr-ccount">1/1</span>
+            <button class="fr-cbtn" id="fr-next" type="button" aria-label="Vidéo suivante / Next video">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
       <div class="fr-copy" id="fr-copy">
         <p>During november</p><p>run 500km (or more)</p><p>raise 10,000$ (or more)</p><p>help cancer research</p>
@@ -167,20 +186,46 @@
 
   function fmtInt(n) { return Math.round(n).toLocaleString('fr-CA').replace(/ /g, ' '); }
 
-  // ── Média d'intro (vidéo ou image), éditable depuis l'admin via /api/copy ──
+  // ── Carrousel de vidéos d'intro, éditable depuis l'admin via /api/copy ──
+  // Le registre fundraise.videos.registry est ordonné du plus récent au plus ancien.
   const escAttr = s => (s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
   const VIDEO_TYPES = { mov:'video/quicktime', mp4:'video/mp4', m4v:'video/mp4', webm:'video/webm', ogg:'video/ogg' };
-  function renderMedia(media, poster) {
-    const el = document.getElementById('fr-media');
-    if (!el || !media) return;
-    const ext = (media.split('.').pop() || '').toLowerCase();
-    if (VIDEO_TYPES[ext]) {
-      el.innerHTML = `<video class="fr-video" controls playsinline preload="metadata" ${poster ? `poster="${escAttr(poster)}"` : ''}><source src="${escAttr(media)}" type="${VIDEO_TYPES[ext]}"></video>`;
-    } else {
-      const mob = media.replace(/(\.[a-z0-9]+)$/i, '-mobile$1');
-      el.innerHTML = `<picture><source media="(min-width:768px)" srcset="${escAttr(media)}"><img src="${escAttr(mob)}" alt="Momo en course" width="160" height="320" onerror="this.src='${escAttr(media)}'"></picture>`;
-    }
+  let FR_VIDEOS = [], frIdx = 0;
+
+  function buildVideos(c) {
+    const reg = (c['fundraise.videos.registry'] || '').split('|').map(s => s.trim()).filter(Boolean);
+    let list = reg
+      .map(id => ({ src: c[`fundraise.video.${id}.src`] || '', poster: c[`fundraise.video.${id}.poster`] || '' }))
+      .filter(v => v.src);
+    // Repli : ancien champ unique
+    if (!list.length && c['fundraise.media']) list = [{ src: c['fundraise.media'], poster: c['fundraise.poster'] || '' }];
+    return list;
   }
+  function slideHtml(v) {
+    const ext = (v.src.split('.').pop() || '').toLowerCase();
+    if (VIDEO_TYPES[ext]) {
+      return `<video class="fr-video" controls playsinline preload="metadata" ${v.poster ? `poster="${escAttr(v.poster)}"` : ''}><source src="${escAttr(v.src)}" type="${VIDEO_TYPES[ext]}"></video>`;
+    }
+    const mob = v.src.replace(/(\.[a-z0-9]+)$/i, '-mobile$1');
+    return `<picture><source media="(min-width:768px)" srcset="${escAttr(v.src)}"><img src="${escAttr(mob)}" alt="Momo en course" width="160" height="320" onerror="this.src='${escAttr(v.src)}'"></picture>`;
+  }
+  function showSlide(i) {
+    if (!FR_VIDEOS.length) return;
+    frIdx = (i % FR_VIDEOS.length + FR_VIDEOS.length) % FR_VIDEOS.length;
+    const media = document.getElementById('fr-cmedia');
+    const count = document.getElementById('fr-ccount');
+    const nav   = document.getElementById('fr-cnav');
+    if (media) media.innerHTML = slideHtml(FR_VIDEOS[frIdx]);
+    if (count) count.textContent = `${frIdx + 1}/${FR_VIDEOS.length}`;
+    if (nav)   nav.hidden = FR_VIDEOS.length < 2;
+  }
+  function renderCarousel(c) {
+    FR_VIDEOS = buildVideos(c);
+    if (!FR_VIDEOS.length) return;
+    showSlide(0);
+  }
+  document.getElementById('fr-prev').addEventListener('click', () => showSlide(frIdx - 1));
+  document.getElementById('fr-next').addEventListener('click', () => showSlide(frIdx + 1));
   async function fetchCopy(lang) {
     try { const r = await fetch(`/api/copy?lang=${lang}`); if (r.ok) return r.json(); } catch {}
     try { const r = await fetch(`/copy/${lang}.json`); if (r.ok) return r.json(); } catch {}
@@ -188,8 +233,7 @@
   }
   Promise.all([fetchCopy('en'), fetchCopy('fr')]).then(([en, fr]) => {
     COPY.en = en || {}; COPY.fr = fr || {}; applyLang(currentLang);
-    const c = COPY[currentLang] || {};
-    if (c['fundraise.media']) renderMedia(c['fundraise.media'], c['fundraise.poster']);
+    renderCarousel(COPY[currentLang] || COPY.en || {});
   });
 
   // km badge from Strava
