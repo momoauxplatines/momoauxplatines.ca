@@ -34,6 +34,8 @@
       --gap-16: 16px;
       --gap-32: 32px;
       --gap-56: 56px;
+      --radius-2:  2px;
+      --radius-8:  8px;
       --radius-72: 72px;
       --font-display: 'Kalnia', serif;
       --font-ui: 'Kanit', sans-serif;
@@ -64,13 +66,24 @@
     .fr-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
     .fr-copy p { margin: 0; }
 
-    .fr-badges { display: flex; gap: var(--gap-8); align-items: center; }
-    .fr-badge {
-      display: inline-flex; align-items: center;
-      background: var(--brand-100); border: 1px solid var(--brand-90);
-      border-radius: var(--radius-72); padding: 6px var(--gap-12);
-      font-family: var(--font-body); font-weight: 300; font-size: 13px; line-height: 16px;
-      color: var(--brand-60); white-space: nowrap;
+    /* ── Stat badges (jauges de progression) ── */
+    .fr-badges { display: flex; flex-direction: column; gap: var(--gap-12); width: 100%; }
+    .stat-badge {
+      display: flex; flex-direction: column; gap: var(--gap-12);
+      background: var(--brand-105); border: 0.5px solid var(--brand-80);
+      border-radius: 0; padding: var(--gap-16);
+    }
+    .stat-label {
+      font-family: var(--font-ui); font-weight: 600; font-size: 14px; line-height: 1.2;
+      text-transform: uppercase; color: #fff;
+    }
+    .stat-num { font-variant-numeric: tabular-nums; }
+    .stat-bar { position: relative; height: 16px; background: var(--brand-90); border-radius: 0; overflow: hidden; }
+    .stat-fill { position: absolute; top: 0; left: 0; bottom: 0; width: 0; background: var(--lime); border-radius: 0; }
+    .stat-scale {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--font-ui); font-weight: 300; font-size: 13px; line-height: 1;
+      color: var(--brand-60); font-variant-numeric: tabular-nums;
     }
 
     .btn-donate {
@@ -95,6 +108,8 @@
       .fr-image img, .fr-image video { width: 320px; height: 540px; }
       .fr-copy { font-size: 30px; line-height: 40px; }
       .fr-link { font-size: 32px; line-height: 36px; }
+      .fr-badges { flex-direction: row; }
+      .stat-badge { flex: 1 1 0; min-width: 0; }
     }
   </style>
 </head>
@@ -133,8 +148,16 @@
         <p>During november</p><p>run 500km (or more)</p><p>raise 10,000$ (or more)</p><p>help cancer research</p>
       </div>
       <div class="fr-badges">
-        <span class="fr-badge" id="badge-km">— / 500 km</span>
-        <span class="fr-badge" id="badge-dollar">0 $</span>
+        <div class="stat-badge" data-badge="km">
+          <div class="stat-label"><span class="stat-num" id="km-num">0</span>&nbsp;<span data-en="km run" data-fr="kms courus">kms courus</span></div>
+          <div class="stat-bar"><div class="stat-fill" id="km-fill"></div></div>
+          <div class="stat-scale"><span>0</span><span id="km-goal">500</span></div>
+        </div>
+        <div class="stat-badge" data-badge="don">
+          <div class="stat-label"><span class="stat-num" id="don-num">0</span>$&nbsp;<span data-en="raised" data-fr="de dons amassés">de dons amassés</span></div>
+          <div class="stat-bar"><div class="stat-fill" id="don-fill"></div></div>
+          <div class="stat-scale"><span>0</span><span id="don-goal">5,000</span></div>
+        </div>
       </div>
       <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
          data-key="fr.donate" data-en="donate" data-fr="faire un don">donate</a>
@@ -236,18 +259,65 @@
     renderCarousel(COPY[currentLang] || COPY.en || {});
   });
 
-  // km badge from Strava
-  fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
-    if (d && typeof d.total_km === 'number') {
-      document.getElementById('badge-km').textContent = `${fmtInt(d.total_km)} / ${KM_GOAL} km`;
-    }
-  }).catch(() => {});
+  // ── Stat badges : jauges animées au scroll (vitesse moyenne) ──
+  const DOLLAR_GOAL = 5000;
+  const ANIM_MS = 1400; // vitesse moyenne
+  const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const badges = {
+    km:  { num: document.getElementById('km-num'),  fill: document.getElementById('km-fill'),  goalEl: document.getElementById('km-goal'),  goal: KM_GOAL,     target: 0, shown: 0, visible: false, anim: null },
+    don: { num: document.getElementById('don-num'), fill: document.getElementById('don-fill'), goalEl: document.getElementById('don-goal'), goal: DOLLAR_GOAL, target: 0, shown: 0, visible: false, anim: null },
+  };
+  // Échelles (max) formatées
+  if (badges.km.goalEl)  badges.km.goalEl.textContent  = fmtInt(KM_GOAL);
+  if (badges.don.goalEl) badges.don.goalEl.textContent = fmtInt(DOLLAR_GOAL);
 
-  // $ badge from GoFundMe donations (sum of amounts)
+  function paint(b, val) {
+    b.num.textContent = fmtInt(val);
+    b.fill.style.width = (b.goal ? Math.min(100, Math.max(0, val / b.goal * 100)) : 0) + '%';
+  }
+  function animateBadge(b) {
+    if (b.anim) cancelAnimationFrame(b.anim);
+    const from = b.shown, to = b.target;
+    if (REDUCED || from === to) { b.shown = to; paint(b, to); return; }
+    const start = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    (function step(now) {
+      const t = Math.min(1, (now - start) / ANIM_MS);
+      const val = from + (to - from) * ease(t);
+      b.shown = val; paint(b, val);
+      if (t < 1) b.anim = requestAnimationFrame(step);
+      else { b.shown = to; paint(b, to); b.anim = null; }
+    })(start);
+  }
+  function setTarget(key, val) {
+    const b = badges[key]; if (!b) return;
+    b.target = val;
+    if (b.visible) animateBadge(b);
+  }
+
+  // Déclenche l'animation quand la carte entre dans la vue
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const b = badges[en.target.dataset.badge];
+        if (b && !b.visible) { b.visible = true; animateBadge(b); }
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.stat-badge').forEach(el => io.observe(el));
+  } else {
+    Object.values(badges).forEach(b => { b.visible = true; animateBadge(b); });
+  }
+
+  // Données live
+  fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
+    if (d && typeof d.total_km === 'number') setTarget('km', d.total_km);
+  }).catch(() => {});
   fetch('/api/dons').then(r => r.ok ? r.json() : null).then(d => {
     if (d && Array.isArray(d.donations)) {
       const total = d.donations.reduce((s, x) => s + (Number(x.amount) || 0), 0);
-      document.getElementById('badge-dollar').textContent = `${fmtInt(total)} $`;
+      setTarget('don', total);
     }
   }).catch(() => {});
 
