@@ -69,6 +69,7 @@ async function fetchRuns(token, afterEpoch) {
         start_date_local: a.start_date_local,
         distance_km: Math.round(km * 100) / 100,
         moving_time_s: a.moving_time,
+        elapsed_time_s: a.elapsed_time,
         pace_s_per_km: km > 0 ? Math.round(a.moving_time / km) : null,
         cadence_spm: a.average_cadence ? Math.round(a.average_cadence * 2) : null,
         polyline: a.map?.summary_polyline || null,
@@ -94,7 +95,13 @@ export default async (req) => {
   try {
     const runs = await fetchRuns(await getAccessToken(store), afterEpoch);
     const total_km = Math.round(runs.reduce((s, r) => s + r.distance_km, 0) * 10) / 10;
-    const payload = { updated_at: new Date().toISOString(), total_km, count: runs.length, runs };
+    const total_moving_s = runs.reduce((s, r) => s + (r.moving_time_s || 0), 0);
+    const total_elapsed_s = runs.reduce((s, r) => s + (r.elapsed_time_s || 0), 0);
+    const avg_pace_s_per_km = total_km > 0 ? Math.round(total_moving_s / total_km) : null;
+    const payload = {
+      updated_at: new Date().toISOString(), total_km, count: runs.length,
+      total_moving_s, total_elapsed_s, avg_pace_s_per_km, runs,
+    };
     await store.setJSON(key, { fetched_at: Date.now(), payload });
     return new Response(JSON.stringify(payload), { headers: HEADERS });
   } catch (err) {

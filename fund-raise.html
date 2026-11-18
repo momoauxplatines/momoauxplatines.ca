@@ -66,13 +66,19 @@
     .fr-copy { font-family: var(--font-display); font-weight: 500; font-size: 23px; line-height: 31px; text-transform: uppercase; color: #fff; }
     .fr-copy p { margin: 0; }
 
-    /* ── Stat badges (jauges de progression) ── */
+    /* ── Stat badges (jauges + valeurs) ── */
     .fr-badges { display: flex; flex-direction: column; gap: var(--gap-12); width: 100%; }
+    .fr-gauges { display: flex; flex-direction: column; gap: var(--gap-12); }
+    .fr-stats  { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-12); }
     .stat-badge {
       display: flex; flex-direction: column; gap: var(--gap-12);
       background: var(--brand-105); border: 0.5px solid var(--brand-80);
-      border-radius: 0; padding: var(--gap-16);
+      border-radius: 0; padding: var(--gap-16); min-width: 0;
     }
+    .stat-value { gap: var(--gap-8); }
+    .stat-figure { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px; font-family: var(--font-body); }
+    .fig-num { font-weight: 700; font-size: 18px; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+    .fig-u   { font-weight: 300; font-size: 16px; line-height: 1; color: var(--brand-60); }
     .stat-label {
       font-family: var(--font-ui); font-weight: 600; font-size: 14px; line-height: 1.2;
       text-transform: uppercase; color: #fff;
@@ -108,8 +114,8 @@
       .fr-image img, .fr-image video { width: 320px; height: 540px; }
       .fr-copy { font-size: 30px; line-height: 40px; }
       .fr-link { font-size: 32px; line-height: 36px; }
-      .fr-badges { flex-direction: row; }
-      .stat-badge { flex: 1 1 0; min-width: 0; }
+      .fr-gauges { flex-direction: row; }
+      .fr-gauges .stat-badge { flex: 1 1 0; }
     }
   </style>
 </head>
@@ -148,15 +154,27 @@
         <p>During november</p><p>run 500km (or more)</p><p>raise 10,000$ (or more)</p><p>help cancer research</p>
       </div>
       <div class="fr-badges">
-        <div class="stat-badge" data-badge="km">
-          <div class="stat-label"><span class="stat-num" id="km-num">0</span>&nbsp;<span data-en="km run" data-fr="kms courus">kms courus</span></div>
-          <div class="stat-bar"><div class="stat-fill" id="km-fill"></div></div>
-          <div class="stat-scale"><span>0</span><span id="km-goal">500</span></div>
+        <div class="fr-gauges">
+          <div class="stat-badge" data-badge="km">
+            <div class="stat-label"><span class="stat-num" id="km-num">0</span>&nbsp;<span data-en="km run" data-fr="kms courus">kms courus</span></div>
+            <div class="stat-bar"><div class="stat-fill" id="km-fill"></div></div>
+            <div class="stat-scale"><span>0</span><span id="km-goal">500</span></div>
+          </div>
+          <div class="stat-badge" data-badge="don">
+            <div class="stat-label"><span class="stat-num" id="don-num">0</span>$&nbsp;<span data-en="raised" data-fr="de dons amassés">de dons amassés</span></div>
+            <div class="stat-bar"><div class="stat-fill" id="don-fill"></div></div>
+            <div class="stat-scale"><span>0</span><span id="don-goal">5,000</span></div>
+          </div>
         </div>
-        <div class="stat-badge" data-badge="don">
-          <div class="stat-label"><span class="stat-num" id="don-num">0</span>$&nbsp;<span data-en="raised" data-fr="de dons amassés">de dons amassés</span></div>
-          <div class="stat-bar"><div class="stat-fill" id="don-fill"></div></div>
-          <div class="stat-scale"><span>0</span><span id="don-goal">5,000</span></div>
+        <div class="fr-stats">
+          <div class="stat-badge stat-value">
+            <div class="stat-label" data-en="elapsed time" data-fr="temps écoulé">temps écoulé</div>
+            <div class="stat-figure" id="time-figure"><span class="fig-u">—</span></div>
+          </div>
+          <div class="stat-badge stat-value">
+            <div class="stat-label" data-en="avg pace" data-fr="allure moyenne">allure moyenne</div>
+            <div class="stat-figure" id="pace-figure"><span class="fig-u">—</span></div>
+          </div>
         </div>
       </div>
       <a class="btn-donate" href="https://gofund.me/8a19f1e06" target="_blank" rel="noopener"
@@ -310,9 +328,37 @@
     Object.values(badges).forEach(b => { b.visible = true; animateBadge(b); });
   }
 
+  // Badges valeurs : temps écoulé + allure moyenne (h/m/s, m/s par km)
+  function figHtml(parts) {
+    return parts.map(([n, u]) => `<span class="fig-num">${n}</span> <span class="fig-u">${u}</span>`).join(' ');
+  }
+  function renderTime(totalS) {
+    let h = Math.floor(totalS / 3600), m = Math.floor((totalS % 3600) / 60), s = Math.round(totalS % 60);
+    if (s === 60) { s = 0; m++; } if (m === 60) { m = 0; h++; }
+    document.getElementById('time-figure').innerHTML = figHtml([[h, 'h'], [m, 'm'], [s, 's']]);
+  }
+  function renderPace(paceS) {
+    if (!paceS || !isFinite(paceS)) return;
+    let m = Math.floor(paceS / 60), s = Math.round(paceS % 60);
+    if (s === 60) { s = 0; m++; }
+    document.getElementById('pace-figure').innerHTML = figHtml([[m, 'm'], [s, 's']]);
+  }
+
   // Données live
   fetch('/api/strava').then(r => r.ok ? r.json() : null).then(d => {
-    if (d && typeof d.total_km === 'number') setTarget('km', d.total_km);
+    if (!d) return;
+    if (typeof d.total_km === 'number') setTarget('km', d.total_km);
+    // Temps total écoulé (fallback : somme des courses)
+    const elapsed = (typeof d.total_elapsed_s === 'number') ? d.total_elapsed_s
+      : (Array.isArray(d.runs) ? d.runs.reduce((s, r) => s + (r.elapsed_time_s || r.moving_time_s || 0), 0) : 0);
+    if (elapsed > 0) renderTime(elapsed);
+    // Allure moyenne par km (fallback : temps en mouvement / km)
+    let pace = (typeof d.avg_pace_s_per_km === 'number') ? d.avg_pace_s_per_km : null;
+    if (pace == null && Array.isArray(d.runs) && typeof d.total_km === 'number' && d.total_km > 0) {
+      const mv = d.runs.reduce((s, r) => s + (r.moving_time_s || 0), 0);
+      pace = Math.round(mv / d.total_km);
+    }
+    if (pace) renderPace(pace);
   }).catch(() => {});
   fetch('/api/dons').then(r => r.ok ? r.json() : null).then(d => {
     if (d && Array.isArray(d.donations)) {
